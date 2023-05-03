@@ -5,6 +5,8 @@ This repo is used to host the converted code and assets from the Netezza To Data
 
 ## Repo Structure
 
+``` text
+
 └── nz-databricks-migration
     ├── Bladebridge **All Bladebridge** artifacts go here
     │   ├── configs **All Bladebridge** converter configs go here 
@@ -20,3 +22,4 @@ This repo is used to host the converted code and assets from the Netezza To Data
     │       ├── notebooks
     │       └── tables
     └── README.md
+```
