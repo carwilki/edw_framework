@@ -1,0 +1,105 @@
+{
+    "name": "WMS_TO_SCDS_4HR",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "DC_10_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "10",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        },
+        {
+            "task_key": "DC_12_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "12",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        },
+        {
+            "task_key": "DC_14_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "14",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        }, {
+            "task_key": "DC_22_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "22",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        },
+        {
+            "task_key": "DC_36_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "36",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        },{
+            "task_key": "DC_38_PRE",
+            "notebook_task": {
+                "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
+                "base_parameters": {
+                    "DC_NBR": "38",
+                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
+                    "Initial_Load": "{{Initial_Load}}"
+                },
+                "source": "GIT"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "format": "MULTI_TASK"
+}
