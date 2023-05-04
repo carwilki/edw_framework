@@ -90,8 +90,10 @@ UCL_USER.COPY_FROM_USER,
 UCL_USER.EXTERNAL_USER_ID,
 UCL_USER.SECURITY_POLICY_GROUP_ID
 FROM UCL_USER
-WHERE $$Initial_Load (date_trunc('DD', UCL_USER.CREATED_DTTM)>= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) OR (date_trunc('DD', UCL_USER.LAST_UPDATED_DTTM)>= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) AND 
-
+WHERE $$Initial_Load (date_trunc('DD', UCL_USER.CREATED_DTTM)>= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) OR (date_trunc('DD', UCL_USER.LAST_UPDATED_DTTM)>= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) AND 
+
+
+
 1=1""", 
 properties={
 'user': os.environ.get('DBConnection_Source_LOGIN'),
@@ -275,6 +277,4 @@ Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 	EXPTRANS.SECURITY_POLICY_GROUP_ID.cast(LongType()).alias('SECURITY_POLICY_GROUP_ID'), \
 	EXPTRANS.LOAD_TSTMP_EXP.cast(TimestampType()).alias('LOAD_TSTMP') \
 )
-Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable('WM_UCL_USER_PRE', mode = 'append')
-
-quit()
+Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable('WM_UCL_USER_PRE', mode = 'overwrite')

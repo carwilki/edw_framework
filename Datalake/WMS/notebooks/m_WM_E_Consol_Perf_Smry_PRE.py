@@ -122,8 +122,10 @@ E_CONSOL_PERF_SMRY.RESOURCE_GROUP_ID,
 E_CONSOL_PERF_SMRY.COMP_ASSIGNMENT_ID,
 E_CONSOL_PERF_SMRY.REFLECTIVE_CODE
 FROM E_CONSOL_PERF_SMRY
-WHERE $$Initial_Load (date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1 ) OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) AND 
-
+WHERE $$Initial_Load (date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1 ) OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) AND 
+
+
+
 1=1""", 
 properties={
 'user': os.environ.get('DBConnection_Source_LOGIN'),

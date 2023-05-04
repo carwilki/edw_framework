@@ -53,8 +53,10 @@ E_DEPT.VERSION_ID,
 E_DEPT.CREATED_DTTM,
 E_DEPT.LAST_UPDATED_DTTM
 FROM E_DEPT
-WHERE $$Initial_Load (date_trunc('DD', CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', MOD_DATE_TIME) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) AND
-
+WHERE $$Initial_Load (date_trunc('DD', CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', MOD_DATE_TIME) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) AND
+
+
+
 1=1""", 
 properties={
 'user': os.environ.get('DBConnection_Source_LOGIN'),
@@ -127,6 +129,4 @@ Shortcut_to_WM_E_DEPT_PRE = EXPTRANS.select( \
 	EXPTRANS.LAST_UPDATED_DTTM.cast(TimestampType()).alias('LAST_UPDATED_DTTM'), \
 	EXPTRANS.LOAD_TSTMP_EXP.cast(TimestampType()).alias('LOAD_TSTMP') \
 )
-Shortcut_to_WM_E_DEPT_PRE.write.saveAsTable('WM_E_DEPT_PRE', mode = 'append')
-
-quit()
+Shortcut_to_WM_E_DEPT_PRE.write.saveAsTable('WM_E_DEPT_PRE', mode = 'overwrite')
