@@ -8,7 +8,6 @@ from pyspark import SparkContext;
 from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from dbruntime import dbutils
 #from PySparkBQWriter import *
 #import ProcessingUtils;
 #bqw = PySparkBQWriter()
