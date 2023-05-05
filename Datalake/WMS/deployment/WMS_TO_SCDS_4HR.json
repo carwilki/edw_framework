@@ -13,8 +13,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "10",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
@@ -28,8 +28,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "12",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
@@ -43,8 +43,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "14",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
@@ -57,8 +57,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "22",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
@@ -72,8 +72,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "36",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
@@ -86,8 +86,8 @@
                 "notebook_path": "datalake/wms/notebooks/scds_stg_pre_load_dc",
                 "base_parameters": {
                     "DC_NBR": "38",
-                    "Prev_Run_Dt": "{{Prev_Run_Dt}}",
-                    "Initial_Load": "{{Initial_Load}}"
+                    "Prev_Run_Dt": "",
+                    "Initial_Load": ""
                 },
                 "source": "GIT"
             },
