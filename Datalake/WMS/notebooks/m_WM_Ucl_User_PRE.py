@@ -9,28 +9,31 @@ from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 from dbruntime import dbutils
-#from PySparkBQWriter import *
-#import ProcessingUtils;
-#bqw = PySparkBQWriter()
-#bqw.setDebug(True)
 
 # COMMAND ----------
+# Variable_declaration_comment
+# Read in job variables
+# read_infa_paramfile('', 'm_WM_E_Consol_Perf_Smry_PRE') ProcessingUtils
+dbutils.widgets.text(name='DC_NBR', defaultValue='')
+dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
+dbutils.widgets.text(name='Initial_Load', defaultValue='')
+dbutils.widgets.text(name='catalog', defaultValue='dev')
 
-conf = SparkConf().setMaster('local')
-sc = SparkContext.getOrCreate(conf = conf)
+# COMMAND ----------
+sc = SparkContext.getOrCreate()
 spark = SparkSession(sc)
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+catalog = dbutils.widgets.get('catalog', as_type=str)
+dcnbr = dbutils.widgets.get('DC_NBR', as_type=str)
+prev_run_dt = dbutils.widgets.get('Prev_Run_Dt', as_type=str)	
+initial_load = dbutils.widgets.get('Initial_Load', as_type=str)
 
-# Read in job variables
-# read_infa_paramfile('', 'm_WM_Ucl_User_PRE') ProcessingUtils
 
 # COMMAND ----------
-# Variable_declaration_comment
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
-dbutils.widgets.text(name='Initial_Load', defaultValue='')
+# Set the catalog to use.
+spark.sql(f"USE CATALOG {catalog}")
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_UCL_USER, type SOURCE 
@@ -277,4 +280,6 @@ Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 	EXPTRANS.SECURITY_POLICY_GROUP_ID.cast(LongType()).alias('SECURITY_POLICY_GROUP_ID'), \
 	EXPTRANS.LOAD_TSTMP_EXP.cast(TimestampType()).alias('LOAD_TSTMP') \
 )
-Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable('WM_UCL_USER_PRE', mode = 'overwrite')
+
+#this needs to be a merge statement
+#Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable('WM_UCL_USER_PRE', mode = 'overwrite')

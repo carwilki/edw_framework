@@ -691,6 +691,5 @@ Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
 	UPD_INS_UPD.LOAD_TSTMP.cast(TimestampType()).alias('LOAD_TSTMP'), \
 	UPD_INS_UPD.pyspark_data_action.alias('pyspark_data_action') \
 )
-Shortcut_to_WM_UCL_USER.write.saveAsTable('WM_UCL_USER', mode = 'append')
 
-quit()
+Shortcut_to_WM_UCL_USER.write.saveAsTable('legacy.WM_UCL_USER', mode = 'append')

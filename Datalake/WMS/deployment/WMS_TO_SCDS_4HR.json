@@ -94,7 +94,90 @@
             "existing_cluster_id": "0502-175325-jk53n8aw",
             "timeout_seconds": 0,
             "email_notifications": {}
-        }
+        },
+        {
+            "depends_on": [
+                {
+                    "task_key": "DC_38_PRE"
+                },
+                {
+                    "task_key": "DC_22_PRE"
+                },
+                {
+                    "task_key": "DC_36_PRE"
+                },
+                {
+                    "task_key": "DC_14_PRE"
+                },
+                {
+                    "task_key": "DC_12_PRE"
+                },
+                {
+                    "task_key": "DC_10_PRE"
+                }
+            ],
+            "description" : "",
+            "max_retries" : "3",
+            "min_retry_interval_millis" : "2000",
+            "notebook_task" : {
+               "notebook_path" : "notebookTestPath/m_WM_Ucl_User.py"
+            },
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "retry_on_timeout" : false,
+            "task_key" : "s_WM_Ucl_User",
+            "timeout_seconds" : "86400"
+         },
+         {
+            "depends_on" : [
+               {
+                  "task_key" : "s_WM_Ucl_User"
+               }
+            ],
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "description" : "",
+            "max_retries" : "3",
+            "min_retry_interval_millis" : "2000",
+            "notebook_task" : {
+               "notebook_path" : "notebookTestPath/m_WM_E_Dept.py"
+            },
+            "retry_on_timeout" : false,
+            "task_key" : "s_WM_E_Dept",
+            "timeout_seconds" : "86400"
+         },
+         {
+            "depends_on" : [
+               {
+                  "task_key" : "s_WM_E_Dept"
+               }
+            ],
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "description" : "",
+            "max_retries" : "3",
+            "min_retry_interval_millis" : "2000",
+            "notebook_task" : {
+               "notebook_path" : "notebookTestPath/m_WM_E_Consol_Perf_Smry.py"
+            },
+            "retry_on_timeout" : false,
+            "task_key" : "s_WM_E_Consol_Perf_Smry",
+            "timeout_seconds" : "86400"
+         },
+         {
+            "depends_on" : [
+               {
+                  "task_key" : "s_WM_E_Consol_Perf_Smry"
+               }
+            ],
+            "existing_cluster_id": "0502-175325-jk53n8aw",
+            "description" : "",
+            "max_retries" : "3",
+            "min_retry_interval_millis" : "2000",
+            "notebook_task" : {
+               "notebook_path" : "notebookTestPath/m_Last_Run_Dt.py"
+            },
+            "retry_on_timeout" : false,
+            "task_key" : "s_Last_Run_Dt",
+            "timeout_seconds" : "86400"
+         }
     ],
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",

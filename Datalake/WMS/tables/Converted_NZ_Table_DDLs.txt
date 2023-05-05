@@ -136,7 +136,8 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   --ORGANIZE   ON (LOCATION_ID)
 
 
- CREATE TABLE  SCDS_PRD.WM_UCL_USER  ( LOCATION_ID INT not null
+ CREATE TABLE  SCDS_PRD.WM_UCL_USER  ( 
+  , LOCATION_ID INT not null
   , WM_UCL_USER_ID                             DECIMAL(18,0)                not null
   , WM_COMPANY_ID                              DECIMAL(9,0) 
   , WM_LOCATION_ID                             DECIMAL(18,0) 
