@@ -1,5 +1,11 @@
 from pyspark.dbutils import DBUtils
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark import SparkContext;
+from pyspark.sql.session import SparkSession
 from datetime import datetime
+
 ##########################################################################
 # this file is a good example of how to map a informatica worklet
 # of maplet to a databricks notebook
