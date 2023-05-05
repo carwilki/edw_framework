@@ -1,12 +1,11 @@
 #Code converted on 2023-05-03 09:47:02
 import os
-import dbutils
+from pyspark import dbutils
 from pyspark.sql import *
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from pyspark import SparkContext;
-from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 
