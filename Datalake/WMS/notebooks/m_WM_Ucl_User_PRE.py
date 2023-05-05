@@ -1,5 +1,6 @@
 #Code converted on 2023-05-03 09:47:08
 import os
+from pyspark.dbutils import DBUtils
 from pyspark.sql import *
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
@@ -8,7 +9,13 @@ from pyspark import SparkContext;
 from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from dbruntime import dbutils
+
+# COMMAND ----------
+# configure spark and dbutils. This is required when building notebooks outside of
+# the notebook itself.
+sc = SparkContext.getOrCreate()
+spark = SparkSession(sc)
+dbutils = DBUtils(sc)
 
 # COMMAND ----------
 # Variable_declaration_comment
@@ -18,10 +25,6 @@ dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
 dbutils.widgets.text(name='Initial_Load', defaultValue='')
 dbutils.widgets.text(name='catalog', defaultValue='dev')
-
-# COMMAND ----------
-sc = SparkContext.getOrCreate()
-spark = SparkSession(sc)
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script

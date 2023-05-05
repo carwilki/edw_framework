@@ -1,8 +1,16 @@
+from pyspark.dbutils import DBUtils
 from datetime import datetime
 ##########################################################################
 # this file is a good example of how to map a informatica worklet
 # of maplet to a databricks notebook
 ##########################################################################
+
+# COMMAND ----------
+# configure spark and dbutils. This is required when building notebooks outside of
+# the notebook itself.
+sc = SparkContext.getOrCreate()
+spark = SparkSession(sc)
+dbutils = DBUtils(sc)
 
 # COMMAND ----------
 # Variable_declaration_comment
