@@ -282,4 +282,4 @@ Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 )
 
 #this needs to be a merge statement
-#Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable('WM_UCL_USER_PRE', mode = 'overwrite')
+#Shortcut_to_WM_UCL_USER_PRE.write.saveAsTable(f'{catalog}.pre.WM_UCL_USER_PRE_{dcnbr}', mode = 'overwrite')

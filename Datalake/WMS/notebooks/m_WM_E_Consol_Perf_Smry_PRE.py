@@ -131,7 +131,7 @@ AND 1=1""",
 properties={
 'user': os.environ.get('DBConnection_Source_LOGIN'),
 'password': os.environ.get('DBConnection_Source_PASSWORD'),
-'driver': os.environ.get('ORACLE_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
+'driver': os.environ.get('ORACLE_DRIVER')})
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE, type TARGET 
@@ -228,4 +228,4 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 )
 
 #this needs to be a merge statement
-#Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.saveAsTable('pre.WM_E_CONSOL_PERF_SMRY_PRE', mode = 'append')
+#Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.saveAsTable(f'pre.WM_E_CONSOL_PERF_SMRY_PRE_{dcnbr}', mode = 'append')
