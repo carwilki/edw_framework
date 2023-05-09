@@ -50,6 +50,29 @@ AND 1=1"""
 
 # COMMAND ----------
 
+SQ_Shortcut_to_E_DEPT =spark.sql("""select 
+123.12 as DEPT_ID,
+"qwerty" as DEPT_CODE,
+"qwerty" as DESCRIPTION,
+TIMESTAMP "2003-01-01 2:00:00" as CREATE_DATE_TIME,
+TIMESTAMP "2003-01-01 2:00:00" as MOD_DATE_TIME,
+"qwerty" as USER_ID,
+"qwerty" as WHSE,
+"qwerty" as MISC_TXT_1,
+"qwerty" as MISC_TXT_2,
+123.12 as MISC_NUM_1,
+123.12 as MISC_NUM_2,
+123.12 as PERF_GOAL,
+1.01 as VERSION_ID,
+TIMESTAMP "2003-01-01 2:00:00" as CREATED_DTTM,
+TIMESTAMP "2003-01-01 2:00:00" as LAST_UPDATED_DTTM""")
+
+# COMMAND ----------
+
+SQ_Shortcut_to_E_DEPT.display()
+
+# COMMAND ----------
+
 SQ_Shortcut_to_E_DEPT = spark.read \
   .format("jdbc") \
   .option("url", connection_string) \
@@ -79,6 +102,26 @@ EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	SQ_Shortcut_to_E_DEPT.LAST_UPDATED_DTTM.cast(TimestampType()).alias('LAST_UPDATED_DTTM'), 
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
+
+# COMMAND ----------
+
+# checking the row count
+assert SQ_Shortcut_to_E_DEPT.count() == EXPTRANS.count()
+
+# COMMAND ----------
+
+# checking the long data type columns
+assert SQ_Shortcut_to_E_DEPT.select(SQ_Shortcut_to_E_DEPT.DEPT_ID.cast(LongType())).first() == EXPTRANS.select(["DEPT_ID"]).first()
+
+# COMMAND ----------
+
+# checking the string data type column
+assert SQ_Shortcut_to_E_DEPT.select(["WHSE"]).first() == EXPTRANS.select(["WHSE"]).first()
+
+# COMMAND ----------
+
+# checking the Timestamp data type column
+assert SQ_Shortcut_to_E_DEPT.select(["USER_ID"]).first() == EXPTRANS.select(["USER_ID"]).first()
 
 # COMMAND ----------
 

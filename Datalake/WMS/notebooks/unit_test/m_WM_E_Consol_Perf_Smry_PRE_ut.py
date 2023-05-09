@@ -113,10 +113,103 @@ E_CONSOL_PERF_SMRY.COMP_ASSIGNMENT_ID,
 E_CONSOL_PERF_SMRY.REFLECTIVE_CODE
 FROM E_CONSOL_PERF_SMRY
 WHERE 
-(date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1 ) 
-OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1) 
+(date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('${prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1 ) 
+OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('${prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1) 
 AND 1=1"""
 
+
+# COMMAND ----------
+
+SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.sql("""SELECT
+100.2 as PERF_SMRY_TRAN_ID,
+"ABC" as WHSE,
+"AbCde" as LOGIN_USER_ID,
+"AbcdE" as JOB_FUNCTION_NAME,
+"QwErTy" as SPVSR_LOGIN_USER_ID,
+"dept1" as DEPT_CODE,
+TIMESTAMP "2003-01-01 2:00:00" as CLOCK_IN_DATE,
+101.2 as CLOCK_IN_STATUS,
+1123.10 as TOTAL_SAM,
+2344.10 as TOTAL_PAM,
+34345,28 as TOTAL_TIME,
+456.01 as OSDL,
+5637.12 as OSIL,
+6718.11 as NSDL,
+78932.14 as SIL,
+98765.34 as UDIL,
+3421.22 as UIL,
+7432.22 as ADJ_OSDL,
+62882.21 as ADJ_OSIL,
+8437.2 as ADJ_UDIL,
+8273.2 as ADJ_NSDL,
+24691.8 as PAID_BRK,
+7462 as UNPAID_BRK,
+94828 as REF_OSDL,
+7472.12 as REF_OSIL,
+874.0 as REF_UDIL,
+27336.12 as REF_NSDL,
+7371.00 as REF_ADJ_OSDL,
+28371.9 as REF_ADJ_OSIL,
+737.19 as REF_ADJ_UDIL,
+123.456 as REF_ADJ_NSDL,
+123.456 as MISC_NUMBER_1,
+TIMESTAMP "2003-01-01 2:00:00" as CREATE_DATE_TIME,
+TIMESTAMP "2003-01-01 2:00:00" as MOD_DATE_TIME,
+"user123user" as USER_ID,
+"abcbndn" as MISC_1,
+"abcdefg" as MISC_2,
+TIMESTAMP "2003-01-01 2:00:00" as CLOCK_OUT_DATE,
+"abcd" as SHIFT_CODE,
+"abcdefg" as EVENT_COUNT,
+TIMESTAMP "2003-01-01 2:00:00" as START_DATE_TIME,
+TIMESTAMP "2003-01-01 2:00:00" as END_DATE_TIME,
+"abcdefg" as LEVEL_1,
+"abcdefg" as LEVEL_2,
+"abcdefg" as LEVEL_3,
+"abcdefg" as LEVEL_4,
+"abcdefg" as LEVEL_5,
+TIMESTAMP "2003-01-01 2:00:00" as WHSE_DATE,
+"abcdefg" as OPS_CODE,
+123.234 as REF_SAM,
+123.234 as REF_PAM,
+"abcd" as REPORT_SHIFT,
+"abcdefg" as MISC_TXT_1,
+"abcdefg" as MISC_TXT_2,
+123.234 as MISC_NUM_1,
+123.234 as MISC_NUM_2,
+"abcdefg" as EVNT_CTGRY_1,
+"abcdefg" as EVNT_CTGRY_2,
+"abcdefg" as EVNT_CTGRY_3,
+"abcdefg" as EVNT_CTGRY_4,
+"abcdefg" as EVNT_CTGRY_5,
+123.234 as LABOR_COST_RATE,
+123.234 as PAID_OVERLAP_OSDL,
+123.234 as UNPAID_OVERLAP_OSDL,
+123.234 as PAID_OVERLAP_NSDL,
+123.234 as UNPAID_OVERLAP_NSDL,
+123.234 as PAID_OVERLAP_OSIL,
+123.234 as UNPAID_OVERLAP_OSIL,
+123.234 as PAID_OVERLAP_UDIL,
+123.234 as UNPAID_OVERLAP_UDIL,
+123.234 as VERSION_ID,
+"abcdefg" as TEAM_CODE,
+123.234 as DEFAULT_JF_FLAG,
+123.234 as EMP_PERF_SMRY_ID,
+123.234 as TOTAL_QTY,
+"abcdefg" as REF_NBR,
+TIMESTAMP "2003-01-01 2:00:00" as TEAM_BEGIN_TIME,
+123.234 as THRUPUT_MIN,
+123.234 as DISPLAY_UOM_QTY,
+"abcdefg" as DISPLAY_UOM,
+"abcdefg" as LOCN_GRP_ATTR,
+"abcdefg" as RESOURCE_GROUP_ID,
+"abcdefg" as COMP_ASSIGNMENT_ID,
+"abcdefg" as REFLECTIVE_CODE""")
+
+
+# COMMAND ----------
+
+SQ_Shortcut_to_E_CONSOL_PERF_SMRY.display()
 
 # COMMAND ----------
 
@@ -221,6 +314,31 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 
 
 
+
+# COMMAND ----------
+
+# checking the row count
+assert Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.count() == SQ_Shortcut_to_E_CONSOL_PERF_SMRY.count()
+
+# COMMAND ----------
+
+# checking the Timestamp data type column
+assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(["WHSE_DATE"]).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["WHSE_DATE"]).first()
+
+# COMMAND ----------
+
+# checking the string data type column
+assert Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["DEPT_CODE"]).first() == SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(["DEPT_CODE"]).first()
+
+# COMMAND ----------
+
+# checking the long data type columns
+assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DISPLAY_UOM_QTY.cast(LongType())).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["DISPLAY_UOM_QTY"]).first()
+
+# COMMAND ----------
+
+# checking the long data type columns
+assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(SQ_Shortcut_to_E_CONSOL_PERF_SMRY.THRUPUT_MIN.cast(LongType())).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["THRUPUT_MIN"]).first()
 
 # COMMAND ----------
 

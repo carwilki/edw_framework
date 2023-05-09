@@ -96,6 +96,67 @@ SQ_Shortcut_to_UCL_USER = spark.read \
 
 # COMMAND ----------
 
+EXPTRANS = spark.sql("""
+SELECT
+123.12 as UCL_USER_ID,
+123.12 as COMPANY_ID,
+"qwerty12" as USER_NAME,
+"qwerty12" as USER_PASSWORD,
+1.0 as IS_ACTIVE,
+12.1 as CREATED_SOURCE_TYPE_ID,
+"qwerty12" as CREATED_SOURCE,
+TIMESTAMP "2003-01-01 2:00:00" as CREATED_DTTM,
+2.0 as LAST_UPDATED_SOURCE_TYPE_ID,
+"abcd" as LAST_UPDATED_SOURCE,
+TIMESTAMP "2003-01-01 2:00:00" as LAST_UPDATED_DTTM,
+123.12 as USER_TYPE_ID,
+123.12 as LOCALE_ID,
+123.12 as LOCATION_ID,
+"qwerty12" as USER_FIRST_NAME,
+"qwerty12" as USER_MIDDLE_NAME,
+"qwerty12" as USER_LAST_NAME,
+"qwerty12" as USER_PREFIX,
+"qwerty12" as USER_TITLE,
+"384832938" as TELEPHONE_NUMBER,
+"3723483" as FAX_NUMBER,
+"qwerty12" as ADDRESS_1,
+"qwerty12" as ADDRESS_2,
+"Riverside" as CITY,
+"Calf" as STATE_PROV_CODE,
+"us-8293" as POSTAL_CODE,
+"USA" as COUNTRY_CODE,
+"qwerty12@xyz1.com" as USER_EMAIL_1,
+"qwerty12@xyz.com" as USER_EMAIL_2,
+12.1 as COMM_METHOD_ID_DURING_BH_1,
+1.2 as COMM_METHOD_ID_DURING_BH_2,
+1.2 as COMM_METHOD_ID_AFTER_BH_1,
+1.2 as COMM_METHOD_ID_AFTER_BH_2,
+"qwerty12" as COMMON_NAME,
+TIMESTAMP "2003-01-01 2:00:00" as LAST_PASSWORD_CHANGE_DTTM,
+2.0 as LOGGED_IN,
+TIMESTAMP "2003-01-01 2:00:00" as LAST_LOGIN_DTTM,
+12312 as DEFAULT_BUSINESS_UNIT_ID,
+12312 as DEFAULT_WHSE_REGION_ID,
+12312 as CHANNEL_ID,
+12312 as HIBERNATE_VERSION,
+12312 as NUMBER_OF_INVALID_LOGINS,
+"qwerty12" as TAX_ID_NBR,
+TIMESTAMP "2003-01-01 2:00:00" as EMP_START_DATE,
+TIMESTAMP "1993-01-01 2:00:00" as BIRTH_DATE,
+"M" as GENDER_ID,
+TIMESTAMP "2003-01-01 2:00:00" as PASSWORD_RESET_DATE_TIME,
+"qwerty12" as PASSWORD_TOKEN,
+2.0 as ISPASSWORDMANAGEDINTERNALLY,
+"qwerty12" as COPY_FROM_USER,
+"qwerty12" as EXTERNAL_USER_ID,
+123.12 as SECURITY_POLICY_GROUP_ID""")
+
+# COMMAND ----------
+
+EXPTRANS.display()
+
+# COMMAND ----------
+
 Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 	lit(f'{dcnbr}').cast(LongType()).alias('DC_NBR'), \
 	EXPTRANS.UCL_USER_ID.cast(LongType()).alias('UCL_USER_ID'), \
@@ -152,6 +213,25 @@ Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 	EXPTRANS.SECURITY_POLICY_GROUP_ID.cast(LongType()).alias('SECURITY_POLICY_GROUP_ID'), \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
+
+
+
+# COMMAND ----------
+
+# checking the row count
+assert Shortcut_to_WM_UCL_USER_PRE.count() == EXPTRANS.count()
+
+# COMMAND ----------
+
+# checking the long data type columns
+assert Shortcut_to_WM_UCL_USER_PRE.select(Shortcut_to_WM_UCL_USER_PRE.COMM_METHOD_ID_DURING_BH_1.cast(LongType())).first() == EXPTRANS.select(["DEPT_ID"]).first()
+
+# COMMAND ----------
+
+# checking the string data type column
+assert Shortcut_to_WM_UCL_USER_PRE.select(["USER_FIRST_NAME"]).first() == EXPTRANS.select(["USER_FIRST_NAME"]).first()
+
+# COMMAND ----------
 
 
 

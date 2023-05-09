@@ -1,4 +1,4 @@
-# Databricks notebook source
+#Code converted on 2023-05-03 09:47:02
 import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *
@@ -9,24 +9,38 @@ from pyspark import SparkContext;
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 
+# COMMAND ----------
+# configure spark and dbutils. This is required when building notebooks outside of
+# the notebook itself.
+sc = SparkContext.getOrCreate()
+spark = SparkSession(sc)
+dbutils = DBUtils(sc)
 
 # COMMAND ----------
-
-
+# Variable_declaration_comment
+# Read in job variables
+# read_infa_paramfile('', 'm_WM_E_Consol_Perf_Smry_PRE') ProcessingUtils
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
 dbutils.widgets.text(name='Initial_Load', defaultValue='')
-
+dbutils.widgets.text(name='catalog', defaultValue='dev')
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-dcnbr = dbutils.widgets.get('DC_NBR')
-prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
+catalog = dbutils.widgets.get('catalog', as_type=str)
+dcnbr = dbutils.widgets.get('DC_NBR', as_type=str)
+prev_run_dt = dbutils.widgets.get('Prev_Run_Dt', as_type=str)	
+initial_load = dbutils.widgets.get('Initial_Load', as_type=str)
 
 
 # COMMAND ----------
-
-perf_summary_query=f"""SELECT
+# Set the catalog to use.
+spark.sql(f"USE CATALOG {catalog}")
+	
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_E_CONSOL_PERF_SMRY, type SOURCE 
+# COLUMN COUNT: 84
+SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read.jdbc(os.environ.get('DBConnection_Source_CONNECT_STRING'), f"""SELECT
 E_CONSOL_PERF_SMRY.PERF_SMRY_TRAN_ID,
 E_CONSOL_PERF_SMRY.WHSE,
 E_CONSOL_PERF_SMRY.LOGIN_USER_ID,
@@ -113,25 +127,21 @@ E_CONSOL_PERF_SMRY.COMP_ASSIGNMENT_ID,
 E_CONSOL_PERF_SMRY.REFLECTIVE_CODE
 FROM E_CONSOL_PERF_SMRY
 WHERE 
-(date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1 ) 
-OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1) 
-AND 1=1"""
-
-
-# COMMAND ----------
-
-SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
-  .format("jdbc") \
-  .option("url", connection_string) \
-  .option("query", perf_summary_query) \
-  .option("user", username) \
-  .option("password", password) \
-  .load()
+$$Initial_Load (date_trunc('DD', E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1 ) 
+OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS')) - 1) 
+AND 1=1""", 
+properties={
+'user': os.environ.get('DBConnection_Source_LOGIN'),
+'password': os.environ.get('DBConnection_Source_PASSWORD'),
+'driver': os.environ.get('ORACLE_DRIVER')})
 
 # COMMAND ----------
+# Processing node Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE, type TARGET 
+# COLUMN COUNT: 86
+
 
 Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select( \
-	lit(f'{dcnbr}').cast(LongType()).alias('DC_NBR'), \
+	(os.environ.get(lit(f'{dcnbr}'))).cast(LongType()).alias('DC_NBR'), \
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PERF_SMRY_TRAN_ID.cast(LongType()).alias('PERF_SMRY_TRAN_ID'), \
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.WHSE.cast(StringType()).alias('WHSE'), \
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.LOGIN_USER_ID.cast(StringType()).alias('LOGIN_USER_ID'), \
@@ -216,16 +226,8 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.RESOURCE_GROUP_ID.cast(StringType()).alias('RESOURCE_GROUP_ID'), \
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.COMP_ASSIGNMENT_ID.cast(StringType()).alias('COMP_ASSIGNMENT_ID'), \
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REFLECTIVE_CODE.cast(StringType()).alias('REFLECTIVE_CODE'), \
-	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
+	(current_timestamp()()).cast(TimestampType()).alias('LOAD_TSTMP') \
 )
 
-
-
-
-# COMMAND ----------
-
-Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy('DC_NBR') \
-  .mode("overwrite") \
-  .option("replaceWhere", f'DC_NBR={dcnbr}') \
-  .saveAsTable("WM_E_CONSOL_PERF_SMRY_PRE")
-
+#this needs to be a merge statement
+#Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.saveAsTable(f'pre.WM_E_CONSOL_PERF_SMRY_PRE_{dcnbr}', mode = 'append')
