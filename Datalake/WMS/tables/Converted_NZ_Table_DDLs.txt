@@ -177,10 +177,10 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , WM_COMM_METHOD_ID_AFTER_BH_2               DECIMAL(4,0) 
   , PASSWORD_MANAGED_INTERNALLY_FLAG           DECIMAL(1,0) 
   , LOGGED_IN_FLAG                             DECIMAL(1,0) 
-  , LAST_LOGIN_TSTMP                           TIMESTAMP_NTZ 
+  , LAST_LOGIN_TSTMP                           TIMESTAMP
   , NUMBER_OF_INVALID_LOGINS                   DECIMAL(4,0) 
-  , PASSWORD_RESET_TSTMP                       TIMESTAMP_NTZ 
-  , LAST_PASSWORD_CHANGE_TSTMP                 TIMESTAMP_NTZ 
+  , PASSWORD_RESET_TSTMP                       TIMESTAMP
+  , LAST_PASSWORD_CHANGE_TSTMP                 TIMESTAMP 
   , WM_HIBERNATE_VERSION                       DECIMAL(10,0) 
   , WM_CREATED_SOURCE_TYPE_ID                  DECIMAL(4,0) 
   , WM_CREATED_SOURCE                          STRING 
@@ -201,7 +201,7 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , JOB_FUNCTION_NAME                   STRING 
   , SPVSR_LOGIN_USER_ID                 STRING 
   , DEPT_CODE                           STRING 
-  , CLOCK_IN_DATE                       TIMESTAMP_NTZ 
+  , CLOCK_IN_DATE                       TIMESTAMP 
   , CLOCK_IN_STATUS                     DECIMAL(3,0) 
   , TOTAL_SAM                           DECIMAL(20,7) 
   , TOTAL_PAM                           DECIMAL(13,5) 
@@ -227,8 +227,8 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , REF_ADJ_UDIL                        DECIMAL(13,5) 
   , REF_ADJ_NSDL                        DECIMAL(13,5) 
   , MISC_NUMBER_1                       DECIMAL(13,5) 
-  , CREATE_DATE_TIME                    TIMESTAMP_NTZ 
-  , MOD_DATE_TIME                       TIMESTAMP_NTZ 
+  , CREATE_DATE_TIME                    TIMESTAMP
+  , MOD_DATE_TIME                       TIMESTAMP 
   , USER_ID                             STRING 
   , MISC_1                              STRING 
   , MISC_2                              STRING 
