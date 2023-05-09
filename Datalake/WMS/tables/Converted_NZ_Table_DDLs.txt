@@ -2,8 +2,8 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , DEPT_ID                             DECIMAL(9,0)                not null
   , DEPT_CODE                           STRING 
   , DESCRIPTION                         STRING 
-  , CREATE_DATE_TIME                    TIMESTAMP_NTZ 
-  , MOD_DATE_TIME                       TIMESTAMP_NTZ 
+  , CREATE_DATE_TIME                    TIMESTAMP 
+  , MOD_DATE_TIME                       TIMESTAMP 
   , USER_ID                             STRING 
   , WHSE                                STRING 
   , MISC_TXT_1                          STRING 
@@ -12,9 +12,9 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , MISC_NUM_2                          DECIMAL(20,7) 
   , PERF_GOAL                           DECIMAL(9,2) 
   , VERSION_ID                          DECIMAL(6,0) 
-  , CREATED_DTTM                        TIMESTAMP_NTZ 
-  , LAST_UPDATED_DTTM                   TIMESTAMP_NTZ 
-  , LOAD_TSTMP                          TIMESTAMP_NTZ
+  , CREATED_DTTM                        TIMESTAMP 
+  , LAST_UPDATED_DTTM                   TIMESTAMP 
+  , LOAD_TSTMP                          TIMESTAMP
   );
   --DISTRIBUTE ON RANDOM
   --ORGANIZE   ON (DC_NBR)
@@ -33,12 +33,12 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , MISC_NUM_2                              DECIMAL(20,7) 
   , WM_USER_ID                              STRING 
   , WM_VERSION_ID                           DECIMAL(6,0) 
-  , WM_CREATED_TSTMP                        TIMESTAMP_NTZ 
-  , WM_LAST_UPDATED_TSTMP                   TIMESTAMP_NTZ 
-  , WM_CREATE_TSTMP                         TIMESTAMP_NTZ 
-  , WM_MOD_TSTMP                            TIMESTAMP_NTZ 
-  , UPDATE_TSTMP                            TIMESTAMP_NTZ                   not null
-  , LOAD_TSTMP                              TIMESTAMP_NTZ                   not null
+  , WM_CREATED_TSTMP                        TIMESTAMP 
+  , WM_LAST_UPDATED_TSTMP                   TIMESTAMP
+  , WM_CREATE_TSTMP                         TIMESTAMP
+  , WM_MOD_TSTMP                            TIMESTAMP
+  , UPDATE_TSTMP                            TIMESTAMP                 not null
+  , LOAD_TSTMP                              TIMESTAMP                  not null
   );
   --DISTRIBUTE ON RANDOM
 
@@ -49,13 +49,13 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , WM_WHSE                                 STRING 
   , WM_LOGIN_USER_ID                        STRING 
   , WM_JOB_FUNCTION_NAME                    STRING 
-  , CLOCK_IN_TSTMP                          TIMESTAMP_NTZ 
-  , CLOCK_OUT_TSTMP                         TIMESTAMP_NTZ 
+  , CLOCK_IN_TSTMP                          TIMESTAMP 
+  , CLOCK_OUT_TSTMP                         TIMESTAMP 
   , CLOCK_IN_STATUS                         DECIMAL(3,0) 
-  , START_TSTMP                             TIMESTAMP_NTZ 
-  , END_TSTMP                               TIMESTAMP_NTZ 
-  , WHSE_TSTMP                              TIMESTAMP_NTZ 
-  , TEAM_BEGIN_TSTMP                        TIMESTAMP_NTZ 
+  , START_TSTMP                             TIMESTAMP 
+  , END_TSTMP                               TIMESTAMP 
+  , WHSE_TSTMP                              TIMESTAMP 
+  , TEAM_BEGIN_TSTMP                        TIMESTAMP 
   , WM_SHIFT_CD                             STRING 
   , WM_REPORT_SHIFT_CD                      STRING 
   , WM_USER_ID                              STRING 
@@ -127,10 +127,10 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , WM_EVNT_CTGRY_3                         STRING 
   , WM_EVNT_CTGRY_4                         STRING 
   , WM_EVNT_CTGRY_5                         STRING 
-  , WM_CREATE_TSTMP                         TIMESTAMP_NTZ 
-  , WM_MOD_TSTMP                            TIMESTAMP_NTZ 
-  , UPDATE_TSTMP                            TIMESTAMP_NTZ                   not null
-  , LOAD_TSTMP                              TIMESTAMP_NTZ                   not null
+  , WM_CREATE_TSTMP                         TIMESTAMP 
+  , WM_MOD_TSTMP                            TIMESTAMP 
+  , UPDATE_TSTMP                            TIMESTAMP                   not null
+  , LOAD_TSTMP                              TIMESTAMP                   not null
   );
   --DISTRIBUTE ON (WM_PERF_SMRY_TRAN_ID)
   --ORGANIZE   ON (LOCATION_ID)
@@ -184,12 +184,12 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , WM_HIBERNATE_VERSION                       DECIMAL(10,0) 
   , WM_CREATED_SOURCE_TYPE_ID                  DECIMAL(4,0) 
   , WM_CREATED_SOURCE                          STRING 
-  , WM_CREATED_TSTMP                           TIMESTAMP_NTZ 
+  , WM_CREATED_TSTMP                           TIMESTAMP 
   , WM_LAST_UPDATED_SOURCE_TYPE_ID             DECIMAL(4,0) 
   , WM_LAST_UPDATED_SOURCE                     STRING 
-  , WM_LAST_UPDATED_TSTMP                      TIMESTAMP_NTZ 
-  , UPDATE_TSTMP                               TIMESTAMP_NTZ                    not null
-  , LOAD_TSTMP                                 TIMESTAMP_NTZ                    not null
+  , WM_LAST_UPDATED_TSTMP                      TIMESTAMP 
+  , UPDATE_TSTMP                               TIMESTAMP                    not null
+  , LOAD_TSTMP                                 TIMESTAMP                    not null
   );
   --DISTRIBUTE ON RANDOM
 
@@ -232,17 +232,17 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , USER_ID                             STRING 
   , MISC_1                              STRING 
   , MISC_2                              STRING 
-  , CLOCK_OUT_DATE                      TIMESTAMP_NTZ 
+  , CLOCK_OUT_DATE                      TIMESTAMP 
   , SHIFT_CODE                          STRING 
   , EVENT_COUNT                         DECIMAL(9,0) 
-  , START_DATE_TIME                     TIMESTAMP_NTZ 
-  , END_DATE_TIME                       TIMESTAMP_NTZ 
+  , START_DATE_TIME                     TIMESTAMP 
+  , END_DATE_TIME                       TIMESTAMP
   , LEVEL_1                             STRING 
   , LEVEL_2                             STRING 
   , LEVEL_3                             STRING 
   , LEVEL_4                             STRING 
   , LEVEL_5                             STRING 
-  , WHSE_DATE                           TIMESTAMP_NTZ 
+  , WHSE_DATE                           TIMESTAMP 
   , OPS_CODE                            STRING 
   , REF_SAM                             DECIMAL(13,5) 
   , REF_PAM                             DECIMAL(13,5) 
@@ -271,7 +271,7 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , EMP_PERF_SMRY_ID                    DECIMAL(20,0) 
   , TOTAL_QTY                           DECIMAL(13,5) 
   , REF_NBR                             STRING 
-  , TEAM_BEGIN_TIME                     TIMESTAMP_NTZ 
+  , TEAM_BEGIN_TIME                     TIMESTAMP 
   , THRUPUT_MIN                         DECIMAL(20,7) 
   , DISPLAY_UOM_QTY                     DECIMAL(20,7) 
   , DISPLAY_UOM                         STRING 
@@ -279,7 +279,7 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , RESOURCE_GROUP_ID                   STRING 
   , COMP_ASSIGNMENT_ID                  STRING 
   , REFLECTIVE_CODE                     STRING 
-  , LOAD_TSTMP                          TIMESTAMP_NTZ
+  , LOAD_TSTMP                          TIMESTAMP
   );
   --DISTRIBUTE ON (PERF_SMRY_TRAN_ID)
   --ORGANIZE   ON (DC_NBR)
@@ -294,10 +294,10 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , IS_ACTIVE                           DECIMAL(4,0) 
   , CREATED_SOURCE_TYPE_ID              DECIMAL(4,0) 
   , CREATED_SOURCE                      STRING 
-  , CREATED_DTTM                        TIMESTAMP_NTZ 
+  , CREATED_DTTM                        TIMESTAMP
   , LAST_UPDATED_SOURCE_TYPE_ID         DECIMAL(4,0) 
   , LAST_UPDATED_SOURCE                 STRING 
-  , LAST_UPDATED_DTTM                   TIMESTAMP_NTZ 
+  , LAST_UPDATED_DTTM                   TIMESTAMP
   , USER_TYPE_ID                        DECIMAL(4,0) 
   , LOCALE_ID                           DECIMAL(4,0) 
   , LOCATION_ID                         DECIMAL(18,0) 
@@ -321,25 +321,25 @@ CREATE TABLE  SCDS_STG_PRD.WM_E_DEPT_PRE  ( DC_NBR                              
   , COMM_METHOD_ID_AFTER_BH_1           DECIMAL(4,0) 
   , COMM_METHOD_ID_AFTER_BH_2           DECIMAL(4,0) 
   , COMMON_NAME                         STRING 
-  , LAST_PASSWORD_CHANGE_DTTM           TIMESTAMP_NTZ 
+  , LAST_PASSWORD_CHANGE_DTTM           TIMESTAMP
   , LOGGED_IN                           DECIMAL(9,0) 
-  , LAST_LOGIN_DTTM                     TIMESTAMP_NTZ 
+  , LAST_LOGIN_DTTM                     TIMESTAMP 
   , DEFAULT_BUSINESS_UNIT_ID            DECIMAL(9,0) 
   , DEFAULT_WHSE_REGION_ID              DECIMAL(9,0) 
   , CHANNEL_ID                          DECIMAL(18,0) 
   , HIBERNATE_VERSION                   DECIMAL(10,0) 
   , NUMBER_OF_INVALID_LOGINS            DECIMAL(4,0) 
   , TAX_ID_NBR                          STRING 
-  , EMP_START_DATE                      TIMESTAMP_NTZ 
-  , BIRTH_DATE                          TIMESTAMP_NTZ 
+  , EMP_START_DATE                      TIMESTAMP 
+  , BIRTH_DATE                          TIMESTAMP 
   , GENDER_ID                           STRING 
-  , PASSWORD_RESET_DATE_TIME            TIMESTAMP_NTZ 
+  , PASSWORD_RESET_DATE_TIME            TIMESTAMP 
   , PASSWORD_TOKEN                      STRING 
   , ISPASSWORDMANAGEDINTERNALLY         DECIMAL(1,0) 
   , COPY_FROM_USER                      STRING 
   , EXTERNAL_USER_ID                    STRING 
   , SECURITY_POLICY_GROUP_ID            DECIMAL(10,0) 
-  , LOAD_TSTMP                          TIMESTAMP_NTZ
+  , LOAD_TSTMP                          TIMESTAMP
   );
   --DISTRIBUTE ON RANDOM
 
