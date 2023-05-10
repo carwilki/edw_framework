@@ -121,7 +121,7 @@ assert SQ_Shortcut_to_E_DEPT.select(["WHSE"]).first() == EXPTRANS.select(["WHSE"
 # COMMAND ----------
 
 # checking the Timestamp data type column
-assert SQ_Shortcut_to_E_DEPT.select(["USER_ID"]).first() == EXPTRANS.select(["USER_ID"]).first()
+assert SQ_Shortcut_to_E_DEPT.select(["CREATE_DATE_TIME"]).first() == EXPTRANS.select(["CREATE_DATE_TIME"]).first()
 
 # COMMAND ----------
 

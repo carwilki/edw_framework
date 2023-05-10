@@ -1,4 +1,4 @@
-#Code converted on 2023-05-03 09:46:44
+# Databricks notebook source
 import os
 from pyspark.sql import *
 from pyspark.sql.functions import *
@@ -9,28 +9,10 @@ from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 from dbruntime import dbutils
-#from PySparkBQWriter import *
-#import ProcessingUtils;
-#bqw = PySparkBQWriter()
-#bqw.setDebug(True)
 
 # COMMAND ----------
 
-conf = SparkConf().setMaster('local')
-sc = SparkContext.getOrCreate(conf = conf)
-spark = SparkSession(sc)
-
-# Set global variables
-starttime = datetime.now() #start timestamp of the script
-
-# Read in job variables
-# read_infa_paramfile('', 'm_WM_Ucl_User') ProcessingUtils
-
-# COMMAND ----------
-# Processing node SQ_Shortcut_to_WM_UCL_USER_PRE, type SOURCE 
-# COLUMN COUNT: 53
-
-SQ_Shortcut_to_WM_UCL_USER_PRE = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
+SQ_Shortcut_to_WM_UCL_USER_PRE_query="""SELECT
 WM_UCL_USER_PRE.DC_NBR,
 WM_UCL_USER_PRE.UCL_USER_ID,
 WM_UCL_USER_PRE.COMPANY_ID,
@@ -84,72 +66,14 @@ WM_UCL_USER_PRE.ISPASSWORDMANAGEDINTERNALLY,
 WM_UCL_USER_PRE.COPY_FROM_USER,
 WM_UCL_USER_PRE.EXTERNAL_USER_ID,
 WM_UCL_USER_PRE.SECURITY_POLICY_GROUP_ID
-FROM WM_UCL_USER_PRE""", 
-properties={
-'user': os.environ.get('NZ_SCDS_LOGIN'),
-'password': os.environ.get('NZ_SCDS_PASSWORD'),
-'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
-# Conforming fields names to the component layout
-SQ_Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_WM_UCL_USER_PRE \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[0],'DC_NBR') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[1],'UCL_USER_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[2],'COMPANY_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[3],'USER_NAME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[4],'USER_PASSWORD') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[5],'IS_ACTIVE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[6],'CREATED_SOURCE_TYPE_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[7],'CREATED_SOURCE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[8],'CREATED_DTTM') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[9],'LAST_UPDATED_SOURCE_TYPE_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[10],'LAST_UPDATED_SOURCE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[11],'LAST_UPDATED_DTTM') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[12],'USER_TYPE_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[13],'LOCALE_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[14],'LOCATION_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[15],'USER_FIRST_NAME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[16],'USER_MIDDLE_NAME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[17],'USER_LAST_NAME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[18],'USER_PREFIX') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[19],'USER_TITLE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[20],'TELEPHONE_NUMBER') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[21],'FAX_NUMBER') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[22],'ADDRESS_1') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[23],'ADDRESS_2') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[24],'CITY') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[25],'STATE_PROV_CODE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[26],'POSTAL_CODE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[27],'COUNTRY_CODE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[28],'USER_EMAIL_1') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[29],'USER_EMAIL_2') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[30],'COMM_METHOD_ID_DURING_BH_1') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[31],'COMM_METHOD_ID_DURING_BH_2') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[32],'COMM_METHOD_ID_AFTER_BH_1') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[33],'COMM_METHOD_ID_AFTER_BH_2') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[34],'COMMON_NAME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[35],'LAST_PASSWORD_CHANGE_DTTM') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[36],'LOGGED_IN') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[37],'LAST_LOGIN_DTTM') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[38],'DEFAULT_BUSINESS_UNIT_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[39],'DEFAULT_WHSE_REGION_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[40],'CHANNEL_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[41],'HIBERNATE_VERSION') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[42],'NUMBER_OF_INVALID_LOGINS') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[43],'TAX_ID_NBR') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[44],'EMP_START_DATE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[45],'BIRTH_DATE') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[46],'GENDER_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[47],'PASSWORD_RESET_DATE_TIME') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[48],'PASSWORD_TOKEN') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[49],'ISPASSWORDMANAGEDINTERNALLY') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[50],'COPY_FROM_USER') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[51],'EXTERNAL_USER_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER_PRE.columns[52],'SECURITY_POLICY_GROUP_ID')
+FROM WM_UCL_USER_PRE"""
+
+SQ_Shortcut_to_WM_UCL_USER_PRE=spark.sql(SQ_Shortcut_to_WM_UCL_USER_PRE_query).withColumn("sys_row_id", monotonically_increasing_id()
+
 
 # COMMAND ----------
-# Processing node SQ_Shortcut_to_WM_UCL_USER, type SOURCE 
-# COLUMN COUNT: 6
 
-SQ_Shortcut_to_WM_UCL_USER = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
+SQ_Shortcut_to_WM_UCL_USER_query="""SELECT
 WM_UCL_USER.LOCATION_ID,
 WM_UCL_USER.WM_UCL_USER_ID,
 WM_UCL_USER.WM_CREATED_TSTMP,
@@ -157,23 +81,11 @@ WM_UCL_USER.WM_LAST_UPDATED_TSTMP,
 WM_UCL_USER.LOAD_TSTMP,
 WM_UCL_USER.USER_NAME
 FROM WM_UCL_USER
-WHERE USER_NAME IN (SELECT USER_NAME FROM WM_UCL_USER_PRE)""", 
-properties={
-'user': os.environ.get('NZ_SCDS_LOGIN'),
-'password': os.environ.get('NZ_SCDS_PASSWORD'),
-'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
-# Conforming fields names to the component layout
-SQ_Shortcut_to_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[0],'LOCATION_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[1],'WM_UCL_USER_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[2],'WM_CREATED_TSTMP') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[3],'WM_LAST_UPDATED_TSTMP') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[4],'LOAD_TSTMP') \
-	.withColumnRenamed(SQ_Shortcut_to_WM_UCL_USER.columns[5],'USER_NAME')
+WHERE USER_NAME IN (SELECT USER_NAME FROM WM_UCL_USER_PRE)"""
+SQ_Shortcut_to_WM_UCL_USER=spark.sql(SQ_Shortcut_to_WM_UCL_USER_query).withColumn("sys_row_id", monotonically_increasing_id()
+
 
 # COMMAND ----------
-# Processing node EXP_INT_CONVERSION, type EXPRESSION 
-# COLUMN COUNT: 53
 
 EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 	SQ_Shortcut_to_WM_UCL_USER_PRE.sys_row_id.alias('sys_row_id'), \
@@ -232,26 +144,14 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 	SQ_Shortcut_to_WM_UCL_USER_PRE.SECURITY_POLICY_GROUP_ID.alias('SECURITY_POLICY_GROUP_ID') \
 )
 
-# COMMAND ----------
-# Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
-# COLUMN COUNT: 2
-
-SQ_Shortcut_to_SITE_PROFILE = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""", 
-properties={
-'user': os.environ.get('NZ_SCDS_LOGIN'),
-'password': os.environ.get('NZ_SCDS_PASSWORD'),
-'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
-# Conforming fields names to the component layout
-SQ_Shortcut_to_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE \
-	.withColumnRenamed(SQ_Shortcut_to_SITE_PROFILE.columns[0],'LOCATION_ID') \
-	.withColumnRenamed(SQ_Shortcut_to_SITE_PROFILE.columns[1],'STORE_NBR')
 
 # COMMAND ----------
-# Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
-# COLUMN COUNT: 55
+
+SQ_Shortcut_to_SITE_PROFILE = spark.sql("""SELECT SITE_PROFILE.LOCATION_ID,SITE_PROFILE.STORE_NBR FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+
+# COMMAND ----------
+
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONVERSION.o_DC_NBR],'inner').select( \
 	EXP_INT_CONVERSION.sys_row_id.alias('sys_row_id'), \
@@ -312,15 +212,13 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Short
 	SQ_Shortcut_to_SITE_PROFILE.STORE_NBR.alias('STORE_NBR'))
 
 # COMMAND ----------
-# Processing node JNR_WM_UCL_USER, type JOINER . Note: using additional SELECT to rename incoming columns
-# COLUMN COUNT: 59
 
 JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_WM_UCL_USER.LOCATION_ID == JNR_SITE_PROFILE.LOCATION_ID1, SQ_Shortcut_to_WM_UCL_USER.USER_NAME == JNR_SITE_PROFILE.USER_NAME],'right_outer').select( \
 	SQ_Shortcut_to_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
 	JNR_SITE_PROFILE.LOCATION_ID1.alias('LOCATION_ID1'), \
 	JNR_SITE_PROFILE.UCL_USER_ID.alias('UCL_USER_ID'), \
 	JNR_SITE_PROFILE.COMPANY_ID.alias('COMPANY_ID'), \
-	JNR_SITE_PROFILE.USER_NAME.alias('USER_NAME'), \
+	JNR_SITE_PROFILE.USER_NAME.alias('USER_NAME'), \ 
 	JNR_SITE_PROFILE.USER_PASSWORD.alias('USER_PASSWORD'), \
 	JNR_SITE_PROFILE.IS_ACTIVE.alias('IS_ACTIVE'), \
 	JNR_SITE_PROFILE.CREATED_SOURCE_TYPE_ID.alias('CREATED_SOURCE_TYPE_ID'), \
@@ -351,7 +249,7 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_
 	JNR_SITE_PROFILE.COMM_METHOD_ID_DURING_BH_2.alias('COMM_METHOD_ID_DURING_BH_2'), \
 	JNR_SITE_PROFILE.COMM_METHOD_ID_AFTER_BH_1.alias('COMM_METHOD_ID_AFTER_BH_1'), \
 	JNR_SITE_PROFILE.COMM_METHOD_ID_AFTER_BH_2.alias('COMM_METHOD_ID_AFTER_BH_2'), \
-	JNR_SITE_PROFILE.COMMON_NAME.alias('COMMON_NAME'), \
+	JNR_SITE_PROFILE.COMMON_NAME.alias('COMMON_NAME'), \ 
 	JNR_SITE_PROFILE.LAST_PASSWORD_CHANGE_DTTM.alias('LAST_PASSWORD_CHANGE_DTTM'), \
 	JNR_SITE_PROFILE.LOGGED_IN.alias('LOGGED_IN'), \
 	JNR_SITE_PROFILE.LAST_LOGIN_DTTM.alias('LAST_LOGIN_DTTM'), \
@@ -377,9 +275,8 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_
 	SQ_Shortcut_to_WM_UCL_USER.LOAD_TSTMP.alias('i_LOAD_TSTMP'), \
 	SQ_Shortcut_to_WM_UCL_USER.USER_NAME.alias('i_USER_NAME'))
 
+
 # COMMAND ----------
-# Processing node FIL_UNCHANGED_RECORDS, type FILTER . Note: using additional SELECT to rename incoming columns
-# COLUMN COUNT: 59
 
 FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 	JNR_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
@@ -441,11 +338,11 @@ FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 	JNR_WM_UCL_USER.i_WM_LAST_UPDATED_TSTMP.alias('i_WM_LAST_UPDATED_TSTMP'), \
 	JNR_WM_UCL_USER.i_LOAD_TSTMP.alias('i_LOAD_TSTMP'), \
 	JNR_WM_UCL_USER.i_USER_NAME.alias('i_USER_NAME1'), \
-	JNR_WM_UCL_USER.i_LOCATION_ID.alias('i_LOCATION_ID')).filter("i_USER_NAME1 __DOT__ isNull() OR ( NOT i_USER_NAME1 __DOT__ isNull() AND ( when((CREATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(CREATED_DTTM) != when((i_WM_CREATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(i_WM_CREATED_TSTMP) OR when((LAST_UPDATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(LAST_UPDATED_DTTM) != when((i_WM_LAST_UPDATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(i_WM_LAST_UPDATED_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
+	JNR_WM_UCL_USER.i_LOCATION_ID.alias('i_LOCATION_ID'))\
+		.filter(" (i_USER_NAME1 is null) OR ( NOT (i_USER_NAME1 is null) AND ( ((case when CREATED_DTTM is null then TO_DATE('01/01/1900','MM/DD/YYYY') else CREATED_DTTM end ) != (case when i_WM_CREATED_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else i_WM_CREATED_TSTMP end )) or ((case when LAST_UPDATED_DTTM is null then TO_DATE('01/01/1900','MM/DD/YYYY') else LAST_UPDATED_DTTM end )!= (case when i_WM_LAST_UPDATED_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else i_WM_LAST_UPDATED_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
+# .filter("i_USER_NAME1 __DOT__ isNull() OR ( NOT i_USER_NAME1 __DOT__ isNull() AND ( when((CREATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(CREATED_DTTM) != when((i_WM_CREATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(i_WM_CREATED_TSTMP) OR when((LAST_UPDATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(LAST_UPDATED_DTTM) != when((i_WM_LAST_UPDATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(i_WM_LAST_UPDATED_TSTMP) ) )")
 
 # COMMAND ----------
-# Processing node EXP_UPD_VALIDATOR, type EXPRESSION . Note: using additional SELECT to rename incoming columns
-# COLUMN COUNT: 58
 
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	FIL_UNCHANGED_RECORDS.sys_row_id.alias('sys_row_id'), \
@@ -565,11 +462,10 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	(current_date()).alias('UPDATE_TSTMP'), \
 	(when((col('i_LOAD_TSTMP').isNull()) ,(current_date())).otherwise(col('i_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
 	(when((((col('i_USER_NAME1').isNull()) &(col('i_LOCATION_ID1').isNull()))) ,(lit(1))).otherwise(lit(2))).alias('o_UPDATE_VALIDATOR') \
-)
+)  ## no i_WM_UCL_USER_ID & i_LOAD_TSTMP in code 
 
 # COMMAND ----------
-# Processing node UPD_INS_UPD, type UPDATE_STRATEGY 
-# COLUMN COUNT: 56
+
 
 UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	EXP_UPD_VALIDATOR.LOCATION_ID1.alias('LOCATION_ID1'), \
@@ -630,9 +526,8 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR.alias('o_UPDATE_VALIDATOR')) \
 	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
+
 # COMMAND ----------
-# Processing node Shortcut_to_WM_UCL_USER, type TARGET 
-# COLUMN COUNT: 53
 
 
 Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
@@ -692,4 +587,11 @@ Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
 	UPD_INS_UPD.pyspark_data_action.alias('pyspark_data_action') \
 )
 
-Shortcut_to_WM_UCL_USER.write.saveAsTable('legacy.WM_UCL_USER', mode = 'append')
+
+
+
+# COMMAND ----------
+
+Invoke Merge
+primaryKeyList=['LOCATION_ID']
+executeMerge(Shortcut_to_WM_UCL_USER,<targetTableName>,primaryKeyList)

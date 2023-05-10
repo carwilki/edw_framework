@@ -12,20 +12,6 @@ from datetime import datetime
 
 # COMMAND ----------
 
-
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
-dbutils.widgets.text(name='Initial_Load', defaultValue='')
-
-
-# Set global variables
-starttime = datetime.now() #start timestamp of the script
-dcnbr = dbutils.widgets.get('DC_NBR')
-prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
-
-
-# COMMAND ----------
-
 consol_perf_smry_pre_query=f"""SELECT
 WM_E_CONSOL_PERF_SMRY_PRE.DC_NBR,
 WM_E_CONSOL_PERF_SMRY_PRE.PERF_SMRY_TRAN_ID,
@@ -117,9 +103,7 @@ FROM WM_E_CONSOL_PERF_SMRY_PRE"""
 
 # COMMAND ----------
 
-SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE=spark.sql(consol_perf_smry_pre_query).withColumn("sys_row_id", monotonically_increasing_id()
-
-
+SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE=spark.sql(consol_perf_smry_pre_query).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -134,7 +118,7 @@ WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM WM_E_CONSOL_PERF_SM
 
 # COMMAND ----------
 
-SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY=spark.sql(consol_perf_smry_query).withColumn("sys_row_id", monotonically_increasing_id()
+SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY=spark.sql(consol_perf_smry_query).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -325,7 +309,7 @@ FROM SITE_PROFILE"""
 
 # COMMAND ----------
 
-SQ_Shortcut_to_SITE_PROFILE=spark.sql(consol_perf_smry_query).withColumn("sys_row_id", monotonically_increasing_id()
+SQ_Shortcut_to_SITE_PROFILE=spark.sql(site_profile_query).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -518,23 +502,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_CON_PERF_SMRY.select( \
 	JNR_WM_E_CON_PERF_SMRY.in_WM_PERF_SMRY_TRAN_ID.alias('in_WM_PERF_SMRY_TRAN_ID'), \
 	JNR_WM_E_CON_PERF_SMRY.in_LOAD_TSTMP.alias('in_LOAD_TSTMP'), \
 	JNR_WM_E_CON_PERF_SMRY.in_WM_CREATE_TSTMP.alias('in_WM_CREATE_TSTMP'), \
-	JNR_WM_E_CON_PERF_SMRY.in_WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP')).filter("in_WM_PERF_SMRY_TRAN_ID __DOT__ isNull() OR ( NOT in_WM_PERF_SMRY_TRAN_ID __DOT__ isNull() AND ( when((CREATE_DATE_TIME __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(CREATE_DATE_TIME) != when((in_WM_CREATE_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_CREATE_TSTMP) OR when((MOD_DATE_TIME __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(MOD_DATE_TIME) != when((in_WM_MOD_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_MOD_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
-
-
-# COMMAND ----------
-
-
-dept = [("Finance",10), 
-        ("Marketing",20), 
-        ("Sales",30), 
-        (None,40) 
-      ]
-
-deptColumns = ["dept_name","dept_id"]
-deptDF = spark.createDataFrame(data=dept, schema = deptColumns)
-#deptDF.filter("(dept_name  is null) or (dept_name is not null)").display()
-deptDF.filter("(case when dept_name is not null then null else ) != (case when dept_name is not null then null) ").display()
-
+	JNR_WM_E_CON_PERF_SMRY.in_WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP')).filter(" (in_WM_PERF_SMRY_TRAN_ID is null) OR ( NOT (in_WM_PERF_SMRY_TRAN_ID is null) AND ( ((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','MM/DD/YYYY') else CREATE_DATE_TIME end ) != (case when in_WM_CREATE_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else in_WM_CREATE_TSTMP end )) or ((case when MOD_DATE_TIME is null then TO_DATE('01/01/1900','MM/DD/YYYY') else MOD_DATE_TIME end )!= (case when in_WM_MOD_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else in_WM_MOD_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
 # COMMAND ----------
@@ -914,4 +882,14 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select( \
 
 # COMMAND ----------
 
+# MAGIC %run Datalake/WMS/notebooks/utils/mergeUtils
+
+# COMMAND ----------
+
 #Final Merge 
+executeMerge(sourceDataFrame,targetTable,primaryKeyList)
+
+
+# COMMAND ----------
+
+

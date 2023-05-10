@@ -224,16 +224,17 @@ assert Shortcut_to_WM_UCL_USER_PRE.count() == EXPTRANS.count()
 # COMMAND ----------
 
 # checking the long data type columns
-assert Shortcut_to_WM_UCL_USER_PRE.select(Shortcut_to_WM_UCL_USER_PRE.COMM_METHOD_ID_DURING_BH_1.cast(LongType())).first() == EXPTRANS.select(["DEPT_ID"]).first()
+assert EXPTRANS.select(EXPTRANS.COMM_METHOD_ID_DURING_BH_1.cast(LongType())).first() == Shortcut_to_WM_UCL_USER_PRE.select(["COMM_METHOD_ID_DURING_BH_1"]).first()
+
+# COMMAND ----------
+
+# checking the Timestamp data type column
+assert Shortcut_to_WM_UCL_USER_PRE.select(["LAST_LOGIN_DTTM"]).first() == EXPTRANS.select(["LAST_LOGIN_DTTM"]).first()
 
 # COMMAND ----------
 
 # checking the string data type column
 assert Shortcut_to_WM_UCL_USER_PRE.select(["USER_FIRST_NAME"]).first() == EXPTRANS.select(["USER_FIRST_NAME"]).first()
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
