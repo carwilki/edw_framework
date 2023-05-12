@@ -8,7 +8,21 @@ from pyspark.sql.types import *
 from pyspark import SparkContext;
 from pyspark.sql.session import SparkSession
 from datetime import datetime
+from pyspark.dbutils import DBUtils
+import logging
 
+# COMMAND ----------
+
+dbutils.widgets.text(name='env', defaultValue='')
+env = dbutils.widgets.get('env')
+
+# COMMAND ----------
+
+pre_perf_table=f'{env}_raw.WM_E_CONSOL_PERF_SMRY_PRE'
+refined_perf_table=f'{env}_refine.WM_E_CONSOL_PERF_SMRY'
+site_profile_table='dev_refine.SITE_PROFILE'
+logger=logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # COMMAND ----------
 
@@ -99,26 +113,30 @@ WM_E_CONSOL_PERF_SMRY_PRE.RESOURCE_GROUP_ID,
 WM_E_CONSOL_PERF_SMRY_PRE.COMP_ASSIGNMENT_ID,
 WM_E_CONSOL_PERF_SMRY_PRE.REFLECTIVE_CODE,
 WM_E_CONSOL_PERF_SMRY_PRE.LOAD_TSTMP
-FROM WM_E_CONSOL_PERF_SMRY_PRE"""
+FROM """+pre_perf_table
 
 # COMMAND ----------
 
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE=spark.sql(consol_perf_smry_pre_query).withColumn("sys_row_id", monotonically_increasing_id())
 
+logger.info('Query to extract data from'+pre_perf_table+' executed successfully')
+
 # COMMAND ----------
 
-consol_perf_smry_query=f"""SELECT
+consol_perf_smry_query="""SELECT
 WM_E_CONSOL_PERF_SMRY.LOCATION_ID,
 WM_E_CONSOL_PERF_SMRY.WM_PERF_SMRY_TRAN_ID,
 WM_E_CONSOL_PERF_SMRY.WM_CREATE_TSTMP,
 WM_E_CONSOL_PERF_SMRY.WM_MOD_TSTMP,
 WM_E_CONSOL_PERF_SMRY.LOAD_TSTMP
-FROM WM_E_CONSOL_PERF_SMRY
-WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM WM_E_CONSOL_PERF_SMRY_PRE)"""
+FROM """+refined_perf_table+"""
+WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM """+pre_perf_table+""")"""
 
 # COMMAND ----------
 
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY=spark.sql(consol_perf_smry_query).withColumn("sys_row_id", monotonically_increasing_id())
+logger.info('Query to extract data from'+refined_perf_table+' executed successfully')
+
 
 # COMMAND ----------
 
@@ -211,7 +229,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select( \
 	SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.REFLECTIVE_CODE.alias('REFLECTIVE_CODE'), \
 	SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.LOAD_TSTMP.alias('LOAD_TSTMP')).select( \
 	(col('sys_row_id')).alias('sys_row_id'), \
-	(TO_INTEGER(col('in_DC_NBR'))).alias('DC_NBR'), \
+	(col('in_DC_NBR').cast(DecimalType(3,0))).alias('DC_NBR'), \
 	col('PERF_SMRY_TRAN_ID'), \
 	col('WHSE'), \
 	col('LOGIN_USER_ID'), \
@@ -298,23 +316,25 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select( \
 	col('REFLECTIVE_CODE'), \
 	col('LOAD_TSTMP') \
 )
-
+logger.info('EXP_INT_CONV dataframe created successfully')
 
 # COMMAND ----------
 
 site_profile_query="""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE"""
+FROM """+site_profile_table
 
 # COMMAND ----------
 
-SQ_Shortcut_to_SITE_PROFILE=spark.sql(site_profile_query).withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(site_profile_query).withColumn("sys_row_id", monotonically_increasing_id())
+logger.info('Site profile table query executed successfully!')
 
 # COMMAND ----------
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
 
+logger.info('JNR_SITE_PROFILE dataframe created successfully')
 
 # COMMAND ----------
 
@@ -412,6 +432,9 @@ JNR_WM_E_CON_PERF_SMRY = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY.join(JNR_SITE_PROF
 	SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY.WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP'))
 
 
+logger.info('JNR_WM_E_CON_PERF_SMRY dataframe created successfully')
+
+
 FIL_NO_CHANGE_REC = JNR_WM_E_CON_PERF_SMRY.select( \
 	JNR_WM_E_CON_PERF_SMRY.LOCATION_ID.alias('LOCATION_ID'), \
 	JNR_WM_E_CON_PERF_SMRY.PERF_SMRY_TRAN_ID.alias('PERF_SMRY_TRAN_ID'), \
@@ -502,7 +525,9 @@ FIL_NO_CHANGE_REC = JNR_WM_E_CON_PERF_SMRY.select( \
 	JNR_WM_E_CON_PERF_SMRY.in_WM_PERF_SMRY_TRAN_ID.alias('in_WM_PERF_SMRY_TRAN_ID'), \
 	JNR_WM_E_CON_PERF_SMRY.in_LOAD_TSTMP.alias('in_LOAD_TSTMP'), \
 	JNR_WM_E_CON_PERF_SMRY.in_WM_CREATE_TSTMP.alias('in_WM_CREATE_TSTMP'), \
-	JNR_WM_E_CON_PERF_SMRY.in_WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP')).filter(" (in_WM_PERF_SMRY_TRAN_ID is null) OR ( NOT (in_WM_PERF_SMRY_TRAN_ID is null) AND ( ((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','MM/DD/YYYY') else CREATE_DATE_TIME end ) != (case when in_WM_CREATE_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else in_WM_CREATE_TSTMP end )) or ((case when MOD_DATE_TIME is null then TO_DATE('01/01/1900','MM/DD/YYYY') else MOD_DATE_TIME end )!= (case when in_WM_MOD_TSTMP is null then TO_DATE('01/01/1900','MM/DD/YYYY') else in_WM_MOD_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
+	JNR_WM_E_CON_PERF_SMRY.in_WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP')).filter(" (in_WM_PERF_SMRY_TRAN_ID is null) OR ( NOT (in_WM_PERF_SMRY_TRAN_ID is null) AND ( ((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else CREATE_DATE_TIME end ) != (case when in_WM_CREATE_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_CREATE_TSTMP end )) or ((case when MOD_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else MOD_DATE_TIME end )!= (case when in_WM_MOD_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_MOD_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
+
+logger.info('FIL_NO_CHANGE_REC dataframe created successfully')
 
 
 # COMMAND ----------
@@ -690,6 +715,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 	col('WM_CREATE_TSTMP'), \
 	col('WM_MOD_TSTMP') \
 )
+logger.info('EXP_EVAL_VALUES dataframe created successfully')
 
 
 # COMMAND ----------
@@ -782,22 +808,21 @@ UPD_VALIDATE = EXP_EVAL_VALUES.select( \
 	EXP_EVAL_VALUES.REFLECTIVE_CODE.alias('REFLECTIVE_CODE'), \
 	EXP_EVAL_VALUES.LOAD_TSTMP.alias('LOAD_TSTMP'), \
 	EXP_EVAL_VALUES.UPDATE_TSTMP.alias('UPDATE_TSTMP'), \
-	EXP_EVAL_VALUES.in_WM_PERF_SMRY_TRAN_ID.alias('in_WM_PERF_SMRY_TRAN_ID')) \
-	.withColumn('pyspark_data_action', when((EXP_EVAL_VALUES.in_WM_PERF_SMRY_TRAN_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
-
-
+	EXP_EVAL_VALUES.in_WM_PERF_SMRY_TRAN_ID.alias('in_WM_PERF_SMRY_TRAN_ID')) 
+UPD_VALIDATE = UPD_VALIDATE.withColumn('pyspark_data_action', when((UPD_VALIDATE.in_WM_PERF_SMRY_TRAN_ID.isNull()),(lit(0))).otherwise(lit(1)))
+logger.info('UPD_VALIDATE dataframe created successfully')
 
 # COMMAND ----------
 
 Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select( \
-	UPD_VALIDATE.LOCATION_ID.cast(LongType()).alias('LOCATION_ID'), \
-	UPD_VALIDATE.PERF_SMRY_TRAN_ID.cast(LongType()).alias('WM_PERF_SMRY_TRAN_ID'), \
+	UPD_VALIDATE.LOCATION_ID.cast(DecimalType(10,0)).alias('LOCATION_ID'), \
+	UPD_VALIDATE.PERF_SMRY_TRAN_ID.cast(DecimalType(20,0)).alias('WM_PERF_SMRY_TRAN_ID'), \
 	UPD_VALIDATE.WHSE.cast(StringType()).alias('WM_WHSE'), \
 	UPD_VALIDATE.LOGIN_USER_ID.cast(StringType()).alias('WM_LOGIN_USER_ID'), \
 	UPD_VALIDATE.JOB_FUNCTION_NAME.cast(StringType()).alias('WM_JOB_FUNCTION_NAME'), \
 	UPD_VALIDATE.CLOCK_IN_DATE.cast(TimestampType()).alias('CLOCK_IN_TSTMP'), \
 	UPD_VALIDATE.CLOCK_OUT_DATE.cast(TimestampType()).alias('CLOCK_OUT_TSTMP'), \
-	UPD_VALIDATE.CLOCK_IN_STATUS.cast(LongType()).alias('CLOCK_IN_STATUS'), \
+	UPD_VALIDATE.CLOCK_IN_STATUS.cast(DecimalType(3,0)).alias('CLOCK_IN_STATUS'), \
 	UPD_VALIDATE.START_DATE_TIME.cast(TimestampType()).alias('START_TSTMP'), \
 	UPD_VALIDATE.END_DATE_TIME.cast(TimestampType()).alias('END_TSTMP'), \
 	UPD_VALIDATE.WHSE_DATE.cast(TimestampType()).alias('WHSE_TSTMP'), \
@@ -810,59 +835,59 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select( \
 	UPD_VALIDATE.RESOURCE_GROUP_ID.cast(StringType()).alias('WM_RESOURCE_GROUP_ID'), \
 	UPD_VALIDATE.COMP_ASSIGNMENT_ID.cast(StringType()).alias('WM_COMP_ASSIGNMENT_ID'), \
 	UPD_VALIDATE.REFLECTIVE_CODE.cast(StringType()).alias('WM_REFLECTIVE_CD'), \
-	UPD_VALIDATE.EMP_PERF_SMRY_ID.cast(LongType()).alias('WM_EMP_PERF_SMRY_ID'), \
+	UPD_VALIDATE.EMP_PERF_SMRY_ID.cast(DecimalType(20,0)).alias('WM_EMP_PERF_SMRY_ID'), \
 	UPD_VALIDATE.LOCN_GRP_ATTR.cast(StringType()).alias('WM_LOCN_GRP_ATTR'), \
-	UPD_VALIDATE.VERSION_ID.cast(LongType()).alias('WM_VERSION_ID'), \
+	UPD_VALIDATE.VERSION_ID.cast(DecimalType(6,0)).alias('WM_VERSION_ID'), \
 	UPD_VALIDATE.OPS_CODE.cast(StringType()).alias('WM_OPS_CD'), \
 	UPD_VALIDATE.TEAM_CODE.cast(StringType()).alias('WM_TEAM_CD'), \
 	UPD_VALIDATE.REF_NBR.cast(StringType()).alias('WM_REF_NBR'), \
-	UPD_VALIDATE.DEFAULT_JF_FLAG.cast(LongType()).alias('DEFAULT_JF_FLAG'), \
-	UPD_VALIDATE.EVENT_COUNT.cast(LongType()).alias('EVENT_CNT'), \
-	UPD_VALIDATE.TOTAL_SAM.cast(LongType()).alias('TOTAL_SAM'), \
-	UPD_VALIDATE.TOTAL_PAM.cast(LongType()).alias('TOTAL_PAM'), \
-	UPD_VALIDATE.TOTAL_TIME.cast(LongType()).alias('TOTAL_TIME'), \
-	UPD_VALIDATE.TOTAL_QTY.cast(LongType()).alias('TOTAL_QTY'), \
-	UPD_VALIDATE.OSDL.cast(LongType()).alias('OSDL'), \
-	UPD_VALIDATE.OSIL.cast(LongType()).alias('OSIL'), \
-	UPD_VALIDATE.NSDL.cast(LongType()).alias('NSDL'), \
-	UPD_VALIDATE.SIL.cast(LongType()).alias('SIL'), \
-	UPD_VALIDATE.UDIL.cast(LongType()).alias('UDIL'), \
-	UPD_VALIDATE.UIL.cast(LongType()).alias('UIL'), \
-	UPD_VALIDATE.ADJ_OSDL.cast(LongType()).alias('ADJ_OSDL'), \
-	UPD_VALIDATE.ADJ_OSIL.cast(LongType()).alias('ADJ_OSIL'), \
-	UPD_VALIDATE.ADJ_UDIL.cast(LongType()).alias('ADJ_UDIL'), \
-	UPD_VALIDATE.ADJ_NSDL.cast(LongType()).alias('ADJ_NSDL'), \
-	UPD_VALIDATE.PAID_BRK.cast(LongType()).alias('PAID_BRK'), \
-	UPD_VALIDATE.UNPAID_BRK.cast(LongType()).alias('UNPAID_BRK'), \
-	UPD_VALIDATE.REF_OSDL.cast(LongType()).alias('REF_OSDL'), \
-	UPD_VALIDATE.REF_OSIL.cast(LongType()).alias('REF_OSIL'), \
-	UPD_VALIDATE.REF_UDIL.cast(LongType()).alias('REF_UDIL'), \
-	UPD_VALIDATE.REF_NSDL.cast(LongType()).alias('REF_NSDL'), \
-	UPD_VALIDATE.REF_ADJ_OSDL.cast(LongType()).alias('REF_ADJ_OSDL'), \
-	UPD_VALIDATE.REF_ADJ_OSIL.cast(LongType()).alias('REF_ADJ_OSIL'), \
-	UPD_VALIDATE.REF_ADJ_UDIL.cast(LongType()).alias('REF_ADJ_UDIL'), \
-	UPD_VALIDATE.REF_ADJ_NSDL.cast(LongType()).alias('REF_ADJ_NSDL'), \
-	UPD_VALIDATE.REF_SAM.cast(LongType()).alias('REF_SAM'), \
-	UPD_VALIDATE.REF_PAM.cast(LongType()).alias('REF_PAM'), \
-	UPD_VALIDATE.LABOR_COST_RATE.cast(LongType()).alias('LABOR_COST_RATE'), \
-	UPD_VALIDATE.THRUPUT_MIN.cast(LongType()).alias('THRUPUT_MIN'), \
-	UPD_VALIDATE.PAID_OVERLAP_OSDL.cast(LongType()).alias('PAID_OVERLAP_OSDL'), \
-	UPD_VALIDATE.UNPAID_OVERLAP_OSDL.cast(LongType()).alias('UNPAID_OVERLAP_OSDL'), \
-	UPD_VALIDATE.PAID_OVERLAP_NSDL.cast(LongType()).alias('PAID_OVERLAP_NSDL'), \
-	UPD_VALIDATE.UNPAID_OVERLAP_NSDL.cast(LongType()).alias('UNPAID_OVERLAP_NSDL'), \
-	UPD_VALIDATE.PAID_OVERLAP_OSIL.cast(LongType()).alias('PAID_OVERLAP_OSIL'), \
-	UPD_VALIDATE.UNPAID_OVERLAP_OSIL.cast(LongType()).alias('UNPAID_OVERLAP_OSIL'), \
-	UPD_VALIDATE.PAID_OVERLAP_UDIL.cast(LongType()).alias('PAID_OVERLAP_UDIL'), \
-	UPD_VALIDATE.UNPAID_OVERLAP_UDIL.cast(LongType()).alias('UNPAID_OVERLAP_UDIL'), \
-	UPD_VALIDATE.DISPLAY_UOM_QTY.cast(LongType()).alias('DISPLAY_UOM_QTY'), \
+	UPD_VALIDATE.DEFAULT_JF_FLAG.cast(DecimalType(9,0)).alias('DEFAULT_JF_FLAG'), \
+	UPD_VALIDATE.EVENT_COUNT.cast(DecimalType(9,0)).alias('EVENT_CNT'), \
+	UPD_VALIDATE.TOTAL_SAM.cast(DecimalType(20,7)).alias('TOTAL_SAM'), \
+	UPD_VALIDATE.TOTAL_PAM.cast(DecimalType(13,5)).alias('TOTAL_PAM'), \
+	UPD_VALIDATE.TOTAL_TIME.cast(DecimalType(13,5)).alias('TOTAL_TIME'), \
+	UPD_VALIDATE.TOTAL_QTY.cast(DecimalType(13,5)).alias('TOTAL_QTY'), \
+	UPD_VALIDATE.OSDL.cast(DecimalType(13,5)).alias('OSDL'), \
+	UPD_VALIDATE.OSIL.cast(DecimalType(13,5)).alias('OSIL'), \
+	UPD_VALIDATE.NSDL.cast(DecimalType(13,5)).alias('NSDL'), \
+	UPD_VALIDATE.SIL.cast(DecimalType(13,5)).alias('SIL'), \
+	UPD_VALIDATE.UDIL.cast(DecimalType(13,5)).alias('UDIL'), \
+	UPD_VALIDATE.UIL.cast(DecimalType(13,5)).alias('UIL'), \
+	UPD_VALIDATE.ADJ_OSDL.cast(DecimalType(13,5)).alias('ADJ_OSDL'), \
+	UPD_VALIDATE.ADJ_OSIL.cast(DecimalType(13,5)).alias('ADJ_OSIL'), \
+	UPD_VALIDATE.ADJ_UDIL.cast(DecimalType(13,5)).alias('ADJ_UDIL'), \
+	UPD_VALIDATE.ADJ_NSDL.cast(DecimalType(13,5)).alias('ADJ_NSDL'), \
+	UPD_VALIDATE.PAID_BRK.cast(DecimalType(13,5)).alias('PAID_BRK'), \
+	UPD_VALIDATE.UNPAID_BRK.cast(DecimalType(13,5)).alias('UNPAID_BRK'), \
+	UPD_VALIDATE.REF_OSDL.cast(DecimalType(13,5)).alias('REF_OSDL'), \
+	UPD_VALIDATE.REF_OSIL.cast(DecimalType(13,5)).alias('REF_OSIL'), \
+	UPD_VALIDATE.REF_UDIL.cast(DecimalType(13,5)).alias('REF_UDIL'), \
+	UPD_VALIDATE.REF_NSDL.cast(DecimalType(13,5)).alias('REF_NSDL'), \
+	UPD_VALIDATE.REF_ADJ_OSDL.cast(DecimalType(13,5)).alias('REF_ADJ_OSDL'), \
+	UPD_VALIDATE.REF_ADJ_OSIL.cast(DecimalType(13,5)).alias('REF_ADJ_OSIL'), \
+	UPD_VALIDATE.REF_ADJ_UDIL.cast(DecimalType(13,5)).alias('REF_ADJ_UDIL'), \
+	UPD_VALIDATE.REF_ADJ_NSDL.cast(DecimalType(13,5)).alias('REF_ADJ_NSDL'), \
+	UPD_VALIDATE.REF_SAM.cast(DecimalType(13,5)).alias('REF_SAM'), \
+	UPD_VALIDATE.REF_PAM.cast(DecimalType(13,5)).alias('REF_PAM'), \
+	UPD_VALIDATE.LABOR_COST_RATE.cast(DecimalType(20,7)).alias('LABOR_COST_RATE'), \
+	UPD_VALIDATE.THRUPUT_MIN.cast(DecimalType(20,7)).alias('THRUPUT_MIN'), \
+	UPD_VALIDATE.PAID_OVERLAP_OSDL.cast(DecimalType(20,7)).alias('PAID_OVERLAP_OSDL'), \
+	UPD_VALIDATE.UNPAID_OVERLAP_OSDL.cast(DecimalType(20,7)).alias('UNPAID_OVERLAP_OSDL'), \
+	UPD_VALIDATE.PAID_OVERLAP_NSDL.cast(DecimalType(20,7)).alias('PAID_OVERLAP_NSDL'), \
+	UPD_VALIDATE.UNPAID_OVERLAP_NSDL.cast(DecimalType(20,7)).alias('UNPAID_OVERLAP_NSDL'), \
+	UPD_VALIDATE.PAID_OVERLAP_OSIL.cast(DecimalType(20,7)).alias('PAID_OVERLAP_OSIL'), \
+	UPD_VALIDATE.UNPAID_OVERLAP_OSIL.cast(DecimalType(20,7)).alias('UNPAID_OVERLAP_OSIL'), \
+	UPD_VALIDATE.PAID_OVERLAP_UDIL.cast(DecimalType(20,7)).alias('PAID_OVERLAP_UDIL'), \
+	UPD_VALIDATE.UNPAID_OVERLAP_UDIL.cast(DecimalType(20,7)).alias('UNPAID_OVERLAP_UDIL'), \
+	UPD_VALIDATE.DISPLAY_UOM_QTY.cast(DecimalType(20,7)).alias('DISPLAY_UOM_QTY'), \
 	UPD_VALIDATE.DISPLAY_UOM.cast(StringType()).alias('DISPLAY_UOM'), \
 	UPD_VALIDATE.MISC_1.cast(StringType()).alias('MISC_1'), \
 	UPD_VALIDATE.MISC_2.cast(StringType()).alias('MISC_2'), \
 	UPD_VALIDATE.MISC_TXT_1.cast(StringType()).alias('MISC_TXT_1'), \
 	UPD_VALIDATE.MISC_TXT_2.cast(StringType()).alias('MISC_TXT_2'), \
-	UPD_VALIDATE.MISC_NUMBER_1.cast(LongType()).alias('MISC_NBR_1'), \
-	UPD_VALIDATE.MISC_NUM_1.cast(LongType()).alias('MISC_NUM_1'), \
-	UPD_VALIDATE.MISC_NUM_2.cast(LongType()).alias('MISC_NUM_2'), \
+	UPD_VALIDATE.MISC_NUMBER_1.cast(DecimalType(13,5)).alias('MISC_NBR_1'), \
+	UPD_VALIDATE.MISC_NUM_1.cast(DecimalType(20,7)).alias('MISC_NUM_1'), \
+	UPD_VALIDATE.MISC_NUM_2.cast(DecimalType(20,7)).alias('MISC_NUM_2'), \
 	UPD_VALIDATE.LEVEL_1.cast(StringType()).alias('LEVEL_1'), \
 	UPD_VALIDATE.LEVEL_2.cast(StringType()).alias('LEVEL_2'), \
 	UPD_VALIDATE.LEVEL_3.cast(StringType()).alias('LEVEL_3'), \
@@ -880,14 +905,25 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select( \
 	UPD_VALIDATE.pyspark_data_action.alias('pyspark_data_action') \
 )
 
+
+logger.info('Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully')
+
 # COMMAND ----------
 
-# MAGIC %run Datalake/WMS/notebooks/utils/mergeUtils
+# MAGIC %run ./utils/mergeUtils
+
+# COMMAND ----------
+
+# MAGIC %run ./utils/logger
 
 # COMMAND ----------
 
 #Final Merge 
-executeMerge(sourceDataFrame,targetTable,primaryKeyList)
+try:
+    executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table)
+    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}_raw.log_run_details")
+except Exception as e:
+    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}_raw.log_run_details")
 
 
 # COMMAND ----------
