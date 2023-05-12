@@ -57,9 +57,4 @@ run_notebook(
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC select * from dev_raw.wm_e_dept_pre
-
-# COMMAND ----------
-
 
