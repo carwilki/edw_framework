@@ -1,7 +1,7 @@
 # Databricks notebook source
 def dc10(env):
 
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa':
 
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.175"
@@ -12,7 +12,7 @@ def dc10(env):
         
         return (username,password,connection_string)
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.160"
         portnumber = "1810"
@@ -25,7 +25,7 @@ def dc10(env):
     
 
 def dc12(env):
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa':
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.186"
         portnumber = "1812"
@@ -35,7 +35,7 @@ def dc12(env):
 
         return (username,password,connection_string) 
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "72.20.89.161"
         portnumber = "1812"
@@ -47,7 +47,7 @@ def dc12(env):
    
 def dc14(env):
 
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa':
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.170"
         portnumber = "1814"
@@ -58,7 +58,7 @@ def dc14(env):
         return (username,password,connection_string)
 
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.159"
         portnumber = "1814"
@@ -69,7 +69,7 @@ def dc14(env):
         return (username,password,connection_string)        
 
 def dc22(env):
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa' :
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.175"
         portnumber = "1822"
@@ -80,7 +80,7 @@ def dc22(env):
         return (username,password,connection_string)
 
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.160"
         portnumber = "1822"
@@ -91,7 +91,7 @@ def dc22(env):
         return (username,password,connection_string)       
 
 def dc36(env):
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa' :
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.170"
         portnumber = "1836"
@@ -101,7 +101,7 @@ def dc36(env):
 
         return (username,password,connection_string)
      
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.159"
         portnumber = "1836"
@@ -116,7 +116,7 @@ def dc36(env):
 
 
 def dc38(env):
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa':
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.186"
         portnumber = "1838"
@@ -126,7 +126,7 @@ def dc38(env):
 
         return (username,password,connection_string)
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.161"
         portnumber = "1838"
@@ -137,7 +137,7 @@ def dc38(env):
         return (username,password,connection_string)    
 
 def dc41(env):      
-    if env.lower()=='dev':
+    if env.lower()=='dev' or env.lower()=='qa' :
         username = "SVC_BD_ORA_NP_READ"
         hostname = "172.17.89.175"
         portnumber = "1841"
@@ -148,7 +148,7 @@ def dc41(env):
         return (username,password,connection_string)      
 
 
-    if env.lower()=='prod' or env.lower()=='qa':
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.160"
         portnumber = "1841"

@@ -54,7 +54,3 @@ run_notebook(
     }
 )
 
-
-# COMMAND ----------
-
-
