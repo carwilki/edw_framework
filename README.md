@@ -1,7 +1,7 @@
 
 # Netezza Datalake Migration
 
-This repo is used to host the converted code and assets from the Netezza To Databricks migration.
+This repo is used to host the converted code and assets from the Netezza\Informatica To Databricks migration.
 
 ## Repo Structure
 

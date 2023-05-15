@@ -1,4 +1,4 @@
-# Databricks notebook source
+#Code converted on 2023-05-03 09:46:35
 import os
 from pyspark.sql import *
 from pyspark.sql.functions import *
@@ -8,30 +8,29 @@ from pyspark import SparkContext;
 from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-import logging
+from dbruntime import dbutils
+#from PySparkBQWriter import *
+#import ProcessingUtils;
+#bqw = PySparkBQWriter()
+#bqw.setDebug(True)
 
 # COMMAND ----------
 
-starttime = datetime.now()
+conf = SparkConf().setMaster('local')
+sc = SparkContext.getOrCreate(conf = conf)
+spark = SparkSession(sc)
+
+# Set global variables
+starttime = datetime.now() #start timestamp of the script
+
+# Read in job variables
+# read_infa_paramfile('', 'm_WM_E_Dept') ProcessingUtils
 
 # COMMAND ----------
+# Processing node SQ_Shortcut_to_WM_E_DEPT_PRE, type SOURCE 
+# COLUMN COUNT: 17
 
-
-dbutils.widgets.text(name='env', defaultValue='')
-
-env = dbutils.widgets.get('env')
-
-# COMMAND ----------
-
-pre_dept_table=f'{env}_raw.WM_E_DEPT_PRE'
-refined_dept_table=f'{env}_refine.WM_E_DEPT'
-site_profile_table=f'{env}_refine.SITE_PROFILE'
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
-
-# COMMAND ----------
-
-dept_pre_query = """SELECT
+SQ_Shortcut_to_WM_E_DEPT_PRE = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
 WM_E_DEPT_PRE.DC_NBR,
 WM_E_DEPT_PRE.DEPT_ID,
 WM_E_DEPT_PRE.DEPT_CODE,
@@ -49,18 +48,36 @@ WM_E_DEPT_PRE.VERSION_ID,
 WM_E_DEPT_PRE.CREATED_DTTM,
 WM_E_DEPT_PRE.LAST_UPDATED_DTTM,
 WM_E_DEPT_PRE.LOAD_TSTMP
-FROM """+pre_dept_table
+FROM WM_E_DEPT_PRE""", 
+properties={
+'user': os.environ.get('NZ_SCDS_LOGIN'),
+'password': os.environ.get('NZ_SCDS_PASSWORD'),
+'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
+# Conforming fields names to the component layout
+SQ_Shortcut_to_WM_E_DEPT_PRE = SQ_Shortcut_to_WM_E_DEPT_PRE \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[0],'DC_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[1],'DEPT_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[2],'DEPT_CODE') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[3],'DESCRIPTION') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[4],'CREATE_DATE_TIME') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[5],'MOD_DATE_TIME') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[6],'USER_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[7],'WHSE') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[8],'MISC_TXT_1') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[9],'MISC_TXT_2') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[10],'MISC_NUM_1') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[11],'MISC_NUM_2') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[12],'PERF_GOAL') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[13],'VERSION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[14],'CREATED_DTTM') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[15],'LAST_UPDATED_DTTM') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT_PRE.columns[16],'LOAD_TSTMP')
 
 # COMMAND ----------
+# Processing node SQ_Shortcut_to_WM_E_DEPT, type SOURCE 
+# COLUMN COUNT: 7
 
-SQ_Shortcut_to_WM_E_DEPT_PRE = spark.sql(dept_pre_query).withColumn(
-    "sys_row_id", monotonically_increasing_id()
-)
-logger.info('Query to extract data from'+pre_dept_table+' executed successfully')
-
-# COMMAND ----------
-
-dept_query = """SELECT
+SQ_Shortcut_to_WM_E_DEPT = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
 WM_E_DEPT.LOCATION_ID,
 WM_E_DEPT.WM_DEPT_ID,
 WM_E_DEPT.WM_CREATED_TSTMP,
@@ -68,15 +85,25 @@ WM_E_DEPT.WM_LAST_UPDATED_TSTMP,
 WM_E_DEPT.WM_CREATE_TSTMP,
 WM_E_DEPT.WM_MOD_TSTMP,
 WM_E_DEPT.LOAD_TSTMP
-FROM """+refined_dept_table+"""
-WHERE WM_DEPT_ID IN (SELECT DEPT_ID FROM """+pre_dept_table+""")"""
+FROM WM_E_DEPT
+WHERE WM_DEPT_ID IN (SELECT DEPT_ID FROM WM_E_DEPT_PRE)""", 
+properties={
+'user': os.environ.get('NZ_SCDS_LOGIN'),
+'password': os.environ.get('NZ_SCDS_PASSWORD'),
+'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
+# Conforming fields names to the component layout
+SQ_Shortcut_to_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[0],'LOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[1],'WM_DEPT_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[2],'WM_CREATED_TSTMP') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[3],'WM_LAST_UPDATED_TSTMP') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[4],'WM_CREATE_TSTMP') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[5],'WM_MOD_TSTMP') \
+	.withColumnRenamed(SQ_Shortcut_to_WM_E_DEPT.columns[6],'LOAD_TSTMP')
 
 # COMMAND ----------
-
-SQ_Shortcut_to_WM_E_DEPT = spark.sql(dept_query).withColumn("sys_row_id", monotonically_increasing_id())
-logger.info('SQ_Shortcut_to_WM_E_DEPT created successfully')
-
-# COMMAND ----------
+# Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 17
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE.select( \
 	SQ_Shortcut_to_WM_E_DEPT_PRE.sys_row_id.alias('sys_row_id'), \
@@ -98,7 +125,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE.select( \
 	SQ_Shortcut_to_WM_E_DEPT_PRE.LAST_UPDATED_DTTM.alias('LAST_UPDATED_DTTM'), \
 	SQ_Shortcut_to_WM_E_DEPT_PRE.LOAD_TSTMP.alias('LOAD_TSTMP')).select( \
 	(col('sys_row_id')).alias('sys_row_id'), \
-	((col('in_DC_NBR').cast(DecimalType(3,0)))).alias('DC_NBR'), \
+	(TO_INTEGER(col('in_DC_NBR'))).alias('DC_NBR'), \
 	col('DEPT_ID'), \
 	col('DEPT_CODE'), \
 	col('DESCRIPTION'), \
@@ -116,26 +143,33 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE.select( \
 	col('LAST_UPDATED_DTTM'), \
 	col('LOAD_TSTMP') \
 )
-logger.info('EXP_INT_CONV created successfully')
 
 # COMMAND ----------
+# Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
+# COLUMN COUNT: 2
 
-site_profile = f"""SELECT
+SQ_Shortcut_to_SITE_PROFILE = spark.read.jdbc(os.environ.get('NZ_SCDS_CONNECT_STRING'), f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM """+site_profile_table
+FROM SITE_PROFILE""", 
+properties={
+'user': os.environ.get('NZ_SCDS_LOGIN'),
+'password': os.environ.get('NZ_SCDS_PASSWORD'),
+'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
+# Conforming fields names to the component layout
+SQ_Shortcut_to_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE \
+	.withColumnRenamed(SQ_Shortcut_to_SITE_PROFILE.columns[0],'LOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_SITE_PROFILE.columns[1],'STORE_NBR')
 
 # COMMAND ----------
-
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(site_profile).withColumn("sys_row_id", monotonically_increasing_id())
-logger.info('Site profile table query executed successfully!')
-
-# COMMAND ----------
+# Processing node JNR_SITE_PROFILE, type JOINER 
+# COLUMN COUNT: 19
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
-logger.info('JNR_SITE_PROFILE dataframe created successfully')
 
 # COMMAND ----------
+# Processing node JNR_WM_E_DEPT, type JOINER . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 24
 
 JNR_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_WM_E_DEPT.LOCATION_ID == JNR_SITE_PROFILE.LOCATION_ID, SQ_Shortcut_to_WM_E_DEPT.WM_DEPT_ID == JNR_SITE_PROFILE.DEPT_ID],'right_outer').select( \
 	SQ_Shortcut_to_WM_E_DEPT.sys_row_id.alias('sys_row_id'), \
@@ -164,13 +198,9 @@ JNR_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_W
 	SQ_Shortcut_to_WM_E_DEPT.WM_CREATED_TSTMP.alias('in_WM_CREATED_TSTMP'), \
 	SQ_Shortcut_to_WM_E_DEPT.WM_LAST_UPDATED_TSTMP.alias('in_WM_LAST_UPDATED_TSTMP'))
 
-logger.info('JNR_WM_E_DEPT dataframe created successfully')
-
 # COMMAND ----------
-
-JNR_WM_E_DEPT.display()
-
-# COMMAND ----------
+# Processing node FIL_NO_CHANGE_REC, type FILTER 
+# COLUMN COUNT: 22
 
 FIL_NO_CHANGE_REC = JNR_WM_E_DEPT.select( \
 	JNR_WM_E_DEPT.LOCATION_ID.alias('LOCATION_ID'), \
@@ -194,13 +224,11 @@ FIL_NO_CHANGE_REC = JNR_WM_E_DEPT.select( \
 	JNR_WM_E_DEPT.in_WM_CREATE_TSTMP.alias('in_WM_CREATE_TSTMP'), \
 	JNR_WM_E_DEPT.in_WM_MOD_TSTMP.alias('in_WM_MOD_TSTMP'), \
 	JNR_WM_E_DEPT.in_WM_CREATED_TSTMP.alias('in_WM_CREATED_TSTMP'), \
-	JNR_WM_E_DEPT.in_WM_LAST_UPDATED_TSTMP.alias('in_WM_LAST_UPDATED_TSTMP')).filter("(in_WM_DEPT_ID is null) OR ( NOT (in_WM_DEPT_ID is null) AND (((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else CREATE_DATE_TIME end )!= (case when in_WM_CREATE_TSTMP is null then TO_DATE ('01/01/1900','M/d/y') else in_WM_CREATE_TSTMP end))OR(( case when MOD_DATE_TIME is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) else MOD_DATE_TIME end) != (case when in_WM_MOD_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) else in_WM_MOD_TSTMP end)) OR((case when CREATED_DTTM  is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) else CREATED_DTTM end) != (case when in_WM_CREATED_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) else in_WM_CREATED_TSTMP end))OR((case when LAST_UPDATED_DTTM is null then TO_DATE( '01/01/1900' , 'M/d/y' ) else LAST_UPDATED_DTTM end) != (case when in_WM_LAST_UPDATED_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) else  in_WM_LAST_UPDATED_TSTMP end) ) ))").withColumn("sys_row_id", monotonically_increasing_id())
-
-	
-logger.info('FIL_NO_CHANGE_REC dataframe created successfully')
+	JNR_WM_E_DEPT.in_WM_LAST_UPDATED_TSTMP.alias('in_WM_LAST_UPDATED_TSTMP')).filter("in_WM_DEPT_ID __DOT__ isNull() OR ( NOT in_WM_DEPT_ID __DOT__ isNull() AND ( when((CREATE_DATE_TIME __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(CREATE_DATE_TIME) != when((in_WM_CREATE_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_CREATE_TSTMP) OR when((MOD_DATE_TIME __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(MOD_DATE_TIME) != when((in_WM_MOD_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_MOD_TSTMP) OR when((CREATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(CREATED_DTTM) != when((in_WM_CREATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_CREATED_TSTMP) OR when((LAST_UPDATED_DTTM __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(LAST_UPDATED_DTTM) != when((in_WM_LAST_UPDATED_TSTMP __DOT__ isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))) __DOT__ otherwise(in_WM_LAST_UPDATED_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
-
+# Processing node EXP_EVAL_VALUES, type EXPRESSION 
+# COLUMN COUNT: 19
 
 EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 	FIL_NO_CHANGE_REC.sys_row_id.alias('sys_row_id'), \
@@ -224,11 +252,10 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 	(current_date()).alias('UPDATE_TSTMP'), \
 	FIL_NO_CHANGE_REC.in_WM_DEPT_ID.alias('in_WM_DEPT_ID') \
 )
-logger.info('EXP_EVAL_VALUES dataframe created successfully')
-
 
 # COMMAND ----------
-
+# Processing node UPD_VALIDATE, type UPDATE_STRATEGY 
+# COLUMN COUNT: 19
 
 UPD_VALIDATE = EXP_EVAL_VALUES.select( \
 	EXP_EVAL_VALUES.LOCATION_ID.alias('LOCATION_ID'), \
@@ -249,27 +276,27 @@ UPD_VALIDATE = EXP_EVAL_VALUES.select( \
 	EXP_EVAL_VALUES.LAST_UPDATED_DTTM.alias('LAST_UPDATED_DTTM'), \
 	EXP_EVAL_VALUES.LOAD_TSTMP.alias('LOAD_TSTMP'), \
 	EXP_EVAL_VALUES.UPDATE_TSTMP.alias('UPDATE_TSTMP'), \
-	EXP_EVAL_VALUES.in_WM_DEPT_ID.alias('in_WM_DEPT_ID'))
-
-UPD_VALIDATE = UPD_VALIDATE.withColumn('pyspark_data_action', when((UPD_VALIDATE.in_WM_DEPT_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
-
-logger.info('UPD_VALIDATE dataframe created successfully')
+	EXP_EVAL_VALUES.in_WM_DEPT_ID.alias('in_WM_DEPT_ID')) \
+	.withColumn('pyspark_data_action', when((EXP_EVAL_VALUES.in_WM_DEPT_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
+# Processing node Shortcut_to_WM_E_DEPT, type TARGET 
+# COLUMN COUNT: 18
+
 
 Shortcut_to_WM_E_DEPT = UPD_VALIDATE.select( \
-	UPD_VALIDATE.LOCATION_ID.cast(DecimalType(10,0)).alias('LOCATION_ID'), \
-	UPD_VALIDATE.DEPT_ID.cast(DecimalType(9,0)).alias('WM_DEPT_ID'), \
+	UPD_VALIDATE.LOCATION_ID.cast(LongType()).alias('LOCATION_ID'), \
+	UPD_VALIDATE.DEPT_ID.cast(LongType()).alias('WM_DEPT_ID'), \
 	UPD_VALIDATE.WHSE.cast(StringType()).alias('WM_WHSE'), \
 	UPD_VALIDATE.DEPT_CODE.cast(StringType()).alias('WM_DEPT_CD'), \
 	UPD_VALIDATE.DESCRIPTION.cast(StringType()).alias('WM_DEPT_DESC'), \
-	UPD_VALIDATE.PERF_GOAL.cast(DecimalType(9,2)).alias('PERF_GOAL'), \
+	UPD_VALIDATE.PERF_GOAL.cast(LongType()).alias('PERF_GOAL'), \
 	UPD_VALIDATE.MISC_TXT_1.cast(StringType()).alias('MISC_TXT_1'), \
 	UPD_VALIDATE.MISC_TXT_2.cast(StringType()).alias('MISC_TXT_2'), \
-	UPD_VALIDATE.MISC_NUM_1.cast(DecimalType(20,7)).alias('MISC_NUM_1'), \
-	UPD_VALIDATE.MISC_NUM_2.cast(DecimalType(20,7)).alias('MISC_NUM_2'), \
+	UPD_VALIDATE.MISC_NUM_1.cast(LongType()).alias('MISC_NUM_1'), \
+	UPD_VALIDATE.MISC_NUM_2.cast(LongType()).alias('MISC_NUM_2'), \
 	UPD_VALIDATE.USER_ID.cast(StringType()).alias('WM_USER_ID'), \
-	UPD_VALIDATE.VERSION_ID.cast(DecimalType(6,0)).alias('WM_VERSION_ID'), \
+	UPD_VALIDATE.VERSION_ID.cast(LongType()).alias('WM_VERSION_ID'), \
 	UPD_VALIDATE.CREATED_DTTM.cast(TimestampType()).alias('WM_CREATED_TSTMP'), \
 	UPD_VALIDATE.LAST_UPDATED_DTTM.cast(TimestampType()).alias('WM_LAST_UPDATED_TSTMP'), \
 	UPD_VALIDATE.CREATE_DATE_TIME.cast(TimestampType()).alias('WM_CREATE_TSTMP'), \
@@ -278,30 +305,6 @@ Shortcut_to_WM_E_DEPT = UPD_VALIDATE.select( \
 	UPD_VALIDATE.UPDATE_TSTMP.cast(TimestampType()).alias('LOAD_TSTMP'), \
 	UPD_VALIDATE.pyspark_data_action.alias('pyspark_data_action') \
 )
-logger.info('Shortcut_to_WM_E_DEPT dataframe created successfully')
+Shortcut_to_WM_E_DEPT.write.saveAsTable('WM_E_DEPT', mode = 'append')
 
-# COMMAND ----------
-
-# MAGIC %run ./utils/mergeUtils
-
-# COMMAND ----------
-
-# MAGIC %run ./utils/logger
-
-# COMMAND ----------
-
-
-
-#Final Merge 
-try:
-    executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table)
-
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}_raw.log_run_details")
-except Exception as e:
-    pass
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}_raw.log_run_details")
-
-
-# COMMAND ----------
-
-
+quit()
