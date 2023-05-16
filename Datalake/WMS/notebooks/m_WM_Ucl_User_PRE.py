@@ -12,6 +12,10 @@ from datetime import datetime
 
 # COMMAND ----------
 
+# MAGIC %run ./utils/configs 
+
+# COMMAND ----------
+
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
@@ -27,7 +31,7 @@ refine_table_name='WM_UCL_USER'
 
 
 prev_run_dt = str(spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0])
-if prev_run_dt is None:
+if prev_run_dt== "None":
     prev_run_dt = getMaxDate(refine_table_name,env)
 else:
     prev_run_dt = datetime.strptime(prev_run_dt, "%Y-%m-%d %H:%M:%S.%f")
@@ -37,7 +41,7 @@ print('The prev run date is ' + prev_run_dt)
 
 # COMMAND ----------
 
-# MAGIC %run ./utils/configs 
+
 
 # COMMAND ----------
 

@@ -28,7 +28,3 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
     print(sql_query)
     spark.sql(sql_query)
     print('Logging Completed')
-
-# COMMAND ----------
-
-
