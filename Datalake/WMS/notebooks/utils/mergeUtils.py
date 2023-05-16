@@ -46,3 +46,7 @@ def executeMerge(sourceDataFrame,targetTable):
             raise Exception("Column for Insert/Update 'pyspark_data_action' not available in source!")
     except Exception as e:
         raise e
+
+# COMMAND ----------
+
+dbutils.secrets.listScopes()
