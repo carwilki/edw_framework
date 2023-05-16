@@ -1,38 +1,25 @@
-#Code converted on 2023-05-03 09:47:12
+#Code converted on 2023-05-16 15:07:16
 import os
-from pyspark.dbutils import DBUtils
 from pyspark.sql import *
 from pyspark.sql.functions import *
+from pyspark.sql.window import Window
 from pyspark.sql.types import *
-from pyspark.sql import SparkSession
 from datetime import datetime
-# COMMAND ----------
-# configure spark and dbutils. This is required when building notebooks outside of
-# the notebook itself.
-sc = SparkContext.getOrCreate()
-spark = SparkSession(sc)
-dbutils = DBUtils(sc)
+from dbruntime import dbutils
 
 # COMMAND ----------
-# Variable_declaration_comment
-# Read in job variables
-# read_infa_paramfile('', 'm_WM_E_Consol_Perf_Smry_PRE') ProcessingUtils
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
-dbutils.widgets.text(name='Initial_Load', defaultValue='')
-dbutils.widgets.text(name='catalog', defaultValue='dev')
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-catalog = dbutils.widgets.get('catalog', as_type=str)
-dcnbr = dbutils.widgets.get('DC_NBR', as_type=str)
-prev_run_dt = dbutils.widgets.get('Prev_Run_Dt', as_type=str)	
-initial_load = dbutils.widgets.get('Initial_Load', as_type=str)
 
+# Read in job variables
+# read_infa_paramfile('', 'm_WM_E_Dept_PRE') ProcessingUtils
 
 # COMMAND ----------
-# Set the catalog to use.
-spark.sql(f"USE CATALOG {catalog}")
+# Variable_declaration_comment
+dbutils.widgets.text(name='DC_NBR', defaultValue='')
+dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='1/1/1901')
+dbutils.widgets.text(name='Initial_Load', defaultValue='')
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_E_DEPT, type SOURCE 
@@ -55,37 +42,61 @@ E_DEPT.VERSION_ID,
 E_DEPT.CREATED_DTTM,
 E_DEPT.LAST_UPDATED_DTTM
 FROM E_DEPT
-WHERE 
-$$Initial_Load (date_trunc('DD', CREATE_DATE_TIME) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) 
-OR (date_trunc('DD', MOD_DATE_TIME) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) 
-AND 1=1""", 
+WHERE '$$Initial_Load' (trunc(CREATE_DATE_TIME) >= trunc(to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) | (trunc(MOD_DATE_TIME) >=  trunc(to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) | (trunc(CREATED_DTTM) >= trunc(to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1) | (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('$$Prev_Run_Dt','MM/DD/YYYY HH24:MI:SS'))-1)  & 1=1""", 
 properties={
 'user': os.environ.get('DBConnection_Source_LOGIN'),
 'password': os.environ.get('DBConnection_Source_PASSWORD'),
-'driver': os.environ.get('ORACLE_DRIVER')})
+'driver': os.environ.get('ORACLE_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
 # COLUMN COUNT: 17
 
-EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
-	(os.environ.get(lit(f'{dcnbr}'))).cast(LongType()).alias('DC_NBR'), \
-	SQ_Shortcut_to_E_DEPT.DEPT_ID.cast(LongType()).alias('DEPT_ID'), \
-	SQ_Shortcut_to_E_DEPT.DEPT_CODE.cast(StringType()).alias('DEPT_CODE'), \
-	SQ_Shortcut_to_E_DEPT.DESCRIPTION.cast(StringType()).alias('DESCRIPTION'), \
-	SQ_Shortcut_to_E_DEPT.CREATE_DATE_TIME.cast(TimestampType()).alias('CREATE_DATE_TIME'), \
-	SQ_Shortcut_to_E_DEPT.MOD_DATE_TIME.cast(TimestampType()).alias('MOD_DATE_TIME'), \
-	SQ_Shortcut_to_E_DEPT.USER_ID.cast(StringType()).alias('USER_ID'), \
-	SQ_Shortcut_to_E_DEPT.WHSE.cast(StringType()).alias('WHSE'), \
-	SQ_Shortcut_to_E_DEPT.MISC_TXT_1.cast(StringType()).alias('MISC_TXT_1'), \
-	SQ_Shortcut_to_E_DEPT.MISC_TXT_2.cast(StringType()).alias('MISC_TXT_2'), \
-	SQ_Shortcut_to_E_DEPT.MISC_NUM_1.cast(LongType()).alias('MISC_NUM_1'), \
-	SQ_Shortcut_to_E_DEPT.MISC_NUM_2.cast(LongType()).alias('MISC_NUM_2'), \
-	SQ_Shortcut_to_E_DEPT.PERF_GOAL.cast(LongType()).alias('PERF_GOAL'), \
-	SQ_Shortcut_to_E_DEPT.VERSION_ID.cast(LongType()).alias('VERSION_ID'), \
-	SQ_Shortcut_to_E_DEPT.CREATED_DTTM.cast(TimestampType()).alias('CREATED_DTTM'), \
-	SQ_Shortcut_to_E_DEPT.LAST_UPDATED_DTTM.cast(TimestampType()).alias('LAST_UPDATED_DTTM'), 
-	lit(f'{starttime}').cast(TimestampType()).alias('LOAD_TSTMP') \
+EXPTRANS = SQ_Shortcut_to_E_DEPT.selectExpr(
+	"sys_row_id as sys_row_id",
+	"'$$DC_NBR' as DC_NBR_EXP",
+	"SQ_Shortcut_to_E_DEPT.DEPT_ID as DEPT_ID",
+	"SQ_Shortcut_to_E_DEPT.DEPT_CODE as DEPT_CODE",
+	"SQ_Shortcut_to_E_DEPT.DESCRIPTION as DESCRIPTION",
+	"SQ_Shortcut_to_E_DEPT.CREATE_DATE_TIME as CREATE_DATE_TIME",
+	"SQ_Shortcut_to_E_DEPT.MOD_DATE_TIME as MOD_DATE_TIME",
+	"SQ_Shortcut_to_E_DEPT.USER_ID as USER_ID",
+	"SQ_Shortcut_to_E_DEPT.WHSE as WHSE",
+	"SQ_Shortcut_to_E_DEPT.MISC_TXT_1 as MISC_TXT_1",
+	"SQ_Shortcut_to_E_DEPT.MISC_TXT_2 as MISC_TXT_2",
+	"SQ_Shortcut_to_E_DEPT.MISC_NUM_1 as MISC_NUM_1",
+	"SQ_Shortcut_to_E_DEPT.MISC_NUM_2 as MISC_NUM_2",
+	"SQ_Shortcut_to_E_DEPT.PERF_GOAL as PERF_GOAL",
+	"SQ_Shortcut_to_E_DEPT.VERSION_ID as VERSION_ID",
+	"SQ_Shortcut_to_E_DEPT.CREATED_DTTM as CREATED_DTTM",
+	"SQ_Shortcut_to_E_DEPT.LAST_UPDATED_DTTM as LAST_UPDATED_DTTM",
+	"current_timestamp() () as LOAD_TSTMP_EXP"
 )
-#this needs to be a merge statement
-#EXPTRANS.write.saveAsTable(f'WM_E_DEPT_PRE', mode = 'overwrite')
+
+# COMMAND ----------
+# Processing node Shortcut_to_WM_E_DEPT_PRE, type TARGET 
+# COLUMN COUNT: 17
+
+
+Shortcut_to_WM_E_DEPT_PRE = EXPTRANS.selectExpr(
+	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR",
+	"CAST(DEPT_ID AS BIGINT) as DEPT_ID",
+	"CAST(DEPT_CODE AS VARCHAR) as DEPT_CODE",
+	"CAST(DESCRIPTION AS VARCHAR) as DESCRIPTION",
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+	"CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+	"CAST(USER_ID AS VARCHAR) as USER_ID",
+	"CAST(WHSE AS VARCHAR) as WHSE",
+	"CAST(MISC_TXT_1 AS VARCHAR) as MISC_TXT_1",
+	"CAST(MISC_TXT_2 AS VARCHAR) as MISC_TXT_2",
+	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1",
+	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2",
+	"CAST(PERF_GOAL AS BIGINT) as PERF_GOAL",
+	"CAST(VERSION_ID AS BIGINT) as VERSION_ID",
+	"CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
+)
+Shortcut_to_WM_E_DEPT_PRE.write.saveAsTable('WM_E_DEPT_PRE', mode = 'append')
+
+quit()
