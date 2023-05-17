@@ -3,34 +3,32 @@
 	"header": "#Code converted on %CONVERTER_TIMESTAMP%~
 import os\nfrom pyspark.sql import *~
 from pyspark.sql.functions import *~
-from pyspark.sql.window import Window~
 from pyspark.sql.types import *~
+from Mapplets import Mapplets~
+from pyspark import SparkContext;~
+from pyspark.sql.session import SparkSession~
 from datetime import datetime~
-from dbruntime import dbutils~
+from PySparkBQWriter import *~
+bqw = PySparkBQWriter()~
+bqw.setDebug(True)~
 ~
-# COMMAND ----------~
+sc = SparkContext('local')~
+spark = SparkSession(sc)~
 ~
 # Set global variables~
 starttime = datetime.now() #start timestamp of the script~
-~
-# Read in job variables~
-# read_infa_paramfile('%PARAMETER_BASE_FILENAME%', '%JOB_NAME%') ProcessingUtils",
+",
 
 	"footer": "quit()",
 	"script_extension": "py",
-	"pre_post_sql_wrapper" : "#Processing %PRE_POST_FLAG% for node %NODE_NAME%\nspark.sql('''%INNER_SQL%''')",
 	//"pre_node_line" : "# Processing node %NODE_NAME%, type %NODE_TYPE%\n# COLUMNS: %COLUMN_LIST%",
-	"pre_node_line" : "# COMMAND ----------\n# Processing node %NODE_NAME%, type %NODE_TYPE% %ADDITIONAL_COMMENT%\n# COLUMN COUNT: %COLUMN_COUNT%", //# COLUMNS %COLUMN_LIST%
+	"pre_node_line" : "# Processing node %NODE_NAME%, type %NODE_TYPE% %ADDITIONAL_COMMENT%\n# COLUMN COUNT: %COLUMN_COUNT%", //# COLUMNS %COLUMN_LIST%
 	"post_node_line" : "",
 	"explicit_aliasing" : "0",
 	"skip_rowid_generation" : "0", // omits generation of sys_row_id
 	//"additional_trailing_fields" : ["load_cntl_no"],
 	"column_aliasing_df_naming_pattern" : "PRE_%DF%", // in case column aliases are used, like prefixes and suffixes, create an additional dataframe with this name
 	"implied_target_fields_enable_alpha_sort" : "1",
-
-	"general_lookup_flatfile_path_dir" : "testPathGeneral_lookup_flatfiles/",
-
-	"general_flatfile_path_dir" : "testPathGeneral_flatfiles/",
 
 	"infa_rename_col_snippets" : "1",
 	//"force_multi_source_join_type" : "left_join",
@@ -39,17 +37,7 @@ starttime = datetime.now() #start timestamp of the script~
 	"field_rename_df_comment" : "#Conforming layout of Hive to InfaCloud for %DF%",
 	"ignore_connection_profiles" : "1", //if ON, will blank out %CONNECTION_PROFILE%. prefixes coming from agnostic layer
 
-	"sql_converter_config_file" : "!BB_CONFIG_CONVERTER!/netezza2sparksql.json",
-	"etl_converter_config_file" : "!BB_CONFIG_WRITER_DIR!/SQL/infapc2pyspark_databricksjobs.json",
-	"expr_sql_converter_config_file" : "!BB_CONFIG_CONVERTER!/infa2databricks_expr.json",
-
-	"convert_as_expr_pattens" : ["\bIIF\b", "\bDECODE\b"],
-
-	"target_merge_specs" : {
-		"pre_merge_stmt" : "%NODE_NAME% = DeltaTable.forPath(spark, '/tmp/delta/%TABLE_NAME%')"
-	},
-
-	"use_selectExpr" : 1,
+	"sql_converter_config_file" : "!BB_CONFIG_CONVERTER!/infa2snowflake_pyspark.json",
 
 	"remove_expression_comments" : "1", // removes inline comments in expressions before converting them
 
@@ -58,40 +46,11 @@ starttime = datetime.now() #start timestamp of the script~
 		"MM\/DD\/YYYY"
 	],
 
-	"exclude_regex_match_from_lit_wrap" : [
-		"to_date\s*\(.*,\s*-?\s*[0-9]+\s*\)"
-	],
-	"regex_match_from_token_modification" : [
-		{"from" : "(\w+)\.rlike", "to" : "__QUALIFIED_NAME__. rlike"},
-		{"from" : "^(r\"[\s\S]+?\")$", "to" : " $1 "},  //keep the same
-		{"from" : "(\w+)\.cast", "to" : "__QUALIFIED_NAME__. cast"}
-	],
-	"final_subst" : [
-		{"from" : "\. rlike", "to" : ".rlike"},
-		{"from" : "\. cast", "to" : ".cast"},
-		{"from" : "\(\s+(r\"[\s\S]+?\")\s+\)", "to" : "($1)"},
-		{"from" : "NOT\s+ISNULL\s*\(\s*(col\s*\([\'\"a-zA-Z_\.0-9]+\s*\)\s*\.\s*cast\(StringType\(\)\))\s*\)", "to" : "$1.IsNotNull()"},
-		{"from" : "ISNULL\s*\(\s*(col\s*\([\'\"a-zA-Z_\.0-9]+\s*\)\s*\.\s*cast\(StringType\(\)\))\s*\)", "to" : "$1.IsNull()"},
-		{"from" : "NOT\s+ISNULL\s*\(\s*([\'\"a-zA-Z_\.0-9]+\s*\.\s*cast\(StringType\(\)\))\s*\)", "to" : "$1.IsNotNull()"},
-		{"from" : "ISNULL\s*\(\s*([\'\"a-zA-Z_\.0-9]+\s*\.\s*cast\(StringType\(\)\))\s*\)", "to" : "$1.IsNull()"}
-	],
-
 	"exclude_function_args_from_lit_wrapping" : [ //prevents wrapping of constants into lit for these functions
 		"REPLACESTR",
 		"RPAD",
-		"LPAD",
-		"ROUND",
 		"SUBSTR",
-		"INSTR",
-		"decimal"
-	],
-
-	"functions_to_exclude_from_lit" : [
-		"\bdecimal\b\s*\("
-	],
-
-	"force_lit_wrapping" : [
-		"starttime" // this is a variable declared at the beginning of script
+		"INSTR"
 	],
 
 	"default_indent" : {
@@ -104,27 +63,14 @@ starttime = datetime.now() #start timestamp of the script~
 	// used in conjunction with "datatype_cast_mapping" spec below
 	"enabled_datatype_casting_components" : ["normalizer", "target"],
 
-//	"datatype_cast_mapping" : { //tells converter what string to use during casting. tokens %LENGTH% and %SCALE% will be replaced at conversion time
-//		"decimal" : ".cast('decimal(%LENGTH%,%SCALE%)')",
-//		"string" : ".cast(StringType())",
-//		"char" : ".cast(StringType())",
-//		"varchar" : ".cast(StringType())",
-//		"numeric" : ".cast(LongType())",
-//		"timestamp" : ".cast(TimestampType())",
-//		"integer" : ".cast(LongType())",
-//		"date" : ".cast(DateType())"
-//	},
-
-	"datatype_cast_mapping": {
-        "decimal": "CAST(%COLUMN% AS DECIMAL(%LENGTH%, %SCALE%))",
-        "string": "CAST(%COLUMN% AS VARCHAR)",
-        "char": "CAST(%COLUMN% AS CHAR)",
-        "varchar": "CAST(%COLUMN% AS VARCHAR)",
-        "numeric": "CAST(%COLUMN% AS BIGINT)",
-        "timestamp": "CAST(%COLUMN% AS TIMESTAMP)",
-        "integer": "CAST(%COLUMN% AS BIGINT)",
-        "date": "CAST(%COLUMN% AS DATE)"
-    },
+	"datatype_cast_mapping" : { //tells converter what string to use during casting. tokens %LENGTH% and %SCALE% will be replaced at conversion time
+		"decimal" : ".cast('decimal(%LENGTH%,%SCALE%)')",
+		"string" : ".cast(StringType())",
+		"char" : ".cast(StringType())",
+		"varchar" : ".cast(StringType())",
+		"numeric" : ".cast(LongType())",
+		"timestamp" : ".cast(TimestampType())"		
+	},
 		
 	"body_wrap" : {
 		// "before" : "try:\n\n",
@@ -132,19 +78,12 @@ starttime = datetime.now() #start timestamp of the script~
 	},
 	
 	"code_indent" : "            ", //general code indent - 12 spaces
-	"multiline_stmt_break" : "",
+	"multiline_stmt_break" : " \ ",
 	"null_assignment" : "lit(None)",
 	"sort_function" : "sort", //goes into the sorter node
 
 	"line_subst" : [
-		{"from" : "\:UDF\.SCRUB_FORMAT", "to" : "SCRUB_FORMAT"},
 		//functions that just need lower-casing:
-//		{"from" : "decode\s*\(\s*true\s*,", "to" : "DECODE("},
-//		{"from" : "(DECODE.*)\s+([\w\'\"]+)\s+(>=|=|<=|<|>)\s+([\w\'\"\\a-zA-Z]+)", "to" : "$1($2$3$4)"},
-//		{"from" : "NOT\s+ISNULL\s*\(\s*([a-zA-Z_\.0-9]+)\s*\)", "to" : " $1.isNotNull()"},
-//		{"from" : "NOT\s*\(\s*ISNULL\s*\(\s*([a-zA-Z_\.0-9]+)\s*\)\s*\)", "to" : " $1.isNotNull()"},
-		//{"from" : "ISNULL\s*\(\s*([a-zA-Z_\.0-9]+)\s*\)", "to" : " $1.isNull()"},
-		{"from" : "\b\s*AND\s*\b", "to" : " & "},
 		{"from" : "\bUPPER\b", "to" : "upper", "case_sensitive_match" : 1},
 		{"from" : "\bLOWER\b", "to" : "lower", "case_sensitive_match" : 1},
 		{"from" : "\bRPAD\b", "to" : "rpad", "case_sensitive_match" : 1},
@@ -167,52 +106,35 @@ starttime = datetime.now() #start timestamp of the script~
 		{"from" : "\bFLOOR\b", "to":"floor", "case_sensitive_match" : 1},
 		{"from" : "\bMOD\b", "to":"mod", "case_sensitive_match" : 1},
 		{"from" : "\bLENGTH\b", "to":"length", "case_sensitive_match" : 1},
-		{"from" : "\band\b" , "to" : "&", "exclude_categories" : ["PYSPARK_FILTER"]},
-		{"from" : "\bor\b" , "to" : "|", "exclude_categories" : ["PYSPARK_FILTER"]},
-		{"from" : "\'os\.environ\.get\b\s*\(\'", "to" : "os.environ.get("},
-
+		
 
 		//
-//		{"from" : "\bISNULL", "to" : "TEMP_ISNULL"},
+		{"from" : "\bISNULL", "to" : "TEMP_ISNULL"},
 		{"from" : "\bNULL\b", "to" : "lit(None)"},
-		//{"from" : "\bNOT\s+ISNULL\s*\(\s*([a-zA-Z_\.]+)\s*\)", "to" : " $1.isNotNull()"},
+
 		{"from" : "REPLACESTR\s*\(\s*\d\s*," , "to" : "regexp_replace("},
 		{"from" : "SYSDATE" , "to" : "current_date()"},
-		//{"from" : "\$\$(\w+)", "to" : "os.environ.get('$1')"},
-		{"from" : "\$\$", "to" : "__DOUBLE_DOLLAR_SIGN__"},
-		{"from" : "\$", "to" : "__DOLLAR_SIGN__"},
-		//{"from" : "\$(\w+)", "to" : "os.environ.get('$1')"},
+		{"from" : "\$\$(\w+)", "to" : "os.environ.get('$1')"},
+		{"from" : "\$(\w+)", "to" : "os.environ.get('$1')"},
 		{"from" : "true", "to": "True", "first_match":"1"},
-		//{"from" : "\bor\b" , "to" : "|", "exclude_categories" : ["PYSPARK_FILTER"]},
+		{"from" : "\bor\b" , "to" : "|", "exclude_categories" : ["PYSPARK_FILTER"]},
+		{"from" : "\band\b" , "to" : "&", "exclude_categories" : ["PYSPARK_FILTER"]},
+
 		{"from" : "\=\s\=", "to" : "=="},
 		{"from" : "SYSTIMESTAMP", "to" : "current_timestamp()"},
-		{"from" : "SESSSTARTTIME", "to" : "(to_timestamp(starttime))"},
+		{"from" : "SESSSTARTTIME", "to" : "(to_timestamp(lit(starttime)))"},
 		{"from" : "YYYY-MM-DD", "to" : "yyyy-MM-dd", "case_sensitive_match" : 1}, // case_sensitive_match does not support $-tokens
-
+		
 		//update strategy - assign numeric values.
 		{"from" : "DD_INSERT", "to" : "0"},
 		{"from" : "DD_UPDATE", "to" : "1"},
 		{"from" : "DD_DELETE", "to" : "2"},
-		{"from" : "DD_REJECT", "to" : "3"},
-
-		{"from" : "CONCAT", "to" : "concat", "case_sensitive_match" : 1},
-
-		//change $$variables to what's needed
-		{"from" : "\'__DOUBLE_DOLLAR_SIGN__(\w+=)\'", "to" : "'$$$1'"},
-		{"from" : "\'__DOUBLE_DOLLAR_SIGN__(\w+)\'", "to" : "'$$$1'"},
-		{"from" : "__DOUBLE_DOLLAR_SIGN__(\w+)", "to" : "'$$$1'"},
-		{"from" : "\'__DOLLAR_SIGN__(\w+=)\'", "to" : "'$$1'"},
-		{"from" : "\'__DOLLAR_SIGN__(\w+)\'", "to" : "'$$1'"},
-		{"from" : "__DOLLAR_SIGN__(\w+)", "to" : "'$$1'"}
-		//{"from": "(TEMP_ISNULL|isnull)\s*\(\s*(\w+)\s*\)\s*\,\s*rpad\s*\(\s*\'([w\s\.]*)\'\s*\,\s*(\w+)\s*\)", "to" : "$1 ( $2 ) , rpad ( col('$2') , $4 , '$3' )"},
-		//{"from": "((TEMP_ISNULL|isnull)\s*\(\s*(\w+)\s*\))\s*\,\s*lpad\s*\(\s*\'([\w\s\.]*)\'\s*\,\s*(\w+)\s*\)", "to" : "$1 , lpad ( col('$3') , $5 , '$4' )"}
+		{"from" : "DD_REJECT", "to" : "3"}
 	],
 
 	"keep_single_quote_in_strings" : 1, //deprecated
 	"skip_variable_token_prefixes" : 1, //infa specific, keep it on
-
-	"generate_extraneous_router_dataframes" : 0,
-
+	
 	"operator_to_function_subst" : { //converting operators to functions
 		"||" : "concat"
 	},
@@ -223,31 +145,11 @@ starttime = datetime.now() #start timestamp of the script~
 	},
 
 	"block_subst" :[
-		{"from" : "\bto_date\s*\(\s*'([0-9]+)\/([0-9]+)\/([0-9]+)\s+([0-9]+):([0-9]+):([0-9]+)\s+PM'\s+,\s+'MM\/DD\/YYYY HH:MI:SS PM'\s+\)" , "to" : "to_date('$3-$1-$2', 'yyyy-MM-dd')"}//Added
-		//{"from": "(when\s*\(\s*\(([\w\.]+)\.TEMP_ISNULL\s*\(\s*\)\s*\))\s*,\s*\(rpad\s*\(\s*\'\s*\'\s*,\s*(\w+)\s*\)\s*\)\s*\)", "to" : "$1, rpad((col('$2')),$3, ' ' )"}
-
 		//{"from" : "\bdecode\((.*?)\)" , "extension_call" : "::convert_decode"}
-	],
-
-	"block_post_function_subst" : [
-//		{"from" : "NOT\s*(.*)\s*(\.|\s*__DOT__\s*)(isNull|TEMP_ISNULL)\s*\(\s*\)", "to" : "$1.isNotNull()"},
-//		{"from" : "\.\s*\.\s*isNull\s*\(\s*\)", "to" : ".isNull()"},
-//		{"from" : "\.\s*__DOT__\s*isNull\(\s*\)", "to" : ".isNull()"}
-//		{"from" : "(\w+)\s*\.\s*isNull\s*\(\s*\)", "to" : "col('$1').isNull()"},
-//		{"from" : "(\w+)\s*\.\s*isNotNull\s*\(\s*\)", "to" : "col('$1').isNotNull()"}
-		{"from" : "\s*__DOT__\s*", "to" : "."}
 	],
 
 	"function_subst" : [
 		// note: if we need to do any object oriented calls, like COL.cast(args), please use space __DOT__ space instead of a dot
-		{"from" : "rpad", "num_args" : 2,"arg_pattern" : {"1" : "'.*'"}, "output_template" : "rpad_temp(lit($1),$2,' ')"},
-		{"from" : "rpad", "num_args" : 2, "output_template" : "rpad_temp($1,$2,' ')"},
-		{"from" : "rpad_temp", "to" : "rpad"},
-		{"from" : "lpad", "num_args" : 2,"arg_pattern" : {"1" : "'.*'"}, "output_template" : "lpad_temp(lit($1),$2,' ')"},
-		{"from" : "lpad", "num_args" : 2, "output_template" : "lpad_temp($1,$2,' ')"},
-		{"from" : "lpad_temp", "to" : "lpad"},
-		{"from" :"IIF", "output_template": "when(($1),($2))", "num_args" : 2},
-		{"from" :"IIF", "output_template": "when(($1),($2)) __DOT__ otherwise($3)", "num_args" : 3},
 		{"from" : "DATE_DIFF", "output_template" : "datediff($1,$2)"},
 		{"from" : "SUBSTR", "to" : "substring"},
 		{"from" : "ADD_TO_DATE", "output_template" : "date_add($1,$3)", "arg_pattern" : {"2":"'DD'"}},
@@ -259,9 +161,7 @@ starttime = datetime.now() #start timestamp of the script~
 		{"from" : "GET_DATE_PART", "output_template" : "months($1)" ,"arg_pattern" : {"2":"'MM'" }},
 		{"from" : "GET_DATE_PART", "output_template" : "to_date($1)"},
 		{"from" : "IS_NUMBER", "output_template" : "$1 __DOT__ cast('int').isNotNull()"},
-		{"from" : "IS_SPACES", "output_template" : "$1 __DOT__ rlike(r\"[^a-zA-Z.-]+\s+\")"},
-		//{"from" : "IS_SPACES", "output_template" : "isspaces($1)"},
-		//{"from" : "IS_SPACES", "output_template" : "$1 __DOT__like(r'[^a-zA-Z.-]+\s+')"},
+		{"from" : "IS_SPACES", "output_template" : "isspaces($1)"},
 		//{"from" : "SUBSTR", "output_template" : "$1.substring($2,$3)"},
 		{"from" : "TO_DECIMAL", "output_template" : "$1 __DOT__ cast('decimal(12,2)')"},
 		//{"from" : "LENGTH", "output_template" : "length($1)", "first_match":"1"},
@@ -269,12 +169,15 @@ starttime = datetime.now() #start timestamp of the script~
 		{"from" : "REPLACECHR", "output_template" : "regexp_replace($2,$3,$4)"},
 		{"from" : "REG_MATCH", "output_template" : "$1 __DOT__ rlike($2)"},
 		{"from" : "TO_BIGINT", "output_template" : "$1 __DOT__ cast('int')"},
-		//{"from" :"IIF", "output_template": "when(($1),($2))", "num_args" : 2},
-		//{"from" :"IIF", "output_template": "when(($1),($2)) __DOT__ otherwise($3)", "num_args" : 3},
+		{"from" :"IIF", "output_template": "when(($1),($2))", "num_args" : 2},
+		{"from" :"IIF", "output_template": "when(($1),($2)) __DOT__ otherwise($3)"},
 		{"from" : "TO_CHAR", "output_template" : "$1 __DOT__ cast(StringType())"},
-		{"from" : "TO_INTEGER", "output_template" : "$1 __DOT__ cast(IntegerType())"},
-		//{"from" : "TEMP_ISNULL", "output_template" : "$1 __DOT__ isNull()"},
+		{"from" : "TEMP_ISNULL", "output_template" : "$1 __DOT__ isNull()"},
 		{"from" : "DECODE", "extension_call" : "::convert_decode"}
+	],
+
+	"block_post_function_subst" : [
+		{"from" : "\s*__DOT__\s*", "to" : "."}
 	],
 
 	"filter_subst" : {
@@ -293,8 +196,7 @@ starttime = datetime.now() #start timestamp of the script~
 
 
 	"commands" : {
-		"READER_FILE_DELIMITED_LOOKUP": "spark.read.csv('%PATH%%DELIMITED_FILE%', sep='%DELIMITER%', header='%HEADER%')",
-		"READER_FILE_DELIMITED": "spark.read.csv('%FILENAME%', sep='%DELIMITER%', header='%HEADER%')",
+		"READER_FILE_DELIMITED": "spark.read.csv('%PATH%', sep='%DELIMITER%', header='%HEADER%')",
 		"READER_RELATIONAL": "spark.read.jdbc(%CONNECT_STRING%, f\"\"\"%TABLE_NAME%\"\"\", ~
 properties={~
 'user': %LOGIN%,~
@@ -302,33 +204,25 @@ properties={~
 'driver': %DRIVER%})",
 		"READER_DEFAULT": "spark.read.jdbc(%CONNECT_STRING%, f\"\"\"%TABLE_NAME%\"\"\", properties={'user': %LOGIN%, 'password': %PASSWORD%, 'driver': %DRIVER%})",
 		"READER_SALEFORCE": "spark.read.salesforce(%CONNECT_STRING%, f\"\"\"%TABLE_NAME%\"\"\", properties={'user': %LOGIN%, 'password': %PASSWORD%, 'driver': %DRIVER%})",
-		"WRITER_FILE_DELIMITED": "%DF%.write.format('csv').option('header','%HEADER%').mode('overwrite').option(sep,'%DELIMITER%').csv('%PATH%')",
+		"WRITER_FILE_DELIMITED": "%DF%.write.format('csv').option('header','%HEADER%').mode('overwrite').option('sep','%DELIMITER%').csv('%PATH%')",
 		//"WRITER_RELATIONAL": "%DF%.write.mode('append').jdbc(%CONNECT_STRING%, f\"\"\"%TABLE_NAME%\"\"\", properties={'user': %LOGIN%, 'password': %PASSWORD%, 'driver': %DRIVER%})",
-		"WRITER_RELATIONAL": "%DF%.write.saveAsTable('%TABLE_NAME%', mode = 'append')",
+		"WRITER_RELATIONAL": "bqw.writeDF2BQ(%DF%, '%TABLE_NAME%','%OPERATION%', '%PKLIST%')", //PKLIST is the list of primary key columns, comma separated
 		"WRITER_SALEFORCE": "SomeArray.Append(%DF%)"
 	},
-
-	"default_flatfile_delimiter" : ",",
-
+	
 	// creates a set of withColumnRenamed commands to adjust columns names coming from sources.
 	// reason could be the database engine changing column case, or no column aliasing provided (e.g. count(xyz) without column name)
-	"conform_source_columns" : 1, //this will only kick in if the SQ does not generate column list in the SELECT clause, e.g. column list is overridden in Infa
-
+	"conform_source_columns" : 1,
+	
 	"df_naming_template" : "%NODE_NAME%", //when not specified, the converter will use NODE_NAME
 	"env_var_extraction": "os.environ.get('%VAR%')",
 	"system_type_class" : {
 		"MySQL" : "RELATIONAL",
-		"MSSQL" : "RELATIONAL",
-        "ODBC" : "RELATIONAL",
-        "Microsoft SQL Server" : "RELATIONAL",
 		"Salesforce" : "SALEFORCE",
 		"TOOLKIT" : "RELATIONAL",
 		"ORACLE" : "RELATIONAL",
-		"DEFAULT" : "RELATIONAL",
-		"FlatFile" : "FILE",
-		"FLATFILE" : "FILE"
-		//"FlatFile" : "FILE_DELIMITED",
-		//"FLATFILE" : "FILE_DELIMITED"
+		"DEFAULT" : "RELATIONAL", 
+		"FLATFILE":"FILE_DELIMITED"		
 	},
 	"connection_code_translations" : {
 		"Sample Salesforce Connection" : "SALESFORCE"
@@ -337,11 +231,10 @@ properties={~
 		"ORACLE" : "ORACLE",
 		"Oracle" : "ORACLE",
 		"DB2" : "DB2",
-		"Flat File" : "FLATFILE",
-		"FLAT FILE" : "FLATFILE",
-		"MSSQL" : "MSSQL",
-        "Microsoft SQL Server" : "MSSQL",
-        "ODBC" : "ODBC"
+//		"Flat File":"FILE_DELIMITED",
+		"FLAT FILE":"FLATFILE"
+
+
 	},
 
 	//////////////// MAPPLETS ////////////////
@@ -351,15 +244,14 @@ properties={~
 	"mapplet_code_indent" : "    ", //mapplet general code indent - 4 spaces
 	"mapplet_pyspark_code_indent" : "    ", //additional indents for multiline sql statements within mapplets. 4 spaces
 	"mapplet_header_template" : "!BB_CONFIG_WRITER_DIR!/Spark/python_mapplet_header_template.py",
-	"mapplet_input_declaration" : "\n    def %MAPPLET_NAME%(%INPUT%):", //specifying python function declaration.  But could be javascript in other cases
+	"mapplet_input_declaration" : "    def %MAPPLET_NAME%(%INPUT%):", //specifying python function declaration.  But could be javascript in other cases
 	"mapplet_conclusion" : "        #Implementation %MAPPLET_NAME% concluded\n\n",
 	"mapplet_object_var_inject_format" : "\"\"\" + %OBJECT_NAME% + \"\"\"", // use """ + OBJECT_NAME + """.
 	"mapplet_function_invocation" : "Mapplets.%MAPPLET_NAME%(%INPUT%)",
-	"mapplet_instance_prefixes" : ["sc_"], // specifies potential prefixes for mapplets.  This is needed when the converter generates the mapplet code and tries to grab the connection info
-	//"object_prefix_list_filename" : "!BB_CONFIG_WRITER_DIR!/Spark/TablePrefixCatalog.txt",
+	"mapplet_instance_prefixes" : ["sc_"] // specifies potential prefixes for mapplets.  This is needed when the converter generates the mapplet code and tries to grab the connection info
 
 	//Workflow conversion
-
+	,
 	"use_generic_workflow_builder" : 1,
 	"workflow_specs" : { // will kick in only if use_generic_workflow_builder is on
 		"workflow_class" : "CodeGeneration::DatabricksJobs",
@@ -472,10 +364,10 @@ properties={~
 		"workflow_component_template_ASSIGNMENT" : "!BB_CONFIG_WRITER_DIR!/Spark/ASSIGNMENT_template.py",
 		"workflow_component_template_CONTROL" : "!BB_CONFIG_WRITER_DIR!/Spark/CONTROL_template.py",
 		"workflow_component_template_DECISION" : "!BB_CONFIG_WRITER_DIR!/Spark/DECISION_template.py",
-
+		
 		"flow_start" : "\n########### Flow definition ###########\n",
 		"dependency_instruction_template" : "%COMPONENT_NAME% << %UPSTREAM_COMPONENT_LIST%",
-
+		
 		"component_list_spec" : {
 			"list_enclosure" : "[,]", //specify start character sequence before comma and closing char sequence after comma
 			"single_item_use_enclosure_flag" : "0"
@@ -484,9 +376,7 @@ properties={~
 		//"single_entry_template_COMMAND" : "#Command label %TOKEN1%\nos.system('%TOKEN2%')",
 		//"single_entry_template_ASSIGNMENT" : "%TOKEN1% = %TOKEN2%"
 	}
-	,
-	"generate_variable_declaration" : 1,
-	"variable_declaration_template" : "dbutils.widgets.text(name='%VARNAME%', defaultValue='%DEFAULT_VALUE%')",
-	"variable_declaration_header" : "# COMMAND ----------\n# Variable_declaration_comment"
+	
+	
 
 }
