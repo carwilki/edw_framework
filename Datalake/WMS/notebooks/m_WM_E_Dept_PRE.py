@@ -50,10 +50,6 @@ print('The prev run date is ' + prev_run_dt)
 
 # COMMAND ----------
 
-prev_run_dt = "2023-01-01"
-
-# COMMAND ----------
-
  (username,password,connection_string)= getConfig(dcnbr,env)
 
 
