@@ -192,8 +192,4 @@ def getMaxDate(refine_table_name,env):
 
 # COMMAND ----------
 
-print(getMaxDate("WM_E_CONSOL_PERF_SMRY","dev"))
-
-# COMMAND ----------
-
 
