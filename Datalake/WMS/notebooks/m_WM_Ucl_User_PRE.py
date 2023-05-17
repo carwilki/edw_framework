@@ -36,14 +36,10 @@ if prev_run_dt == "None":
     print("Prev_run_dt is none so getting maxdate")
     prev_run_dt = getMaxDate(refine_table_name,env)
 else:
-    prev_run_dt = datetime.strptime(prev_run_dt, "%Y-%m-%d %H:%M:%S.%f")
+    prev_run_dt = datetime.strptime(prev_run_dt, "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt.strftime('%Y-%m-%d')
 
 print('The prev run date is ' + prev_run_dt)
-
-
-# COMMAND ----------
-
 
 
 # COMMAND ----------
