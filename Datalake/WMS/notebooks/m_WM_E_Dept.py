@@ -4,7 +4,7 @@ from pyspark.sql import *
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
-from pyspark import SparkContext;
+from pyspark import SparkContext
 from pyspark import SparkConf
 from pyspark.sql.session import SparkSession
 from datetime import datetime
@@ -294,7 +294,8 @@ logger.info('Shortcut_to_WM_E_DEPT dataframe created successfully')
 
 #Final Merge 
 try:
-    executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table)
+    primary_key= "source.LOCATION_ID = target.LOCATION_ID AND source.WM_DEPT_ID = target.WM_DEPT_ID"
+    executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table,primary_key)
 
     logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:

@@ -4,12 +4,12 @@
 
 # COMMAND ----------
 
-def genMergeUpsertQuery(target_table,source_table,targetColList):
-  mergeQuery=""" MERGE INTO """+target_table+""" target USING """+source_table+""" source ON source.pyspark_data_action=1"""
-  mergeQuery=mergeQuery+""" WHEN MATCHED THEN UPDATE SET """
+def genMergeUpsertQuery(target_table,source_table,targetColList,primaryKeyString):
+  mergeQuery=""" MERGE INTO """+target_table+""" target USING """+source_table+""" source ON """+primaryKeyString
+  mergeQuery=mergeQuery+""" WHEN MATCHED AND source.pyspark_data_action=1 THEN UPDATE SET """
   for col in targetColList:
     mergeQuery=mergeQuery+" target."+col+"=source."+col+","
-  mergeQuery=mergeQuery.rstrip(',')+""" WHEN NOT MATCHED THEN INSERT ("""
+  mergeQuery=mergeQuery.rstrip(',')+""" WHEN NOT MATCHED AND source.pyspark_data_action=0 THEN INSERT ("""
   for col in targetColList:
     mergeQuery=mergeQuery+col+","
   mergeQuery=mergeQuery.rstrip(',')+") VALUES(" 
@@ -20,7 +20,7 @@ def genMergeUpsertQuery(target_table,source_table,targetColList):
 
 # COMMAND ----------
 
-def executeMerge(sourceDataFrame,targetTable):
+def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     import deepdiff
 
     try:
@@ -35,8 +35,8 @@ def executeMerge(sourceDataFrame,targetTable):
             listDiff=deepdiff.DeepDiff(sourceColList, targetColList, ignore_string_case=True)
             
             if len(sourceColList)==len(targetColList)  and listDiff=={}:
-                upsertQuery=genMergeUpsertQuery(targetTable,sourceTempView,targetColList) 
-                
+                upsertQuery=genMergeUpsertQuery(targetTable,sourceTempView,targetColList,primaryKeyString) 
+                print("Merge Query ::::::::"+upsertQuery)
                 spark.sql(upsertQuery)
                 print("Merge Completed Successfully!")
 
@@ -46,7 +46,3 @@ def executeMerge(sourceDataFrame,targetTable):
             raise Exception("Column for Insert/Update 'pyspark_data_action' not available in source!")
     except Exception as e:
         raise e
-
-# COMMAND ----------
-
-dbutils.secrets.listScopes()
