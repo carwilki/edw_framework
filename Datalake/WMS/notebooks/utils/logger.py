@@ -23,11 +23,8 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
         ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', current_timestamp())
         """
+        
     print('Logging the status')    
     print(sql_query)
     spark.sql(sql_query)
     print('Logging Completed')
-
-# COMMAND ----------
-
-

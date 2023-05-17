@@ -1,4 +1,8 @@
 # Databricks notebook source
+import pyspark.sql.functions as F
+
+# COMMAND ----------
+
 def dc10(env):
 
     if env.lower()=='dev' or env.lower()=='qa':
@@ -169,5 +173,27 @@ def getConfig(DC_NBR,env):
        'dc41': dc41(env)
        }
     return select.get(DC_NBR)
+
+
+
+# COMMAND ----------
+
+def getMaxDate(refine_table_name,env):
+    if refine_table_name=='WM_E_DEPT':
+        maxDateQuery= '''select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from '''+env+'''_refine.'''+refine_table_name #refinetable name to be added
+    elif refine_table_name=='WM_UCL_USER':
+        maxDateQuery= '''select greatest(coalesce(WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP),coalesce(WM_LAST_UPDATED_TSTMP,WM_CREATED_TSTMP) ) as max_date from '''+env+'''_refine.'''+refine_table_name
+    elif refine_table_name=='WM_E_CONSOL_PERF_SMRY':
+        maxDateQuery= '''select greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP) ) as max_date from '''+env+'''_refine.'''+refine_table_name
+    df = spark.sql(maxDateQuery)
+    maxDate=df.select(F.max(F.col('max_date'))).first()[0]
+    maxDate= maxDate.strftime('%Y-%m-%d')
+    return maxDate
+
+# COMMAND ----------
+
+print(getMaxDate("WM_E_CONSOL_PERF_SMRY","dev"))
+
+# COMMAND ----------
 
 

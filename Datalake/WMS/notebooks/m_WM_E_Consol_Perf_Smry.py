@@ -920,7 +920,8 @@ logger.info('Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully')
 
 #Final Merge 
 try:
-    executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table)
+    primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.WM_PERF_SMRY_TRAN_ID = target.WM_PERF_SMRY_TRAN_ID"
+    executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table, primary_key)
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}_raw.log_run_details")

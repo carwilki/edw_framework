@@ -623,7 +623,8 @@ logger.info('Input data for '+refined_user_table+' generated!')
 
 #Final Merge 
 try:
-    executeMerge(Shortcut_to_WM_UCL_USER,refined_user_table)
+    primary_key = "source.LOCATION_ID = target.LOCATION_ID"
+    executeMerge(Shortcut_to_WM_UCL_USER,refined_user_table, primary_key)
     logger.info('Merge with'+refined_user_table+'completed]')
     logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
