@@ -6,6 +6,14 @@ import json
 #Function to Log the Success/Failure to log_run_details table
 # #Usage   - logPrevRunDt('test','test','Completed','N/A',"dev_refine.log_run_details")  
 def logPrevRunDt(process,table_name,status,error,logTableName):
+    
+    from datetime import datetime as dt
+    # Getting current date and time
+    now = dt.now()
+    print("Without formatting", now)
+
+    s = now.strftime("%Y-%m-%d %H:%M:%S")
+    s = str(s)
 
     context_str = dbutils.notebook.entry_point.getDbutils().notebook().getContext().toJson()
     context = json.loads(context_str)
@@ -21,7 +29,7 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
     sql_query = f"""
         INSERT INTO {logTableName}
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
-        ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', current_timestamp())
+        ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', '{s}')
         """
         
     print('Logging the status')    

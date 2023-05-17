@@ -45,10 +45,6 @@ print('The prev run date is ' + prev_run_dt )
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
 #get Configs for JDBC Credentials
 (username,password,connection_string)= getConfig(dcnbr,env)
 
