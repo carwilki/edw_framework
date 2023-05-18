@@ -26,12 +26,21 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
         task_name='null'
         job_id=run_id=1
 
-    sql_query = f"""
+    
+    if status.lower()=='failed':
+        
+        sql_query = f"""
+        INSERT INTO {logTableName}
+        (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
+        ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', null)
+        """
+    else:
+        sql_query = f"""
         INSERT INTO {logTableName}
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
         ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', '{s}')
         """
-        
+
     print('Logging the status')    
     print(sql_query)
     spark.sql(sql_query)
