@@ -302,7 +302,3 @@ except Exception as e:
     pass
     logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}_raw.log_run_details")
 
-
-# COMMAND ----------
-
-
