@@ -48,7 +48,8 @@
 		{"from" : "ISNULL", "output_template" : "$1 IS NULL"},
 		//{"from" : "IIF", "output_template" : "CASE WHEN $1 THEN $2 ELSE $3 END"}, // specify template, instead of swapping arguments or replacing the function call
 //		{"from" : "IIF", "to" : "IFF"},
-		{"from" : "IIF", "output_template" : "IFF($1, $2, NULL)", "num_args" : "2"},
+		{"from" : "IIF", "output_template" : "IF ($1, $2, NULL)", "num_args" : "2"},
+		{"from" : "IIF", "output_template" : "IF ($1, $2, $3)", "num_args" : "3"},
 		{"from" : "IS_NUMBER", "output_template" : "cast($1 as double) IS NOT NULL"},
 		{"from" : "DATE_COMPARE", "output_template" :  "cast(regexp_replace($1, \"-\", \"\") as int) > cast(regexp_replace($2, \"-\", \"\") as int)"},
 		{"from" : "MAKE_DATE_TIME", "output_template" :  "cast($1+\"-\"+$2+\"-\"+$3+\" \"+$4+\":\"+$5+\":\"+$6 as timestamp)", "num_args" : "6"},
