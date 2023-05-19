@@ -141,8 +141,8 @@ E_CONSOL_PERF_SMRY.COMP_ASSIGNMENT_ID,
 E_CONSOL_PERF_SMRY.REFLECTIVE_CODE
 FROM E_CONSOL_PERF_SMRY
 WHERE 
-(trunc(E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1 ) 
-OR (trunc(E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
+(trunc(E_CONSOL_PERF_SMRY.CREATE_DATE_TIME) >= trunc(to_date('{prev_run_dt}','yyyy-mm-dd')) - 1)
+OR (trunc(E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= trunc(to_date('{prev_run_dt}','yyyy-mm-dd')) - 1)
 AND 1=1
 """
 
