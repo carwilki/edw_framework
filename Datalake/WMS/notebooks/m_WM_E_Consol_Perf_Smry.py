@@ -925,6 +925,7 @@ try:
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}_raw.log_run_details")
+    raise e
 
 
 # COMMAND ----------

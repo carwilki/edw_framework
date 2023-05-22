@@ -17,10 +17,6 @@ from datetime import datetime
 # COMMAND ----------
 
 
-
-# COMMAND ----------
-
-
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 
