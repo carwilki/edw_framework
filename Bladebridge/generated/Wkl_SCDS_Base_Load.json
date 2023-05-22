@@ -1,0 +1,86 @@
+{
+   "access_control_list" : [
+      {
+         "permission_level" : "CAN_MANAGE",
+         "user_name" : "jsmith@example.com"
+      }
+   ],
+   "email_notifications" : {
+      "no_alert_for_skipped_runs" : false,
+      "on_failure" : [
+         "user.name@databricks.com"
+      ],
+      "on_start" : [
+         "user.name@databricks.com"
+      ],
+      "on_success" : [
+         "user.name@databricks.com"
+      ]
+   },
+   "format" : "MULTI_TASK",
+   "git_source" : null,
+   "job_clusters" : [
+      {
+         "job_cluster_key" : "auto_scaling_cluster",
+         "new_cluster" : {}
+      }
+   ],
+   "max_concurrent_runs" : "10",
+   "name" : "Wkl_SCDS_Base_Load",
+   "schedule" : {
+      "pause_status" : "PAUSED",
+      "quartz_cron_expression" : "20 30 * * * ?",
+      "timezone_id" : "Europe/London"
+   },
+   "tags" : {
+      "cost-center" : "engineering",
+      "team" : "jobs"
+   },
+   "tasks" : [
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ucl_User.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ucl_User",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ucl_User"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Dept.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Dept",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Dept"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Consol_Perf_Smry.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Consol_Perf_Smry",
+         "timeout_seconds" : "86400"
+      }
+   ],
+   "timeout_seconds" : "86400"
+}
