@@ -30,9 +30,9 @@ target_table_name = schemaName+'.'+tableName
 refine_table_name='WM_E_CONSOL_PERF_SMRY'
 
 
-prev_run_dt = str(spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0])
+prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
 
-if prev_run_dt == None:
+if prev_run_dt is None:
     print("Prev_run_dt is none so getting maxdate")
     #prev_run_dt = getMaxDate(refine_table_name,env)
     prev_run_dt = "2000-01-01"
