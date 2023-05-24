@@ -158,7 +158,9 @@ SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
   .option("password", password)\
   .option("numPartitions", 3)\
   .option("driver", "oracle.jdbc.OracleDriver")\
+  .option("oracle.jdbc.timezoneAsRegion","false")\
   .load()
+  
 SQ_Shortcut_to_E_CONSOL_PERF_SMRY.createOrReplaceTempView("SQ_Shortcut_to_E_CONSOL_PERF_SMRY_Temp")
 
 # COMMAND ----------
