@@ -39,7 +39,7 @@ run_notebook("./m_WM_Ucl_User_PRE",3090,
 )
 run_notebook(
     "./m_WM_E_Dept_PRE",
-    3600,
+    8000,
     {
         "DC_NBR": f"{dcnbr}",
         "env": f"{env}"
@@ -47,7 +47,7 @@ run_notebook(
 )
 run_notebook(
     "./m_WM_E_Consol_Perf_Smry_PRE",
-    3600,
+    8000,
     {
         "DC_NBR": f"{dcnbr}",
         "env": f"{env}"
