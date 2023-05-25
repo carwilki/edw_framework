@@ -160,6 +160,10 @@ SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
   .option("driver", "oracle.jdbc.OracleDriver")\
   .option('fetchsize',10000)\
   .option("oracle.jdbc.timezoneAsRegion","false")\
+  .option("sessionInitStatement","""begin 
+  		execute immediate 'alter session set time_zone=''-07:00''';
+	end;
+ """) \
   .load()
   
 SQ_Shortcut_to_E_CONSOL_PERF_SMRY.createOrReplaceTempView("SQ_Shortcut_to_E_CONSOL_PERF_SMRY_Temp")
