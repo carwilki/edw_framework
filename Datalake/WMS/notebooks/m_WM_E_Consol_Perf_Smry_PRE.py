@@ -89,7 +89,7 @@ E_CONSOL_PERF_SMRY.REF_ADJ_UDIL,
 E_CONSOL_PERF_SMRY.REF_ADJ_NSDL,
 E_CONSOL_PERF_SMRY.MISC_NUMBER_1,
 E_CONSOL_PERF_SMRY.CREATE_DATE_TIME,
-E_CONSOL_PERF_SMRY.MOD_DATE_TIME,
+cast(E_CONSOL_PERF_SMRY.MOD_DATE_TIME as timestamp) as MOD_DATE_TIME,,
 E_CONSOL_PERF_SMRY.USER_ID,
 E_CONSOL_PERF_SMRY.MISC_1,
 E_CONSOL_PERF_SMRY.MISC_2,
@@ -158,6 +158,7 @@ SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
   .option("password", password)\
   .option("numPartitions", 3)\
   .option("driver", "oracle.jdbc.OracleDriver")\
+  .option('fetchsize',10000)\
   .option("oracle.jdbc.timezoneAsRegion","false")\
   .load()
   
