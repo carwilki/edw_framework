@@ -12,13 +12,7 @@ import logging
 
 # COMMAND ----------
 
-starttime = datetime.now()
-
-# COMMAND ----------
-
-
 dbutils.widgets.text(name='env', defaultValue='')
-
 env = dbutils.widgets.get('env')
 
 # COMMAND ----------
@@ -168,10 +162,6 @@ logger.info('JNR_WM_E_DEPT dataframe created successfully')
 
 # COMMAND ----------
 
-JNR_WM_E_DEPT.display()
-
-# COMMAND ----------
-
 FIL_NO_CHANGE_REC = JNR_WM_E_DEPT.select( \
 	JNR_WM_E_DEPT.LOCATION_ID.alias('LOCATION_ID'), \
 	JNR_WM_E_DEPT.DEPT_ID.alias('DEPT_ID'), \
@@ -291,15 +281,13 @@ logger.info('Shortcut_to_WM_E_DEPT dataframe created successfully')
 # COMMAND ----------
 
 
-
 #Final Merge 
 try:
     primary_key= "source.LOCATION_ID = target.LOCATION_ID AND source.WM_DEPT_ID = target.WM_DEPT_ID"
     executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table,primary_key)
-
+    logger.info('Merge with'+refined_dept_table+'completed')
     logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
-    pass
     logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}_raw.log_run_details")
     raise e
 

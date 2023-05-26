@@ -27,22 +27,19 @@ tableName='WM_E_DEPT_PRE'
 schemaName=env+'_raw'
 
 target_table_name = schemaName+'.'+tableName
-
 refine_table_name='WM_E_DEPT'
-
 
 
 prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
 
 if prev_run_dt is None:
-    #prev_run_dt = getMaxDate(refine_table_name,env)
-    prev_run_dt = "2023-05-12"
+    prev_run_dt = getMaxDate(refine_table_name,env)
+    
 else:
-    prev_run_dt = datetime.strptime(prev_run_dt, "%Y-%m-%d %H:%M:%S")
+    prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt.strftime('%Y-%m-%d')
 
 print('The prev run date is ' + prev_run_dt)
-
 
 
 # COMMAND ----------
@@ -78,7 +75,8 @@ FROM E_DEPT
 where
 (trunc(E_DEPT.CREATE_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1 ) 
 OR (trunc(E_DEPT.MOD_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1)
-OR (trunc(E_DEPT.CREATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
+OR (trunc(E_DEPT.CREATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1)
+OR (trunc(E_DEPT.LAST_UPDATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
 AND 1=1"""
 
 # COMMAND ----------
@@ -91,9 +89,12 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   .option("password", password)\
   .option("numPartitions", 3)\
   .option("driver", "oracle.jdbc.OracleDriver")\
-  .load()
+  .option('fetchsize',10000)\
+  .option("oracle.jdbc.timezoneAsRegion","false")\
+  .option("sessionInitStatement","""begin 
+  		execute immediate 'alter session set time_zone=''-07:00''';
+	end;""").load()
 
-SQ_Shortcut_to_E_DEPT.createOrReplaceTempView('SQ_Shortcut_to_E_DEPT_Temp')
 
 # COMMAND ----------
 
@@ -123,8 +124,4 @@ EXPTRANS.write.partitionBy('DC_NBR') \
   .mode("overwrite") \
   .option("replaceWhere", f'DC_NBR={dcnbr}') \
   .saveAsTable(target_table_name)
-
-
-# COMMAND ----------
-
 

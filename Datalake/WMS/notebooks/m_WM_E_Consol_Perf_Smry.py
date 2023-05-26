@@ -137,7 +137,6 @@ WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM """+pre_perf_table+
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY=spark.sql(consol_perf_smry_query).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('Query to extract data from'+refined_perf_table+' executed successfully')
 
-
 # COMMAND ----------
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select( \
@@ -333,7 +332,6 @@ logger.info('Site profile table query executed successfully!')
 # COMMAND ----------
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
-
 logger.info('JNR_SITE_PROFILE dataframe created successfully')
 
 # COMMAND ----------
@@ -922,12 +920,9 @@ logger.info('Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully')
 try:
     primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.WM_PERF_SMRY_TRAN_ID = target.WM_PERF_SMRY_TRAN_ID"
     executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table, primary_key)
+    logger.info('Merge with'+refined_perf_smry_table+'completed]')
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
     logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}_raw.log_run_details")
     raise e
-
-
-# COMMAND ----------
-
 

@@ -34,10 +34,10 @@ prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_det
 
 if prev_run_dt is None:
     print("Prev_run_dt is none so getting maxdate")
-    #prev_run_dt = getMaxDate(refine_table_name,env)
-    prev_run_dt = "2023-05-12"
+    prev_run_dt = getMaxDate(refine_table_name,env)
+    
 else:
-    prev_run_dt = datetime.strptime(prev_run_dt, "%Y-%m-%d %H:%M:%S")
+    prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt.strftime('%Y-%m-%d')
 
 print('The prev run date is ' + prev_run_dt)
@@ -124,9 +124,13 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   .option("user", username) \
   .option("password", password) \
   .option("numPartitions", 3)\
-  .option("driver","oracle.jdbc.driver.OracleDriver").load()
+  .option("driver","oracle.jdbc.driver.OracleDriver")\
+  .option('fetchsize',10000)\
+  .option("oracle.jdbc.timezoneAsRegion","false")\
+  .option("sessionInitStatement","""begin 
+  		execute immediate 'alter session set time_zone=''-07:00''';
+	end;""").load()
 
-SQ_Shortcut_to_UCL_USER.createOrReplaceTempView('SQ_Shortcut_to_UCL_USER_Temp')
 
 # COMMAND ----------
 

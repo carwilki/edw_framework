@@ -15,7 +15,6 @@ import logging
 dbutils.widgets.text(name='env', defaultValue='')
 env = dbutils.widgets.get('env')
 
-
 # COMMAND ----------
 
 pre_user_table=f'{env}_raw.WM_UCL_USER_PRE'
@@ -479,10 +478,6 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 
 # COMMAND ----------
 
-display(EXP_UPD_VALIDATOR)
-
-# COMMAND ----------
-
 
 UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	EXP_UPD_VALIDATOR.LOCATION_ID1.alias('LOCATION_ID1'), \
@@ -544,10 +539,6 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	
 UPD_INS_UPD=UPD_INS_UPD.withColumn('pyspark_data_action', when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
-
-# COMMAND ----------
-
-display(UPD_INS_UPD)
 
 # COMMAND ----------
 
@@ -628,11 +619,6 @@ try:
     logger.info('Merge with'+refined_user_table+'completed]')
     logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
-    
     logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{env}_raw.log_run_details")
     raise e
-
-
-# COMMAND ----------
-
 
