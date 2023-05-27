@@ -709,8 +709,8 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 	col('RESOURCE_GROUP_ID'), \
 	col('COMP_ASSIGNMENT_ID'), \
 	col('REFLECTIVE_CODE'), \
-	(when((col('in_LOAD_TSTMP').isNull()) ,(current_timestamp())).otherwise(col('in_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
-	(current_timestamp()).alias('UPDATE_TSTMP'), \
+	(when((col('in_LOAD_TSTMP').isNull()) ,(date_trunc('second',current_timestamp()))).otherwise(col('in_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
+	(date_trunc('second',current_timestamp())).alias('UPDATE_TSTMP'), \
 	col('in_WM_PERF_SMRY_TRAN_ID'), \
 	col('WM_CREATE_TSTMP'), \
 	col('WM_MOD_TSTMP') \
