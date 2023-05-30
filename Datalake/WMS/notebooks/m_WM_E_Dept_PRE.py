@@ -91,6 +91,10 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   .option("password", password)\
   .option("numPartitions", 3)\
   .option("driver", "oracle.jdbc.OracleDriver")\
+  .option("sessionInitStatement","""begin 
+  		execute immediate 'alter session set time_zone=''-07:00''';
+	end;
+ """) \
   .load()
 
 SQ_Shortcut_to_E_DEPT.createOrReplaceTempView('SQ_Shortcut_to_E_DEPT_Temp')
