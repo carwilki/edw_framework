@@ -274,8 +274,8 @@ Shortcut_to_WM_E_DEPT = UPD_VALIDATE.select( \
 	UPD_VALIDATE.LAST_UPDATED_DTTM.cast(TimestampType()).alias('WM_LAST_UPDATED_TSTMP'), \
 	UPD_VALIDATE.CREATE_DATE_TIME.cast(TimestampType()).alias('WM_CREATE_TSTMP'), \
 	UPD_VALIDATE.MOD_DATE_TIME.cast(TimestampType()).alias('WM_MOD_TSTMP'), \
-	UPD_VALIDATE.LOAD_TSTMP.cast(TimestampType()).alias('LOAD_TSTMP'), \
-	UPD_VALIDATE.UPDATE_TSTMP.cast(TimestampType()).alias('UPDATE_TSTMP'), \
+	UPD_VALIDATE.LOAD_TSTMP.cast(TimestampType()).alias('UPDATE_TSTMP'), \
+	UPD_VALIDATE.UPDATE_TSTMP.cast(TimestampType()).alias('LOAD_TSTMP'), \
 	UPD_VALIDATE.pyspark_data_action.alias('pyspark_data_action') \
 )
 logger.info('Shortcut_to_WM_E_DEPT dataframe created successfully')
