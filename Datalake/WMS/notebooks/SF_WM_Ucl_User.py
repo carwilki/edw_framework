@@ -8,8 +8,8 @@ env = dbutils.widgets.get('env')
 
 # COMMAND ----------
 
-deltaTable='dev_refine.WM_E_CONSOL_PERF_SMRY'
-SFTable='WM_E_CONSOL_PERF_SMRY_LGCY'
+deltaTable=env+'_refine.WM_UCL_USER'
+SFTable='WM_UCL_USER_LGCY'
 
 # COMMAND ----------
 
