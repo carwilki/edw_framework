@@ -124,7 +124,12 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   .option("user", username) \
   .option("password", password) \
   .option("numPartitions", 3)\
-  .option("driver","oracle.jdbc.driver.OracleDriver").load()
+  .option("driver","oracle.jdbc.driver.OracleDriver").
+  .option("sessionInitStatement","""begin 
+  		execute immediate 'alter session set time_zone=''-07:00''';
+	end;
+ """) \
+  .load()
 
 SQ_Shortcut_to_UCL_USER.createOrReplaceTempView('SQ_Shortcut_to_UCL_USER_Temp')
 
