@@ -22,7 +22,7 @@ CREATE TABLE raw.WM_E_DEPT_PRE (
   TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
-    CREATE TABLE  prod.WM_E_DEPT  ( LOCATION_ID INT not null
+    CREATE TABLE  refine.WM_E_DEPT  ( LOCATION_ID INT not null
   , WM_DEPT_ID                              DECIMAL(9,0)                not null
   , WM_WHSE                                 STRING 
   , WM_DEPT_CD                              STRING 
@@ -140,7 +140,7 @@ PARTITIONED BY (DC_NBR)
 TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
- CREATE TABLE  prod.WM_E_CONSOL_PERF_SMRY  ( LOCATION_ID INT not null
+ CREATE TABLE  refine.WM_E_CONSOL_PERF_SMRY  ( LOCATION_ID INT not null
   , WM_PERF_SMRY_TRAN_ID                    DECIMAL(20,0)               not null
   , WM_WHSE                                 STRING 
   , WM_LOGIN_USER_ID                        STRING 
@@ -297,7 +297,7 @@ CREATE TABLE raw.WM_UCL_USER_PRE (
   TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
   
- CREATE TABLE  prod.WM_UCL_USER  ( 
+ CREATE TABLE  refine.WM_UCL_USER  ( 
   , LOCATION_ID INT not null
   , WM_UCL_USER_ID                             DECIMAL(18,0)                not null
   , WM_COMPANY_ID                              DECIMAL(9,0) 
