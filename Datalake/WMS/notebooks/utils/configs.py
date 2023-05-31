@@ -41,7 +41,7 @@ def dc12(env):
 
     if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
-        hostname = "72.20.89.161"
+        hostname = "172.20.89.161"
         portnumber = "1812"
         db = "WMDC12P1" 
         password = dbutils.secrets.get(scope = "SVC_BD_ORA_P_READ" , key = f"{db}_password")
