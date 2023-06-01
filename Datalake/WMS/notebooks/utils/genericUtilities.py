@@ -23,12 +23,12 @@ password = dbutils.secrets.get("databricks_service_account", "password")
 
 def getSfCredentials(env,username,password):
 
-    if env.lower()=='dev':
+    if env.lower()=='dev_':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
         db="edw_"+env
         schema="public"
         warehouse="IT_WH"
-    if env.lower()=='qa':
+    if env.lower()=='qa_':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
         db="edw_"+env
         schema="public"
@@ -85,7 +85,7 @@ def getEnvPrefix(env:str):
         envPrefix='dev_'
     elif env.lower()=='qa':
         envPrefix='qa_'
-    elif env.lower()=='prod':
+    elif env.lower()=='prd':
         envPrefix=''
     else:
         raise Exception("Invalid environment")
