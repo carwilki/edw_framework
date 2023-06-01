@@ -11,15 +11,16 @@ from datetime import datetime
 import logging
 
 # COMMAND ----------
-
+dbutils:DBUtils=dbutils
+spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 # COMMAND ----------
 
-pre_user_table=f'{env}_raw.WM_UCL_USER_PRE'
-refined_user_table=f'{env}_refine.WM_UCL_USER'
-site_profile_table=f'{env}_refine.SITE_PROFILE'
+pre_user_table=f'{env}raw.WM_UCL_USER_PRE'
+refined_user_table=f'{env}refine.WM_UCL_USER'
+site_profile_table=f'{env}refine.SITE_PROFILE'
 
 logger=logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -617,8 +618,8 @@ try:
     primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.USER_NAME = target.USER_NAME"
     executeMerge(Shortcut_to_WM_UCL_USER,refined_user_table, primary_key)
     logger.info('Merge with'+refined_user_table+'completed]')
-    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{env}_raw.log_run_details")
+    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{env}raw.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{env}_raw.log_run_details")
+    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{env}raw.log_run_details")
     raise e
 

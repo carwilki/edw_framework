@@ -11,15 +11,16 @@ from datetime import datetime
 import logging
 
 # COMMAND ----------
-
+dbutils:DBUtils = dbutils
+spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 # COMMAND ----------
 
-pre_dept_table=f'{env}_raw.WM_E_DEPT_PRE'
-refined_dept_table=f'{env}_refine.WM_E_DEPT'
-site_profile_table=f'{env}_refine.SITE_PROFILE'
+pre_dept_table=f'{env}raw.WM_E_DEPT_PRE'
+refined_dept_table=f'{env}refine.WM_E_DEPT'
+site_profile_table=f'{env}refine.SITE_PROFILE'
 logger=logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -286,8 +287,8 @@ try:
     primary_key= "source.LOCATION_ID = target.LOCATION_ID AND source.WM_DEPT_ID = target.WM_DEPT_ID"
     executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table,primary_key)
     logger.info('Merge with'+refined_dept_table+'completed')
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}_raw.log_run_details")
+    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}raw.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}_raw.log_run_details")
+    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}raw.log_run_details")
     raise e
 

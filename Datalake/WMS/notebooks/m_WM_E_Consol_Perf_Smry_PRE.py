@@ -15,6 +15,8 @@ from datetime import datetime
 
 # COMMAND ----------
 
+dbutils:DBUtils = dbutils
+spark:SparkSession = spark
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
@@ -256,9 +258,6 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REFLECTIVE_CODE.cast(StringType()).alias('REFLECTIVE_CODE'), \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
-
-
-
 
 # COMMAND ----------
 

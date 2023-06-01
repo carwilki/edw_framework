@@ -12,17 +12,19 @@ from pyspark.dbutils import DBUtils
 import logging
 
 # COMMAND ----------
+dbutils:DBUtils=dbutils
+spark:SparkSession=spark
 
 dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 # COMMAND ----------
 
-pre_perf_table=f'{env}_raw.WM_E_CONSOL_PERF_SMRY_PRE'
-refined_perf_table=f'{env}_refine.WM_E_CONSOL_PERF_SMRY'
-site_profile_table='dev_refine.SITE_PROFILE'
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
+pre_perf_table=f'{env}raw.WM_E_CONSOL_PERF_SMRY_PRE'
+refined_perf_table=f'{env}refine.WM_E_CONSOL_PERF_SMRY'
+site_profile_table=f'{env}legacy.SITE_PROFILE'
+logger=getLogger()
+logger.setLevel(INFO)
 
 # COMMAND ----------
 
