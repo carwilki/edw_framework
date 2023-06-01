@@ -1,36 +1,34 @@
 # Databricks notebook source
-import os
 from pyspark.dbutils import DBUtils
-from pyspark.sql import *
-from pyspark.sql.functions import *
-from pyspark.sql.window import Window
-from pyspark.sql.types import *
-from pyspark import SparkContext
+from pyspark.sql.functions import current_timestamp, lit
+from pyspark.sql import DecimalType,StringType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-
+from utils.genericUtilities import getEnvPrefix
 # COMMAND ----------
 
 # MAGIC %run ./utils/configs 
 
 # COMMAND ----------
 
+dbutils:DBUtils = dbutils
+spark:SparkSession = spark
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 
 dcnbr = dbutils.widgets.get('DC_NBR')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 tableName='WM_E_CONSOL_PERF_SMRY_PRE'
-schemaName=env+'_raw'
+schemaName=env+'raw'
 
 target_table_name = schemaName+'.'+tableName
 
 refine_table_name='WM_E_CONSOL_PERF_SMRY'
 
 
-prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}_raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
+prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
 
 if prev_run_dt is None:
     print("Prev_run_dt is none so getting maxdate")
@@ -256,9 +254,6 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 	SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REFLECTIVE_CODE.cast(StringType()).alias('REFLECTIVE_CODE'), \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
-
-
-
 
 # COMMAND ----------
 

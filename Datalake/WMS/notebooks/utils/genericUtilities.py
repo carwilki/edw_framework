@@ -69,3 +69,16 @@ def ingestToSF(env,deltaTable,SFTable):
     except Exception as e:
         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}_raw.log_run_details")
         raise e
+
+#for the env we need to get the env prefix
+#if the env is != 'prod' then we need to add the env prefix to the table name
+def getEnvPrefix(env:str):
+    if env.lower()=='dev':
+        envPrefix='dev_'
+    elif env.lower()=='qa':
+        envPrefix='qa_'
+    elif env.lower()=='prod':
+        envPrefix=''
+    else:
+        raise Exception("Invalid environment")
+    return envPrefix
