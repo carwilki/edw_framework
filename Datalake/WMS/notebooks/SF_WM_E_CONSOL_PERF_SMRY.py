@@ -3,6 +3,10 @@
 
 # COMMAND ----------
 
+# MAGIC %run ./utils/genericUtilities
+
+# COMMAND ----------
+
 from pyspark.dbutils import DBUtils
 from logging import getLogger
 

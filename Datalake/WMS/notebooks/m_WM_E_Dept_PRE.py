@@ -10,6 +10,11 @@ from datetime import datetime
 # MAGIC %run ./utils/configs 
 
 # COMMAND ----------
+
+# MAGIC %run ./utils/genericUtilities
+
+# COMMAND ----------
+
 spark:SparkSession=spark
 dbutils:DBUtils=dbutils
 dbutils.widgets.text(name='DC_NBR', defaultValue='')

@@ -4,9 +4,14 @@ from pyspark.sql.functions import current_timestamp, lit
 from pyspark.sql import DecimalType,StringType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
+
 # COMMAND ----------
 
 # MAGIC %run ./utils/configs 
+
+# COMMAND ----------
+
+# MAGIC %run ./utils/genericUtilities
 
 # COMMAND ----------
 

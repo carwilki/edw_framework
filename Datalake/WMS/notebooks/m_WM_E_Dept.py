@@ -5,6 +5,11 @@ from pyspark.sql.types import DecimalType, TimestampType, StringType
 from pyspark.sql.session import SparkSession
 
 # COMMAND ----------
+
+# MAGIC %run ./utils/genericUtilities
+
+# COMMAND ----------
+
 dbutils:DBUtils = dbutils
 spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')

@@ -5,6 +5,11 @@ from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing
 from pyspark.sql.types import StringType,DecimalType,TimestampType,DateType,LongType
 
 # COMMAND ----------
+
+# MAGIC %run ./utils/genericUtilities
+
+# COMMAND ----------
+
 dbutils:DBUtils=dbutils
 spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')
