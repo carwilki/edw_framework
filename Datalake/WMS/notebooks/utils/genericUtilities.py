@@ -35,7 +35,7 @@ def getSfCredentials(env,username,password):
         warehouse="IT_WH"
     if env.lower()=='':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
-        db="edw_prod"
+        db="edw_prd"
         schema="public"
         warehouse="IT_WH"  
 
