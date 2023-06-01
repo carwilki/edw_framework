@@ -1,15 +1,16 @@
 # Databricks notebook source
-import logging
-
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
-
+from logging import getLogger,INFO
+from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
+from logger import logPrevRunDt
 # COMMAND ----------
 
-# MAGIC %run ./logger
+logger=getLogger()
+logger.setLevel(INFO)
 
 # COMMAND ----------
-
+spark:SparkSession=spark
+dbutils:DBUtils=dbutils
 username = dbutils.secrets.get("databricks_service_account", "username")
 password = dbutils.secrets.get("databricks_service_account", "password")
 
