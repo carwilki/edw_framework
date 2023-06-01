@@ -1,4 +1,8 @@
 # Databricks notebook source
+# MAGIC %run ./logger
+
+# COMMAND ----------
+
 from logging import getLogger,INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
