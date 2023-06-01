@@ -12,6 +12,8 @@ from datetime import datetime
 
 # COMMAND ----------
 
+dbutils:DBUtils=dbutils
+spark:SparkSession=spark
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 dcnbr = dbutils.widgets.get('DC_NBR')

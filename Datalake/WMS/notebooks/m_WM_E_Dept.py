@@ -3,9 +3,6 @@ from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import col, lit, when, current_timestamp, monotonically_increasing_id
 from pyspark.sql.types import DecimalType, TimestampType, StringType
 from pyspark.sql.session import SparkSession
-from utils.genericUtilities import getEnvPrefix
-from utils.mergeUtils import executeMerge
-from utils.logger import logPrevRunDt
 
 # COMMAND ----------
 dbutils:DBUtils = dbutils

@@ -1,9 +1,7 @@
 # Databricks notebook source
-
+# MAGIC %run ./utils/genericUtilities
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import ingestToSF
 from logging import getLogger
-
 # COMMAND ----------
 dbutils: DBUtils = dbutils
 dbutils.widgets.text(name='env', defaultValue='')

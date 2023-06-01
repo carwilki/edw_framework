@@ -1,6 +1,5 @@
 # Databricks notebook source
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import ingestToSF
 from logging import getLogger
 # COMMAND ----------
 

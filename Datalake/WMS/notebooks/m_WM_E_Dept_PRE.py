@@ -1,12 +1,9 @@
 # Databricks notebook source
-import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp,lit
 from pyspark.sql.types import StringType,DecimalType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from utils.configs import getConfig,getMaxDate
-from utils.genericUtilities import getEnvPrefix
 
 # COMMAND ----------
 

@@ -5,9 +5,6 @@ from pyspark.sql import *
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
-from utils.genericUtilities import getEnvPrefix
-from utils.mergeUtils import executeMerge
-from utils.logger import logPrevRunDt
 
 # COMMAND ----------
 dbutils:DBUtils=dbutils
