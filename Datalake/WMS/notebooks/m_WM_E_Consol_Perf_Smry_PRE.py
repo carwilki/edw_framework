@@ -22,17 +22,19 @@ dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 
 dcnbr = dbutils.widgets.get('DC_NBR')
-env = getEnvPrefix(dbutils.widgets.get('env'))
-
+env = dbutils.widgets.get('env')
+refine = getEnvPrefix(env)+'refine'
+raw = getEnvPrefix(env)+'raw'
+legacy = getEnvPrefix(env)+'legacy'
 tableName='WM_E_CONSOL_PERF_SMRY_PRE'
-schemaName=env+'raw'
+schemaName=raw
 
 target_table_name = schemaName+'.'+tableName
 
 refine_table_name='WM_E_CONSOL_PERF_SMRY'
 
 
-prev_run_dt = spark.sql(f"""select max(prev_run_date) from {env}raw.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
+prev_run_dt = spark.sql(f"""select max(prev_run_date) from {schemaName}.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'""").collect()[0][0]
 
 if prev_run_dt is None:
     print("Prev_run_dt is none so getting maxdate")

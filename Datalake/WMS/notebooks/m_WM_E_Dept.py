@@ -13,13 +13,15 @@ from pyspark.sql.session import SparkSession
 dbutils:DBUtils = dbutils
 spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')
-env = getEnvPrefix(dbutils.widgets.get('env'))
-
+env = dbutils.widgets.get('env')
+refine = getEnvPrefix(env)+'refine'
+raw = getEnvPrefix(env)+'raw'
+legacy = getEnvPrefix(env)+'legacy'
 # COMMAND ----------
 
-pre_dept_table=f'{env}raw.WM_E_DEPT_PRE'
-refined_dept_table=f'{env}refine.WM_E_DEPT'
-site_profile_table=f'{env}refine.SITE_PROFILE'
+pre_dept_table=f'{raw}.WM_E_DEPT_PRE'
+refined_dept_table=f'{refine}.WM_E_DEPT'
+site_profile_table=f'{refine}.SITE_PROFILE'
 logger=logging.getLogger()
 logger.setLevel(logging.INFO)
 

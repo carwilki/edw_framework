@@ -13,13 +13,15 @@ from pyspark.sql.types import StringType,DecimalType,TimestampType,DateType,Long
 dbutils:DBUtils=dbutils
 spark:SparkSession=spark
 dbutils.widgets.text(name='env', defaultValue='')
-env = getEnvPrefix(dbutils.widgets.get('env'))
-
+env = dbutils.widgets.get('env')
+refine = getEnvPrefix(env)+'refine'
+raw = getEnvPrefix(env)+'raw'
+legacy = getEnvPrefix(env)+'legacy'
 # COMMAND ----------
 
-pre_user_table=f'{env}raw.WM_UCL_USER_PRE'
-refined_user_table=f'{env}refine.WM_UCL_USER'
-site_profile_table=f'{env}refine.SITE_PROFILE'
+pre_user_table=f'{raw}.WM_UCL_USER_PRE'
+refined_user_table=f'{refine}.WM_UCL_USER'
+site_profile_table=f'{refine}.SITE_PROFILE'
 
 logger=logging.getLogger()
 logger.setLevel(logging.INFO)

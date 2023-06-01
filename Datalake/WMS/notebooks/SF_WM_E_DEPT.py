@@ -10,12 +10,14 @@ from logging import getLogger
 
 dbutils: DBUtils = dbutils
 dbutils.widgets.text(name='env', defaultValue='')
-env = getEnvPrefix(dbutils.widgets.get('env'))
+env =dbutils.widgets.get('env')
 logger = getLogger()
-
+refine = getEnvPrefix(env)+'refine'
+raw = getEnvPrefix(env)+'raw'
+legacy = getEnvPrefix(env)+'legacy'
 # COMMAND ----------
 
-deltaTable=env+"refine.WM_E_DEPT"
+deltaTable=f"{refine}.WM_E_DEPT"
 SFTable="WM_E_DEPT_LGCY"
 
 # COMMAND ----------
