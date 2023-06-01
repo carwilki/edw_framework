@@ -17,9 +17,11 @@ spark:SparkSession=spark
 
 dbutils.widgets.text(name='env', defaultValue='')
 env = dbutils.widgets.get('env')
+env2 = getEnvPrefix(env)
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
 pre_perf_table=f'{raw}.WM_E_CONSOL_PERF_SMRY_PRE'
@@ -927,6 +929,6 @@ try:
     logger.info(f'Merge with {refined_perf_smry_table} completed]')
     #logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}raw.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}raw.log_run_details")
+    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{raw}.log_run_details")
     raise e
 

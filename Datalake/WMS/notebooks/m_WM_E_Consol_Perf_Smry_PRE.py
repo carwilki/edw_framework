@@ -38,7 +38,7 @@ prev_run_dt = spark.sql(f"""select max(prev_run_date) from {schemaName}.log_run_
 
 if prev_run_dt is None:
     print("Prev_run_dt is none so getting maxdate")
-    prev_run_dt = getMaxDate(refine_table_name,env)    
+    prev_run_dt = getMaxDate(refine_table_name,refine)    
 else:
     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt.strftime('%Y-%m-%d')
