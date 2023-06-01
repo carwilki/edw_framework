@@ -135,7 +135,8 @@ SQ_Shortcut_to_UCL_USER = spark.read \
 
 # COMMAND ----------
 
-EXPTRANS=SQ_Shortcut_to_UCL_USER.withcol("sys_row_id", monotonically_increasing_id())
+EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
+
 
 # COMMAND ----------
 
