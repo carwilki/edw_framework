@@ -130,16 +130,16 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   .option("oracle.jdbc.timezoneAsRegion","false")\
   .option("sessionInitStatement","""begin 
   		execute immediate 'alter session set time_zone=''-07:00''';
-	end;""")
+	end;""").load()
 
 
 # COMMAND ----------
 
-EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
+EXPTRANS=SQ_Shortcut_to_UCL_USER.withcol("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
-Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
+Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select( \
 	lit(f'{dcnbr}').cast(DecimalType(3,0)).alias('DC_NBR'), \
 	EXPTRANS.UCL_USER_ID.cast(DecimalType(18,0)).alias('UCL_USER_ID'), \
 	EXPTRANS.COMPANY_ID.cast(DecimalType(9,0)).alias('COMPANY_ID'), \
