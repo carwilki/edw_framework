@@ -33,9 +33,9 @@ def getSfCredentials(env,username,password):
         db="edw_"+env
         schema="public"
         warehouse="IT_WH"
-    if env.lower()=='prod':
+    if env.lower()=='':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
-        db="edw_"+env
+        db="edw_prod"
         schema="public"
         warehouse="IT_WH"  
 
@@ -75,6 +75,8 @@ def ingestToSF(env,deltaTable,SFTable):
     except Exception as e:
         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}raw.log_run_details")
         raise e
+
+# COMMAND ----------
 
 #for the env we need to get the env prefix
 #if the env is != 'prod' then we need to add the env prefix to the table name
