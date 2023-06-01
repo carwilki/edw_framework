@@ -75,7 +75,7 @@ E_DEPT.PERF_GOAL,
 E_DEPT.VERSION_ID,
 E_DEPT.CREATED_DTTM,
 E_DEPT.LAST_UPDATED_DTTM
-FROM E_DEPT
+FROM WMSMIS.E_DEPT
 where
 (trunc(E_DEPT.CREATE_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1 ) 
 OR (trunc(E_DEPT.MOD_DATE_TIME) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1)
