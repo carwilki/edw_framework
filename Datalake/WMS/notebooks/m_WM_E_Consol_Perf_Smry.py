@@ -1,28 +1,28 @@
 # Databricks notebook source
-import os
+from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *
 from pyspark.sql.functions import *
-from pyspark.sql.window import Window
 from pyspark.sql.types import *
-from pyspark import SparkContext;
 from pyspark.sql.session import SparkSession
-from datetime import datetime
-from pyspark.dbutils import DBUtils
-import logging
+from utils.genericUtilities import getEnvPrefix
+from utils.mergeUtils import executeMerge
+from utils.logger import logPrevRunDt
 
 # COMMAND ----------
+dbutils:DBUtils=dbutils
+spark:SparkSession=spark
 
 dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 # COMMAND ----------
 
-pre_perf_table=f'{env}_raw.WM_E_CONSOL_PERF_SMRY_PRE'
-refined_perf_table=f'{env}_refine.WM_E_CONSOL_PERF_SMRY'
-site_profile_table='dev_refine.SITE_PROFILE'
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
+pre_perf_table=f'{env}raw.WM_E_CONSOL_PERF_SMRY_PRE'
+refined_perf_table=f'{env}refine.WM_E_CONSOL_PERF_SMRY'
+site_profile_table=f'{env}legacy.SITE_PROFILE'
+logger=getLogger()
+logger.setLevel(INFO)
 
 # COMMAND ----------
 
@@ -920,9 +920,9 @@ logger.info('Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully')
 try:
     primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.WM_PERF_SMRY_TRAN_ID = target.WM_PERF_SMRY_TRAN_ID"
     executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table, primary_key)
-    logger.info('Merge with'+refined_perf_smry_table+'completed]')
+    logger.info(f'Merge with {refined_perf_smry_table} completed]')
     #logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}_raw.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}_raw.log_run_details")
+    logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Failed',str(e),f"{env}raw.log_run_details")
     raise e
 
