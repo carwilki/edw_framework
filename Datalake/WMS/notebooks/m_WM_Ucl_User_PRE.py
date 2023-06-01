@@ -17,7 +17,8 @@ spark:SparkSession=spark
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 dcnbr = dbutils.widgets.get('DC_NBR')
-env = dbutils.widgets.get('env')
+
+env = getEnvPrefix(dbutils.widgets.get('env'))
 
 tableName='WM_UCL_USER_PRE'
 schemaName=env+'raw'
