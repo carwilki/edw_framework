@@ -16,7 +16,7 @@ def dc10(env):
         
         return (username,password,connection_string)
 
-    if env.lower()=='prd' :
+    if env.lower()=='prod' :
         username = "SVC_BD_ORA_P_READ"
         hostname = "172.20.89.160"
         portnumber = "1810"

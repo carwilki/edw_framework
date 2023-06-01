@@ -85,7 +85,7 @@ def getEnvPrefix(env:str):
         envPrefix='dev_'
     elif env.lower()=='qa':
         envPrefix='qa_'
-    elif env.lower()=='prd':
+    elif env.lower()=='prod':
         envPrefix=''
     else:
         raise Exception("Invalid environment")
