@@ -3,5 +3,7 @@
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "python.formatting.provider": "none",
-    "python.analysis.typeCheckingMode": "off"
+    "python.analysis.typeCheckingMode": "off",
+    "python.envFile": "${workspaceFolder}/.databricks/.databricks.env",
+    "databricks.python.envFile": "${workspaceFolder}/.env"
 }
