@@ -66,9 +66,9 @@ def ingestToSF(env,deltaTable,SFTable):
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
         
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{env}_raw.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{env}raw.log_run_details")
     except Exception as e:
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}_raw.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}raw.log_run_details")
         raise e
 
 #for the env we need to get the env prefix
