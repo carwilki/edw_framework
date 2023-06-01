@@ -1,18 +1,17 @@
 # Databricks notebook source
+import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id
 from pyspark.sql.types import StringType,DecimalType,TimestampType
 from datetime import datetime
-from utils.configs import getConfig,getMaxDate
+
 # COMMAND ----------
 
 # MAGIC %run ./utils/configs 
 
 # COMMAND ----------
 
-dbutils:DBUtils=dbutils
-spark:SparkSession=spark
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='env', defaultValue='')
 dcnbr = dbutils.widgets.get('DC_NBR')
