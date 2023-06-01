@@ -91,9 +91,8 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   .option("driver", "oracle.jdbc.OracleDriver")\
   .option("sessionInitStatement","""begin 
   		execute immediate 'alter session set time_zone=''-07:00''';
-	end;
- """) \
-  .load()
+		end;
+ 	""")
 
 
 # COMMAND ----------

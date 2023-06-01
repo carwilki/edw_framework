@@ -129,7 +129,7 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   .option("oracle.jdbc.timezoneAsRegion","false")\
   .option("sessionInitStatement","""begin 
   		execute immediate 'alter session set time_zone=''-07:00''';
-	end;""").load()
+	end;""")
 
 
 # COMMAND ----------

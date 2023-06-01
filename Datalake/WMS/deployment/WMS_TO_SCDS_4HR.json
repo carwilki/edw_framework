@@ -23,6 +23,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -42,6 +49,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -61,6 +75,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -80,6 +101,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -99,6 +127,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -118,6 +153,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -263,6 +305,13 @@
                     "source": "GIT"
                 },
                 "existing_cluster_id": "0509-005631-cmrsptcr",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    }
+                ],
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
