@@ -1,4 +1,4 @@
- CREATE TABLE SCDS_STG_PRD.WM_E_DEPT_PRE (
+CREATE TABLE raw.WM_E_DEPT_PRE (
   DC_NBR DECIMAL(3,0) NOT NULL,
   DEPT_ID DECIMAL(9,0) NOT NULL,
   DEPT_CODE STRING,
@@ -17,13 +17,12 @@
   LAST_UPDATED_DTTM TIMESTAMP,
   LOAD_TSTMP TIMESTAMP DEFAULT CURRENT_TIMESTAMP())
   USING delta
-  LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/wms/wm_e_dept_pre'
+  LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_dept_pre'
   PARTITIONED BY (DC_NBR)
+  TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
-  ALTER TABLE SCDS_STG_PRD.WM_E_DEPT_PRE ALTER COLUMN LOAD_TSTMP SET DEFAULT CURRENT_TIMESTAMP();
-
-    CREATE TABLE  SCDS_PRD.WM_E_DEPT  ( LOCATION_ID INT not null
+    CREATE TABLE  refine.WM_E_DEPT  ( LOCATION_ID INT not null
   , WM_DEPT_ID                              DECIMAL(9,0)                not null
   , WM_WHSE                                 STRING 
   , WM_DEPT_CD                              STRING 
@@ -41,162 +40,14 @@
   , WM_MOD_TSTMP                            TIMESTAMP
   , UPDATE_TSTMP                            TIMESTAMP                 not null
   , LOAD_TSTMP                              TIMESTAMP                  not null
-  );
+  ) 
+  USING delta
+  LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_dept'
+  TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported')
+  ;
   --DISTRIBUTE ON RANDOM
 
-
-
- CREATE TABLE  SCDS_PRD.WM_E_CONSOL_PERF_SMRY  ( LOCATION_ID INT not null
-  , WM_PERF_SMRY_TRAN_ID                    DECIMAL(20,0)               not null
-  , WM_WHSE                                 STRING 
-  , WM_LOGIN_USER_ID                        STRING 
-  , WM_JOB_FUNCTION_NAME                    STRING 
-  , CLOCK_IN_TSTMP                          TIMESTAMP 
-  , CLOCK_OUT_TSTMP                         TIMESTAMP 
-  , CLOCK_IN_STATUS                         DECIMAL(3,0) 
-  , START_TSTMP                             TIMESTAMP 
-  , END_TSTMP                               TIMESTAMP 
-  , WHSE_TSTMP                              TIMESTAMP 
-  , TEAM_BEGIN_TSTMP                        TIMESTAMP 
-  , WM_SHIFT_CD                             STRING 
-  , WM_REPORT_SHIFT_CD                      STRING 
-  , WM_USER_ID                              STRING 
-  , WM_SPVSR_LOGIN_USER_ID                  STRING 
-  , WM_DEPT_CD                              STRING 
-  , WM_RESOURCE_GROUP_ID                    STRING 
-  , WM_COMP_ASSIGNMENT_ID                   STRING 
-  , WM_REFLECTIVE_CD                        STRING 
-  , WM_EMP_PERF_SMRY_ID                     DECIMAL(20,0) 
-  , WM_LOCN_GRP_ATTR                        STRING 
-  , WM_VERSION_ID                           DECIMAL(6,0) 
-  , WM_OPS_CD                               STRING 
-  , WM_TEAM_CD                              STRING 
-  , WM_REF_NBR                              STRING 
-  , DEFAULT_JF_FLAG                         DECIMAL(9,0) 
-  , EVENT_CNT                               DECIMAL(9,0) 
-  , TOTAL_SAM                               DECIMAL(20,7) 
-  , TOTAL_PAM                               DECIMAL(13,5) 
-  , TOTAL_TIME                              DECIMAL(13,5) 
-  , TOTAL_QTY                               DECIMAL(13,5) 
-  , OSDL                                    DECIMAL(13,5) 
-  , OSIL                                    DECIMAL(13,5) 
-  , NSDL                                    DECIMAL(13,5) 
-  , SIL                                     DECIMAL(13,5) 
-  , UDIL                                    DECIMAL(13,5) 
-  , UIL                                     DECIMAL(13,5) 
-  , ADJ_OSDL                                DECIMAL(13,5) 
-  , ADJ_OSIL                                DECIMAL(13,5) 
-  , ADJ_UDIL                                DECIMAL(13,5) 
-  , ADJ_NSDL                                DECIMAL(13,5) 
-  , PAID_BRK                                DECIMAL(13,5) 
-  , UNPAID_BRK                              DECIMAL(13,5) 
-  , REF_OSDL                                DECIMAL(13,5) 
-  , REF_OSIL                                DECIMAL(13,5) 
-  , REF_UDIL                                DECIMAL(13,5) 
-  , REF_NSDL                                DECIMAL(13,5) 
-  , REF_ADJ_OSDL                            DECIMAL(13,5) 
-  , REF_ADJ_OSIL                            DECIMAL(13,5) 
-  , REF_ADJ_UDIL                            DECIMAL(13,5) 
-  , REF_ADJ_NSDL                            DECIMAL(13,5) 
-  , REF_SAM                                 DECIMAL(13,5) 
-  , REF_PAM                                 DECIMAL(13,5) 
-  , LABOR_COST_RATE                         DECIMAL(20,7) 
-  , THRUPUT_MIN                             DECIMAL(20,7) 
-  , PAID_OVERLAP_OSDL                       DECIMAL(20,7) 
-  , UNPAID_OVERLAP_OSDL                     DECIMAL(20,7) 
-  , PAID_OVERLAP_NSDL                       DECIMAL(20,7) 
-  , UNPAID_OVERLAP_NSDL                     DECIMAL(20,7) 
-  , PAID_OVERLAP_OSIL                       DECIMAL(20,7) 
-  , UNPAID_OVERLAP_OSIL                     DECIMAL(20,7) 
-  , PAID_OVERLAP_UDIL                       DECIMAL(20,7) 
-  , UNPAID_OVERLAP_UDIL                     DECIMAL(20,7) 
-  , DISPLAY_UOM_QTY                         DECIMAL(20,7) 
-  , DISPLAY_UOM                             STRING 
-  , MISC_1                                  STRING 
-  , MISC_2                                  STRING 
-  , MISC_TXT_1                              STRING 
-  , MISC_TXT_2                              STRING 
-  , MISC_NBR_1                              DECIMAL(13,5) 
-  , MISC_NUM_1                              DECIMAL(20,7) 
-  , MISC_NUM_2                              DECIMAL(20,7) 
-  , LEVEL_1                                 STRING 
-  , LEVEL_2                                 STRING 
-  , LEVEL_3                                 STRING 
-  , LEVEL_4                                 STRING 
-  , LEVEL_5                                 STRING 
-  , WM_EVNT_CTGRY_1                         STRING 
-  , WM_EVNT_CTGRY_2                         STRING 
-  , WM_EVNT_CTGRY_3                         STRING 
-  , WM_EVNT_CTGRY_4                         STRING 
-  , WM_EVNT_CTGRY_5                         STRING 
-  , WM_CREATE_TSTMP                         TIMESTAMP 
-  , WM_MOD_TSTMP                            TIMESTAMP 
-  , UPDATE_TSTMP                            TIMESTAMP                   not null
-  , LOAD_TSTMP                              TIMESTAMP                   not null
-  );
-  --DISTRIBUTE ON (WM_PERF_SMRY_TRAN_ID)
-  --ORGANIZE   ON (LOCATION_ID)
-
-
- CREATE TABLE  SCDS_PRD.WM_UCL_USER  ( 
-  , LOCATION_ID INT not null
-  , WM_UCL_USER_ID                             DECIMAL(18,0)                not null
-  , WM_COMPANY_ID                              DECIMAL(9,0) 
-  , WM_LOCATION_ID                             DECIMAL(18,0) 
-  , WM_LOCALE_ID                               DECIMAL(4,0) 
-  , WM_USER_TYPE_ID                            DECIMAL(4,0) 
-  , ACTIVE_FLAG                                DECIMAL(1,0) 
-  , USER_NAME                                  STRING        not null
-  , TAX_ID_NBR                                 STRING 
-  , COMMON_NAME                                STRING 
-  , USER_PREFIX                                STRING 
-  , USER_TITLE                                 STRING 
-  , USER_FIRST_NAME                            STRING 
-  , USER_MIDDLE_NAME                           STRING 
-  , USER_LAST_NAME                             STRING 
-  , BIRTH_DT DATE
-  , GENDER_ID                                  STRING 
-  , EMPLOYEE_START_DT DATE
-  , ADDR_1                                     STRING 
-  , ADDR_2                                     STRING 
-  , CITY                                       STRING 
-  , STATE_PROV_CD                              STRING 
-  , POSTAL_CD                                  STRING 
-  , COUNTRY_CD                                 STRING 
-  , USER_EMAIL_1                               STRING 
-  , USER_EMAIL_2                               STRING 
-  , PHONE_NBR                                  STRING 
-  , FAX_NBR                                    STRING 
-  , WM_EXTERNAL_USER_ID                        STRING 
-  , COPY_FROM_USER                             STRING 
-  , WM_SECURITY_POLICY_GROUP_ID                DECIMAL(10,0) 
-  , DEFAULT_WM_BUSINESS_UNIT_ID                DECIMAL(9,0) 
-  , DEFAULT_WM_WHSE_REGION_ID                  DECIMAL(9,0) 
-  , WM_CHANNEL_ID                              DECIMAL(18,0) 
-  , WM_COMM_METHOD_ID_DURING_BH_1              DECIMAL(4,0) 
-  , WM_COMM_METHOD_ID_DURING_BH_2              DECIMAL(4,0) 
-  , WM_COMM_METHOD_ID_AFTER_BH_1               DECIMAL(4,0) 
-  , WM_COMM_METHOD_ID_AFTER_BH_2               DECIMAL(4,0) 
-  , PASSWORD_MANAGED_INTERNALLY_FLAG           DECIMAL(1,0) 
-  , LOGGED_IN_FLAG                             DECIMAL(1,0) 
-  , LAST_LOGIN_TSTMP                           TIMESTAMP
-  , NUMBER_OF_INVALID_LOGINS                   DECIMAL(4,0) 
-  , PASSWORD_RESET_TSTMP                       TIMESTAMP
-  , LAST_PASSWORD_CHANGE_TSTMP                 TIMESTAMP 
-  , WM_HIBERNATE_VERSION                       DECIMAL(10,0) 
-  , WM_CREATED_SOURCE_TYPE_ID                  DECIMAL(4,0) 
-  , WM_CREATED_SOURCE                          STRING 
-  , WM_CREATED_TSTMP                           TIMESTAMP 
-  , WM_LAST_UPDATED_SOURCE_TYPE_ID             DECIMAL(4,0) 
-  , WM_LAST_UPDATED_SOURCE                     STRING 
-  , WM_LAST_UPDATED_TSTMP                      TIMESTAMP 
-  , UPDATE_TSTMP                               TIMESTAMP                    not null
-  , LOAD_TSTMP                                 TIMESTAMP                    not null
-  );
-  --DISTRIBUTE ON RANDOM
-
-
- CREATE TABLE SCDS_STG_PRD.WM_E_CONSOL_PERF_SMRY_PRE (
+CREATE TABLE raw.WM_E_CONSOL_PERF_SMRY_PRE (
   DC_NBR DECIMAL(3,0) NOT NULL,
   PERF_SMRY_TRAN_ID DECIMAL(20,0) NOT NULL,
   WHSE STRING,
@@ -284,13 +135,108 @@
   REFLECTIVE_CODE STRING,
   LOAD_TSTMP TIMESTAMP DEFAULT CURRENT_TIMESTAMP())
 USING delta
-LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/wms/wm_e_consol_perf_smry_pre'
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_consol_perf_smry_pre'
 PARTITIONED BY (DC_NBR)
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
-  ALTER TABLE SCDS_STG_PRD.WM_E_CONSOL_PERF_SMRY_PRE ALTER COLUMN LOAD_TSTMP SET DEFAULT CURRENT_TIMESTAMP();
+ CREATE TABLE  refine.WM_E_CONSOL_PERF_SMRY  ( LOCATION_ID INT not null
+  , WM_PERF_SMRY_TRAN_ID                    DECIMAL(20,0)               not null
+  , WM_WHSE                                 STRING 
+  , WM_LOGIN_USER_ID                        STRING 
+  , WM_JOB_FUNCTION_NAME                    STRING 
+  , CLOCK_IN_TSTMP                          TIMESTAMP 
+  , CLOCK_OUT_TSTMP                         TIMESTAMP 
+  , CLOCK_IN_STATUS                         DECIMAL(3,0) 
+  , START_TSTMP                             TIMESTAMP 
+  , END_TSTMP                               TIMESTAMP 
+  , WHSE_TSTMP                              TIMESTAMP 
+  , TEAM_BEGIN_TSTMP                        TIMESTAMP 
+  , WM_SHIFT_CD                             STRING 
+  , WM_REPORT_SHIFT_CD                      STRING 
+  , WM_USER_ID                              STRING 
+  , WM_SPVSR_LOGIN_USER_ID                  STRING 
+  , WM_DEPT_CD                              STRING 
+  , WM_RESOURCE_GROUP_ID                    STRING 
+  , WM_COMP_ASSIGNMENT_ID                   STRING 
+  , WM_REFLECTIVE_CD                        STRING 
+  , WM_EMP_PERF_SMRY_ID                     DECIMAL(20,0) 
+  , WM_LOCN_GRP_ATTR                        STRING 
+  , WM_VERSION_ID                           DECIMAL(6,0) 
+  , WM_OPS_CD                               STRING 
+  , WM_TEAM_CD                              STRING 
+  , WM_REF_NBR                              STRING 
+  , DEFAULT_JF_FLAG                         DECIMAL(9,0) 
+  , EVENT_CNT                               DECIMAL(9,0) 
+  , TOTAL_SAM                               DECIMAL(20,7) 
+  , TOTAL_PAM                               DECIMAL(13,5) 
+  , TOTAL_TIME                              DECIMAL(13,5) 
+  , TOTAL_QTY                               DECIMAL(13,5) 
+  , OSDL                                    DECIMAL(13,5) 
+  , OSIL                                    DECIMAL(13,5) 
+  , NSDL                                    DECIMAL(13,5) 
+  , SIL                                     DECIMAL(13,5) 
+  , UDIL                                    DECIMAL(13,5) 
+  , UIL                                     DECIMAL(13,5) 
+  , ADJ_OSDL                                DECIMAL(13,5) 
+  , ADJ_OSIL                                DECIMAL(13,5) 
+  , ADJ_UDIL                                DECIMAL(13,5) 
+  , ADJ_NSDL                                DECIMAL(13,5) 
+  , PAID_BRK                                DECIMAL(13,5) 
+  , UNPAID_BRK                              DECIMAL(13,5) 
+  , REF_OSDL                                DECIMAL(13,5) 
+  , REF_OSIL                                DECIMAL(13,5) 
+  , REF_UDIL                                DECIMAL(13,5) 
+  , REF_NSDL                                DECIMAL(13,5) 
+  , REF_ADJ_OSDL                            DECIMAL(13,5) 
+  , REF_ADJ_OSIL                            DECIMAL(13,5) 
+  , REF_ADJ_UDIL                            DECIMAL(13,5) 
+  , REF_ADJ_NSDL                            DECIMAL(13,5) 
+  , REF_SAM                                 DECIMAL(13,5) 
+  , REF_PAM                                 DECIMAL(13,5) 
+  , LABOR_COST_RATE                         DECIMAL(20,7) 
+  , THRUPUT_MIN                             DECIMAL(20,7) 
+  , PAID_OVERLAP_OSDL                       DECIMAL(20,7) 
+  , UNPAID_OVERLAP_OSDL                     DECIMAL(20,7) 
+  , PAID_OVERLAP_NSDL                       DECIMAL(20,7) 
+  , UNPAID_OVERLAP_NSDL                     DECIMAL(20,7) 
+  , PAID_OVERLAP_OSIL                       DECIMAL(20,7) 
+  , UNPAID_OVERLAP_OSIL                     DECIMAL(20,7) 
+  , PAID_OVERLAP_UDIL                       DECIMAL(20,7) 
+  , UNPAID_OVERLAP_UDIL                     DECIMAL(20,7) 
+  , DISPLAY_UOM_QTY                         DECIMAL(20,7) 
+  , DISPLAY_UOM                             STRING 
+  , MISC_1                                  STRING 
+  , MISC_2                                  STRING 
+  , MISC_TXT_1                              STRING 
+  , MISC_TXT_2                              STRING 
+  , MISC_NBR_1                              DECIMAL(13,5) 
+  , MISC_NUM_1                              DECIMAL(20,7) 
+  , MISC_NUM_2                              DECIMAL(20,7) 
+  , LEVEL_1                                 STRING 
+  , LEVEL_2                                 STRING 
+  , LEVEL_3                                 STRING 
+  , LEVEL_4                                 STRING 
+  , LEVEL_5                                 STRING 
+  , WM_EVNT_CTGRY_1                         STRING 
+  , WM_EVNT_CTGRY_2                         STRING 
+  , WM_EVNT_CTGRY_3                         STRING 
+  , WM_EVNT_CTGRY_4                         STRING 
+  , WM_EVNT_CTGRY_5                         STRING 
+  , WM_CREATE_TSTMP                         TIMESTAMP 
+  , WM_MOD_TSTMP                            TIMESTAMP 
+  , UPDATE_TSTMP                            TIMESTAMP                   not null
+  , LOAD_TSTMP                              TIMESTAMP                   not null
+  )
+  USING delta
+  LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_consol_perf_smry'
+  TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported')
+  ;
+  --DISTRIBUTE ON (WM_PERF_SMRY_TRAN_ID)
+  --ORGANIZE   ON (LOCATION_ID)
 
- CREATE TABLE SCDS_STG_PRD.WM_UCL_USER_PRE (
+
+CREATE TABLE raw.WM_UCL_USER_PRE (
   DC_NBR DECIMAL(3,0) NOT NULL,
   UCL_USER_ID DECIMAL(18,0) NOT NULL,
   COMPANY_ID DECIMAL(9,0),
@@ -346,13 +292,74 @@ PARTITIONED BY (DC_NBR)
   SECURITY_POLICY_GROUP_ID DECIMAL(10,0),
   LOAD_TSTMP TIMESTAMP DEFAULT CURRENT_TIMESTAMP())
   USING delta
-  LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/wms/wm_ucl_user_pre'
+  LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ucl_user_pre'
   PARTITIONED BY (DC_NBR)
+  TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
-  ALTER TABLE SCDS_STG_PRD.WM_UCL_USER_PRE ALTER COLUMN LOAD_TSTMP SET DEFAULT CURRENT_TIMESTAMP();
+  
+ CREATE TABLE  refine.WM_UCL_USER  ( 
+  , LOCATION_ID INT not null
+  , WM_UCL_USER_ID                             DECIMAL(18,0)                not null
+  , WM_COMPANY_ID                              DECIMAL(9,0) 
+  , WM_LOCATION_ID                             DECIMAL(18,0) 
+  , WM_LOCALE_ID                               DECIMAL(4,0) 
+  , WM_USER_TYPE_ID                            DECIMAL(4,0) 
+  , ACTIVE_FLAG                                DECIMAL(1,0) 
+  , USER_NAME                                  STRING        not null
+  , TAX_ID_NBR                                 STRING 
+  , COMMON_NAME                                STRING 
+  , USER_PREFIX                                STRING 
+  , USER_TITLE                                 STRING 
+  , USER_FIRST_NAME                            STRING 
+  , USER_MIDDLE_NAME                           STRING 
+  , USER_LAST_NAME                             STRING 
+  , BIRTH_DT DATE
+  , GENDER_ID                                  STRING 
+  , EMPLOYEE_START_DT DATE
+  , ADDR_1                                     STRING 
+  , ADDR_2                                     STRING 
+  , CITY                                       STRING 
+  , STATE_PROV_CD                              STRING 
+  , POSTAL_CD                                  STRING 
+  , COUNTRY_CD                                 STRING 
+  , USER_EMAIL_1                               STRING 
+  , USER_EMAIL_2                               STRING 
+  , PHONE_NBR                                  STRING 
+  , FAX_NBR                                    STRING 
+  , WM_EXTERNAL_USER_ID                        STRING 
+  , COPY_FROM_USER                             STRING 
+  , WM_SECURITY_POLICY_GROUP_ID                DECIMAL(10,0) 
+  , DEFAULT_WM_BUSINESS_UNIT_ID                DECIMAL(9,0) 
+  , DEFAULT_WM_WHSE_REGION_ID                  DECIMAL(9,0) 
+  , WM_CHANNEL_ID                              DECIMAL(18,0) 
+  , WM_COMM_METHOD_ID_DURING_BH_1              DECIMAL(4,0) 
+  , WM_COMM_METHOD_ID_DURING_BH_2              DECIMAL(4,0) 
+  , WM_COMM_METHOD_ID_AFTER_BH_1               DECIMAL(4,0) 
+  , WM_COMM_METHOD_ID_AFTER_BH_2               DECIMAL(4,0) 
+  , PASSWORD_MANAGED_INTERNALLY_FLAG           DECIMAL(1,0) 
+  , LOGGED_IN_FLAG                             DECIMAL(1,0) 
+  , LAST_LOGIN_TSTMP                           TIMESTAMP
+  , NUMBER_OF_INVALID_LOGINS                   DECIMAL(4,0) 
+  , PASSWORD_RESET_TSTMP                       TIMESTAMP
+  , LAST_PASSWORD_CHANGE_TSTMP                 TIMESTAMP 
+  , WM_HIBERNATE_VERSION                       DECIMAL(10,0) 
+  , WM_CREATED_SOURCE_TYPE_ID                  DECIMAL(4,0) 
+  , WM_CREATED_SOURCE                          STRING 
+  , WM_CREATED_TSTMP                           TIMESTAMP 
+  , WM_LAST_UPDATED_SOURCE_TYPE_ID             DECIMAL(4,0) 
+  , WM_LAST_UPDATED_SOURCE                     STRING 
+  , WM_LAST_UPDATED_TSTMP                      TIMESTAMP 
+  , UPDATE_TSTMP                               TIMESTAMP                    not null
+  , LOAD_TSTMP                                 TIMESTAMP                    not null
+  )
+  USING delta
+  LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ucl_user'
+  TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported')
+  ;
+  --DISTRIBUTE ON RANDOM
 
 
-create table if not exists log_run_details (
+create table if not exists raw.log_run_details (
   job_id Long,
   run_id Long,
   task_name String,
@@ -362,5 +369,4 @@ create table if not exists log_run_details (
   error String,
   prev_run_date Timestamp
 
-)
-
+);

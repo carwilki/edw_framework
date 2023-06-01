@@ -45,7 +45,7 @@ print('The prev run date is ' + prev_run_dt)
 
 # COMMAND ----------
 
- (username,password,connection_string)= getConfig(dcnbr,env)
+(username,password,connection_string)= getConfig(dcnbr,env)
 
 
 # COMMAND ----------

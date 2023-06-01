@@ -471,8 +471,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	col('SECURITY_POLICY_GROUP_ID'), \
 	col('i_USER_NAME1'), \
 	col('i_LOCATION_ID1'), \
-	(current_date()).alias('UPDATE_TSTMP'), \
-	(when((col('i_LOAD_TSTMP').isNull()) ,(current_date())).otherwise(col('i_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
+	(current_timestamp()).alias('UPDATE_TSTMP'), \
+	(when((col('i_LOAD_TSTMP').isNull()) ,(current_timestamp())).otherwise(col('i_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
 	(when((((col('i_USER_NAME1').isNull()) &(col('i_LOCATION_ID1').isNull()))) ,(lit(1))).otherwise(lit(2))).alias('o_UPDATE_VALIDATOR') \
 )  ## no i_WM_UCL_USER_ID & i_LOAD_TSTMP in code 
 

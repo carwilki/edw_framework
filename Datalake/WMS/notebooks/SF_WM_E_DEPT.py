@@ -8,7 +8,7 @@ env = dbutils.widgets.get('env')
 
 # COMMAND ----------
 
-deltaTable="dev_refine.WM_E_DEPT"
+deltaTable=env+"_refine.WM_E_DEPT"
 SFTable="WM_E_DEPT_LGCY"
 
 # COMMAND ----------

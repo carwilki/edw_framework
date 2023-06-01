@@ -210,8 +210,8 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 	FIL_NO_CHANGE_REC.VERSION_ID.alias('VERSION_ID'), \
 	FIL_NO_CHANGE_REC.CREATED_DTTM.alias('CREATED_DTTM'), \
 	FIL_NO_CHANGE_REC.LAST_UPDATED_DTTM.alias('LAST_UPDATED_DTTM'), \
-	(when((col('in_LOAD_TSTMP').isNull()) ,(current_date())).otherwise(col('in_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
-	(current_date()).alias('UPDATE_TSTMP'), \
+	(when((col('in_LOAD_TSTMP').isNull()) ,(current_timestamp())).otherwise(col('in_LOAD_TSTMP'))).alias('LOAD_TSTMP'), \
+	(current_timestamp()).alias('UPDATE_TSTMP'), \
 	FIL_NO_CHANGE_REC.in_WM_DEPT_ID.alias('in_WM_DEPT_ID') \
 )
 logger.info('EXP_EVAL_VALUES dataframe created successfully')

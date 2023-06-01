@@ -69,18 +69,3 @@ def ingestToSF(env,deltaTable,SFTable):
     except Exception as e:
         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}_raw.log_run_details")
         raise e
-
-# COMMAND ----------
-
-# try:
-#     options=getSfCredentials(env,username,password)
-#     tblReference='dev_refine.WM_E_CONSOL_PERF_SMRY'
-#     tblName='WM_E_CONSOL_PERF_SMRY_LGCY'
-
-#     df = deltaReader(tblReference,False)
-#     sfWriter(df,options,tblName,"overwrite")
-#     logger.info('Data write to SF completed')
-#     logPrevRunDt("SF Writer -" + tblName,tblName,'Completed','N/A',f"{env}_raw.log_run_details")
-# except Exception as e:
-#     logPrevRunDt("SF Writer -" + tblName,tblName,'Failed',str(e),f"{env}_raw.log_run_details")
-#     raise e

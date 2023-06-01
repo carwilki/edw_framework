@@ -44,7 +44,7 @@ print('The prev run date is ' + prev_run_dt)
 
 # COMMAND ----------
 
- (username,password,connection_string)= getConfig(dcnbr,env)
+(username,password,connection_string)= getConfig(dcnbr,env)
 
 
 # COMMAND ----------
@@ -89,11 +89,11 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   .option("password", password)\
   .option("numPartitions", 3)\
   .option("driver", "oracle.jdbc.OracleDriver")\
-  .option('fetchsize',10000)\
-  .option("oracle.jdbc.timezoneAsRegion","false")\
   .option("sessionInitStatement","""begin 
   		execute immediate 'alter session set time_zone=''-07:00''';
-	end;""").load()
+	end;
+ """) \
+  .load()
 
 
 # COMMAND ----------
