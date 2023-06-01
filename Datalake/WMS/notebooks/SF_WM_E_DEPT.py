@@ -1,13 +1,18 @@
 # Databricks notebook source
-from pyspark.dbutils import DBUtils
-from logging import getLogger
 # MAGIC %run ./utils/genericUtilities
 
 # COMMAND ----------
+
+from pyspark.dbutils import DBUtils
+from logging import getLogger
+
+# COMMAND ----------
+
 dbutils: DBUtils = dbutils
 dbutils.widgets.text(name='env', defaultValue='')
 env = dbutils.widgets.get('env')
 logger = getLogger()
+
 # COMMAND ----------
 
 deltaTable=env+"_refine.WM_E_DEPT"
