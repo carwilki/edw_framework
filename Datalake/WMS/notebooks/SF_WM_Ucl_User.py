@@ -10,7 +10,7 @@ from logging import getLogger
 
 dbutils:DBUtils=dbutils
 dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+env = getEnvPrefix(dbutils.widgets.get('env'))
 logger = getLogger()
 
 # COMMAND ----------
