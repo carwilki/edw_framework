@@ -19,7 +19,7 @@ logger = getLogger()
 
 # COMMAND ----------
 
-deltaTable=env+'_refine.WM_E_CONSOL_PERF_SMRY'
+deltaTable=env+'refine.WM_E_CONSOL_PERF_SMRY'
 SFTable='WM_E_CONSOL_PERF_SMRY_LGCY'
 
 # COMMAND ----------

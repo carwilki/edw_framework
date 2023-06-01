@@ -15,7 +15,7 @@ logger = getLogger()
 
 # COMMAND ----------
 
-deltaTable=env+'_refine.WM_UCL_USER'
+deltaTable=env+'refine.WM_UCL_USER'
 SFTable='WM_UCL_USER_LGCY'
 
 # COMMAND ----------
