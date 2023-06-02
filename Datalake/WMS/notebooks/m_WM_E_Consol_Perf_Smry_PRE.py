@@ -1,7 +1,7 @@
 # Databricks notebook source
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp, lit
-from pyspark.sql import DecimalType,StringType,TimestampType
+from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 
