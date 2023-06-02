@@ -22,7 +22,7 @@ legacy = getEnvPrefix(env)+'legacy'
 
 pre_user_table=f'{raw}.WM_UCL_USER_PRE'
 refined_user_table=f'{refine}.WM_UCL_USER'
-site_profile_table=f'{refine}.SITE_PROFILE'
+site_profile_table=f'{legacy}.SITE_PROFILE'
 
 logger=getLogger()
 logger.setLevel(INFO)
