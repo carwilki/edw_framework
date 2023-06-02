@@ -24,8 +24,8 @@ pre_user_table=f'{raw}.WM_UCL_USER_PRE'
 refined_user_table=f'{refine}.WM_UCL_USER'
 site_profile_table=f'{refine}.SITE_PROFILE'
 
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
+logger=getLogger()
+logger.setLevel(INFO)
 
 # COMMAND ----------
 
