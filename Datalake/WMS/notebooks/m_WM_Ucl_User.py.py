@@ -18,6 +18,7 @@ env = dbutils.widgets.get('env')
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
 pre_user_table=f'{raw}.WM_UCL_USER_PRE'

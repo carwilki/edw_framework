@@ -15,6 +15,7 @@ logger = getLogger()
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
 deltaTable=refine+'.WM_E_CONSOL_PERF_SMRY'
