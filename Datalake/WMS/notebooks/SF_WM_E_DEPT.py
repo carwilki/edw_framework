@@ -23,7 +23,7 @@ SFTable="WM_E_DEPT_LGCY"
 # COMMAND ----------
 
 try:
-    ingestToSF(env,deltaTable,SFTable)
+    ingestToSF(raw,deltaTable,SFTable)
     logger.info("Data write to SF completed succesfully")
 except Exception as e:
     raise e

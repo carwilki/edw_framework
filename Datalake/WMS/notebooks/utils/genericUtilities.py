@@ -33,7 +33,7 @@ def getSfCredentials(env,username,password):
         db="edw_"+env
         schema="public"
         warehouse="IT_WH"
-    if env.lower()=='prod':
+    if env.lower()==:
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
         db="edw_prd"
         schema="public"
@@ -65,15 +65,15 @@ def deltaReader(tblReference,isPath):
 
 # COMMAND ----------
 
-def ingestToSF(env,deltaTable,SFTable):
+def ingestToSF(schema,deltaTable,SFTable):
     try:
         options=getSfCredentials(env,username,password)
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
         
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{env}raw.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
     except Exception as e:
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{env}raw.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
         raise e
 
 # COMMAND ----------
