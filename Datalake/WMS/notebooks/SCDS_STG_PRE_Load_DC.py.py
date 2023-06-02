@@ -19,6 +19,7 @@ dbutils.widgets.text(name="env", defaultValue="")
 
 dcnbr = dbutils.widgets.get("DC_NBR")
 env = dbutils.widgets.get("env")
+
 # COMMAND ----------
 
 

@@ -18,6 +18,7 @@ env = dbutils.widgets.get('env')
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
 pre_dept_table=f'{raw}.WM_E_DEPT_PRE'

@@ -10,20 +10,21 @@ from logging import getLogger
 
 dbutils: DBUtils = dbutils
 dbutils.widgets.text(name='env', defaultValue='')
-env =dbutils.widgets.get('env')
+env = dbutils.widgets.get('env')
 logger = getLogger()
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
-deltaTable=f"{refine}.WM_E_DEPT"
-SFTable="WM_E_DEPT_LGCY"
+deltaTable=refine+'.WM_E_CONSOL_PERF_SMRY'
+SFTable='WM_E_CONSOL_PERF_SMRY_LGCY'
 
 # COMMAND ----------
 
 try:
     ingestToSF(raw,deltaTable,SFTable)
-    logger.info("Data write to SF completed succesfully")
+    logger.info('Data write to SF completed')
 except Exception as e:
     raise e

@@ -1,24 +1,25 @@
 # Databricks notebook source
-# MAGIC %run ./utils/genericUtilities
-
-# COMMAND ----------
-
 from pyspark.dbutils import DBUtils
 from logging import getLogger
 
 # COMMAND ----------
 
-dbutils: DBUtils = dbutils
+# MAGIC %run ./utils/genericUtilities
+
+# COMMAND ----------
+
+dbutils:DBUtils=dbutils
 dbutils.widgets.text(name='env', defaultValue='')
 env = dbutils.widgets.get('env')
 logger = getLogger()
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
+
 # COMMAND ----------
 
-deltaTable=refine+'.WM_E_CONSOL_PERF_SMRY'
-SFTable='WM_E_CONSOL_PERF_SMRY_LGCY'
+deltaTable=f'{refine}.WM_UCL_USER'
+SFTable='WM_UCL_USER_LGCY'
 
 # COMMAND ----------
 
