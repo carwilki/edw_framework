@@ -1,4 +1,5 @@
 # Databricks notebook source
+from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import col, lit, when, current_timestamp, monotonically_increasing_id
 from pyspark.sql.types import DecimalType, TimestampType, StringType
@@ -22,8 +23,8 @@ legacy = getEnvPrefix(env)+'legacy'
 pre_dept_table=f'{raw}.WM_E_DEPT_PRE'
 refined_dept_table=f'{refine}.WM_E_DEPT'
 site_profile_table=f'{refine}.SITE_PROFILE'
-logger=logging.getLogger()
-logger.setLevel(logging.INFO)
+logger=getLogger()
+logger.setLevel(INFO)
 
 # COMMAND ----------
 
