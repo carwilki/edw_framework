@@ -289,8 +289,8 @@ try:
     primary_key= "source.LOCATION_ID = target.LOCATION_ID AND source.WM_DEPT_ID = target.WM_DEPT_ID"
     executeMerge(Shortcut_to_WM_E_DEPT,refined_dept_table,primary_key)
     logger.info('Merge with'+refined_dept_table+'completed')
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{env}raw.log_run_details")
+    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Completed','N/A',f"{raw}.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{env}raw.log_run_details")
+    logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{raw}.log_run_details")
     raise e
 

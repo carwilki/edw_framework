@@ -620,8 +620,8 @@ try:
     primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.USER_NAME = target.USER_NAME"
     executeMerge(Shortcut_to_WM_UCL_USER,refined_user_table, primary_key)
     logger.info('Merge with'+refined_user_table+'completed]')
-    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{env}raw.log_run_details")
+    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Completed','N/A',f"{raw}.log_run_details")
 except Exception as e:
-    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{env}raw.log_run_details")
+    logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{raw}.log_run_details")
     raise e
 
