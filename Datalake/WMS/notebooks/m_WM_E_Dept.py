@@ -1,4 +1,4 @@
-# Databricks notebook source
+#
 from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import col, lit, when, current_timestamp, monotonically_increasing_id

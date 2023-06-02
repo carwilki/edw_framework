@@ -1,4 +1,4 @@
-# Databricks notebook source
+#
 # MAGIC %run ./utils/genericUtilities
 
 # COMMAND ----------

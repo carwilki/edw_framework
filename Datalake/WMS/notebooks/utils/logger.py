@@ -1,7 +1,4 @@
-# Databricks notebook source
 import json
-
-# COMMAND ----------
 
 #Function to Log the Success/Failure to log_run_details table
 # #Usage   - logPrevRunDt('test','test','Completed','N/A',"devrefine.log_run_details")  

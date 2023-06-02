@@ -1,4 +1,4 @@
-# Databricks notebook source
+#
 import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *

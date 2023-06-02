@@ -1,7 +1,3 @@
-# Databricks notebook source
-# MAGIC %run ./logger
-
-# COMMAND ----------
 
 from logging import getLogger,INFO
 from pyspark.dbutils import DBUtils

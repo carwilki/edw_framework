@@ -1,4 +1,4 @@
-# Databricks notebook source
+#
 # MAGIC %sh
 # MAGIC pip install deepdiff
 
