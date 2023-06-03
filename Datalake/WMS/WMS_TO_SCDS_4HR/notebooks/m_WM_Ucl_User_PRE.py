@@ -25,7 +25,7 @@ if env is None or env == "":
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
-
+tableName='WM_UCL_USER_PRE'
 target_table_name = raw+'.'+tableName
 
 refine_table_name='WM_UCL_USER'
