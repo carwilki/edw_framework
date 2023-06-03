@@ -1,5 +1,5 @@
 {
-    "name": "DEV_WMS_TO_SCDS_4HR_cw_test",
+    "name": "WMS_TO_SCDS_4HR_cw_test",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
@@ -9,8 +9,12 @@
     "tasks": [
         {
             "task_key": "DC_10_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc10",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -31,8 +35,12 @@
         },
         {
             "task_key": "DC_12_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc12",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -53,8 +61,12 @@
         },
         {
             "task_key": "DC_14_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc14",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -75,8 +87,12 @@
         },
         {
             "task_key": "DC_22_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc22",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -97,8 +113,12 @@
         },
         {
             "task_key": "DC_36_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc36",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -119,11 +139,22 @@
         },
         {
             "task_key": "DC_38_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc38",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -158,9 +189,9 @@
                 }
             ],
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/m_WM_Ucl_User",
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/m_WM_Ucl_User",
                 "base_parameters": {
-                    "env": "dev"
+                    "env": "prod"
                 },
                 "source": "GIT"
             },
@@ -184,8 +215,11 @@
                     "task_key": "s_WM_Ucl_User"
                 }
             ],
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/m_WM_E_Dept.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/m_WM_E_Dept",
+                "base_parameters": {
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -208,8 +242,11 @@
                     "task_key": "s_WM_E_Dept"
                 }
             ],
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/m_WM_E_Consol_Perf_Smry.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/m_WM_E_Consol_Perf_Smry",
+                "base_parameters": {
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -232,8 +269,11 @@
                     "task_key": "s_WM_E_Consol_Perf_Smry"
                 }
             ],
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SF_WM_E_CONSOL_PERF_SMRY.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SF_WM_E_CONSOL_PERF_SMRY",
+                "base_parameters": {
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -251,8 +291,12 @@
         },
         {
             "task_key": "DC_41_PRE",
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/m_WM_E_Consol_Perf_Smry.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SCDS_STG_PRE_Load_DC",
+                "base_parameters": {
+                    "DC_NBR": "dc41",
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -279,9 +323,9 @@
                 }
             ],
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SF_WM_E_DEPT",
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SF_WM_E_DEPT",
                 "base_parameters": {
-                    "env": "dev"
+                    "env": "prod"
                 },
                 "source": "GIT"
             },
@@ -301,8 +345,11 @@
                     "task_key": "s_WM_E_Consol_Perf_Smry"
                 }
             ],
-            "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SF_WM_Ucl_User.py",
+            "notebook_task": {
+                "notebook_path": "Datalake/WMS/WMS_SDS_4HR/notebooks/SF_WM_Ucl_User",
+                "base_parameters": {
+                    "env": "prod"
+                },
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -318,10 +365,10 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "dev"
+        "git_branch": "python-import"
     },
     "tags": {
-        "qa.ready": "true"
+        "Department": "Netezza-Migration"
     },
     "format": "MULTI_TASK"
 }
