@@ -1,9 +1,9 @@
-#
 from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 from logging import getLogger
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToSF
 
-
-dbutils:DBUtils=dbutils
+dbutils: DBUtils = DBUtils(SparkSession.getActiveSession())
 dbutils.widgets.text(name='env', defaultValue='')
 env = dbutils.widgets.get('env')
 logger = getLogger()

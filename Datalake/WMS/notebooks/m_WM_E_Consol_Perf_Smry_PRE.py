@@ -6,18 +6,24 @@ from datetime import datetime
 from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
 from Datalake.WMS.notebooks.utils.configs import getConfig
 
-spark: SparkSession = SparkSession.builder.getOrCreate()
-dbutils: DBUtils = DBUtils.get_dbutils(spark)
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
-dbutils.widgets.text(name="DC_NBR", defaultValue="")
-dbutils.widgets.text(name="env", defaultValue="")
+dcnbr = dbutils.jobs.taskValue.get(key='DC_NBR', defaultValue='')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
 
-dcnbr = dbutils.widgets.get("DC_NBR")
-env = dbutils.widgets.get("env")
+if dcnbr is None or dcnbr == "":
+    raise ValueError("DC_NBR is not set")
+
+if env is None or env == "":
+    raise Exception("env is not set")
+
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
+
 tableName = "WM_E_CONSOL_PERF_SMRY_PRE"
+
 schemaName = raw
 
 target_table_name = schemaName + "." + tableName

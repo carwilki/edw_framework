@@ -6,17 +6,20 @@ from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
 from Datalake.WMS.notebooks.utils.configs import getConfig
+from Datalake.WMS.notebooks.utils.logger import logPrevRunDt
+from Datalake.WMS.notebooks.utils.mergeUtils import executeMerge
 
-dbutils: DBUtils = dbutils
-spark: SparkSession = spark
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
-dbutils.widgets.text(name="env", defaultValue="")
-env = dbutils.widgets.get("env")
-env2 = getEnvPrefix(env)
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
+
+if env is None or env == "":
+    raise Exception("env is not set")
+
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
-
 pre_perf_table = f"{raw}.WM_E_CONSOL_PERF_SMRY_PRE"
 refined_perf_table = f"{refine}.WM_E_CONSOL_PERF_SMRY"
 site_profile_table = f"{legacy}.SITE_PROFILE"

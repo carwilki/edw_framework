@@ -1,26 +1,22 @@
-#
 from pyspark.dbutils import DBUtils
-from pyspark.sql import *
-from pyspark.sql.functions import *
+from pyspark.sql.functions import current_timestamp, lit
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
+from datetime import datetime
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
+from Datalake.WMS.notebooks.utils.configs import getConfig
 
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
+dcnbr = dbutils.jobs.taskValue.get(key='DC_NBR', defaultValue='')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
 
+if dcnbr is None or dcnbr == "":
+    raise Exception("DC_NBR is not set")
 
-
-
-
-dbutils: DBUtils = dbutils
-spark: SparkSession = spark
-
-dbutils.widgets.text(name="DC_NBR", defaultValue="")
-dbutils.widgets.text(name="env", defaultValue="")
-
-dcnbr = dbutils.widgets.get("DC_NBR")
-env = dbutils.widgets.get("env")
-
-
+if env is None or env == "":
+    raise Exception("env is not set")
 
 
 ####################################################################
@@ -29,9 +25,6 @@ env = dbutils.widgets.get("env")
 ####################################################################
 def run_notebook(name, timeout, params):
     dbutils.notebook.run(name, timeout, params)
-
-
-
 
 ####################################################################
 ## main section

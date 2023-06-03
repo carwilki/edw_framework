@@ -1,30 +1,26 @@
-#
-import os
 from pyspark.dbutils import DBUtils
-from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id
 from pyspark.sql.types import StringType,DecimalType,TimestampType
+from pyspark.sql.session import SparkSession
 from datetime import datetime
+from Datalake.WMS.notebooks.utils.configs import getMaxDate,getConfig
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
 
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
+dcnbr = dbutils.jobs.taskValue.get(key='DC_NBR', defaultValue='')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
 
+if dcnbr is None or dcnbr == "":
+    raise ValueError("DC_NBR is not set")
 
+if env is None or env == "":
+    raise ValueError("env is not set")
 
-
-
-
-
-
-
-dbutils:DBUtils=dbutils
-spark:SparkSession=spark
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='env', defaultValue='')
-dcnbr = dbutils.widgets.get('DC_NBR')
-env = dbutils.widgets.get('env')
-refine = getEnvPrefix(env)+'refine'
-raw = getEnvPrefix(env)+'raw'
-legacy = getEnvPrefix(env)+'legacy'
+refine = getEnvPrefix(env) + "refine"
+raw = getEnvPrefix(env) + "raw"
+legacy = getEnvPrefix(env) + "legacy"
 tableName='WM_UCL_USER_PRE'
 
 target_table_name = raw+'.'+tableName
@@ -43,18 +39,10 @@ else:
 
 print('The prev run date is ' + prev_run_dt)
 
-
-
-
 (username,password,connection_string)= getConfig(dcnbr,env)
-
-
-
 
 #Extract dc number 
 dcnbr=dcnbr.strip()[2:]
-
-
 
 user_query=f"""SELECT
 UCL_USER.UCL_USER_ID,
@@ -116,8 +104,6 @@ OR
 (trunc(UCL_USER.LAST_UPDATED_DTTM)>= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) AND 1=1
 """
 
-
-
 SQ_Shortcut_to_UCL_USER = spark.read \
   .format("jdbc") \
   .option("url", connection_string) \
@@ -132,13 +118,7 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   		execute immediate 'alter session set time_zone=''-07:00''';
 	end;""").load()
 
-
-
-
 EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
-
-
-
 
 Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select( \
 	lit(f'{dcnbr}').cast(DecimalType(3,0)).alias('DC_NBR'), \
@@ -197,12 +177,7 @@ Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select( \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
 
-
-
-
-
 Shortcut_to_WM_UCL_USER_PRE.write.partitionBy('DC_NBR') \
   .mode("overwrite") \
   .option("replaceWhere", f'DC_NBR={dcnbr}') \
   .saveAsTable(target_table_name)
-

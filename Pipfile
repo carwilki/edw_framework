@@ -7,6 +7,8 @@ name = "pypi"
 pyspark = "*"
 databricks-connect = "*"
 black = "*"
+databricks-cli = "*"
+databricks-sdk = "*"
 
 [dev-packages]
 

@@ -1,31 +1,26 @@
-#
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp,lit
 from pyspark.sql.types import StringType,DecimalType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
+from Datalake.WMS.notebooks.utils.configs import getMaxDate,getConfig
 
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
+dcnbr = dbutils.jobs.taskValue.get(key='DC_NBR', defaultValue='')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
 
+if dcnbr is None or dcnbr == "":
+    raise Exception("DC_NBR is not set")
 
+if env is None or env == "":
+    raise Exception("env is not set")
 
-
-
-
-
-
-
-spark:SparkSession=spark
-dbutils:DBUtils=dbutils
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='env', defaultValue='')
-
-dcnbr = dbutils.widgets.get('DC_NBR')
-env =dbutils.widgets.get('env')
-
-refine = getEnvPrefix(env)+'refine'
-raw = getEnvPrefix(env)+'raw'
-legacy = getEnvPrefix(env)+'legacy'
+refine = getEnvPrefix(env) + "refine"
+raw = getEnvPrefix(env) + "raw"
+legacy = getEnvPrefix(env) + "legacy"
 
 tableName='WM_E_DEPT_PRE'
 schemaName=raw
@@ -45,19 +40,10 @@ else:
 
 print('The prev run date is ' + prev_run_dt)
 
-
-
-
 (username,password,connection_string)= getConfig(dcnbr,env)
-
-
-
 
 #Extract dc number
 dcnbr=dcnbr.strip()[2:]
-
-
-
 
 dept_query=f"""SELECT
 E_DEPT.DEPT_ID,
@@ -83,8 +69,6 @@ OR (trunc(E_DEPT.CREATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) -
 OR (trunc(E_DEPT.LAST_UPDATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
 AND 1=1"""
 
-
-
 SQ_Shortcut_to_E_DEPT = spark.read \
   .format("jdbc") \
   .option("url", connection_string) \
@@ -97,9 +81,6 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   		execute immediate 'alter session set time_zone=''-07:00''';
 		end;
  	""").load()
-
-
-
 
 EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	lit(f'{dcnbr}').cast(DecimalType(3,0)).alias('DC_NBR'), \
@@ -121,10 +102,7 @@ EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
 
-
-
 EXPTRANS.write.partitionBy('DC_NBR') \
   .mode("overwrite") \
   .option("replaceWhere", f'DC_NBR={dcnbr}') \
   .saveAsTable(target_table_name)
-

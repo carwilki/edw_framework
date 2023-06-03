@@ -1,25 +1,28 @@
-#
 from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id,col,when
 from pyspark.sql.types import StringType,DecimalType,TimestampType,DateType,LongType
 
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
+from Datalake.WMS.notebooks.utils.logger import logPrevRunDt
+from Datalake.WMS.notebooks.utils.mergeUtils import executeMerge
 
+spark: SparkSession = SparkSession.getActiveSession()
+dbutils: DBUtils = DBUtils(spark)
 
+dcnbr = dbutils.jobs.taskValue.get(key='DC_NBR', defaultValue='')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
 
+if dcnbr is None or dcnbr == "":
+    raise ValueError("DC_NBR is not set")
 
+if env is None or env == "":
+    raise Exception("env is not set")
 
-
-dbutils:DBUtils=dbutils
-spark:SparkSession=spark
-dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
-refine = getEnvPrefix(env)+'refine'
-raw = getEnvPrefix(env)+'raw'
-legacy = getEnvPrefix(env)+'legacy'
-
-
+refine = getEnvPrefix(env) + "refine"
+raw = getEnvPrefix(env) + "raw"
+legacy = getEnvPrefix(env) + "legacy"
 
 pre_user_table=f'{raw}.WM_UCL_USER_PRE'
 refined_user_table=f'{refine}.WM_UCL_USER'
@@ -27,8 +30,6 @@ site_profile_table=f'{legacy}.SITE_PROFILE'
 
 logger=getLogger()
 logger.setLevel(INFO)
-
-
 
 SQ_Shortcut_to_WM_UCL_USER_PRE_query="""SELECT
 WM_UCL_USER_PRE.DC_NBR,
@@ -102,9 +103,6 @@ FROM """+refined_user_table+"""
 WHERE USER_NAME IN (SELECT USER_NAME FROM """+pre_user_table+ """)"""
 SQ_Shortcut_to_WM_UCL_USER=spark.sql(SQ_Shortcut_to_WM_UCL_USER_query).withColumn("sys_row_id", monotonically_increasing_id())
 
-
-
-
 EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 	SQ_Shortcut_to_WM_UCL_USER_PRE.sys_row_id.alias('sys_row_id'), \
 	col('DC_NBR').cast(DecimalType(3,0)).alias('o_DC_NBR'), \
@@ -162,14 +160,8 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 	SQ_Shortcut_to_WM_UCL_USER_PRE.SECURITY_POLICY_GROUP_ID.alias('SECURITY_POLICY_GROUP_ID') \
 )
 
-
-
-
 SQ_Shortcut_to_SITE_PROFILE = spark.sql("""SELECT SITE_PROFILE.LOCATION_ID,SITE_PROFILE.STORE_NBR FROM """+site_profile_table).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('Site profile table query executed successfully!')
-
-
-
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONVERSION.o_DC_NBR],'inner').select( \
 	EXP_INT_CONVERSION.sys_row_id.alias('sys_row_id'), \
@@ -228,8 +220,6 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Short
 	EXP_INT_CONVERSION.SECURITY_POLICY_GROUP_ID.alias('SECURITY_POLICY_GROUP_ID'), \
 	SQ_Shortcut_to_SITE_PROFILE.LOCATION_ID.alias('LOCATION_ID1'), \
 	SQ_Shortcut_to_SITE_PROFILE.STORE_NBR.alias('STORE_NBR'))
-
-
 
 JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_WM_UCL_USER.LOCATION_ID == JNR_SITE_PROFILE.LOCATION_ID1, SQ_Shortcut_to_WM_UCL_USER.USER_NAME == JNR_SITE_PROFILE.USER_NAME],'right_outer').select( \
 	SQ_Shortcut_to_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
@@ -290,9 +280,6 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_
 	SQ_Shortcut_to_WM_UCL_USER.WM_LAST_UPDATED_TSTMP.alias('i_WM_LAST_UPDATED_TSTMP'), \
 	SQ_Shortcut_to_WM_UCL_USER.LOAD_TSTMP.alias('i_LOAD_TSTMP'), \
 	SQ_Shortcut_to_WM_UCL_USER.USER_NAME.alias('i_USER_NAME'))
-
-
-
 
 FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 	JNR_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
@@ -356,9 +343,6 @@ FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 	JNR_WM_UCL_USER.i_USER_NAME.alias('i_USER_NAME1'), \
 	JNR_WM_UCL_USER.i_LOCATION_ID.alias('i_LOCATION_ID'))\
 		.filter(" (i_USER_NAME1 is null) OR ( NOT (i_USER_NAME1 is null) AND ( ((case when CREATED_DTTM is null then TO_DATE('01/01/1900','M/d/y') else CREATED_DTTM end ) != (case when i_WM_CREATED_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else i_WM_CREATED_TSTMP end )) or ((case when LAST_UPDATED_DTTM is null then TO_DATE('01/01/1900','M/d/y') else LAST_UPDATED_DTTM end )!= (case when i_WM_LAST_UPDATED_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else i_WM_LAST_UPDATED_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
-
-
-
 
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	FIL_UNCHANGED_RECORDS.sys_row_id.alias('sys_row_id'), \
@@ -480,9 +464,6 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	(when((((col('i_USER_NAME1').isNull()) &(col('i_LOCATION_ID1').isNull()))) ,(lit(1))).otherwise(lit(2))).alias('o_UPDATE_VALIDATOR') \
 )  ## no i_WM_UCL_USER_ID & i_LOAD_TSTMP in code 
 
-
-
-
 UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	EXP_UPD_VALIDATOR.LOCATION_ID1.alias('LOCATION_ID1'), \
 	EXP_UPD_VALIDATOR.UCL_USER_ID.alias('UCL_USER_ID'), \
@@ -543,10 +524,6 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 	
 UPD_INS_UPD=UPD_INS_UPD.withColumn('pyspark_data_action', when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
-
-
-
-
 Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
 	UPD_INS_UPD.LOCATION_ID1.cast(LongType()).alias('LOCATION_ID'), \
 	UPD_INS_UPD.UCL_USER_ID.cast(DecimalType(18,0)).alias('WM_UCL_USER_ID'), \
@@ -605,16 +582,6 @@ Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
 )
 
 logger.info('Input data for '+refined_user_table+' generated!')
-
-
-
-# MAGIC %run ./utils/mergeUtils
-
-
-
-# MAGIC %run ./utils/logger
-
-
 
 #Final Merge 
 try:

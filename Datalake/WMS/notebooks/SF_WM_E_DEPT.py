@@ -1,14 +1,20 @@
 from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 from logging import getLogger
 from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToSF
 
-dbutils: DBUtils = dbutils
+dbutils: DBUtils = DBUtils(SparkSession.getActiveSession())
+
 dbutils.widgets.text(name='env', defaultValue='')
-env =dbutils.widgets.get('env')
+env = dbutils.jobs.taskValue.get(key='env', defaultValue='')
+
+if env is None or env == "":
+    raise ValueError("env is not set")
+
 logger = getLogger()
+
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
-legacy = getEnvPrefix(env)+'legacy'
 
 deltaTable=f"{refine}.WM_E_DEPT"
 SFTable="WM_E_DEPT_LGCY"
