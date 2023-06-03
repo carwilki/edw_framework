@@ -12,7 +12,7 @@ from Datalake.WMS.notebooks.utils.mergeUtils import executeMerge
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-env = dbutils.jobs.taskValues.get(key='env', defaultValue='')
+env = dbutils.jobs.taskValues.get(key='env', default='')
 
 if env is None or env == "":
     raise Exception("env is not set")

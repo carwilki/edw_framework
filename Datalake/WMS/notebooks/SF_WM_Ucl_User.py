@@ -4,8 +4,12 @@ from logging import getLogger
 from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToSF
 
 dbutils: DBUtils = DBUtils(SparkSession.getActiveSession())
-dbutils.widgets.text(name='env', defaultValue='')
-env = dbutils.widgets.get('env')
+
+env = dbutils.jobs.taskValues.get(key='env', default='')
+
+if env is None or env == "":
+    raise ValueError("env is not set")
+
 logger = getLogger()
 refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'

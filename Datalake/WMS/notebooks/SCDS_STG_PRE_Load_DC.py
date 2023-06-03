@@ -9,8 +9,8 @@ from Datalake.WMS.notebooks.utils.configs import getConfig
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dcnbr = dbutils.jobs.taskValues.get(key='DC_NBR', defaultValue='')
-env = dbutils.jobs.taskValues.get(key='env', defaultValue='')
+dcnbr = dbutils.jobs.taskValues.get(key='DC_NBR', default='')
+env = dbutils.jobs.taskValues.get(key='env', default='')
 
 if dcnbr is None or dcnbr == "":
     raise Exception("DC_NBR is not set")

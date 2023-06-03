@@ -6,7 +6,7 @@ from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToS
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
-env = dbutils.jobs.taskValues.get(key='env', defaultValue='')
+env = dbutils.jobs.taskValues.get(key='env', default='')
 
 if env is None or env == "":
     raise ValueError("env is not set")
