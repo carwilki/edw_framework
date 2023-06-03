@@ -1,3 +1,4 @@
+# Databricks notebook source
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id
 from pyspark.sql.types import StringType,DecimalType,TimestampType

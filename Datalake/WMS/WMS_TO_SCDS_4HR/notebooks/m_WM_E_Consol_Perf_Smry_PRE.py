@@ -1,10 +1,11 @@
+# Databricks notebook source
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp, lit
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
-from Datalake.WMS.notebooks.utils.configs import getConfig
+from Datalake.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.configs import getConfig
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)

@@ -1,4 +1,4 @@
-#
+# Databricks notebook source
 import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *
@@ -8,10 +8,6 @@ from pyspark.sql.types import *
 from pyspark import SparkContext;
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-
-
-
-
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')

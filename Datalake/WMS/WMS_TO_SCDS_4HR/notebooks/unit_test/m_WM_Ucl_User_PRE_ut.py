@@ -1,4 +1,4 @@
-#
+# Databricks notebook source
 import os
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *
@@ -9,22 +9,14 @@ from pyspark import SparkContext;
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 
-
-
-
-
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
 dbutils.widgets.text(name='Initial_Load', defaultValue='')
-
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 dcnbr = dbutils.widgets.get('DC_NBR')
 prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
-
-
-
 
 user_query=f"""SELECT
 UCL_USER.UCL_USER_ID,
@@ -92,7 +84,7 @@ SQ_Shortcut_to_UCL_USER = spark.read \
   .option("password", password) \
   .load()
 
-  EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
+EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
 
 
 
