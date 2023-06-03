@@ -3,19 +3,19 @@ from logging import getLogger,INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
-# COMMAND ----------
+
 
 logger=getLogger()
 logger.setLevel(INFO)
 
-# COMMAND ----------
+
 
 spark:SparkSession=spark
 dbutils:DBUtils=dbutils
 username = dbutils.secrets.get("databricks_service_account", "username")
 password = dbutils.secrets.get("databricks_service_account", "password")
 
-# COMMAND ----------
+
 
 def getSfCredentials(env,username,password):
 
@@ -40,7 +40,7 @@ def getSfCredentials(env,username,password):
     return sfOptions
 
 
-# COMMAND ----------
+
 
 def sfWriter(df,options,tblName,mode):
     df.write.format("snowflake") \
@@ -49,7 +49,7 @@ def sfWriter(df,options,tblName,mode):
     .mode(mode) \
     .save()
 
-# COMMAND ----------
+
 
 def deltaReader(tblReference,isPath):
     if isPath:
@@ -59,7 +59,7 @@ def deltaReader(tblReference,isPath):
     return df
 
 
-# COMMAND ----------
+
 
 def ingestToSF(schema,deltaTable,SFTable):
     try:
@@ -72,7 +72,7 @@ def ingestToSF(schema,deltaTable,SFTable):
         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
         raise e
 
-# COMMAND ----------
+
 
 #for the env we need to get the env prefix
 #if the env is != 'prod' then we need to add the env prefix to the table name

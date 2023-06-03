@@ -10,7 +10,7 @@ from pyspark.sql.session import SparkSession
 from datetime import datetime
 
 
-# COMMAND ----------
+
 
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
@@ -24,7 +24,7 @@ dcnbr = dbutils.widgets.get('DC_NBR')
 prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
 
 
-# COMMAND ----------
+
 
 perf_summary_query=f"""SELECT
 E_CONSOL_PERF_SMRY.PERF_SMRY_TRAN_ID,
@@ -118,7 +118,7 @@ OR (date_trunc('DD', E_CONSOL_PERF_SMRY.MOD_DATE_TIME) >= date_trunc('DD', to_da
 AND 1=1"""
 
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.sql("""SELECT
 100.2 as PERF_SMRY_TRAN_ID,
@@ -207,11 +207,11 @@ TIMESTAMP "2003-01-01 2:00:00" as TEAM_BEGIN_TIME,
 "abcdefg" as REFLECTIVE_CODE""")
 
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_CONSOL_PERF_SMRY.display()
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
   .format("jdbc") \
@@ -221,7 +221,7 @@ SQ_Shortcut_to_E_CONSOL_PERF_SMRY = spark.read \
   .option("password", password) \
   .load()
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select( \
 	lit(f'{dcnbr}').cast(LongType()).alias('DC_NBR'), \
@@ -315,32 +315,32 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select
 
 
 
-# COMMAND ----------
+
 
 # checking the row count
 assert Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.count() == SQ_Shortcut_to_E_CONSOL_PERF_SMRY.count()
 
-# COMMAND ----------
+
 
 # checking the Timestamp data type column
 assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(["WHSE_DATE"]).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["WHSE_DATE"]).first()
 
-# COMMAND ----------
+
 
 # checking the string data type column
 assert Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["DEPT_CODE"]).first() == SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(["DEPT_CODE"]).first()
 
-# COMMAND ----------
+
 
 # checking the long data type columns
 assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DISPLAY_UOM_QTY.cast(LongType())).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["DISPLAY_UOM_QTY"]).first()
 
-# COMMAND ----------
+
 
 # checking the long data type columns
 assert SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(SQ_Shortcut_to_E_CONSOL_PERF_SMRY.THRUPUT_MIN.cast(LongType())).first() == Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.select(["THRUPUT_MIN"]).first()
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy('DC_NBR') \
   .mode("overwrite") \

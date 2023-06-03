@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from dbruntime import dbutils
 
-# COMMAND ----------
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -15,11 +15,11 @@ starttime = datetime.now() #start timestamp of the script
 # Read in job variables
 # read_infa_paramfile('', 'm_Last_Run_Dt') ProcessingUtils
 
-# COMMAND ----------
+
 # Variable_declaration_comment
 dbutils.widgets.text(name='Last_Run_Dt', defaultValue='1/1/1900')
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_DAYS, type SOURCE 
 # COLUMN COUNT: 1
 
@@ -32,7 +32,7 @@ properties={
 'password': os.environ.get('NZ_EDW_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_LAST_RUN_DT, type EXPRESSION 
 # COLUMN COUNT: 1
 
@@ -44,7 +44,7 @@ SQ_Shortcut_to_DAYS_temp = SQ_Shortcut_to_DAYS.toDF(*["SQ_Shortcut_to_DAYS___" +
 	"SQ_Shortcut_to_DAYS___DAY_DT as DAY_DT"
 )
 
-# COMMAND ----------
+
 # Processing node FIL_FALSE, type FILTER 
 # COLUMN COUNT: 1
 
@@ -54,7 +54,7 @@ EXP_LAST_RUN_DT_temp = EXP_LAST_RUN_DT.toDF(*["EXP_LAST_RUN_DT___" + col for col
 FIL_FALSE = EXP_LAST_RUN_DT_temp.selectExpr(
 	"EXP_LAST_RUN_DT___DAY_DT as DAY_DT").filter("false").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node Shortcut_to_WM_YARD, type TARGET 
 # COLUMN COUNT: 34
 

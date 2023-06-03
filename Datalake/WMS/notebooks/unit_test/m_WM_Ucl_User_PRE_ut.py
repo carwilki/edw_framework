@@ -10,7 +10,7 @@ from pyspark.sql.session import SparkSession
 from datetime import datetime
 
 
-# COMMAND ----------
+
 
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
@@ -24,7 +24,7 @@ dcnbr = dbutils.widgets.get('DC_NBR')
 prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
 
 
-# COMMAND ----------
+
 
 user_query=f"""SELECT
 UCL_USER.UCL_USER_ID,
@@ -82,7 +82,7 @@ UCL_USER.SECURITY_POLICY_GROUP_ID
 FROM UCL_USER
 WHERE (date_trunc('DD', UCL_USER.CREATED_DTTM)>= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (date_trunc('DD', UCL_USER.LAST_UPDATED_DTTM)>= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS')) - 1) AND 1=1"""
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_UCL_USER = spark.read \
   .format("jdbc") \
@@ -94,7 +94,7 @@ SQ_Shortcut_to_UCL_USER = spark.read \
 
   EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 
 EXPTRANS = spark.sql("""
 SELECT
@@ -151,11 +151,11 @@ TIMESTAMP "2003-01-01 2:00:00" as PASSWORD_RESET_DATE_TIME,
 "qwerty12" as EXTERNAL_USER_ID,
 123.12 as SECURITY_POLICY_GROUP_ID""")
 
-# COMMAND ----------
+
 
 EXPTRANS.display()
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 	lit(f'{dcnbr}').cast(LongType()).alias('DC_NBR'), \
@@ -216,27 +216,27 @@ Shortcut_to_WM_UCL_USER_PRE = EXPTRANS.select( \
 
 
 
-# COMMAND ----------
+
 
 # checking the row count
 assert Shortcut_to_WM_UCL_USER_PRE.count() == EXPTRANS.count()
 
-# COMMAND ----------
+
 
 # checking the long data type columns
 assert EXPTRANS.select(EXPTRANS.COMM_METHOD_ID_DURING_BH_1.cast(LongType())).first() == Shortcut_to_WM_UCL_USER_PRE.select(["COMM_METHOD_ID_DURING_BH_1"]).first()
 
-# COMMAND ----------
+
 
 # checking the Timestamp data type column
 assert Shortcut_to_WM_UCL_USER_PRE.select(["LAST_LOGIN_DTTM"]).first() == EXPTRANS.select(["LAST_LOGIN_DTTM"]).first()
 
-# COMMAND ----------
+
 
 # checking the string data type column
 assert Shortcut_to_WM_UCL_USER_PRE.select(["USER_FIRST_NAME"]).first() == EXPTRANS.select(["USER_FIRST_NAME"]).first()
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_UCL_USER_PRE.write.partitionBy('DC_NBR') \
   .mode("overwrite") \

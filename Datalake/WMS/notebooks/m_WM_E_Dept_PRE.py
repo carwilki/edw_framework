@@ -5,15 +5,15 @@ from pyspark.sql.types import StringType,DecimalType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/configs 
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/genericUtilities
 
-# COMMAND ----------
+
+
+
+
+
 
 spark:SparkSession=spark
 dbutils:DBUtils=dbutils
@@ -46,18 +46,18 @@ else:
 print('The prev run date is ' + prev_run_dt)
 
 
-# COMMAND ----------
+
 
 (username,password,connection_string)= getConfig(dcnbr,env)
 
 
-# COMMAND ----------
+
 
 #Extract dc number
 dcnbr=dcnbr.strip()[2:]
 
 
-# COMMAND ----------
+
 
 dept_query=f"""SELECT
 E_DEPT.DEPT_ID,
@@ -83,7 +83,7 @@ OR (trunc(E_DEPT.CREATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) -
 OR (trunc(E_DEPT.LAST_UPDATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
 AND 1=1"""
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_DEPT = spark.read \
   .format("jdbc") \
@@ -99,7 +99,7 @@ SQ_Shortcut_to_E_DEPT = spark.read \
  	""").load()
 
 
-# COMMAND ----------
+
 
 EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	lit(f'{dcnbr}').cast(DecimalType(3,0)).alias('DC_NBR'), \
@@ -121,7 +121,7 @@ EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
 
-# COMMAND ----------
+
 
 EXPTRANS.write.partitionBy('DC_NBR') \
   .mode("overwrite") \

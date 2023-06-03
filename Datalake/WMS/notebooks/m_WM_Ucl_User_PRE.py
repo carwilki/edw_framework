@@ -6,15 +6,15 @@ from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing
 from pyspark.sql.types import StringType,DecimalType,TimestampType
 from datetime import datetime
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/configs 
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/genericUtilities
 
-# COMMAND ----------
+
+
+
+
+
 
 dbutils:DBUtils=dbutils
 spark:SparkSession=spark
@@ -44,17 +44,17 @@ else:
 print('The prev run date is ' + prev_run_dt)
 
 
-# COMMAND ----------
+
 
 (username,password,connection_string)= getConfig(dcnbr,env)
 
 
-# COMMAND ----------
+
 
 #Extract dc number 
 dcnbr=dcnbr.strip()[2:]
 
-# COMMAND ----------
+
 
 user_query=f"""SELECT
 UCL_USER.UCL_USER_ID,
@@ -116,7 +116,7 @@ OR
 (trunc(UCL_USER.LAST_UPDATED_DTTM)>= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) AND 1=1
 """
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_UCL_USER = spark.read \
   .format("jdbc") \
@@ -133,12 +133,12 @@ SQ_Shortcut_to_UCL_USER = spark.read \
 	end;""").load()
 
 
-# COMMAND ----------
+
 
 EXPTRANS=SQ_Shortcut_to_UCL_USER.withColumn("sys_row_id", monotonically_increasing_id())
 
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select( \
 	lit(f'{dcnbr}').cast(DecimalType(3,0)).alias('DC_NBR'), \
@@ -199,7 +199,7 @@ Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select( \
 
 
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_UCL_USER_PRE.write.partitionBy('DC_NBR') \
   .mode("overwrite") \

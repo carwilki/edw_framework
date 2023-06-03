@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from dbruntime import dbutils
 
-# COMMAND ----------
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -15,7 +15,7 @@ starttime = datetime.now() #start timestamp of the script
 # Read in job variables
 # read_infa_paramfile('', 'm_WM_E_Dept') ProcessingUtils
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_E_DEPT_PRE, type SOURCE 
 # COLUMN COUNT: 17
 
@@ -43,7 +43,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_E_DEPT, type SOURCE 
 # COLUMN COUNT: 7
 
@@ -62,7 +62,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 17
 
@@ -108,7 +108,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE_temp.selectExpr(
 	"SQ_Shortcut_to_WM_E_DEPT_PRE___LOAD_TSTMP as LOAD_TSTMP"
 )
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
@@ -121,13 +121,13 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node JNR_SITE_PROFILE, type JOINER 
 # COLUMN COUNT: 19
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
 
-# COMMAND ----------
+
 # Processing node JNR_WM_E_DEPT, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 24
 
@@ -161,7 +161,7 @@ JNR_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT_temp.join(JNR_SITE_PROFILE_temp,[SQ_Sho
 	"SQ_Shortcut_to_WM_E_DEPT___WM_CREATED_TSTMP as in_WM_CREATED_TSTMP",
 	"SQ_Shortcut_to_WM_E_DEPT___WM_LAST_UPDATED_TSTMP as in_WM_LAST_UPDATED_TSTMP")
 
-# COMMAND ----------
+
 # Processing node FIL_NO_CHANGE_REC, type FILTER 
 # COLUMN COUNT: 22
 
@@ -192,7 +192,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_DEPT_temp.selectExpr(
 	"JNR_WM_E_DEPT___in_WM_CREATED_TSTMP as in_WM_CREATED_TSTMP",
 	"JNR_WM_E_DEPT___in_WM_LAST_UPDATED_TSTMP as in_WM_LAST_UPDATED_TSTMP").filter(f"in_WM_DEPT_ID.isNull() OR ( in_WM_DEPT_ID.isNotNull()  &  ( when((CREATE_DATE_TIME.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(CREATE_DATE_TIME) != when((in_WM_CREATE_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_CREATE_TSTMP) OR when((MOD_DATE_TIME.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(MOD_DATE_TIME) != when((in_WM_MOD_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_MOD_TSTMP) OR when((CREATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(CREATED_DTTM) != when((in_WM_CREATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_CREATED_TSTMP) OR when((LAST_UPDATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(LAST_UPDATED_DTTM) != when((in_WM_LAST_UPDATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_LAST_UPDATED_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_EVAL_VALUES, type EXPRESSION 
 # COLUMN COUNT: 19
 
@@ -222,7 +222,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr(
 	"FIL_NO_CHANGE_REC___in_WM_DEPT_ID as in_WM_DEPT_ID"
 )
 
-# COMMAND ----------
+
 # Processing node UPD_VALIDATE, type UPDATE_STRATEGY 
 # COLUMN COUNT: 19
 
@@ -248,10 +248,10 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr(
 	"EXP_EVAL_VALUES___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM",
 	"EXP_EVAL_VALUES___LOAD_TSTMP as LOAD_TSTMP",
 	"EXP_EVAL_VALUES___UPDATE_TSTMP as UPDATE_TSTMP",
-	"EXP_EVAL_VALUES___in_WM_DEPT_ID as in_WM_DEPT_ID")
+	"EXP_EVAL_VALUES___in_WM_DEPT_ID as in_WM_DEPT_ID")\
 	.withColumn('pyspark_data_action', when((EXP_EVAL_VALUES.in_WM_DEPT_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
 
-# COMMAND ----------
+
 # Processing node Shortcut_to_WM_E_DEPT, type TARGET 
 # COLUMN COUNT: 18
 

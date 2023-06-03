@@ -5,11 +5,11 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/genericUtilities
 
-# COMMAND ----------
+
+
+
 
 dbutils: DBUtils = dbutils
 spark: SparkSession = spark
@@ -20,7 +20,7 @@ dbutils.widgets.text(name="env", defaultValue="")
 dcnbr = dbutils.widgets.get("DC_NBR")
 env = dbutils.widgets.get("env")
 
-# COMMAND ----------
+
 
 
 ####################################################################
@@ -31,7 +31,7 @@ def run_notebook(name, timeout, params):
     dbutils.notebook.run(name, timeout, params)
 
 
-# COMMAND ----------
+
 
 ####################################################################
 ## main section

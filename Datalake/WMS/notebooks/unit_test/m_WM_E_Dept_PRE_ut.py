@@ -10,7 +10,7 @@ from pyspark.sql.session import SparkSession
 from datetime import datetime
 
 
-# COMMAND ----------
+
 
 
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
@@ -24,7 +24,7 @@ dcnbr = dbutils.widgets.get('DC_NBR')
 prev_run_dt = dbutils.widgets.get('Prev_Run_Dt')	
 
 
-# COMMAND ----------
+
 
 dept_query=f"""SELECT
 E_DEPT.DEPT_ID,
@@ -48,7 +48,7 @@ WHERE
 OR (date_trunc('DD', MOD_DATE_TIME) >=  date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS'))-1) 
 AND 1=1"""
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_DEPT =spark.sql("""select 
 123.12 as DEPT_ID,
@@ -67,11 +67,11 @@ TIMESTAMP "2003-01-01 2:00:00" as MOD_DATE_TIME,
 TIMESTAMP "2003-01-01 2:00:00" as CREATED_DTTM,
 TIMESTAMP "2003-01-01 2:00:00" as LAST_UPDATED_DTTM""")
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_DEPT.display()
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_E_DEPT = spark.read \
   .format("jdbc") \
@@ -81,7 +81,7 @@ SQ_Shortcut_to_E_DEPT = spark.read \
   .option("password", password) \
   .load()
 
-# COMMAND ----------
+
 
 EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	lit(f'{dcnbr}').cast(LongType()).alias('DC_NBR'), \
@@ -103,27 +103,27 @@ EXPTRANS = SQ_Shortcut_to_E_DEPT.select( \
 	current_timestamp().cast(TimestampType()).alias('LOAD_TSTMP') \
 )
 
-# COMMAND ----------
+
 
 # checking the row count
 assert SQ_Shortcut_to_E_DEPT.count() == EXPTRANS.count()
 
-# COMMAND ----------
+
 
 # checking the long data type columns
 assert SQ_Shortcut_to_E_DEPT.select(SQ_Shortcut_to_E_DEPT.DEPT_ID.cast(LongType())).first() == EXPTRANS.select(["DEPT_ID"]).first()
 
-# COMMAND ----------
+
 
 # checking the string data type column
 assert SQ_Shortcut_to_E_DEPT.select(["WHSE"]).first() == EXPTRANS.select(["WHSE"]).first()
 
-# COMMAND ----------
+
 
 # checking the Timestamp data type column
 assert SQ_Shortcut_to_E_DEPT.select(["CREATE_DATE_TIME"]).first() == EXPTRANS.select(["CREATE_DATE_TIME"]).first()
 
-# COMMAND ----------
+
 
 EXPTRANS.write.partitionBy('DC_NBR') \
   .mode("overwrite") \

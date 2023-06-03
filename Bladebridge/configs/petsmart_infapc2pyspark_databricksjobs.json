@@ -8,7 +8,7 @@ from pyspark.sql.types import *~
 from datetime import datetime~
 from dbruntime import dbutils~
 ~
-# COMMAND ----------~
+~
 ~
 # Set global variables~
 starttime = datetime.now() #start timestamp of the script~
@@ -20,7 +20,7 @@ starttime = datetime.now() #start timestamp of the script~
 	"script_extension": "py",
 	"pre_post_sql_wrapper" : "#Processing %PRE_POST_FLAG% for node %NODE_NAME%\nspark.sql('''%INNER_SQL%''')",
 	//"pre_node_line" : "# Processing node %NODE_NAME%, type %NODE_TYPE%\n# COLUMNS: %COLUMN_LIST%",
-	"pre_node_line" : "# COMMAND ----------\n# Processing node %NODE_NAME%, type %NODE_TYPE% %ADDITIONAL_COMMENT%\n# COLUMN COUNT: %COLUMN_COUNT%", //# COLUMNS %COLUMN_LIST%
+	"pre_node_line" : "\n# Processing node %NODE_NAME%, type %NODE_TYPE% %ADDITIONAL_COMMENT%\n# COLUMN COUNT: %COLUMN_COUNT%", //# COLUMNS %COLUMN_LIST%
 	"post_node_line" : "",
 	"explicit_aliasing" : "0",
 	"skip_rowid_generation" : "0", // omits generation of sys_row_id
@@ -487,6 +487,6 @@ properties={~
 	,
 	"generate_variable_declaration" : 1,
 	"variable_declaration_template" : "dbutils.widgets.text(name='%VARNAME%', defaultValue='%DEFAULT_VALUE%')",
-	"variable_declaration_header" : "# COMMAND ----------\n# Variable_declaration_comment"
+	"variable_declaration_header" : "\n# Variable_declaration_comment"
 
 }

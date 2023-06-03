@@ -5,11 +5,11 @@ from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id,col,when
 from pyspark.sql.types import StringType,DecimalType,TimestampType,DateType,LongType
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/genericUtilities
 
-# COMMAND ----------
+
+
+
 
 dbutils:DBUtils=dbutils
 spark:SparkSession=spark
@@ -19,7 +19,7 @@ refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
 
-# COMMAND ----------
+
 
 pre_user_table=f'{raw}.WM_UCL_USER_PRE'
 refined_user_table=f'{refine}.WM_UCL_USER'
@@ -28,7 +28,7 @@ site_profile_table=f'{legacy}.SITE_PROFILE'
 logger=getLogger()
 logger.setLevel(INFO)
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_WM_UCL_USER_PRE_query="""SELECT
 WM_UCL_USER_PRE.DC_NBR,
@@ -89,7 +89,7 @@ FROM """+pre_user_table
 SQ_Shortcut_to_WM_UCL_USER_PRE=spark.sql(SQ_Shortcut_to_WM_UCL_USER_PRE_query).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('Query to extract data from'+pre_user_table+' executed successfully')
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_WM_UCL_USER_query="""SELECT
 WM_UCL_USER.LOCATION_ID,
@@ -103,7 +103,7 @@ WHERE USER_NAME IN (SELECT USER_NAME FROM """+pre_user_table+ """)"""
 SQ_Shortcut_to_WM_UCL_USER=spark.sql(SQ_Shortcut_to_WM_UCL_USER_query).withColumn("sys_row_id", monotonically_increasing_id())
 
 
-# COMMAND ----------
+
 
 EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 	SQ_Shortcut_to_WM_UCL_USER_PRE.sys_row_id.alias('sys_row_id'), \
@@ -163,12 +163,12 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select( \
 )
 
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_SITE_PROFILE = spark.sql("""SELECT SITE_PROFILE.LOCATION_ID,SITE_PROFILE.STORE_NBR FROM """+site_profile_table).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('Site profile table query executed successfully!')
 
-# COMMAND ----------
+
 
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONVERSION.o_DC_NBR],'inner').select( \
@@ -229,7 +229,7 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Short
 	SQ_Shortcut_to_SITE_PROFILE.LOCATION_ID.alias('LOCATION_ID1'), \
 	SQ_Shortcut_to_SITE_PROFILE.STORE_NBR.alias('STORE_NBR'))
 
-# COMMAND ----------
+
 
 JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_WM_UCL_USER.LOCATION_ID == JNR_SITE_PROFILE.LOCATION_ID1, SQ_Shortcut_to_WM_UCL_USER.USER_NAME == JNR_SITE_PROFILE.USER_NAME],'right_outer').select( \
 	SQ_Shortcut_to_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
@@ -292,7 +292,7 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(JNR_SITE_PROFILE,[SQ_Shortcut_
 	SQ_Shortcut_to_WM_UCL_USER.USER_NAME.alias('i_USER_NAME'))
 
 
-# COMMAND ----------
+
 
 FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 	JNR_WM_UCL_USER.sys_row_id.alias('sys_row_id'), \
@@ -358,7 +358,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER.select( \
 		.filter(" (i_USER_NAME1 is null) OR ( NOT (i_USER_NAME1 is null) AND ( ((case when CREATED_DTTM is null then TO_DATE('01/01/1900','M/d/y') else CREATED_DTTM end ) != (case when i_WM_CREATED_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else i_WM_CREATED_TSTMP end )) or ((case when LAST_UPDATED_DTTM is null then TO_DATE('01/01/1900','M/d/y') else LAST_UPDATED_DTTM end )!= (case when i_WM_LAST_UPDATED_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else i_WM_LAST_UPDATED_TSTMP end )) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
-# COMMAND ----------
+
 
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	FIL_UNCHANGED_RECORDS.sys_row_id.alias('sys_row_id'), \
@@ -480,7 +480,7 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select( \
 	(when((((col('i_USER_NAME1').isNull()) &(col('i_LOCATION_ID1').isNull()))) ,(lit(1))).otherwise(lit(2))).alias('o_UPDATE_VALIDATOR') \
 )  ## no i_WM_UCL_USER_ID & i_LOAD_TSTMP in code 
 
-# COMMAND ----------
+
 
 
 UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
@@ -544,7 +544,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR.select( \
 UPD_INS_UPD=UPD_INS_UPD.withColumn('pyspark_data_action', when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(UPD_INS_UPD.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
 
-# COMMAND ----------
+
 
 
 Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
@@ -606,15 +606,15 @@ Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select( \
 
 logger.info('Input data for '+refined_user_table+' generated!')
 
-# COMMAND ----------
+
 
 # MAGIC %run ./utils/mergeUtils
 
-# COMMAND ----------
+
 
 # MAGIC %run ./utils/logger
 
-# COMMAND ----------
+
 
 #Final Merge 
 try:

@@ -1,6 +1,6 @@
 import pyspark.sql.functions as F
 
-# COMMAND ----------
+
 
 def dc10(env):
 
@@ -175,7 +175,7 @@ def getConfig(DC_NBR,env):
 
 
 
-# COMMAND ----------
+
 
 def getMaxDate(refine_table_name,schema):
     if refine_table_name=='WM_E_DEPT':
@@ -189,6 +189,6 @@ def getMaxDate(refine_table_name,schema):
     maxDate= maxDate.strftime('%Y-%m-%d')
     return maxDate
 
-# COMMAND ----------
+
 
 

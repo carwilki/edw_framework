@@ -2,7 +2,7 @@
 # MAGIC %sh
 # MAGIC pip install deepdiff
 
-# COMMAND ----------
+
 
 def genMergeUpsertQuery(target_table,source_table,targetColList,primaryKeyString):
   mergeQuery=""" MERGE INTO """+target_table+""" target USING """+source_table+""" source ON """+primaryKeyString
@@ -18,7 +18,7 @@ def genMergeUpsertQuery(target_table,source_table,targetColList,primaryKeyString
   mergeQuery=mergeQuery.rstrip(',')+")"   
   return mergeQuery
 
-# COMMAND ----------
+
 
 def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     import deepdiff

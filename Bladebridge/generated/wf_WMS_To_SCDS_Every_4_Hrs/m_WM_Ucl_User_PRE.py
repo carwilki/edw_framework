@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from dbruntime import dbutils
 
-# COMMAND ----------
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -15,13 +15,13 @@ starttime = datetime.now() #start timestamp of the script
 # Read in job variables
 # read_infa_paramfile('', 'm_WM_Ucl_User_PRE') ProcessingUtils
 
-# COMMAND ----------
+
 # Variable_declaration_comment
 dbutils.widgets.text(name='DC_NBR', defaultValue='')
 dbutils.widgets.text(name='Prev_Run_Dt', defaultValue='01/01/1901')
 dbutils.widgets.text(name='Initial_Load', defaultValue='')
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_UCL_USER, type SOURCE 
 # COLUMN COUNT: 52
 
@@ -85,7 +85,7 @@ properties={
 'password': os.environ.get('DBConnection_Source_PASSWORD'),
 'driver': os.environ.get('ORACLE_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXPTRANS, type EXPRESSION 
 # COLUMN COUNT: 54
 
@@ -150,7 +150,7 @@ EXPTRANS = SQ_Shortcut_to_UCL_USER_temp.selectExpr(
 	"current_timestamp() () as LOAD_TSTMP_EXP"
 )
 
-# COMMAND ----------
+
 # Processing node Shortcut_to_WM_UCL_USER_PRE, type TARGET 
 # COLUMN COUNT: 54
 

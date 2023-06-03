@@ -5,11 +5,11 @@ from pyspark.sql.functions import col, lit, when, current_timestamp, monotonical
 from pyspark.sql.types import DecimalType, TimestampType, StringType
 from pyspark.sql.session import SparkSession
 
-# COMMAND ----------
 
-# MAGIC %run ./utils/genericUtilities
 
-# COMMAND ----------
+
+
+
 
 dbutils:DBUtils = dbutils
 spark:SparkSession=spark
@@ -19,7 +19,7 @@ refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
 
-# COMMAND ----------
+
 
 pre_dept_table=f'{raw}.WM_E_DEPT_PRE'
 refined_dept_table=f'{refine}.WM_E_DEPT'
@@ -27,7 +27,7 @@ site_profile_table=f'{legacy}.SITE_PROFILE'
 logger=getLogger()
 logger.setLevel(INFO)
 
-# COMMAND ----------
+
 
 dept_pre_query = """SELECT
 WM_E_DEPT_PRE.DC_NBR,
@@ -49,14 +49,14 @@ WM_E_DEPT_PRE.LAST_UPDATED_DTTM,
 WM_E_DEPT_PRE.LOAD_TSTMP
 FROM """+pre_dept_table
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_WM_E_DEPT_PRE = spark.sql(dept_pre_query).withColumn(
     "sys_row_id", monotonically_increasing_id()
 )
 logger.info('Query to extract data from'+pre_dept_table+' executed successfully')
 
-# COMMAND ----------
+
 
 dept_query = """SELECT
 WM_E_DEPT.LOCATION_ID,
@@ -69,12 +69,12 @@ WM_E_DEPT.LOAD_TSTMP
 FROM """+refined_dept_table+"""
 WHERE WM_DEPT_ID IN (SELECT DEPT_ID FROM """+pre_dept_table+""")"""
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_WM_E_DEPT = spark.sql(dept_query).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('SQ_Shortcut_to_WM_E_DEPT created successfully')
 
-# COMMAND ----------
+
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE.select( \
 	SQ_Shortcut_to_WM_E_DEPT_PRE.sys_row_id.alias('sys_row_id'), \
@@ -116,24 +116,24 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_DEPT_PRE.select( \
 )
 logger.info('EXP_INT_CONV created successfully')
 
-# COMMAND ----------
+
 
 site_profile = f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
 FROM """+site_profile_table
 
-# COMMAND ----------
+
 
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(site_profile).withColumn("sys_row_id", monotonically_increasing_id())
 logger.info('Site profile table query executed successfully!')
 
-# COMMAND ----------
+
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
 logger.info('JNR_SITE_PROFILE dataframe created successfully')
 
-# COMMAND ----------
+
 
 JNR_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_WM_E_DEPT.LOCATION_ID == JNR_SITE_PROFILE.LOCATION_ID, SQ_Shortcut_to_WM_E_DEPT.WM_DEPT_ID == JNR_SITE_PROFILE.DEPT_ID],'right_outer').select( \
 	SQ_Shortcut_to_WM_E_DEPT.sys_row_id.alias('sys_row_id'), \
@@ -164,7 +164,7 @@ JNR_WM_E_DEPT = SQ_Shortcut_to_WM_E_DEPT.join(JNR_SITE_PROFILE,[SQ_Shortcut_to_W
 
 logger.info('JNR_WM_E_DEPT dataframe created successfully')
 
-# COMMAND ----------
+
 
 FIL_NO_CHANGE_REC = JNR_WM_E_DEPT.select( \
 	JNR_WM_E_DEPT.LOCATION_ID.alias('LOCATION_ID'), \
@@ -193,7 +193,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_DEPT.select( \
 	
 logger.info('FIL_NO_CHANGE_REC dataframe created successfully')
 
-# COMMAND ----------
+
 
 
 EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
@@ -221,7 +221,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC.select( \
 logger.info('EXP_EVAL_VALUES dataframe created successfully')
 
 
-# COMMAND ----------
+
 
 
 UPD_VALIDATE = EXP_EVAL_VALUES.select( \
@@ -249,7 +249,7 @@ UPD_VALIDATE = UPD_VALIDATE.withColumn('pyspark_data_action', when((UPD_VALIDATE
 
 logger.info('UPD_VALIDATE dataframe created successfully')
 
-# COMMAND ----------
+
 
 Shortcut_to_WM_E_DEPT = UPD_VALIDATE.select( \
 	UPD_VALIDATE.LOCATION_ID.cast(DecimalType(10,0)).alias('LOCATION_ID'), \
@@ -274,15 +274,15 @@ Shortcut_to_WM_E_DEPT = UPD_VALIDATE.select( \
 )
 logger.info('Shortcut_to_WM_E_DEPT dataframe created successfully')
 
-# COMMAND ----------
+
 
 # MAGIC %run ./utils/mergeUtils
 
-# COMMAND ----------
+
 
 # MAGIC %run ./utils/logger
 
-# COMMAND ----------
+
 
 
 #Final Merge 

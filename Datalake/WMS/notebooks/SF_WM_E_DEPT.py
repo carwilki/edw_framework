@@ -1,12 +1,6 @@
-#
-# MAGIC %run ./utils/genericUtilities
-
-# COMMAND ----------
-
 from pyspark.dbutils import DBUtils
 from logging import getLogger
-
-# COMMAND ----------
+from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToSF
 
 dbutils: DBUtils = dbutils
 dbutils.widgets.text(name='env', defaultValue='')
@@ -16,12 +10,8 @@ refine = getEnvPrefix(env)+'refine'
 raw = getEnvPrefix(env)+'raw'
 legacy = getEnvPrefix(env)+'legacy'
 
-# COMMAND ----------
-
 deltaTable=f"{refine}.WM_E_DEPT"
 SFTable="WM_E_DEPT_LGCY"
-
-# COMMAND ----------
 
 try:
     ingestToSF(raw,deltaTable,SFTable)
