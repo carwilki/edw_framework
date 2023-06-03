@@ -1,6 +1,13 @@
 import pyspark.sql.functions as F
+from logging import getLogger,INFO
+from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 
+logger=getLogger()
+logger.setLevel(INFO)
 
+spark:SparkSession=SparkSession.getActiveSession()
+dbutils:DBUtils=DBUtils(spark)
 
 def dc10(env):
 
@@ -24,8 +31,6 @@ def dc10(env):
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"   
 
         return (username,password,connection_string)
-
-    
 
 def dc12(env):
     if env.lower()=='dev' or env.lower()=='qa':
@@ -114,10 +119,6 @@ def dc36(env):
 
         return (username,password,connection_string)       
  
-
-
-
-
 def dc38(env):
     if env.lower()=='dev' or env.lower()=='qa':
         username = "SVC_BD_ORA_NP_READ"
@@ -173,10 +174,6 @@ def getConfig(DC_NBR,env):
        }
     return select.get(DC_NBR)
 
-
-
-
-
 def getMaxDate(refine_table_name,schema):
     if refine_table_name=='WM_E_DEPT':
         maxDateQuery= f'''select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from {schema}.{refine_table_name}'''
@@ -188,7 +185,3 @@ def getMaxDate(refine_table_name,schema):
     maxDate=df.select(F.max(F.col('max_date'))).first()[0]
     maxDate= maxDate.strftime('%Y-%m-%d')
     return maxDate
-
-
-
-

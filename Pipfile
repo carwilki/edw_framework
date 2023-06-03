@@ -9,6 +9,7 @@ databricks-connect = "*"
 black = "*"
 databricks-cli = "*"
 databricks-sdk = "*"
+deepdiff = "*"
 
 [dev-packages]
 

@@ -1,4 +1,9 @@
 import json
+from logging import getLogger,INFO
+from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
+spark:SparkSession = SparkSession.getActiveSession()
+dbutils = DBUtils(spark)
 
 #Function to Log the Success/Failure to log_run_details table
 # #Usage   - logPrevRunDt('test','test','Completed','N/A',"devrefine.log_run_details")  

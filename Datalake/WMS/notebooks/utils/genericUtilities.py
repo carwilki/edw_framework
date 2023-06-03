@@ -3,15 +3,11 @@ from logging import getLogger,INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
-
-
 logger=getLogger()
 logger.setLevel(INFO)
 
-
-
-spark:SparkSession=spark
-dbutils:DBUtils=dbutils
+spark:SparkSession=SparkSession.getActiveSession()
+dbutils:DBUtils=DBUtils(spark)
 username = dbutils.secrets.get("databricks_service_account", "username")
 password = dbutils.secrets.get("databricks_service_account", "password")
 

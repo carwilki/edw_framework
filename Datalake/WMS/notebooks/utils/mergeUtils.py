@@ -1,8 +1,6 @@
-#
-# MAGIC %sh
-# MAGIC pip install deepdiff
+from pyspark.sql import SparkSession
 
-
+spark:SparkSession = SparkSession.getActiveSession()
 
 def genMergeUpsertQuery(target_table,source_table,targetColList,primaryKeyString):
   mergeQuery=""" MERGE INTO """+target_table+""" target USING """+source_table+""" source ON """+primaryKeyString
