@@ -4,14 +4,17 @@ from pyspark.sql.functions import current_timestamp, lit
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
-from Datalake.WMS.notebooks.utils.configs import getConfig
+from Datalake.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.configs import getConfig
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dcnbr = dbutils.jobs.taskValues.get(key='DC_NBR', default='')
-env = dbutils.jobs.taskValues.get(key='env', default='')
+dbutils.widgets.text(name='DC_NBR', defaultValue='')
+dbutils.widgets.text(name='env', defaultValue='')	
+
+dcnbr = dbutils.widgets.get('DC_NBR')	
+env = dbutils.widgets.get('env')
 
 if dcnbr is None or dcnbr == "":
     raise Exception("DC_NBR is not set")

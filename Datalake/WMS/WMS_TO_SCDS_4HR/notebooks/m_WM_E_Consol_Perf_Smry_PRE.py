@@ -10,14 +10,14 @@ from Datalake.utils.configs import getConfig
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dcnbr = dbutils.jobs.taskValuess.get(key='DC_NBR', default='')
-env = dbutils.jobs.taskValues.get(key='env', default='')
+dcnbr = dbutils.widgets.get('DC_NBR')
+env = dbutils.widgets.get('env')
 
 if dcnbr is None or dcnbr == "":
     raise ValueError("DC_NBR is not set")
 
 if env is None or env == "":
-    raise Exception("env is not set")
+    raise ValueError("env is not set")
 
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"

@@ -1,5 +1,5 @@
 {
-    "name": "WMS_TO_SCDS_4HR",
+    "name": "DEV_WMS_TO_SCDS_4HR_cw_test",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },

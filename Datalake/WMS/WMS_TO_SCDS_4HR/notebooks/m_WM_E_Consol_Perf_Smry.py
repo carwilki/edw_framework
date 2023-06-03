@@ -5,10 +5,10 @@ from pyspark.sql import *
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
-from Datalake.WMS.notebooks.utils.configs import getConfig
-from Datalake.WMS.notebooks.utils.logger import logPrevRunDt
-from Datalake.WMS.notebooks.utils.mergeUtils import executeMerge
+from Datalake.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.configs import getConfig
+from Datalake.utils.logger import logPrevRunDt
+from Datalake.utils.mergeUtils import executeMerge
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)

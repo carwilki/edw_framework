@@ -5,9 +5,9 @@ from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing_id,col,when
 from pyspark.sql.types import StringType,DecimalType,TimestampType,DateType,LongType
 
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
-from Datalake.WMS.notebooks.utils.logger import logPrevRunDt
-from Datalake.WMS.notebooks.utils.mergeUtils import executeMerge
+from Datalake.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.logger import logPrevRunDt
+from Datalake.utils.mergeUtils import executeMerge
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)

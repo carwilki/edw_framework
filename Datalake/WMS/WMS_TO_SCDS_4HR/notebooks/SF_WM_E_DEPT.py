@@ -2,7 +2,7 @@
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 from logging import getLogger
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix,ingestToSF
+from Datalake.utils.genericUtilities import getEnvPrefix,ingestToSF
 
 dbutils: DBUtils = DBUtils(SparkSession.getActiveSession())
 

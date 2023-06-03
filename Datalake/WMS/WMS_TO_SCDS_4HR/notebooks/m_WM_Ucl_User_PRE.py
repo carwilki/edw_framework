@@ -4,25 +4,27 @@ from pyspark.sql.functions import current_timestamp,lit,monotonically_increasing
 from pyspark.sql.types import StringType,DecimalType,TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
-from Datalake.WMS.notebooks.utils.configs import getMaxDate,getConfig
-from Datalake.WMS.notebooks.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.configs import getMaxDate,getConfig
+from Datalake.utils.genericUtilities import getEnvPrefix
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dcnbr = dbutils.jobs.taskValues.get(key='DC_NBR', default='')
-env = dbutils.jobs.taskValues.get(key='env', default='')
+dbutils.widgets.text(name='DC_NBR', defaultValue='')
+dbutils.widgets.text(name='env', defaultValue='')	
+
+dcnbr = dbutils.widgets.get('DC_NBR')	
+env = dbutils.widgets.get('env')
 
 if dcnbr is None or dcnbr == "":
-    raise ValueError("DC_NBR is not set")
+    raise Exception("DC_NBR is not set")
 
 if env is None or env == "":
-    raise ValueError("env is not set")
+    raise Exception("env is not set")
 
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
-tableName='WM_UCL_USER_PRE'
 
 target_table_name = raw+'.'+tableName
 
