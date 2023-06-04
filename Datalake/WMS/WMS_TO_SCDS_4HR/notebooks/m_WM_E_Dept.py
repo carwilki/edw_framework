@@ -11,14 +11,10 @@ from Datalake.utils.mergeUtils import executeMerge
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dcnbr = dbutils.jobs.taskValues.get(key='DC_NBR', default='')
-env = dbutils.jobs.taskValues.get(key='env', default='')
-
-if dcnbr is None or dcnbr == "":
-    raise ValueError("DC_NBR is not set")
+env = dbutils.widgets.get('env')
 
 if env is None or env == "":
-    raise Exception("env is not set")
+    raise ValueError("env is not set")
 
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"

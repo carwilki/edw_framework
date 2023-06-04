@@ -13,17 +13,19 @@ from Datalake.utils.mergeUtils import executeMerge
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-env = dbutils.jobs.taskValues.get(key='env', default='')
+env = dbutils.widgets.get('env')
 
 if env is None or env == "":
-    raise Exception("env is not set")
+    raise ValueError("env is not set")
 
 refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
+
 pre_perf_table = f"{raw}.WM_E_CONSOL_PERF_SMRY_PRE"
 refined_perf_table = f"{refine}.WM_E_CONSOL_PERF_SMRY"
 site_profile_table = f"{legacy}.SITE_PROFILE"
+
 logger = getLogger()
 logger.setLevel(INFO)
 
