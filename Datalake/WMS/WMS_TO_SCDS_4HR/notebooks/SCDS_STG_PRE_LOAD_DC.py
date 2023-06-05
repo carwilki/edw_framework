@@ -1,10 +1,15 @@
 from pyspark.dbutils import DBUtils
-from pyspark.sql.functions import current_timestamp, lit
+from pyspark.sql.functions import current_timestamp, lit,monotonically_increasing_id
 from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.configs import getConfig
+from Datalake.utils.configs import getMaxDate,getConfig
+from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Consol_Perf_Smry_PRE import perf_smry
+from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_Ucl_User import user_pre
+from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Dept.py import dept_pre
+
 import argparse
 parser = argparse.ArgumentParser()
 
@@ -31,12 +36,11 @@ if env is None or env == "":
 # foreach mapping in maplet/worklet call the corresponding notebook
 # that is created.
 ####################################################################
-def run_notebook(name, timeout, params):
-    dbutils.notebook.run(name, timeout, params)
 
 ####################################################################
-## main section
+## main section ##
 ####################################################################
-run_notebook("./m_WM_Ucl_User_PRE", 3090, {"DC_NBR": f"{dcnbr}", "env": f"{env}"})
-run_notebook("./m_WM_E_Dept_PRE", 8000, {"DC_NBR": f"{dcnbr}", "env": f"{env}"})
-run_notebook("./m_WM_E_Consol_Perf_Smry_PRE", 8000, {"DC_NBR": f"{dcnbr}", "env": f"{env}"})
+
+user_pre(dcnbr,env)
+dept_pre(dcnbr,env)
+perf_smry(dcnbr,env)

@@ -1,3 +1,4 @@
+# Databricks notebook source
 from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql import *
@@ -8,7 +9,6 @@ from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.configs import getConfig
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
-
 import argparse
 parser = argparse.ArgumentParser()
 
@@ -982,6 +982,10 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select(
 logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully")
 
 
+%run ./utils/mergeUtils
+
+
+%run ./utils/logger
 
 
 # Final Merge

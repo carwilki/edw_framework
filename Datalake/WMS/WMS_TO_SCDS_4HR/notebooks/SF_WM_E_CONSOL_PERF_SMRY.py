@@ -1,8 +1,9 @@
-# Databricks notebook source
 from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from logging import getLogger
 from Datalake.utils.genericUtilities import getEnvPrefix,ingestToSF
+from Datalake.utils.logger import logPrevRunDt
+from Datalake.utils.mergeUtils import executeMerge
 import argparse
 parser = argparse.ArgumentParser()
 
@@ -27,7 +28,7 @@ deltaTable=refine+'.WM_E_CONSOL_PERF_SMRY'
 SFTable='WM_E_CONSOL_PERF_SMRY_LGCY'
 
 try:
-    ingestToSF(raw,deltaTable,SFTable)
+    ingestToSF(raw,deltaTable,SFTable,env)
     logger.info('Data write to SF completed')
 except Exception as e:
     raise e

@@ -1,4 +1,3 @@
-# Databricks notebook source
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 from logging import getLogger

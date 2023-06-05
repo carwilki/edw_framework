@@ -1,3 +1,4 @@
+# Databricks notebook source
 from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
@@ -593,3 +594,4 @@ try:
 except Exception as e:
     logPrevRunDt('WM_UCL_USER','WM_UCL_USER','Failed',str(e),f"{raw}.log_run_details")
     raise e
+

@@ -1,4 +1,3 @@
-# Databricks notebook source
 from logging import *
 from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import col, lit, when, current_timestamp, monotonically_increasing_id
@@ -12,8 +11,6 @@ parser = argparse.ArgumentParser()
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
-
-
 
 
 parser.add_argument('env',type=str, help = "Env Variable")
@@ -261,4 +258,3 @@ try:
 except Exception as e:
     logPrevRunDt('WM_E_DEPT','WM_E_DEPT','Failed',str(e),f"{raw}.log_run_details")
     raise e
-
