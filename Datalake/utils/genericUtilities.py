@@ -74,7 +74,7 @@ def ingestToSF(schema,deltaTable,SFTable,env):
         username = dbutils.secrets.get("databricks_service_account", "username")
         password = dbutils.secrets.get("databricks_service_account", "password")
 
-        options=getSfCredentials(env,username,password)
+        options=getSfCredentials(env+"_",username,password)
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
         
