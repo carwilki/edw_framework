@@ -1,18 +1,17 @@
-from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp, lit
-from pyspark.sql.types import *
+from pyspark.sql.types import DecimalType, StringType, TimestampType
 from pyspark.sql.session import SparkSession
 from datetime import datetime
 from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.configs import getConfig
+from Datalake.utils.configs import getConfig, getMaxDate
 
 import argparse
+
 parser = argparse.ArgumentParser()
 
-def perf_smry(dcnbr,env):
-        
+
+def perf_smry(dcnbr, env):
     spark: SparkSession = SparkSession.getActiveSession()
-    dbutils: DBUtils = DBUtils(spark)
 
     if dcnbr is None or dcnbr == "":
         raise ValueError("DC_NBR is not set")
@@ -22,7 +21,6 @@ def perf_smry(dcnbr,env):
 
     refine = getEnvPrefix(env) + "refine"
     raw = getEnvPrefix(env) + "raw"
-    legacy = getEnvPrefix(env) + "legacy"
 
     tableName = "WM_E_CONSOL_PERF_SMRY_PRE"
 
@@ -31,7 +29,6 @@ def perf_smry(dcnbr,env):
     target_table_name = schemaName + "." + tableName
 
     refine_table_name = "WM_E_CONSOL_PERF_SMRY"
-
 
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date) from {schemaName}.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'"""
@@ -43,7 +40,6 @@ def perf_smry(dcnbr,env):
     else:
         prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
         prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
-
 
     print("The prev run date is " + prev_run_dt)
 
@@ -165,12 +161,11 @@ def perf_smry(dcnbr,env):
         .load()
     )
 
-
     Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(
         lit(f"{dcnbr}").cast(DecimalType(3, 0)).alias("DC_NBR"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PERF_SMRY_TRAN_ID.cast(DecimalType(20, 0)).alias(
-            "PERF_SMRY_TRAN_ID"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PERF_SMRY_TRAN_ID.cast(
+            DecimalType(20, 0)
+        ).alias("PERF_SMRY_TRAN_ID"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.WHSE.cast(StringType()).alias("WHSE"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.LOGIN_USER_ID.cast(StringType()).alias(
             "LOGIN_USER_ID"
@@ -181,7 +176,9 @@ def perf_smry(dcnbr,env):
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.SPVSR_LOGIN_USER_ID.cast(StringType()).alias(
             "SPVSR_LOGIN_USER_ID"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DEPT_CODE.cast(StringType()).alias("DEPT_CODE"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DEPT_CODE.cast(StringType()).alias(
+            "DEPT_CODE"
+        ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.CLOCK_IN_DATE.cast(TimestampType()).alias(
             "CLOCK_IN_DATE"
         ),
@@ -260,7 +257,9 @@ def perf_smry(dcnbr,env):
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.CLOCK_OUT_DATE.cast(TimestampType()).alias(
             "CLOCK_OUT_DATE"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.SHIFT_CODE.cast(StringType()).alias("SHIFT_CODE"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.SHIFT_CODE.cast(StringType()).alias(
+            "SHIFT_CODE"
+        ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.EVENT_COUNT.cast(DecimalType(9, 0)).alias(
             "EVENT_COUNT"
         ),
@@ -279,13 +278,21 @@ def perf_smry(dcnbr,env):
             "WHSE_DATE"
         ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.OPS_CODE.cast(StringType()).alias("OPS_CODE"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REF_SAM.cast(DecimalType(13, 5)).alias("REF_SAM"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REF_PAM.cast(DecimalType(13, 5)).alias("REF_PAM"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REF_SAM.cast(DecimalType(13, 5)).alias(
+            "REF_SAM"
+        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REF_PAM.cast(DecimalType(13, 5)).alias(
+            "REF_PAM"
+        ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.REPORT_SHIFT.cast(StringType()).alias(
             "REPORT_SHIFT"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.MISC_TXT_1.cast(StringType()).alias("MISC_TXT_1"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.MISC_TXT_2.cast(StringType()).alias("MISC_TXT_2"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.MISC_TXT_1.cast(StringType()).alias(
+            "MISC_TXT_1"
+        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.MISC_TXT_2.cast(StringType()).alias(
+            "MISC_TXT_2"
+        ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.MISC_NUM_1.cast(DecimalType(20, 7)).alias(
             "MISC_NUM_1"
         ),
@@ -307,43 +314,45 @@ def perf_smry(dcnbr,env):
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.EVNT_CTGRY_5.cast(StringType()).alias(
             "EVNT_CTGRY_5"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.LABOR_COST_RATE.cast(DecimalType(20, 7)).alias(
-            "LABOR_COST_RATE"
-        ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_OSDL.cast(DecimalType(20, 7)).alias(
-            "PAID_OVERLAP_OSDL"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.LABOR_COST_RATE.cast(
+            DecimalType(20, 7)
+        ).alias("LABOR_COST_RATE"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_OSDL.cast(
+            DecimalType(20, 7)
+        ).alias("PAID_OVERLAP_OSDL"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.UNPAID_OVERLAP_OSDL.cast(
             DecimalType(20, 7)
         ).alias("UNPAID_OVERLAP_OSDL"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_NSDL.cast(DecimalType(20, 7)).alias(
-            "PAID_OVERLAP_NSDL"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_NSDL.cast(
+            DecimalType(20, 7)
+        ).alias("PAID_OVERLAP_NSDL"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.UNPAID_OVERLAP_NSDL.cast(
             DecimalType(20, 7)
         ).alias("UNPAID_OVERLAP_NSDL"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_OSIL.cast(DecimalType(20, 7)).alias(
-            "PAID_OVERLAP_OSIL"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_OSIL.cast(
+            DecimalType(20, 7)
+        ).alias("PAID_OVERLAP_OSIL"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.UNPAID_OVERLAP_OSIL.cast(
             DecimalType(20, 7)
         ).alias("UNPAID_OVERLAP_OSIL"),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_UDIL.cast(DecimalType(20, 7)).alias(
-            "PAID_OVERLAP_UDIL"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.PAID_OVERLAP_UDIL.cast(
+            DecimalType(20, 7)
+        ).alias("PAID_OVERLAP_UDIL"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.UNPAID_OVERLAP_UDIL.cast(
             DecimalType(20, 7)
         ).alias("UNPAID_OVERLAP_UDIL"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.VERSION_ID.cast(DecimalType(6, 0)).alias(
             "VERSION_ID"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.TEAM_CODE.cast(StringType()).alias("TEAM_CODE"),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.TEAM_CODE.cast(StringType()).alias(
+            "TEAM_CODE"
+        ),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DEFAULT_JF_FLAG.cast(DecimalType(9, 0)).alias(
             "DEFAULT_JF_FLAG"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.EMP_PERF_SMRY_ID.cast(DecimalType(20, 0)).alias(
-            "EMP_PERF_SMRY_ID"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.EMP_PERF_SMRY_ID.cast(
+            DecimalType(20, 0)
+        ).alias("EMP_PERF_SMRY_ID"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.TOTAL_QTY.cast(DecimalType(13, 5)).alias(
             "TOTAL_QTY"
         ),
@@ -354,9 +363,9 @@ def perf_smry(dcnbr,env):
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.THRUPUT_MIN.cast(DecimalType(20, 7)).alias(
             "THRUPUT_MIN"
         ),
-        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DISPLAY_UOM_QTY.cast(DecimalType(20, 7)).alias(
-            "DISPLAY_UOM_QTY"
-        ),
+        SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DISPLAY_UOM_QTY.cast(
+            DecimalType(20, 7)
+        ).alias("DISPLAY_UOM_QTY"),
         SQ_Shortcut_to_E_CONSOL_PERF_SMRY.DISPLAY_UOM.cast(StringType()).alias(
             "DISPLAY_UOM"
         ),
@@ -374,7 +383,6 @@ def perf_smry(dcnbr,env):
         ),
         current_timestamp().cast(TimestampType()).alias("LOAD_TSTMP"),
     )
-
 
     Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy("DC_NBR").mode(
         "overwrite"

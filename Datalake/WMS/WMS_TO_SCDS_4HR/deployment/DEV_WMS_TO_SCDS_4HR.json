@@ -10,7 +10,7 @@
         {
             "task_key": "DC_10_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -32,7 +32,7 @@
         {
             "task_key": "DC_12_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -54,7 +54,7 @@
         {
             "task_key": "DC_14_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -76,7 +76,7 @@
         {
             "task_key": "DC_22_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -98,7 +98,7 @@
         {
             "task_key": "DC_36_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",
@@ -120,7 +120,7 @@
         {
             "task_key": "DC_38_PRE",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC.py",
+                "python_file": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "source": "GIT"
             },
             "existing_cluster_id": "0509-005631-cmrsptcr",

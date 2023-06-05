@@ -1,22 +1,27 @@
-from logging import *
+from logging import getLogger, INFO
 from pyspark.dbutils import DBUtils
-from pyspark.sql import *
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-from pyspark.sql.session import SparkSession
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import (
+    col,
+    lit,
+    monotonically_increasing_id,
+    when,
+    current_timestamp,
+    date_trunc,
+)
+from pyspark.sql.types import DecimalType, StringType, TimestampType
 from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.configs import getConfig
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
 
 import argparse
+
 parser = argparse.ArgumentParser()
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-
-parser.add_argument('env',type=str, help = "Env Variable")
+parser.add_argument("env", type=str, help="Env Variable")
 args = parser.parse_args()
 env = args.env
 # env = dbutils.widgets.get('env')
@@ -35,8 +40,7 @@ site_profile_table = f"{legacy}.SITE_PROFILE"
 logger = getLogger()
 logger.setLevel(INFO)
 
-consol_perf_smry_pre_query = (
-    f"""SELECT
+consol_perf_smry_pre_query = f"""SELECT
 WM_E_CONSOL_PERF_SMRY_PRE.DC_NBR,
 WM_E_CONSOL_PERF_SMRY_PRE.PERF_SMRY_TRAN_ID,
 WM_E_CONSOL_PERF_SMRY_PRE.WHSE,
@@ -123,30 +127,22 @@ WM_E_CONSOL_PERF_SMRY_PRE.RESOURCE_GROUP_ID,
 WM_E_CONSOL_PERF_SMRY_PRE.COMP_ASSIGNMENT_ID,
 WM_E_CONSOL_PERF_SMRY_PRE.REFLECTIVE_CODE,
 WM_E_CONSOL_PERF_SMRY_PRE.LOAD_TSTMP
-FROM """
-    + pre_perf_table
-)
+FROM {pre_perf_table} """
 
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = spark.sql(
     consol_perf_smry_pre_query
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
-logger.info("Query to extract data from" + pre_perf_table + " executed successfully")
+logger.info(f"Query to extract data from{pre_perf_table}executed successfully")
 
-consol_perf_smry_query = (
-    """SELECT
+consol_perf_smry_query = f"""SELECT
 WM_E_CONSOL_PERF_SMRY.LOCATION_ID,
 WM_E_CONSOL_PERF_SMRY.WM_PERF_SMRY_TRAN_ID,
 WM_E_CONSOL_PERF_SMRY.WM_CREATE_TSTMP,
 WM_E_CONSOL_PERF_SMRY.WM_MOD_TSTMP,
 WM_E_CONSOL_PERF_SMRY.LOAD_TSTMP
-FROM """
-    + refined_perf_table
-    + """
-WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM """
-    + pre_perf_table
-    + """)"""
-)
+FROM {refined_perf_table}
+WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM {pre_perf_table}"""
 
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY = spark.sql(consol_perf_smry_query).withColumn(
     "sys_row_id", monotonically_increasing_id()
@@ -581,7 +577,11 @@ FIL_NO_CHANGE_REC = (
         JNR_WM_E_CON_PERF_SMRY.in_WM_MOD_TSTMP.alias("in_WM_MOD_TSTMP"),
     )
     .filter(
-        " (in_WM_PERF_SMRY_TRAN_ID is null) OR ( NOT (in_WM_PERF_SMRY_TRAN_ID is null) AND ( ((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else CREATE_DATE_TIME end ) != (case when in_WM_CREATE_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_CREATE_TSTMP end )) or ((case when MOD_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else MOD_DATE_TIME end )!= (case when in_WM_MOD_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_MOD_TSTMP end )) ) )"
+        """(in_WM_PERF_SMRY_TRAN_ID is null) OR ( NOT (in_WM_PERF_SMRY_TRAN_ID is null) 
+            AND ( ((case when CREATE_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else CREATE_DATE_TIME end ) !=
+            (case when in_WM_CREATE_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_CREATE_TSTMP end ))
+            or ((case when MOD_DATE_TIME is null then TO_DATE('01/01/1900','M/d/y') else MOD_DATE_TIME end )!=
+            (case when in_WM_MOD_TSTMP is null then TO_DATE('01/01/1900','M/d/y') else in_WM_MOD_TSTMP end )) ) )"""
     )
     .withColumn("sys_row_id", monotonically_increasing_id())
 )
@@ -982,11 +982,10 @@ Shortcut_to_WM_E_CONSOL_PERF_SMRY = UPD_VALIDATE.select(
 logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY dataframe created successfully")
 
 
-
-
 # Final Merge
 try:
-    primary_key = "source.LOCATION_ID = target.LOCATION_ID AND source.WM_PERF_SMRY_TRAN_ID = target.WM_PERF_SMRY_TRAN_ID"
+    primary_key = """source.LOCATION_ID = target.LOCATION_ID
+                    AND source.WM_PERF_SMRY_TRAN_ID = target.WM_PERF_SMRY_TRAN_ID"""
     executeMerge(Shortcut_to_WM_E_CONSOL_PERF_SMRY, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")
     # logPrevRunDt('WM_E_CONSOL_PERF_SMRY','WM_E_CONSOL_PERF_SMRY','Completed','N/A',f"{env}raw.log_run_details")

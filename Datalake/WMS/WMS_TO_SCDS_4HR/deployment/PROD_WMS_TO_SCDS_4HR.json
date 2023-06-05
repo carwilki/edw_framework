@@ -10,7 +10,7 @@
         {
             "task_key": "DC_10_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc10",
                     "env": "prod"
@@ -36,7 +36,7 @@
         {
             "task_key": "DC_12_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc12",
                     "env": "prod"
@@ -62,7 +62,7 @@
         {
             "task_key": "DC_14_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc14",
                     "env": "prod"
@@ -88,7 +88,7 @@
         {
             "task_key": "DC_22_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc22",
                     "env": "prod"
@@ -114,7 +114,7 @@
         {
             "task_key": "DC_36_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc36",
                     "env": "prod"
@@ -140,7 +140,7 @@
         {
             "task_key": "DC_38_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc38",
                     "env": "prod"
@@ -292,7 +292,7 @@
         {
             "task_key": "DC_41_PRE",
             "notebook_task": {
-                "notebook_path": "Datalake/WMS/notebooks/SCDS_STG_PRE_Load_DC",
+                "notebook_path": "Datalake/WMS/notebooks/WL_SCDS_STG_PRE_LOAD_DC",
                 "base_parameters": {
                     "DC_NBR": "dc41",
                     "env": "prod"
