@@ -3,11 +3,18 @@ from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from logging import getLogger
 from Datalake.utils.genericUtilities import getEnvPrefix,ingestToSF
+import argparse
+parser = argparse.ArgumentParser()
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-env = dbutils.widgets.get('env')
+
+parser.add_argument('env',type=str, help = "Env Variable")
+args = parser.parse_args()
+env = args.env	
+
+#env = dbutils.widgets.get('env')
 
 if env is None or env == "":
     raise ValueError("env is not set")

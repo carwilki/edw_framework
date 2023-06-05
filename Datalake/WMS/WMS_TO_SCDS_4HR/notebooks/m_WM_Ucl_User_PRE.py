@@ -7,14 +7,23 @@ from datetime import datetime
 from Datalake.utils.configs import getMaxDate,getConfig
 from Datalake.utils.genericUtilities import getEnvPrefix
 
+import argparse
+parser = argparse.ArgumentParser()
+
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-dbutils.widgets.text(name='DC_NBR', defaultValue='')
-dbutils.widgets.text(name='env', defaultValue='')	
+parser.add_argument('DC_NBR',type=str, help = "DC number")
+parser.add_argument('env',type=str, help = "Env Variable")
+args = parser.parse_args()
+dcnbr=args.DC_NBR
+env = args.env
 
-dcnbr = dbutils.widgets.get('DC_NBR')	
-env = dbutils.widgets.get('env')
+# dbutils.widgets.text(name='DC_NBR', defaultValue='')
+# dbutils.widgets.text(name='env', defaultValue='')	
+
+# dcnbr = dbutils.widgets.get('DC_NBR')	
+# env = dbutils.widgets.get('env')
 
 if dcnbr is None or dcnbr == "":
     raise Exception("DC_NBR is not set")
