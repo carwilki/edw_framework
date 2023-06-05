@@ -78,9 +78,9 @@ def ingestToSF(schema,deltaTable,SFTable,env):
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
         
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
+        #logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
     except Exception as e:
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
+        #logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
         raise e
 
 
