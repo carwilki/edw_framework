@@ -60,7 +60,7 @@ def deltaReader(tblReference,isPath):
 
 
 
-def ingestToSF(schema,deltaTable,SFTable):
+def ingestToSF(schema,deltaTable,SFTable,env):
     try:
         options=getSfCredentials(env,username,password)
         df = deltaReader(deltaTable,False)

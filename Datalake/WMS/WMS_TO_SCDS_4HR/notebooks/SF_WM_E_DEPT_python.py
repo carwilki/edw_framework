@@ -31,7 +31,7 @@ deltaTable=f"{refine}.WM_E_DEPT"
 SFTable="WM_E_DEPT_LGCY"
 
 try:
-    ingestToSF(raw,deltaTable,SFTable)
+    ingestToSF(raw,deltaTable,SFTable,env)
     logger.info("Data write to SF completed succesfully")
 except Exception as e:
     raise e
