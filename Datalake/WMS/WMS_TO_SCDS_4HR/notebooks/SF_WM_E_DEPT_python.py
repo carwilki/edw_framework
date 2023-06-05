@@ -4,6 +4,8 @@ from logging import getLogger
 from Datalake.utils.genericUtilities import getEnvPrefix,ingestToSF
 import argparse
 parser = argparse.ArgumentParser()
+from Datalake.utils.logger import logPrevRunDt
+from Datalake.utils.mergeUtils import executeMerge
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
