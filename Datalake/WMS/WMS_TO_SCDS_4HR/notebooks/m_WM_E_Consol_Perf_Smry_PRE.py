@@ -31,7 +31,8 @@ def perf_smry(dcnbr, env):
     refine_table_name = "WM_E_CONSOL_PERF_SMRY"
 
     prev_run_dt = spark.sql(
-        f"""select max(prev_run_date) from {schemaName}.log_run_details where table_name='{refine_table_name}' and lower(status)= 'completed'"""
+        f"""select max(prev_run_date) from {schemaName}.log_run_details
+        where table_name='{refine_table_name}' and lower(status)= 'completed'"""
     ).collect()[0][0]
 
     if prev_run_dt is None:

@@ -214,14 +214,20 @@ FIL_NO_CHANGE_REC = (
         OR ( NOT (in_WM_DEPT_ID is null)
         AND (((case when CREATE_DATE_TIME is null
         then TO_DATE('01/01/1900','M/d/y') else CREATE_DATE_TIME end )
-        != (case when in_WM_CREATE_TSTMP is null then TO_DATE ('01/01/1900','M/d/y')
-        else in_WM_CREATE_TSTMP end))OR(( case when MOD_DATE_TIME is null then TO_DATE ( '01/01/1900' , 'M/d/y' ) 
-        else MOD_DATE_TIME end) != (case when in_WM_MOD_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y' )
+        != (case when in_WM_CREATE_TSTMP is null
+         then TO_DATE ('01/01/1900','M/d/y')
+        else in_WM_CREATE_TSTMP end))OR(( case when MOD_DATE_TIME is null
+         then TO_DATE ('01/01/1900' , 'M/d/y')
+        else MOD_DATE_TIME end) != (case when in_WM_MOD_TSTMP is null
+         then TO_DATE ( '01/01/1900' , 'M/d/y' )
         else in_WM_MOD_TSTMP end))
         OR((case when CREATED_DTTM  is null then TO_DATE ( '01/01/1900' , 'M/d/y' )
-        else CREATED_DTTM end) != (case when in_WM_CREATED_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y' )
-        else in_WM_CREATED_TSTMP end))OR((case when LAST_UPDATED_DTTM is null then TO_DATE( '01/01/1900' , 'M/d/y' )
-        else LAST_UPDATED_DTTM end) != (case when in_WM_LAST_UPDATED_TSTMP is null then TO_DATE ( '01/01/1900' , 'M/d/y') 
+        else CREATED_DTTM end) != (case when in_WM_CREATED_TSTMP is null
+         then TO_DATE ( '01/01/1900' , 'M/d/y' )
+        else in_WM_CREATED_TSTMP end))OR((case when LAST_UPDATED_DTTM is null
+         then TO_DATE( '01/01/1900' , 'M/d/y' )
+        else LAST_UPDATED_DTTM end) != (case when in_WM_LAST_UPDATED_TSTMP is null
+         then TO_DATE ( '01/01/1900' , 'M/d/y')
         else  in_WM_LAST_UPDATED_TSTMP end) ) ))"""
     )
     .withColumn("sys_row_id", monotonically_increasing_id())

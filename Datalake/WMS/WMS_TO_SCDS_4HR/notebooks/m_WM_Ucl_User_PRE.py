@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from pyspark.sql.functions import current_timestamp, lit,\
-    monotonically_increasing_id
+from pyspark.sql.functions import current_timestamp, lit, monotonically_increasing_id
 from pyspark.sql.session import SparkSession
 from pyspark.sql.types import DecimalType, StringType, TimestampType
 
@@ -107,7 +106,7 @@ def user_pre(dcnbr, env):
         (trunc(UCL_USER.CREATED_DTTM)>= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
     OR
     (trunc(UCL_USER.LAST_UPDATED_DTTM)>= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) AND 1=1
-    """# noqa501
+    """  # noqa501
 
     SQ_Shortcut_to_UCL_USER = (
         spark.read.format("jdbc")
@@ -147,10 +146,8 @@ def user_pre(dcnbr, env):
         EXPTRANS.LAST_UPDATED_SOURCE_TYPE_ID.cast(DecimalType(4, 0)).alias(
             "LAST_UPDATED_SOURCE_TYPE_ID"
         ),
-        EXPTRANS.LAST_UPDATED_SOURCE.cast(StringType())
-                .alias("LAST_UPDATED_SOURCE"),
-        EXPTRANS.LAST_UPDATED_DTTM.cast(TimestampType())
-                .alias("LAST_UPDATED_DTTM"),
+        EXPTRANS.LAST_UPDATED_SOURCE.cast(StringType()).alias("LAST_UPDATED_SOURCE"),
+        EXPTRANS.LAST_UPDATED_DTTM.cast(TimestampType()).alias("LAST_UPDATED_DTTM"),
         EXPTRANS.USER_TYPE_ID.cast(DecimalType(4, 0)).alias("USER_TYPE_ID"),
         EXPTRANS.LOCALE_ID.cast(DecimalType(4, 0)).alias("LOCALE_ID"),
         EXPTRANS.LOCATION_ID.cast(DecimalType(18, 0)).alias("LOCATION_ID"),
@@ -194,8 +191,7 @@ def user_pre(dcnbr, env):
             "DEFAULT_WHSE_REGION_ID"
         ),
         EXPTRANS.CHANNEL_ID.cast(DecimalType(18, 0)).alias("CHANNEL_ID"),
-        EXPTRANS.HIBERNATE_VERSION.cast(DecimalType(10, 0))
-                .alias("HIBERNATE_VERSION"),
+        EXPTRANS.HIBERNATE_VERSION.cast(DecimalType(10, 0)).alias("HIBERNATE_VERSION"),
         EXPTRANS.NUMBER_OF_INVALID_LOGINS.cast(DecimalType(4, 0)).alias(
             "NUMBER_OF_INVALID_LOGINS"
         ),
@@ -218,6 +214,6 @@ def user_pre(dcnbr, env):
         current_timestamp().cast(TimestampType()).alias("LOAD_TSTMP"),
     )
 
-    Shortcut_to_WM_UCL_USER_PRE.write.partitionBy("DC_NBR").mode("overwrite")\
-        .option("replaceWhere", f"DC_NBR={dcnbr}")\
-        .saveAsTable(target_table_name)
+    Shortcut_to_WM_UCL_USER_PRE.write.partitionBy("DC_NBR").mode("overwrite").option(
+        "replaceWhere", f"DC_NBR={dcnbr}"
+    ).saveAsTable(target_table_name)
