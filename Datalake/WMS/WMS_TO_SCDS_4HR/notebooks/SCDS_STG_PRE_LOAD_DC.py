@@ -7,8 +7,8 @@ from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.configs import getConfig
 from Datalake.utils.configs import getMaxDate,getConfig
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Consol_Perf_Smry_PRE import perf_smry
-from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_Ucl_User import user_pre
-from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Dept.py import dept_pre
+from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_Ucl_User_PRE import user_pre
+from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Dept_PRE import dept_pre
 
 import argparse
 parser = argparse.ArgumentParser()
