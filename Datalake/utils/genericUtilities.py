@@ -18,12 +18,12 @@ password = dbutils.secrets.get("databricks_service_account", "password")
 
 def getSfCredentials(env,username,password):
 
-    if env.lower()=='dev_':
+    if env.lower()=='dev':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
         db="edw_"+env
         schema="public"
         warehouse="IT_WH"
-    if env.lower()=='qa_':
+    if env.lower()=='qa':
         url="petsmart.us-central1.gcp.snowflakecomputing.com"
         db="edw_"+env
         schema="public"
@@ -74,13 +74,14 @@ def ingestToSF(schema,deltaTable,SFTable,env):
         username = dbutils.secrets.get("databricks_service_account", "username")
         password = dbutils.secrets.get("databricks_service_account", "password")
 
-        options=getSfCredentials(env+"_",username,password)
+        options=getSfCredentials(env,username,password)
+        print(options)
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
         
-        #logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
     except Exception as e:
-        #logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
+        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
         raise e
 
 

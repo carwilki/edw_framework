@@ -30,7 +30,6 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
 
     
     if status.lower()=='failed':
-        
         sql_query = f"""
         INSERT INTO {logTableName}
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
