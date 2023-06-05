@@ -29,7 +29,7 @@ deltaTable=f'{refine}.WM_UCL_USER'
 SFTable='WM_UCL_USER_LGCY'
 
 try:
-    ingestToSF(raw,deltaTable,SFTable)
+    ingestToSF(raw,deltaTable,SFTable,env)
     logger.info('Data write to SF completed')
 except Exception as e:
     raise e
