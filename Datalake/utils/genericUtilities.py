@@ -62,6 +62,12 @@ def deltaReader(tblReference,isPath):
 
 def ingestToSF(schema,deltaTable,SFTable,env):
     try:
+        from pyspark.dbutils import DBUtils
+        from pyspark.sql import SparkSession
+        spark:SparkSession=SparkSession.getActiveSession()
+        dbutils:DBUtils=DBUtils(spark)
+        username = dbutils.secrets.get("databricks_service_account", "username")
+        password = dbutils.secrets.get("databricks_service_account", "password")
         options=getSfCredentials(env,username,password)
         df = deltaReader(deltaTable,False)
         sfWriter(df,options,SFTable,"overwrite")
