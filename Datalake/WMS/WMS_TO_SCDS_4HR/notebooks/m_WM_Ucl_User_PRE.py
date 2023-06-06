@@ -9,6 +9,7 @@ from Datalake.utils.genericUtilities import getEnvPrefix
 
 
 def user_pre(dcnbr, env):
+    logger.info("inside user_pre function")
     spark: SparkSession = SparkSession.getActiveSession()
 
     if dcnbr is None or dcnbr == "":
@@ -30,9 +31,10 @@ def user_pre(dcnbr, env):
                             where table_name='{refine_table_name}'
                             and lower(status)= 'completed'"""
     ).collect()[0][0]
+    logger.info("Extracted prev_run_dt from log_run_details table")
 
     if prev_run_dt is None:
-        print("Prev_run_dt is none so getting maxdate")
+        logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
         prev_run_dt = getMaxDate(refine_table_name, refine)
 
     else:
@@ -42,6 +44,7 @@ def user_pre(dcnbr, env):
     print("The prev run date is " + prev_run_dt)
 
     (username, password, connection_string) = getConfig(dcnbr, env)
+    logger.info("username, password, connection_string is obtained from getConfig fun")
 
     # Extract dc number
     dcnbr = dcnbr.strip()[2:]
@@ -126,10 +129,15 @@ def user_pre(dcnbr, env):
         )
         .load()
     )
+    logger.info("SQL query for SQ_Shortcut_to_UCL_USER is executed and data is loaded using jdbc")
+    
 
     EXPTRANS = SQ_Shortcut_to_UCL_USER.withColumn(
         "sys_row_id", monotonically_increasing_id()
     )
+    logger.info("EXPTRANS is created successfully")
+    
+
 
     Shortcut_to_WM_UCL_USER_PRE = SQ_Shortcut_to_UCL_USER.select(
         lit(f"{dcnbr}").cast(DecimalType(3, 0)).alias("DC_NBR"),
@@ -213,7 +221,11 @@ def user_pre(dcnbr, env):
         ),
         current_timestamp().cast(TimestampType()).alias("LOAD_TSTMP"),
     )
+    logger.info("Shortcut_to_WM_UCL_USER_PRE is created successfully")
 
     Shortcut_to_WM_UCL_USER_PRE.write.partitionBy("DC_NBR").mode("overwrite").option(
         "replaceWhere", f"DC_NBR={dcnbr}"
     ).saveAsTable(target_table_name)
+    logger.info("Shortcut_to_WM_UCL_USER_PRE is written to the target table")
+
+

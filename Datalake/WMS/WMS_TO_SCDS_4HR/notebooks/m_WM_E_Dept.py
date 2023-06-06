@@ -84,6 +84,7 @@ WHERE WM_DEPT_ID IN (SELECT DEPT_ID FROM """
     + """)"""
 )
 
+
 SQ_Shortcut_to_WM_E_DEPT = spark.sql(dept_query).withColumn(
     "sys_row_id", monotonically_increasing_id()
 )

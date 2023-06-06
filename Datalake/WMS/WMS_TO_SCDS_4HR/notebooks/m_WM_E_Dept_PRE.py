@@ -7,6 +7,7 @@ from Datalake.utils.configs import getMaxDate, getConfig
 
 
 def dept_pre(dcnbr, env):
+    logger.info("inside dept_pre")
     spark: SparkSession = SparkSession.getActiveSession()
 
     if dcnbr is None or dcnbr == "":
@@ -29,8 +30,11 @@ def dept_pre(dcnbr, env):
         from {raw}.log_run_details
         where table_name='{refine_table_name}' and lower(status)= 'completed'"""
     ).collect()[0][0]
+    logger.info("Extracted prev_run_dt from log_run_details table")
+
 
     if prev_run_dt is None:
+        logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
         prev_run_dt = getMaxDate(refine_table_name, refine)
 
     else:
@@ -40,6 +44,7 @@ def dept_pre(dcnbr, env):
     print("The prev run date is " + prev_run_dt)
 
     (username, password, connection_string) = getConfig(dcnbr, env)
+    logger.info("username, password, connection_string is obtained from getConfig fun")
 
     # Extract dc number
     dcnbr = dcnbr.strip()[2:]
@@ -85,6 +90,7 @@ def dept_pre(dcnbr, env):
         )
         .load()
     )
+    logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
     EXPTRANS = SQ_Shortcut_to_E_DEPT.select(
         lit(f"{dcnbr}").cast(DecimalType(3, 0)).alias("DC_NBR"),
@@ -111,7 +117,9 @@ def dept_pre(dcnbr, env):
         ),
         current_timestamp().cast(TimestampType()).alias("LOAD_TSTMP"),
     )
+    logger.info("EXPTRANS is created successfully")
 
     EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
         "replaceWhere", f"DC_NBR={dcnbr}"
     ).saveAsTable(target_table_name)
+    logger.info("EXPTRANS is written to the target table")

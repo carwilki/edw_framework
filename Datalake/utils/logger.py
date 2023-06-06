@@ -12,7 +12,7 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
     from datetime import datetime as dt
     # Getting current date and time
     now = dt.now()
-    print("Without formatting", now)
+
 
     s = now.strftime("%Y-%m-%d %H:%M:%S")
     s = str(s)
@@ -30,19 +30,21 @@ def logPrevRunDt(process,table_name,status,error,logTableName):
 
     
     if status.lower()=='failed':
+        logger.info("Inserting failed run details into log_run_details table")
         sql_query = f"""
         INSERT INTO {logTableName}
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
         ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', null)
         """
     else:
+        logger.info("Inserting success run details into log_run_details table")
         sql_query = f"""
         INSERT INTO {logTableName}
         (job_id, run_id, task_name,  process, table_name, status, error, prev_run_date) VALUES
         ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table_name}', '{status}', '{error}', '{s}')
         """
 
-    print('Logging the status')    
-    print(sql_query)
+    logger.info('Logging the status')    
+    logger.info(sql_query)
     spark.sql(sql_query)
-    print('Logging Completed')
+    logger.info('Logging Completed')

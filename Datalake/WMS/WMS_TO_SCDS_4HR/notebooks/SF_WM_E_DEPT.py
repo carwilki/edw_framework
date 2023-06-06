@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pyspark.sql import SparkSession
-from logging import getLogger
+from logging import getLogger, INFO
 from Datalake.utils.genericUtilities import getEnvPrefix, ingestToSF
 
 parser = ArgumentParser()
@@ -18,6 +18,7 @@ refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
 logger = getLogger()
+
 deltaTable = refine + ".WM_E_CONSOL_PERF_SMRY"
 SFTable = "WM_E_CONSOL_PERF_SMRY_LGCY"
 

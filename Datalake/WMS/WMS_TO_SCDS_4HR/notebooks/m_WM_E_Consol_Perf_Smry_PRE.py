@@ -7,11 +7,18 @@ from pyspark.sql.types import DecimalType, StringType, TimestampType
 
 from Datalake.utils.configs import getConfig, getMaxDate
 from Datalake.utils.genericUtilities import getEnvPrefix
+from logging import getLogger, INFO
+
+logger = getLogger()
+logger.setLevel(INFO)
 
 parser = argparse.ArgumentParser()
 
 
+
+
 def perf_smry(dcnbr, env):
+    logger.info("inside perf_smry function")
     spark: SparkSession = SparkSession.getActiveSession()
 
     if dcnbr is None or dcnbr == "":
@@ -35,9 +42,10 @@ def perf_smry(dcnbr, env):
         f"""select max(prev_run_date) from {schemaName}.log_run_details
         where table_name='{refine_table_name}' and lower(status)= 'completed'"""
     ).collect()[0][0]
+    logger.info("Extracted prev_run_dt from log_run_details table")
 
     if prev_run_dt is None:
-        print("Prev_run_dt is none so getting maxdate")
+        logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
         prev_run_dt = getMaxDate(refine_table_name, refine)
     else:
         prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
@@ -47,6 +55,7 @@ def perf_smry(dcnbr, env):
 
     # get Configs for JDBC Credentials
     (username, password, connection_string) = getConfig(dcnbr, env)
+    logger.info("username, password, connection_string is obtained from getConfig fun")
 
     # Extract dc number
     dcnbr = dcnbr.strip()[2:]
@@ -162,6 +171,8 @@ def perf_smry(dcnbr, env):
         )
         .load()
     )
+    logger.info("SQL query for SQ_Shortcut_to_E_CONSOL_PERF_SMRY is executed and data is loaded using jdbc")
+
 
     Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE = SQ_Shortcut_to_E_CONSOL_PERF_SMRY.select(
         lit(f"{dcnbr}").cast(DecimalType(3, 0)).alias("DC_NBR"),
@@ -385,7 +396,10 @@ def perf_smry(dcnbr, env):
         ),
         current_timestamp().cast(TimestampType()).alias("LOAD_TSTMP"),
     )
+    logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is created successfully")
 
     Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy("DC_NBR").mode(
         "overwrite"
     ).option("replaceWhere", f"DC_NBR={dcnbr}").saveAsTable(target_table_name)
+    logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table")
+

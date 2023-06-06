@@ -25,5 +25,8 @@ if env is None or env == "":
 ####################################################################
 
 user_pre(dcnbr, env)
+logger.info("m_WM_Ucl_User_PRE executed")
 dept_pre(dcnbr, env)
+logger.info("m_WM_E_Dept_PRE executed")
 perf_smry(dcnbr, env)
+logger.info("m_WM_E_Consol_Perf_Smry_PRE executed")

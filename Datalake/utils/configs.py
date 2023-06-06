@@ -164,6 +164,7 @@ def dc41(env):
         return (username,password,connection_string)        
 
 def getConfig(DC_NBR,env):
+    logger.info("getConfig function is getting executed")
     select={
        'dc10': dc10(env),
        'dc12': dc12(env),
@@ -176,6 +177,7 @@ def getConfig(DC_NBR,env):
     return select.get(DC_NBR)
 
 def getMaxDate(refine_table_name,schema):
+    logger.info("getMaxDate funcation is getting executed")
     if refine_table_name=='WM_E_DEPT':
         maxDateQuery= f'''select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from {schema}.{refine_table_name}'''
     elif refine_table_name=='WM_UCL_USER':
@@ -185,4 +187,5 @@ def getMaxDate(refine_table_name,schema):
     df = spark.sql(maxDateQuery)
     maxDate=df.select(F.max(F.col('max_date'))).first()[0]
     maxDate= maxDate.strftime('%Y-%m-%d')
+    logger.info("returnning max date")
     return maxDate

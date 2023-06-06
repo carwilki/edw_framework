@@ -73,11 +73,14 @@ def ingestToSF(schema,deltaTable,SFTable,env):
 
         username = dbutils.secrets.get("databricks_service_account", "username")
         password = dbutils.secrets.get("databricks_service_account", "password")
+        logger.info("username and password obtained from secrets")
 
         options=getSfCredentials(env,username,password)
-        print(options)
+        logger.info("env, username and password obtained successfully")
         df = deltaReader(deltaTable,False)
+        logger.info("sfWriter function is called")
         sfWriter(df,options,SFTable,"overwrite")
+        logger.info("dataframe written to snowflake successfully")
         
         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
     except Exception as e:

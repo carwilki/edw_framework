@@ -1,4 +1,6 @@
 from pyspark.sql import SparkSession
+from logging import getLogger
+logger = getLogger()
 
 spark:SparkSession = SparkSession.getActiveSession()
 
@@ -22,6 +24,7 @@ def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     import deepdiff
 
     try:
+        logger.info("executing executeMerge Function")
         sourceTempView="temp_source_"+targetTable.split('.')[1]
         sourceDataFrame.createOrReplaceTempView(sourceTempView)
         sourceColList=sourceDataFrame.columns
@@ -34,9 +37,9 @@ def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
             
             if len(sourceColList)==len(targetColList)  and listDiff=={}:
                 upsertQuery=genMergeUpsertQuery(targetTable,sourceTempView,targetColList,primaryKeyString) 
-                print("Merge Query ::::::::"+upsertQuery)
+                logger.info("Merge Query ::::::::"+upsertQuery)
                 spark.sql(upsertQuery)
-                print("Merge Completed Successfully!")
+                logger.info("Merge Completed Successfully!")
 
             else:
                 raise Exception("Merge not possible due to column mismatch!")

@@ -115,9 +115,11 @@ WHERE USER_NAME IN (SELECT USER_NAME FROM """
     + pre_user_table
     + """)"""
 )
+
 SQ_Shortcut_to_WM_UCL_USER = spark.sql(SQ_Shortcut_to_WM_UCL_USER_query).withColumn(
     "sys_row_id", monotonically_increasing_id()
 )
+logger.info("SQ_Shortcut_to_WM_UCL_USER dataframe is created successfully")
 
 EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select(
     SQ_Shortcut_to_WM_UCL_USER_PRE.sys_row_id.alias("sys_row_id"),
@@ -202,6 +204,8 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE.select(
     ),
 )
 
+logger.info("EXP_INT_CONVERSION is created successfully")
+
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(
     """SELECT SITE_PROFILE.LOCATION_ID,SITE_PROFILE.STORE_NBR FROM """
     + site_profile_table
@@ -270,6 +274,7 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(
     SQ_Shortcut_to_SITE_PROFILE.LOCATION_ID.alias("LOCATION_ID1"),
     SQ_Shortcut_to_SITE_PROFILE.STORE_NBR.alias("STORE_NBR"),
 )
+logger.info("JNR_SITE_PROFILE is created successfully")
 
 JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(
     JNR_SITE_PROFILE,
@@ -340,6 +345,7 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER.join(
     SQ_Shortcut_to_WM_UCL_USER.LOAD_TSTMP.alias("i_LOAD_TSTMP"),
     SQ_Shortcut_to_WM_UCL_USER.USER_NAME.alias("i_USER_NAME"),
 )
+logger.info("JNR_WM_UCL_USER is created successfully")
 
 FIL_UNCHANGED_RECORDS = (
     JNR_WM_UCL_USER.select(
@@ -419,6 +425,7 @@ FIL_UNCHANGED_RECORDS = (
     )
     .withColumn("sys_row_id", monotonically_increasing_id())
 )
+logger.info("FIL_UNCHANGED_RECORDS is created successfully")
 
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select(
     FIL_UNCHANGED_RECORDS.sys_row_id.alias("sys_row_id"),
@@ -558,6 +565,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS.select(
     ).alias("o_UPDATE_VALIDATOR"),
 )  # no i_WM_UCL_USER_ID & i_LOAD_TSTMP in code
 
+logger.info("EXP_UPD_VALIDATOR is created successfully")
+
 UPD_INS_UPD = EXP_UPD_VALIDATOR.select(
     EXP_UPD_VALIDATOR.LOCATION_ID1.alias("LOCATION_ID1"),
     EXP_UPD_VALIDATOR.UCL_USER_ID.alias("UCL_USER_ID"),
@@ -617,12 +626,16 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR.select(
     EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR.alias("o_UPDATE_VALIDATOR"),
 )
 
+logger.info("UPD_INS_UPD is created successfully")
+
 UPD_INS_UPD = UPD_INS_UPD.withColumn(
     "pyspark_data_action",
     when(UPD_INS_UPD.o_UPDATE_VALIDATOR == (lit(1)), lit(0)).when(
         UPD_INS_UPD.o_UPDATE_VALIDATOR == (lit(2)), lit(1)
     ),
 )
+
+logger.info("pyspark_data_action column is added to UPD_INS_UPD successfully")
 
 Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select(
     UPD_INS_UPD.LOCATION_ID1.cast(LongType()).alias("LOCATION_ID"),
@@ -708,7 +721,7 @@ Shortcut_to_WM_UCL_USER = UPD_INS_UPD.select(
     UPD_INS_UPD.LOAD_TSTMP.cast(TimestampType()).alias("LOAD_TSTMP"),
     UPD_INS_UPD.pyspark_data_action.alias("pyspark_data_action"),
 )
-
+logger.info("Shortcut_to_WM_UCL_USER is created successfully")
 logger.info("Input data for " + refined_user_table + " generated!")
 
 # Final Merge
