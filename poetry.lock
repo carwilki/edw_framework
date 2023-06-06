@@ -522,10 +522,7 @@ files = [
 ]
 
 [package.dependencies]
-numpy = [
-    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
-    {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
-]
+numpy = {version = ">=1.21.0", markers = "python_version >= \"3.10\""}
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
 tzdata = ">=2022.1"
@@ -819,5 +816,5 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.10"
-content-hash = "b2a25ea831cebd6919a677a0772adf5d736d0b51ea9631293c5e63d0f934c619"
+python-versions = "3.10.*"
+content-hash = "02d45d7699575717130036a01b0638b00c63c03f12ce03dfeb796e5797bfd3ba"

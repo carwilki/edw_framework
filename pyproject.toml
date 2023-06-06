@@ -7,11 +7,10 @@ readme = "README.md"
 packages = [{include = "nz_databricks_migration"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "3.10.*"
 pyspark = "^3.4.0"
 databricks-connect = "^13.1.0"
 databricks-cli = "^0.17.7"
-databricks-sdk = "^0.1.8"
 deepdiff = "^6.3.0"
 
 [tool.poetry.group.dev.dependencies]

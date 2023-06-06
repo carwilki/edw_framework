@@ -1,4 +1,3 @@
-from pyspark.dbutils import DBUtils
 from pyspark.sql.functions import current_timestamp, lit
 from pyspark.sql.types import StringType, DecimalType, TimestampType
 from pyspark.sql.session import SparkSession
@@ -18,7 +17,6 @@ def dept_pre(dcnbr, env):
 
     refine = getEnvPrefix(env) + "refine"
     raw = getEnvPrefix(env) + "raw"
-    legacy = getEnvPrefix(env) + "legacy"
 
     tableName = "WM_E_DEPT_PRE"
     schemaName = raw
