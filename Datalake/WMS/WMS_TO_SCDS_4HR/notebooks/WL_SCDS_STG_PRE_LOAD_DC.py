@@ -2,8 +2,10 @@ import argparse
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Consol_Perf_Smry_PRE import perf_smry
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Dept_PRE import dept_pre
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_Ucl_User_PRE import user_pre
+from logging import getLogger, INFO
 
 parser = argparse.ArgumentParser()
+logger = getLogger()
 
 parser.add_argument("DC_NBR", type=str, help="DC number")
 parser.add_argument("env", type=str, help="Env Variable")
