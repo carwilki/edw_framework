@@ -1,11 +1,12 @@
-from pyspark.sql.functions import current_timestamp, lit
-from pyspark.sql.types import DecimalType, StringType, TimestampType
-from pyspark.sql.session import SparkSession
-from datetime import datetime
-from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.configs import getConfig, getMaxDate
-
 import argparse
+from datetime import datetime
+
+from pyspark.sql.functions import current_timestamp, lit
+from pyspark.sql.session import SparkSession
+from pyspark.sql.types import DecimalType, StringType, TimestampType
+
+from Datalake.utils.configs import getConfig, getMaxDate
+from Datalake.utils.genericUtilities import getEnvPrefix
 
 parser = argparse.ArgumentParser()
 
