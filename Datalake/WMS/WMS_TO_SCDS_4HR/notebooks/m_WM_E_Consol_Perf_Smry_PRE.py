@@ -10,7 +10,7 @@ from Datalake.utils.genericUtilities import getEnvPrefix
 from logging import getLogger, INFO
 
 logger = getLogger()
-logger.setLevel(INFO)
+
 
 parser = argparse.ArgumentParser()
 
