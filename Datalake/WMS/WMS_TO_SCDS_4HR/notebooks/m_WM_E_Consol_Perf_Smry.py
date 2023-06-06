@@ -142,7 +142,7 @@ WM_E_CONSOL_PERF_SMRY.WM_CREATE_TSTMP,
 WM_E_CONSOL_PERF_SMRY.WM_MOD_TSTMP,
 WM_E_CONSOL_PERF_SMRY.LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM {pre_perf_table}"""
+WHERE WM_PERF_SMRY_TRAN_ID IN (SELECT PERF_SMRY_TRAN_ID FROM {pre_perf_table})"""
 
 SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY = spark.sql(consol_perf_smry_query).withColumn(
     "sys_row_id", monotonically_increasing_id()
