@@ -402,5 +402,5 @@ def perf_smry(dcnbr, env):
     Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy("DC_NBR").mode(
         "overwrite"
     ).option("replaceWhere", f"DC_NBR={dcnbr}").saveAsTable(target_table_name)
-    logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table")
+    logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table - "+target_table_name)
 
