@@ -61,6 +61,9 @@ def deltaReader(tblReference,isPath):
 
 
 def ingestToSF(schema,deltaTable,SFTable,env):
+    from logging import getLogger, INFO
+    logger = getLogger()
+    
     try:
         from pyspark.dbutils import DBUtils
         from pyspark.sql import SparkSession

@@ -3,7 +3,6 @@ from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Consol_Perf_Smry_PRE import p
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_E_Dept_PRE import dept_pre
 from Datalake.WMS.WMS_TO_SCDS_4HR.notebooks.m_WM_Ucl_User_PRE import user_pre
 from logging import getLogger, INFO
-global logger
 parser = argparse.ArgumentParser()
 logger = getLogger()
 

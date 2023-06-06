@@ -177,6 +177,8 @@ def getConfig(DC_NBR,env):
     return select.get(DC_NBR)
 
 def getMaxDate(refine_table_name,schema):
+    from logging import getLogger, INFO
+    logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
     if refine_table_name=='WM_E_DEPT':
         maxDateQuery= f'''select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from {schema}.{refine_table_name}'''

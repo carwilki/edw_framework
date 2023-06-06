@@ -8,7 +8,6 @@ from pyspark.sql.types import DecimalType, StringType, TimestampType
 from Datalake.utils.configs import getConfig, getMaxDate
 from Datalake.utils.genericUtilities import getEnvPrefix
 from logging import getLogger, INFO
-
 logger = getLogger()
 
 
@@ -18,6 +17,8 @@ parser = argparse.ArgumentParser()
 
 
 def perf_smry(dcnbr, env):
+    from logging import getLogger, INFO
+    logger = getLogger()
     logger.info("inside perf_smry function")
     spark: SparkSession = SparkSession.getActiveSession()
 

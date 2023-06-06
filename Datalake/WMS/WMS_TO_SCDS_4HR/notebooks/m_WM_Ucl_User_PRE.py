@@ -9,6 +9,8 @@ from Datalake.utils.genericUtilities import getEnvPrefix
 
 
 def user_pre(dcnbr, env):
+    from logging import getLogger, INFO
+    logger = getLogger()
     logger.info("inside user_pre function")
     spark: SparkSession = SparkSession.getActiveSession()
 

@@ -8,7 +8,8 @@ dbutils = DBUtils(spark)
 #Function to Log the Success/Failure to log_run_details table
 # #Usage   - logPrevRunDt('test','test','Completed','N/A',"devrefine.log_run_details")  
 def logPrevRunDt(process,table_name,status,error,logTableName):
-    
+    from logging import getLogger, INFO
+    logger = getLogger()
     from datetime import datetime as dt
     # Getting current date and time
     now = dt.now()

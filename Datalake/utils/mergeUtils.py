@@ -22,6 +22,8 @@ def genMergeUpsertQuery(target_table,source_table,targetColList,primaryKeyString
 
 def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     import deepdiff
+    from logging import getLogger, INFO
+    logger = getLogger()
 
     try:
         logger.info("executing executeMerge Function")

@@ -7,6 +7,8 @@ from Datalake.utils.configs import getMaxDate, getConfig
 
 
 def dept_pre(dcnbr, env):
+    from logging import getLogger, INFO
+    logger = getLogger()
     logger.info("inside dept_pre")
     spark: SparkSession = SparkSession.getActiveSession()
 
