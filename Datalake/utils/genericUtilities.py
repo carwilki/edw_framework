@@ -4,39 +4,46 @@ from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from Datalake.utils.logger import logPrevRunDt
-from Datalake.utils.mergeUtils import executeMerge
+# from Datalake.utils.mergeUtils import executeMerge
 
 logger=getLogger()
 logger.setLevel(INFO)
 
 spark:SparkSession=SparkSession.getActiveSession()
 dbutils:DBUtils=DBUtils(spark)
-username = dbutils.secrets.get("databricks_service_account", "username")
-password = dbutils.secrets.get("databricks_service_account", "password")
 
 
 
-def getSfCredentials(env,username,password):
 
-    if env.lower()=='dev':
-        url="petsmart.us-central1.gcp.snowflakecomputing.com"
-        db="edw_"+env
-        schema="public"
-        warehouse="IT_WH"
-    if env.lower()=='qa':
-        url="petsmart.us-central1.gcp.snowflakecomputing.com"
-        db="edw_"+env
-        schema="public"
-        warehouse="IT_WH"
-    if env.lower()=="prod":
-        url="petsmart.us-central1.gcp.snowflakecomputing.com"
-        db="edw_prd"
-        schema="public"
-        warehouse="IT_WH"  
+def getSfCredentials():
+  username = dbutils.secrets.get("databricks_service_account", "username")
+  password = dbutils.secrets.get("databricks_service_account", "password")
+  if "dev" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
+    env = "DEV"
+  elif "qa" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
+    env = "QA"
+  else:
+    env = "PRD"
 
-    sfOptions = {"sfUrl": url,"sfUser": username,"sfPassword": password,"sfDatabase": db,"sfSchema": schema,"sfWarehouse": warehouse,"authenticator" : "https://petsmart.okta.com"}
-    
-    return sfOptions
+  if env.lower()=='dev':
+      url="petsmart.us-central1.gcp.snowflakecomputing.com"
+      db="edw_"+env
+      schema = "PUBLIC"
+      warehouse = "IT_WH"
+  if env.lower()=='qa':
+      url="petsmart.us-central1.gcp.snowflakecomputing.com"
+      db="edw_"+env
+      schema = "PUBLIC"
+      warehouse="IT_WH"
+  if env.lower()=="prod":
+      url="petsmart.us-central1.gcp.snowflakecomputing.com"
+      db="edw_prd"
+      schema = "PUBLIC"
+      warehouse="IT_WH"  
+
+  sfOptions = {"sfUrl": url,"sfUser": username,"sfPassword": password,"sfDatabase": db,"sfSchema": schema,"sfWarehouse": warehouse,"authenticator" : "https://petsmart.okta.com"}
+  
+  return sfOptions
 
 
 
@@ -60,35 +67,35 @@ def deltaReader(tblReference,isPath):
 
 
 
-def ingestToSF(schema,deltaTable,SFTable,env):
-    from logging import getLogger, INFO
-    logger = getLogger()
+# def ingestToSF(schema,deltaTable,SFTable,env):
+#     from logging import getLogger, INFO
+#     logger = getLogger()
     
-    try:
-        from pyspark.dbutils import DBUtils
-        from pyspark.sql import SparkSession
-        from Datalake.utils.logger import logPrevRunDt
-        from Datalake.utils.genericUtilities import sfWriter,getSfCredentials,deltaReader
-        from Datalake.utils.mergeUtils import executeMerge
+#     try:
+#         from pyspark.dbutils import DBUtils
+#         from pyspark.sql import SparkSession
+#         from Datalake.utils.logger import logPrevRunDt
+#         from Datalake.utils.genericUtilities import sfWriter,getSfCredentials,deltaReader
+#         from Datalake.utils.mergeUtils import executeMerge
         
-        spark:SparkSession=SparkSession.getActiveSession()
-        dbutils:DBUtils=DBUtils(spark)
+#         spark:SparkSession=SparkSession.getActiveSession()
+#         dbutils:DBUtils=DBUtils(spark)
 
-        username = dbutils.secrets.get("databricks_service_account", "username")
-        password = dbutils.secrets.get("databricks_service_account", "password")
-        logger.info("username and password obtained from secrets")
+#         username = dbutils.secrets.get("databricks_service_account", "username")
+#         password = dbutils.secrets.get("databricks_service_account", "password")
+#         logger.info("username and password obtained from secrets")
 
-        options=getSfCredentials(env,username,password)
-        logger.info("env, username and password obtained successfully")
-        df = deltaReader(deltaTable,False)
-        logger.info("sfWriter function is called")
-        sfWriter(df,options,SFTable,"overwrite")
-        logger.info("dataframe written to snowflake successfully")
+#         options=getSfCredentials(env,username,password)
+#         logger.info("env, username and password obtained successfully")
+#         df = deltaReader(deltaTable,False)
+#         logger.info("sfWriter function is called")
+#         sfWriter(df,options,SFTable,"overwrite")
+#         logger.info("dataframe written to snowflake successfully")
         
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
-    except Exception as e:
-        logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
-        raise e
+#         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Completed','N/A',f"{schema}.log_run_details")
+#     except Exception as e:
+#         logPrevRunDt("SF Writer -" + SFTable,SFTable,'Failed',str(e),f"{schema}.log_run_details")
+#         raise e
 
 
 
@@ -104,3 +111,32 @@ def getEnvPrefix(env:str):
     else:
         raise Exception("Invalid environment")
     return envPrefix
+
+def importUtilitiesPre():
+  import argparse
+  from datetime import datetime
+  from pyspark.sql.functions import current_timestamp, lit
+  from pyspark.sql.session import SparkSession
+  from pyspark.sql.types import DecimalType, StringType, TimestampType
+
+  from Datalake.utils.configs import getConfig, getMaxDate
+  from Datalake.utils.genericUtilities import getEnvPrefix
+  from logging import getLogger, INFO
+
+  logger = getLogger()
+  return logger
+
+def importUtilities():
+    from logging import getLogger, INFO
+    from pyspark.dbutils import DBUtils
+    from pyspark.sql.functions import (col,
+      lit,
+      when,
+      current_timestamp,
+      monotonically_increasing_id,
+    )
+    from pyspark.sql.types import DecimalType, TimestampType, StringType
+    from pyspark.sql.session import SparkSession
+    from Datalake.utils.genericUtilities import getEnvPrefix
+    from Datalake.utils.logger import logPrevRunDt
+    from Datalake.utils.mergeUtils import executeMerge

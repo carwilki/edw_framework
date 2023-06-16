@@ -1,19 +1,7 @@
-from logging import getLogger, INFO
-from pyspark.dbutils import DBUtils
-from pyspark.sql.functions import (
-    col,
-    lit,
-    when,
-    current_timestamp,
-    monotonically_increasing_id,
-)
-from pyspark.sql.types import DecimalType, TimestampType, StringType
-from pyspark.sql.session import SparkSession
-from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.logger import logPrevRunDt
-from Datalake.utils.mergeUtils import executeMerge
+from Datalake.utils.genericUtilities import importUtilities
 import argparse
 
+importUtilities()
 parser = argparse.ArgumentParser()
 
 spark: SparkSession = SparkSession.getActiveSession()

@@ -1,32 +1,33 @@
-from pyspark.sql import SparkSession
-from logging import getLogger
+from pyspark.dbutils import DBUtils
+from pyspark.sql.session import SparkSession
+from logging import getLogger, INFO
 from Datalake.utils.genericUtilities import getEnvPrefix, ingestToSF
+from Datalake.utils.logger import logPrevRunDt
+from Datalake.utils.mergeUtils import executeMerge
 import argparse
 
+
 parser = argparse.ArgumentParser()
-spark: SparkSession = SparkSession.getActiveSession()
+parser.add_argument("deltaTable", type=str, help="Delta Table")
+parser.add_argument("primaryKeys", type=str, help="Primary Keys to the delta table")
+parser.add_argument("conditionCols", type=str, help="condition cols to merge on")
 
-parser.add_argument("env", type=str, help="Env Variable")
 args = parser.parse_args()
-env = args.env
+deltaTable = args.deltaTable
+primaryKeys = [pKey for pKey in args.primaryKeys.split(",")]
+conditionCols = [conditionCol for conditionCol in args.conditionCols.split(",")]
+primaryKeys_list = json.dumps(primaryKeys)
+conditionCols_list = json.dumps(conditionCols)
 
-
-if env is None or env == "":
-    raise ValueError("env is not set")
-
-refine = getEnvPrefix(env) + "refine"
-raw = getEnvPrefix(env) + "raw"
-legacy = getEnvPrefix(env) + "legacy"
+spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
+logger.setLevel(INFO)
 
-deltaTable = refine + ".WM_E_CONSOL_PERF_SMRY"
-SFTable = "WM_E_CONSOL_PERF_SMRY_LGCY"
 
-deltaTable = f"{refine}.WM_UCL_USER"
-SFTable = "WM_UCL_USER_LGCY"
 
 try:
-    ingestToSF(raw, deltaTable, SFTable, env)
-    logger.info("Data write to SF completed")
+    logger.info("Ingesting data to Snowflake tables for table - ",deltaTable)
+    mergeToSF(deltaTable, primaryKeys_list, conditionCols_list)
+    logger.info("Data write to SF completed for table - ",deltaTable)
 except Exception as e:
     raise e
