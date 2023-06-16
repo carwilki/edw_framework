@@ -125,11 +125,8 @@ def dept_pre(dcnbr, env):
     )
     logger.info("EXPTRANS is created successfully")
 
-    # EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
-    #     "replaceWhere", f"DC_NBR={dcnbr}"
-    # ).saveAsTable(target_table_name)
-    # logger.info("EXPTRANS is written to the target table - "+target_table_name)
+    EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
+        "replaceWhere", f"DC_NBR={dcnbr}"
+    ).saveAsTable(target_table_name)
+    logger.info("EXPTRANS is written to the target table - "+target_table_name)
 
-
-
-dept_pre('dc10', 'qa')

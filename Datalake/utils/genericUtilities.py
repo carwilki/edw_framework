@@ -136,3 +136,22 @@ def importUtilities():
 
   logger = getLogger()
   return logger,spark
+
+def genPrevRunDt(refine_table_name, refine,raw):
+  from Datalake.utils.configs import getMaxDate
+  prev_run_dt = spark.sql(f"""select max(prev_run_date)
+        from {raw}.log_run_details
+        where table_name='{refine_table_name}' and lower(status)= 'completed'"""
+    ).collect()[0][0]
+  logger.info("Extracted prev_run_dt from log_run_details table")
+
+
+  if prev_run_dt is None:
+    logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
+    prev_run_dt = getMaxDate(refine_table_name, refine)
+
+  else:
+    prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
+    prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
+  
+  return prev_run_dt
