@@ -1,7 +1,7 @@
 class SnowflakeWriter:
-    from pyspark.sql import SparkSession
-    spark:SparkSession=SparkSession.getActiveSession()
     def __init__(self, database, schema, table, primary_keys=None, update_excl_columns = []):
+        from pyspark.sql import SparkSession
+        spark:SparkSession=SparkSession.getActiveSession()
         print("initiating SF Writer class")
         from pyspark.dbutils import DBUtils
         dbutils = DBUtils(spark)  
@@ -21,11 +21,17 @@ class SnowflakeWriter:
         }
 
     def run_sf_query(self, query):
+        from pyspark.sql import SparkSession
+        spark:SparkSession=SparkSession.getActiveSession()
+        
         spark.sparkContext._jvm.net.snowflake.spark.snowflake.Utils.runQuery(
             self.sfOptions, query
         )
 
     def write_df_to_sf(self, df, table=None):
+        from pyspark.sql import SparkSession
+        spark:SparkSession=SparkSession.getActiveSession()
+
         if table is None:
             table = self.table
         df.write.format("net.snowflake.spark.snowflake").options(
