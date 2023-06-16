@@ -4,7 +4,7 @@
 # from datetime import datetime
 # from Datalake.utils.genericUtilities import getEnvPrefix
 # from Datalake.utils.configs import getMaxDate, getConfig
-from Datalake.utils.genericUtilities import importUtilities
+from Datalake.utils.genericUtilities import importUtilitiesPre
 
 
 def dept_pre(dcnbr, env):
