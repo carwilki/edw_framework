@@ -101,6 +101,7 @@ def dept_pre(dcnbr, env):
     # )
 
     SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query,username,password,connection_string)
+
     logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
     EXPTRANS = SQ_Shortcut_to_E_DEPT.select(
@@ -135,4 +136,5 @@ def dept_pre(dcnbr, env):
     # EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
     #     "replaceWhere", f"DC_NBR={dcnbr}"
     # ).saveAsTable(target_table_name)
+    
     logger.info("EXPTRANS is written to the target table - "+target_table_name)

@@ -1,7 +1,7 @@
 from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from logging import getLogger, INFO
-from Datalake.utils.genericUtilities import getEnvPrefix, ingestToSF
+from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
 import argparse
