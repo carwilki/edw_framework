@@ -23,8 +23,8 @@ def dept_pre(dcnbr, env):
     if env is None or env == "":
         raise ValueError("env is not set")
 
-    refine = gu.getEnvPrefix(env) + "refine"
-    raw = gu.getEnvPrefix(env) + "raw"
+    refine = getEnvPrefix(env) + "refine"
+    raw = getEnvPrefix(env) + "raw"
 
     tableName = "WM_E_DEPT_PRE"
     schemaName = raw
@@ -52,7 +52,7 @@ def dept_pre(dcnbr, env):
 
     print("The prev run date is " + prev_run_dt)
 
-    #(username, password, connection_string) = getConfig(dcnbr, env)
+    (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
 
     # Extract dc number
@@ -100,7 +100,7 @@ def dept_pre(dcnbr, env):
     #     .load()
     # )
 
-    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query,dcnbr,env)
+    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query,username,password,connection_string)
     logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
     EXPTRANS = SQ_Shortcut_to_E_DEPT.select(
@@ -136,4 +136,3 @@ def dept_pre(dcnbr, env):
     #     "replaceWhere", f"DC_NBR={dcnbr}"
     # ).saveAsTable(target_table_name)
     logger.info("EXPTRANS is written to the target table - "+target_table_name)
-

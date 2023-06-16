@@ -111,16 +111,26 @@ def getEnvPrefix(env:str):
     else:
         raise Exception("Invalid environment")
     return envPrefix
-  
+
+def global_imports(modulename,shortname = None, asfunction = False):
+    if shortname is None: 
+        shortname = modulename
+    if asfunction is False:
+        globals()[shortname] = __import__(modulename)
+    else:        
+        globals()[shortname] = eval(modulename + "." + shortname)  
 
 def importUtilities():
   import argparse
   from datetime import datetime
   from pyspark.sql.session import SparkSession
   from pyspark.sql.types import DecimalType, StringType, TimestampType
+  global_imports('Datalake.utils.configs','getConfig', True)
+  global_imports('Datalake.utils.configs','getMaxDate', True)
+  global_imports('Datalake.utils.genericUtilities','getEnvPrefix', True)
 
-  from Datalake.utils.configs import getConfig, getMaxDate
-  from Datalake.utils.genericUtilities import getEnvPrefix
+  #from Datalake.utils.configs import getConfig, getMaxDate
+  #from Datalake.utils.genericUtilities import getEnvPrefix
   from logging import getLogger, INFO
   from pyspark.dbutils import DBUtils
   from pyspark.sql.functions import (col,
@@ -161,9 +171,8 @@ def genPrevRunDt(refine_table_name,refine,raw):
   
   return prev_run_dt
 
-def jdbcOracleConnection(query,dcnbr,env):
-  from Datalake.utils.configs import getConfig
-  (username, password, connection_string) = getConfig(dcnbr, env)
+def jdbcOracleConnection(query,username,password,connection_string):
+
   df = (
         spark.read.format("jdbc")
         .option("url", connection_string)
