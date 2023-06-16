@@ -161,7 +161,7 @@ def genPrevRunDt(refine_table_name,refine,raw):
   
   return prev_run_dt
 
-def jdbcOracleConnection(query):
+def jdbcOracleConnection(query,dcnbr,env):
   from Datalake.utils.configs import getConfig
   (username, password, connection_string) = getConfig(dcnbr, env)
   df = (

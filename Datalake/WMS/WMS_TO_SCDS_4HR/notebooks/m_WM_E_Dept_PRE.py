@@ -100,7 +100,7 @@ def dept_pre(dcnbr, env):
     #     .load()
     # )
 
-    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query)
+    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query,dcnbr,env)
     logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
     EXPTRANS = SQ_Shortcut_to_E_DEPT.select(
