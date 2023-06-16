@@ -161,3 +161,29 @@ def genPrevRunDt(refine_table_name,refine,raw):
   
   return prev_run_dt
 
+def jdbcOracleConnection(query):
+  from Datalake.utils.configs import getConfig
+  (username, password, connection_string) = getConfig(dcnbr, env)
+  df = (
+        spark.read.format("jdbc")
+        .option("url", connection_string)
+        .option("query", query)
+        .option("user", username)
+        .option("password", password)
+        .option("numPartitions", 3)
+        .option("driver", "oracle.jdbc.OracleDriver")
+        .option(
+            "sessionInitStatement",
+            """begin 
+            execute immediate 'alter session set time_zone=''-07:00''';
+            end;
+        """,
+        )
+        .load()
+    )
+  return df
+
+def overwriteDeltaPartition(df,partition,partitionvalue,target_table_name):
+  df.write.partitionBy(partition).mode("overwrite").option(
+        "replaceWhere", f"{partition}={partitionvalue}"
+    ).saveAsTable(target_table_name)

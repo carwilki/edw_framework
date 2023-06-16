@@ -52,7 +52,7 @@ def dept_pre(dcnbr, env):
 
     print("The prev run date is " + prev_run_dt)
 
-    (username, password, connection_string) = getConfig(dcnbr, env)
+    #(username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
 
     # Extract dc number
@@ -82,23 +82,25 @@ def dept_pre(dcnbr, env):
     OR (trunc(E_DEPT.LAST_UPDATED_DTTM) >= trunc(to_date('{prev_run_dt}','YYYY-MM-DD')) - 1) 
     AND 1=1"""
 
-    SQ_Shortcut_to_E_DEPT = (
-        spark.read.format("jdbc")
-        .option("url", connection_string)
-        .option("query", dept_query)
-        .option("user", username)
-        .option("password", password)
-        .option("numPartitions", 3)
-        .option("driver", "oracle.jdbc.OracleDriver")
-        .option(
-            "sessionInitStatement",
-            """begin 
-            execute immediate 'alter session set time_zone=''-07:00''';
-            end;
-        """,
-        )
-        .load()
-    )
+    # SQ_Shortcut_to_E_DEPT = (
+    #     spark.read.format("jdbc")
+    #     .option("url", connection_string)
+    #     .option("query", dept_query)
+    #     .option("user", username)
+    #     .option("password", password)
+    #     .option("numPartitions", 3)
+    #     .option("driver", "oracle.jdbc.OracleDriver")
+    #     .option(
+    #         "sessionInitStatement",
+    #         """begin 
+    #         execute immediate 'alter session set time_zone=''-07:00''';
+    #         end;
+    #     """,
+    #     )
+    #     .load()
+    # )
+
+    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query)
     logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
     EXPTRANS = SQ_Shortcut_to_E_DEPT.select(
@@ -128,8 +130,10 @@ def dept_pre(dcnbr, env):
     )
     logger.info("EXPTRANS is created successfully")
 
-    EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
-        "replaceWhere", f"DC_NBR={dcnbr}"
-    ).saveAsTable(target_table_name)
+    gu.overwriteDeltaPartition(EXPTRANS,"DC_NBR",dcnbr,target_table_name)
+
+    # EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
+    #     "replaceWhere", f"DC_NBR={dcnbr}"
+    # ).saveAsTable(target_table_name)
     logger.info("EXPTRANS is written to the target table - "+target_table_name)
 
