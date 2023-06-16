@@ -83,6 +83,7 @@ def getAppendQuery(deltaTable,conditionCols):
   print("get Append query")
   from pyspark.sql import SparkSession
   spark:SparkSession=SparkSession.getActiveSession()
+  import json
   from datetime import datetime
   prev_run_dt = spark.sql(f"""select max(prev_run_date)  from qa_raw.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'""").collect()[0][0]
   prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
