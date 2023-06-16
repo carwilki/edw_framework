@@ -3,8 +3,9 @@ from pyspark.sql.session import SparkSession
 from logging import getLogger, INFO
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
-from Datalake.utils.mergeUtils import executeMerge
+from Datalake.utils.mergeUtils import mergeToSF
 import argparse
+import json
 
 
 parser = argparse.ArgumentParser()

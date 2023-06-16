@@ -25,7 +25,8 @@ spark: SparkSession = SparkSession.getActiveSession()
 
 dbutils: DBUtils = DBUtils(spark)
 
-env=gu.parseArgEnv("env")
+env=gu.parseArgEnv("env").env
+print("Env:::",env)
 # parser.add_argument("env", type=str, help="Env Variable")
 # args = parser.parse_args()
 # env = args.env

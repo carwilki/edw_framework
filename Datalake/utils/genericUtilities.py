@@ -113,42 +113,6 @@ def getEnvPrefix(env:str):
         raise Exception("Invalid environment")
     return envPrefix
 
-def global_imports(modulename,shortname = None, asfunction = False):
-    if shortname is None: 
-        shortname = modulename
-    if asfunction is False:
-        globals()[shortname] = __import__(modulename)
-    else:        
-        globals()[shortname] = eval(modulename + "." + shortname)  
-
-def importUtilities():
-  import argparse
-  from datetime import datetime
-  from pyspark.sql.session import SparkSession
-  from pyspark.sql.types import DecimalType, StringType, TimestampType
-  global_imports('Datalake.utils.configs','getConfig', True)
-  global_imports('Datalake.utils.configs','getMaxDate', True)
-  global_imports('Datalake.utils.genericUtilities','getEnvPrefix', True)
-
-  #from Datalake.utils.configs import getConfig, getMaxDate
-  #from Datalake.utils.genericUtilities import getEnvPrefix
-  from logging import getLogger, INFO
-  from pyspark.dbutils import DBUtils
-  from pyspark.sql.functions import (col,
-      lit,
-      when,
-      current_timestamp,
-      monotonically_increasing_id,
-    )
-  from Datalake.utils.logger import logPrevRunDt
-  from Datalake.utils.mergeUtils import executeMerge
-
-  spark: SparkSession = SparkSession.getActiveSession()
-
-  logger = getLogger()
-  return logger,spark
-
-
 
 
 def genPrevRunDt(refine_table_name,refine,raw):
@@ -199,13 +163,14 @@ def overwriteDeltaPartition(df,partition,partitionvalue,target_table_name):
         "replaceWhere", f"{partition}={partitionvalue}"
     ).saveAsTable(target_table_name)
 
+
 def parseArgEnv(env):
   import argparse
   parser = argparse.ArgumentParser()
-  parser.add_argument(env, type=str, help="Env Variable")
+  parser.add_argument(env, type=str, help=f"{env} Variable")
   args = parser.parse_args()
-  env = args.env
-  return env
+  #env = args.env
+  return args
 
 
 
