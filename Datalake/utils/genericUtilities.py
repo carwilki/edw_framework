@@ -152,6 +152,7 @@ def importUtilities():
 
 
 def genPrevRunDt(refine_table_name,refine,raw):
+  print("get Prev_run date")
   from Datalake.utils.configs import getMaxDate
   from datetime import datetime
 
@@ -200,6 +201,7 @@ def overwriteDeltaPartition(df,partition,partitionvalue,target_table_name):
 
 def parseArgEnv(env):
   import argparse
+  parser = argparse.ArgumentParser()
   parser.add_argument(env, type=str, help="Env Variable")
   args = parser.parse_args()
   env = args.env
