@@ -11,6 +11,9 @@ from Datalake.utils.genericUtilities import importUtilities
 def dept_pre(dcnbr, env):
     from logging import getLogger, INFO
     #logger,spark = importUtilities()
+
+    logger = getLogger()    
+    spark: SparkSession = SparkSession.getActiveSession()
     logger.info("inside dept_pre")
     
     if dcnbr is None or dcnbr == "":
