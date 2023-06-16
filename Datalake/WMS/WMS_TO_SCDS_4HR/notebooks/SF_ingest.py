@@ -3,7 +3,7 @@ from pyspark.sql.session import SparkSession
 from logging import getLogger, INFO
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
-from Datalake.utils import mergeUtils 
+from Datalake.utils.mergeUtils import MergeToSF
 import argparse
 import json
 
@@ -29,7 +29,7 @@ logger.setLevel(INFO)
 try:
     logger.info("Ingesting data to Snowflake tables for table - ",deltaTable)
     print("ingesting to sf")
-    mergeUtils.mergeToSF(deltaTable, primaryKeys_list, conditionCols_list)
+    MergeToSF(deltaTable, primaryKeys_list, conditionCols_list)
     print("ingesting to sf comepleted")
     logger.info("Data write to SF completed for table - ",deltaTable)
 except Exception as e:
