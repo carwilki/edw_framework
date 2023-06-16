@@ -23,8 +23,8 @@ def dept_pre(dcnbr, env):
     if env is None or env == "":
         raise ValueError("env is not set")
 
-    refine = getEnvPrefix(env) + "refine"
-    raw = getEnvPrefix(env) + "raw"
+    refine = gu.getEnvPrefix(env) + "refine"
+    raw = gu.getEnvPrefix(env) + "raw"
 
     tableName = "WM_E_DEPT_PRE"
     schemaName = raw
