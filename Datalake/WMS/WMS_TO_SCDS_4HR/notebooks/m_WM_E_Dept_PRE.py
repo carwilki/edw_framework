@@ -1,19 +1,20 @@
-from pyspark.sql.functions import current_timestamp, lit
-from pyspark.sql.types import StringType, DecimalType, TimestampType
-from pyspark.sql.session import SparkSession
-from datetime import datetime
-from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.configs import getMaxDate, getConfig
-from Datalake.utils.genericUtilities import importUtilities
+# from pyspark.sql.functions import current_timestamp, lit
+# from pyspark.sql.types import StringType, DecimalType, TimestampType
+# from pyspark.sql.session import SparkSession
+# from datetime import datetime
+# from Datalake.utils.genericUtilities import getEnvPrefix
+# from Datalake.utils.configs import getMaxDate, getConfig
+from Datalake.utils import genericUtilities as gu
+
 #logger,spark = importUtilities()
 
 
 def dept_pre(dcnbr, env):
-    from logging import getLogger, INFO
-    #logger,spark = importUtilities()
+    # from logging import getLogger, INFO
+    logger,spark = gu.importUtilities()
 
-    logger = getLogger()    
-    spark: SparkSession = SparkSession.getActiveSession()
+    # logger = getLogger()    
+    # spark: SparkSession = SparkSession.getActiveSession()
     logger.info("inside dept_pre")
     
     if dcnbr is None or dcnbr == "":
@@ -31,21 +32,23 @@ def dept_pre(dcnbr, env):
     target_table_name = schemaName + "." + tableName
     refine_table_name = "WM_E_DEPT"
 
-    prev_run_dt = spark.sql(
-        f"""select max(prev_run_date)
-        from {raw}.log_run_details
-        where table_name='{refine_table_name}' and lower(status)= 'completed'"""
-    ).collect()[0][0]
-    logger.info("Extracted prev_run_dt from log_run_details table")
+    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
+
+    # prev_run_dt = spark.sql(
+    #     f"""select max(prev_run_date)
+    #     from {raw}.log_run_details
+    #     where table_name='{refine_table_name}' and lower(status)= 'completed'"""
+    # ).collect()[0][0]
+    # logger.info("Extracted prev_run_dt from log_run_details table")
 
 
-    if prev_run_dt is None:
-        logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
-        prev_run_dt = getMaxDate(refine_table_name, refine)
+    # if prev_run_dt is None:
+    #     logger.info("Prev_run_dt is none so getting prev_run_dt from getMaxDate function")
+    #     prev_run_dt = getMaxDate(refine_table_name, refine)
 
-    else:
-        prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
-        prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
+    # else:
+    #     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
+    #     prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
 
     print("The prev run date is " + prev_run_dt)
 
