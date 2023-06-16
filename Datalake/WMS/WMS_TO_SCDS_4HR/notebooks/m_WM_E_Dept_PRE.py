@@ -136,5 +136,5 @@ def dept_pre(dcnbr, env):
     # EXPTRANS.write.partitionBy("DC_NBR").mode("overwrite").option(
     #     "replaceWhere", f"DC_NBR={dcnbr}"
     # ).saveAsTable(target_table_name)
-    
+
     logger.info("EXPTRANS is written to the target table - "+target_table_name)

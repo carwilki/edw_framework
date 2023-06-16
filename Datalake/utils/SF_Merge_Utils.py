@@ -1,6 +1,6 @@
 class SnowflakeWriter:
-  from pyspark.sql import SparkSession
-  spark:SparkSession=SparkSession.getActiveSession()
+    from pyspark.sql import SparkSession
+    spark:SparkSession=SparkSession.getActiveSession()
     def __init__(self, database, schema, table, primary_keys=None, update_excl_columns = []):
         print("initiating SF Writer class")
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
