@@ -88,6 +88,7 @@ def getAppendQuery(deltaTable,conditionCols):
   prev_run_dt = spark.sql(f"""select max(prev_run_date)  from qa_raw.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'""").collect()[0][0]
   prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
   prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
+  append_query=""
   for i in json.loads(conditionCols):
       if json.loads(conditionCols).index(i) == 0:
           append_query = append_query + f"""{i} >= '{prev_run_dt}'"""
