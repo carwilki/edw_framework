@@ -13,6 +13,7 @@ parser.add_argument("deltaTable", type=str, help="Delta Table")
 parser.add_argument("primaryKeys", type=str, help="Primary Keys to the delta table")
 parser.add_argument("conditionCols", type=str, help="condition cols to merge on")
 
+
 args = parser.parse_args()
 deltaTable = args.deltaTable
 primaryKeys = [pKey for pKey in args.primaryKeys.split(",")]

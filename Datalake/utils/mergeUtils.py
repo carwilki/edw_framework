@@ -59,6 +59,8 @@ def MergeToSF(deltaTable,primaryKeys,conditionCols):
   logger = getLogger()
   sfOptions = getSfCredentials()
   append_query = getAppendQuery(deltaTable,conditionCols)
+  env = sfOptions["env"]
+  schemaForDeltaTable = f"{env}_refine"
 
   mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
   df_table = spark.sql(mergeDatasetSql)

@@ -42,7 +42,7 @@ def getSfCredentials():
       schema = "PUBLIC"
       warehouse="IT_WH"  
 
-  sfOptions = {"sfUrl": url,"sfUser": username,"sfPassword": password,"sfDatabase": db,"sfSchema": schema,"sfWarehouse": warehouse,"authenticator" : "https://petsmart.okta.com"}
+  sfOptions = {"env": env, "sfUrl": url,"sfUser": username,"sfPassword": password,"sfDatabase": db,"sfSchema": schema,"sfWarehouse": warehouse,"authenticator" : "https://petsmart.okta.com"}
   
   return sfOptions
 
