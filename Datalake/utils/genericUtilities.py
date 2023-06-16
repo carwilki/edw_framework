@@ -16,6 +16,7 @@ dbutils:DBUtils=DBUtils(spark)
 
 
 def getSfCredentials():
+  print("getting SF credentials")
   username = dbutils.secrets.get("databricks_service_account", "username")
   password = dbutils.secrets.get("databricks_service_account", "password")
   if "dev" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
@@ -196,3 +197,14 @@ def overwriteDeltaPartition(df,partition,partitionvalue,target_table_name):
   df.write.partitionBy(partition).mode("overwrite").option(
         "replaceWhere", f"{partition}={partitionvalue}"
     ).saveAsTable(target_table_name)
+
+def parseArgEnv(env):
+  import argparse
+  parser.add_argument(env, type=str, help="Env Variable")
+  args = parser.parse_args()
+  env = args.env
+  return env
+
+
+
+

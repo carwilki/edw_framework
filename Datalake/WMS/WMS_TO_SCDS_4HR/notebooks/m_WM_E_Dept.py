@@ -13,21 +13,23 @@ from pyspark.sql.types import DecimalType, StringType, TimestampType
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
+from Datalake.utils import genericUtilities as gu
 
-import argparse
+#import argparse
 
 
 #logger,spark = importUtilities() 
-parser = argparse.ArgumentParser()
+#parser = argparse.ArgumentParser()
 spark: SparkSession = SparkSession.getActiveSession()
 
 
 dbutils: DBUtils = DBUtils(spark)
 
+env=gu.parseArgEnv("env")
+# parser.add_argument("env", type=str, help="Env Variable")
+# args = parser.parse_args()
+# env = args.env
 
-parser.add_argument("env", type=str, help="Env Variable")
-args = parser.parse_args()
-env = args.env
 # env = dbutils.widgets.get('env')
 
 if env is None or env == "":

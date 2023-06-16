@@ -1,5 +1,6 @@
 class SnowflakeWriter:
     def __init__(self, database, schema, table, primary_keys=None, update_excl_columns = []):
+        print("initiating SF Writer class")
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
         self.table = table
         self.primary_keys = primary_keys
@@ -77,6 +78,7 @@ class SnowflakeWriter:
 
 
 def getAppendQuery(deltaTable,conditionCols):
+  print("get Append query")
   prev_run_dt = spark.sql(f"""select max(prev_run_date)  from qa_raw.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'""").collect()[0][0]
   prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
   prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
