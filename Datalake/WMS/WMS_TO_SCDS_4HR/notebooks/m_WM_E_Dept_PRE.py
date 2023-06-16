@@ -1,20 +1,20 @@
-# from pyspark.sql.functions import current_timestamp, lit
-# from pyspark.sql.types import StringType, DecimalType, TimestampType
-# from pyspark.sql.session import SparkSession
-# from datetime import datetime
-# from Datalake.utils.genericUtilities import getEnvPrefix
-# from Datalake.utils.configs import getMaxDate, getConfig
+from pyspark.sql.functions import current_timestamp, lit
+from pyspark.sql.types import StringType, DecimalType, TimestampType
+from pyspark.sql.session import SparkSession
+from datetime import datetime
+from Datalake.utils.genericUtilities import getEnvPrefix
+from Datalake.utils.configs import getMaxDate, getConfig
 from Datalake.utils import genericUtilities as gu
 
 #logger,spark = importUtilities()
 
 
 def dept_pre(dcnbr, env):
-    # from logging import getLogger, INFO
-    logger,spark = gu.importUtilities()
+    from logging import getLogger, INFO
+    #logger,spark = gu.importUtilities()
 
-    # logger = getLogger()    
-    # spark: SparkSession = SparkSession.getActiveSession()
+    logger = getLogger()    
+    spark: SparkSession = SparkSession.getActiveSession()
     logger.info("inside dept_pre")
     
     if dcnbr is None or dcnbr == "":
@@ -23,8 +23,8 @@ def dept_pre(dcnbr, env):
     if env is None or env == "":
         raise ValueError("env is not set")
 
-    refine = gu.getEnvPrefix(env) + "refine"
-    raw = gu.getEnvPrefix(env) + "raw"
+    refine = getEnvPrefix(env) + "refine"
+    raw = getEnvPrefix(env) + "raw"
 
     tableName = "WM_E_DEPT_PRE"
     schemaName = raw
