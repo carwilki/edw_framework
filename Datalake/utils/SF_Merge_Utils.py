@@ -3,6 +3,8 @@ class SnowflakeWriter:
     spark:SparkSession=SparkSession.getActiveSession()
     def __init__(self, database, schema, table, primary_keys=None, update_excl_columns = []):
         print("initiating SF Writer class")
+        from pyspark.dbutils import DBUtils
+        dbutils = DBUtils(spark)  
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
         self.table = table
         self.primary_keys = primary_keys
