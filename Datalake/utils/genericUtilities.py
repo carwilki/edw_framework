@@ -112,31 +112,26 @@ def getEnvPrefix(env:str):
         raise Exception("Invalid environment")
     return envPrefix
 
-def importUtilitiesPre():
+def importUtilities():
   import argparse
   from datetime import datetime
-  from pyspark.sql.functions import current_timestamp, lit
   from pyspark.sql.session import SparkSession
   from pyspark.sql.types import DecimalType, StringType, TimestampType
 
   from Datalake.utils.configs import getConfig, getMaxDate
   from Datalake.utils.genericUtilities import getEnvPrefix
   from logging import getLogger, INFO
-
-  logger = getLogger()
-  return logger
-
-def importUtilities():
-    from logging import getLogger, INFO
-    from pyspark.dbutils import DBUtils
-    from pyspark.sql.functions import (col,
+  from pyspark.dbutils import DBUtils
+  from pyspark.sql.functions import (col,
       lit,
       when,
       current_timestamp,
       monotonically_increasing_id,
     )
-    from pyspark.sql.types import DecimalType, TimestampType, StringType
-    from pyspark.sql.session import SparkSession
-    from Datalake.utils.genericUtilities import getEnvPrefix
-    from Datalake.utils.logger import logPrevRunDt
-    from Datalake.utils.mergeUtils import executeMerge
+  from Datalake.utils.logger import logPrevRunDt
+  from Datalake.utils.mergeUtils import executeMerge
+
+  spark: SparkSession = SparkSession.getActiveSession()
+
+  logger = getLogger()
+  return logger,spark

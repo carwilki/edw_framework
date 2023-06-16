@@ -1,10 +1,10 @@
 from Datalake.utils.genericUtilities import importUtilities
 import argparse
 
-importUtilities()
+logger,spark = importUtilities() 
 parser = argparse.ArgumentParser()
 
-spark: SparkSession = SparkSession.getActiveSession()
+
 dbutils: DBUtils = DBUtils(spark)
 
 

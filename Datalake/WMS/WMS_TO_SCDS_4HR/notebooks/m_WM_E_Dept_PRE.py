@@ -4,15 +4,14 @@
 # from datetime import datetime
 # from Datalake.utils.genericUtilities import getEnvPrefix
 # from Datalake.utils.configs import getMaxDate, getConfig
-from Datalake.utils.genericUtilities import importUtilitiesPre
+from Datalake.utils.genericUtilities import importUtilities
 
 
 def dept_pre(dcnbr, env):
     #from logging import getLogger, INFO
-    logger = importUtilitiesPre()
+    logger,spark = importUtilities()
     logger.info("inside dept_pre")
-    spark: SparkSession = SparkSession.getActiveSession()
-
+    
     if dcnbr is None or dcnbr == "":
         raise ValueError("DC_NBR is not set")
 
