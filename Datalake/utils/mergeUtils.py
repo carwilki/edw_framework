@@ -55,6 +55,7 @@ def MergeToSF(deltaTable,primaryKeys,conditionCols):
   print("Merge_To_SF function")
   from Datalake.utils.genericUtilities import getSfCredentials
   from logging import getLogger
+  import json
   from Datalake.utils.SF_Merge_Utils import SnowflakeWriter,getAppendQuery
   logger = getLogger()
   sfOptions = getSfCredentials()
