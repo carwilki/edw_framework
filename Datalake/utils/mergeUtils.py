@@ -66,15 +66,15 @@ def MergeToSF(deltaTable,primaryKeys,conditionCols):
   mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
   print(mergeDatasetSql)
 
-  # df_table = spark.sql(mergeDatasetSql)
+  df_table = spark.sql(mergeDatasetSql)
 
-  # row_count = df_table.count()
-  # SFTable = f"{deltaTable}"
+  row_count = df_table.count()
+  SFTable = f"{deltaTable}"
 
-  # if row_count == 0:
-  #     logger.info("No new records to insert or update into Snowflake")
-  # else:
-  #     SnowflakeWriter(sfOptions["sfDatabase"], sfOptions["sfSchema"], SFTable, json.loads(primaryKeys)).push_data(
-  #         df_table, write_mode="merge"
-  #     )
+  if row_count == 0:
+      logger.info("No new records to insert or update into Snowflake")
+  else:
+      SnowflakeWriter(sfOptions["sfDatabase"], sfOptions["sfSchema"], SFTable, json.loads(primaryKeys)).push_data(
+          df_table, write_mode="merge"
+      )
 

@@ -34,6 +34,7 @@ class SnowflakeWriter:
 
         if table is None:
             table = self.table
+        print("TableName in write_df_to_sf:: ",table)    
         df.write.format("net.snowflake.spark.snowflake").options(
             **self.sfOptions
         ).option("dbtable", table).mode("append").save()
@@ -72,8 +73,8 @@ class SnowflakeWriter:
     def push_data(self, df, write_mode="merge"):
       if write_mode.lower() == "merge":
         upsert_query = self.create_upsert_query(df.columns)
-        print("running upsert ", upsert_query)
         self.write_df_to_sf(df, f"TEMP_{self.table}")
+        print("running upsert ", upsert_query)
         self.run_sf_query(upsert_query)
         self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")
       elif write_mode.lower() == "full":
