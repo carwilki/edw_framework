@@ -4,7 +4,7 @@ from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from Datalake.utils.logger import logPrevRunDt
-# from Datalake.utils.mergeUtils import executeMerge
+
 
 logger=getLogger()
 logger.setLevel(INFO)
@@ -19,12 +19,6 @@ def getSfCredentials(env):
   print("getting SF credentials")
   username = dbutils.secrets.get("databricks_service_account", "username")
   password = dbutils.secrets.get("databricks_service_account", "password")
-  # if "dev" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
-  #   env = "DEV"
-  # elif "qa" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
-  #   env = "QA"
-  # else:
-  #   env = "PRD"
 
   if env.lower()=='dev':
       url="petsmart.us-central1.gcp.snowflakecomputing.com"
@@ -138,6 +132,8 @@ def genPrevRunDt(refine_table_name,refine,raw):
   
   return prev_run_dt
 
+
+
 def jdbcOracleConnection(query,username,password,connection_string):
 
   df = (
@@ -148,6 +144,8 @@ def jdbcOracleConnection(query,username,password,connection_string):
         .option("password", password)
         .option("numPartitions", 3)
         .option("driver", "oracle.jdbc.OracleDriver")
+        .option("fetchsize", 10000)
+        .option("oracle.jdbc.timezoneAsRegion", "false")
         .option(
             "sessionInitStatement",
             """begin 
@@ -159,10 +157,13 @@ def jdbcOracleConnection(query,username,password,connection_string):
     )
   return df
 
+
+
 def overwriteDeltaPartition(df,partition,partitionvalue,target_table_name):
   df.write.partitionBy(partition).mode("overwrite").option(
         "replaceWhere", f"{partition}={partitionvalue}"
     ).saveAsTable(target_table_name)
+
 
 
 def parseArgEnv(env):

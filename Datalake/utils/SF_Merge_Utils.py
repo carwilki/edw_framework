@@ -33,8 +33,7 @@ class SnowflakeWriter:
         spark:SparkSession=SparkSession.getActiveSession()
 
         if table is None:
-            table = self.table
-        print("TableName in write_df_to_sf:: ",table)    
+            table = self.table   
         df.write.format("net.snowflake.spark.snowflake").options(
             **self.sfOptions
         ).option("dbtable", table).mode("overwrite").save()

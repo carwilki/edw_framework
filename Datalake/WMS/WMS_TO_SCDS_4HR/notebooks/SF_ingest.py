@@ -30,10 +30,10 @@ logger.setLevel(INFO)
 
 
 try:
+  
     logger.info("Ingesting data to Snowflake tables for table - ",deltaTable)
-    print("ingesting to sf")
     MergeToSF(env,deltaTable, primaryKeys_list, conditionCols_list)
-    print("ingesting to sf comepleted")
     logger.info("Data write to SF completed for table - ",deltaTable)
+
 except Exception as e:
     raise e

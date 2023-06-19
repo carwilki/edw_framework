@@ -20,11 +20,8 @@ from Datalake.utils import genericUtilities as gu
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
-# parser.add_argument("env", type=str, help="Env Variable")
-# args = parser.parse_args()
-# env = args.env
+
 env=gu.parseArgEnv("env").env
-print("Env:::",env)
 
 
 if env is None or env == "":

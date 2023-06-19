@@ -36,23 +36,6 @@ def perf_smry(dcnbr, env):
     refine_table_name = "WM_E_CONSOL_PERF_SMRY"
 
     prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-
-
-    # prev_run_dt = spark.sql(
-    #     f"""select max(prev_run_date) from {schemaName}.log_run_details
-    #     where table_name='{refine_table_name}' and lower(status)= 'completed'"""
-    # ).collect()[0][0]
-    # logger.info("Extracted prev_run_dt from log_run_details table")
-
-    # if prev_run_dt is None:
-    #     logger.info(
-    #         "Prev_run_dt is none so getting prev_run_dt from getMaxDate function"
-    #     )
-    #     prev_run_dt = getMaxDate(refine_table_name, refine)
-    # else:
-    #     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
-    #     prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
-
     print("The prev run date is " + prev_run_dt)
 
     # get Configs for JDBC Credentials
@@ -154,25 +137,7 @@ def perf_smry(dcnbr, env):
     AND 1=1
     """
 
-    # SQ_Shortcut_to_E_CONSOL_PERF_SMRY = (
-    #     spark.read.format("jdbc")
-    #     .option("url", connection_string)
-    #     .option("query", perf_summary_query)
-    #     .option("user", username)
-    #     .option("password", password)
-    #     .option("numPartitions", 3)
-    #     .option("driver", "oracle.jdbc.OracleDriver")
-    #     .option("fetchsize", 10000)
-    #     .option("oracle.jdbc.timezoneAsRegion", "false")
-    #     .option(
-    #         "sessionInitStatement",
-    #         """begin 
-    #         execute immediate 'alter session set time_zone=''-07:00''';
-    #     end;
-    # """,
-    #     )
-    #     .load()
-    # )
+  
     SQ_Shortcut_to_E_CONSOL_PERF_SMRY = gu.jdbcOracleConnection(perf_summary_query,username,password,connection_string)
     logger.info(
         "SQL query for SQ_Shortcut_to_E_CONSOL_PERF_SMRY is executed and data is loaded using jdbc"
@@ -403,9 +368,6 @@ def perf_smry(dcnbr, env):
     logger.info("Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is created successfully")
 
     gu.overwriteDeltaPartition(Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE,"DC_NBR",dcnbr,target_table_name)
-    # Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE.write.partitionBy("DC_NBR").mode(
-    #     "overwrite"
-    # ).option("replaceWhere", f"DC_NBR={dcnbr}").saveAsTable(target_table_name)
     logger.info(
         "Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table - "
         + target_table_name
