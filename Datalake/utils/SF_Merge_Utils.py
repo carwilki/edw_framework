@@ -72,7 +72,7 @@ class SnowflakeWriter:
     def push_data(self, df, write_mode="merge"):
       if write_mode.lower() == "merge":
         upsert_query = self.create_upsert_query(df.columns)
-        print("running upsert ", upsert_query )
+        print("running upsert ", upsert_query)
         self.write_df_to_sf(df, f"TEMP_{self.table}")
         self.run_sf_query(upsert_query)
         self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")
