@@ -15,16 +15,16 @@ dbutils:DBUtils=DBUtils(spark)
 
 
 
-def getSfCredentials():
+def getSfCredentials(env):
   print("getting SF credentials")
   username = dbutils.secrets.get("databricks_service_account", "username")
   password = dbutils.secrets.get("databricks_service_account", "password")
-  if "dev" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
-    env = "DEV"
-  elif "qa" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
-    env = "QA"
-  else:
-    env = "PRD"
+  # if "dev" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
+  #   env = "DEV"
+  # elif "qa" in spark.conf.get("spark.databricks.clusterUsageTags.gcpProjectId"):
+  #   env = "QA"
+  # else:
+  #   env = "PRD"
 
   if env.lower()=='dev':
       url="petsmart.us-central1.gcp.snowflakecomputing.com"
@@ -33,7 +33,8 @@ def getSfCredentials():
       warehouse = "IT_WH"
   if env.lower()=='qa':
       url="petsmart.us-central1.gcp.snowflakecomputing.com"
-      db="edw_"+env
+      #db="edw_"+env
+      db="edw_dev"
       schema = "PUBLIC"
       warehouse="IT_WH"
   if env.lower()=="prod":

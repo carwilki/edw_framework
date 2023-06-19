@@ -51,16 +51,15 @@ def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     except Exception as e:
         raise e
 
-def MergeToSF(deltaTable,primaryKeys,conditionCols):
+def MergeToSF(env,deltaTable,primaryKeys,conditionCols):
   print("Merge_To_SF function")
   from Datalake.utils.genericUtilities import getSfCredentials
   from logging import getLogger
   import json
   from Datalake.utils.SF_Merge_Utils import SnowflakeWriter,getAppendQuery
   logger = getLogger()
-  sfOptions = getSfCredentials()
+  sfOptions = getSfCredentials(env)
   append_query = getAppendQuery(deltaTable,conditionCols)
-  env = sfOptions["env"]
   schemaForDeltaTable = f"{env}_refine"
 
   mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
