@@ -11,8 +11,7 @@ from Datalake.utils import genericUtilities as gu
 
 def dept_pre(dcnbr, env):
     from logging import getLogger, INFO
-    #logger,spark = gu.importUtilities()
-
+   
     logger = getLogger()    
     spark: SparkSession = SparkSession.getActiveSession()
     logger.info("inside dept_pre")
@@ -100,7 +99,7 @@ def dept_pre(dcnbr, env):
     #     .load()
     # )
 
-    SQ_Shortcut_to_E_DEPT=gu.jdbcOracleConnection(dept_query,username,password,connection_string)
+    SQ_Shortcut_to_E_DEPT = gu.jdbcOracleConnection(dept_query,username,password,connection_string)
 
     logger.info("SQL query for SQ_Shortcut_to_E_DEPT is executed and data is loaded using jdbc")
 
