@@ -76,7 +76,7 @@ class SnowflakeWriter:
         self.write_df_to_sf(df, f"TEMP_{self.table}")
         print("running upsert ", upsert_query)
         self.run_sf_query(upsert_query)
-        self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")
+        #self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")
       elif write_mode.lower() == "full":
         self.run_sf_query(f"TRUNCATE TABLE {self.table}")
         self.write_df_to_sf(df)
