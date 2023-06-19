@@ -37,7 +37,7 @@ class SnowflakeWriter:
         print("TableName in write_df_to_sf:: ",table)    
         df.write.format("net.snowflake.spark.snowflake").options(
             **self.sfOptions
-        ).option("dbtable", table).mode("append").save()
+        ).option("dbtable", table).mode("overwrite").save()
         
     def get_clause(self, column_list, clause_type):
       clause_type = clause_type.lower()
