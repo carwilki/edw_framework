@@ -1,7 +1,7 @@
 class SnowflakeWriter:
     def __init__(self, env, database, schema, table, primary_keys=None, update_excl_columns = []):
         from pyspark.sql import SparkSession
-        from Datalake.utils.genericUtilities import getSFEnvPrefix
+        from Datalake.utils.genericUtilities import getSFEnvSuffix
         spark:SparkSession=SparkSession.getActiveSession()
         print("initiating SF Writer class")
         from pyspark.dbutils import DBUtils
@@ -11,7 +11,7 @@ class SnowflakeWriter:
         self.primary_keys = primary_keys
         self.env=env
         print(env)
-        envSuffix=getSFEnvPrefix(self.env)
+        envSuffix=getSFEnvSuffix(self.env)
         self.sfOptions = {
             "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
             "sfUser": dbutils.secrets.get("databricks_service_account", "username"),

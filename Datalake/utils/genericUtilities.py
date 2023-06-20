@@ -20,7 +20,7 @@ def getSfCredentials(env):
   username = dbutils.secrets.get("databricks_service_account", "username")
   password = dbutils.secrets.get("databricks_service_account", "password")
 
-  envSuffix = getSFEnvPrefix(env)
+  envSuffix = getSFEnvSuffix(env)
   url="petsmart.us-central1.gcp.snowflakecomputing.com"
   db= f"edw{envSuffix}"
   schema = "PUBLIC"
@@ -98,17 +98,17 @@ def getEnvPrefix(env:str):
         raise Exception("Invalid environment")
     return envPrefix
 
-def getSFEnvPrefix(env:str):
+def getSFEnvSuffix(env:str):
     print(env)
     if env.lower()=='dev':
-        envPrefix='_dev'
+        envSuffix='_dev'
     elif env.lower()=='qa':
-        envPrefix='_qa'
+        envSuffix='_qa'
     elif env.lower()=='prod':
-        envPrefix='_prd'
+        envSuffix='_prd'
     else:
         raise Exception("Invalid environment")
-    return envPrefix
+    return envSuffix
 
 def genPrevRunDt(refine_table_name,refine,raw):
   print("get Prev_run date")
