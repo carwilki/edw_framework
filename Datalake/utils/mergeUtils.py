@@ -73,7 +73,7 @@ def MergeToSF(env,deltaTable,primaryKeys,conditionCols):
   if row_count == 0:
       logger.info("No new records to insert or update into Snowflake")
   else:
-      SnowflakeWriter(sfOptions["sfDatabase"], sfOptions["sfSchema"], SFTable, json.loads(primaryKeys)).push_data(
+      SnowflakeWriter(sfOptions["sfDatabase"], sfOptions["sfSchema"], SFTable, json.loads(primaryKeys), env).push_data(
           df_table, write_mode="merge"
       )
 
