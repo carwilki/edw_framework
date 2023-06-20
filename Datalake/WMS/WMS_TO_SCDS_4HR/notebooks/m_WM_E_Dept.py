@@ -1,29 +1,26 @@
 from logging import getLogger, INFO
 from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
     col,
     lit,
+    monotonically_increasing_id,
     when,
     current_timestamp,
-    monotonically_increasing_id,
+    date_trunc,
 )
-from pyspark.sql.types import DecimalType, TimestampType, StringType
-from pyspark.sql.session import SparkSession
+from pyspark.sql.types import DecimalType, StringType, TimestampType
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
-import argparse
+from Datalake.utils import genericUtilities as gu
 
-parser = argparse.ArgumentParser()
 
 spark: SparkSession = SparkSession.getActiveSession()
 dbutils: DBUtils = DBUtils(spark)
 
+env=gu.parseArgEnv("env").env
 
-parser.add_argument("env", type=str, help="Env Variable")
-args = parser.parse_args()
-env = args.env
-# env = dbutils.widgets.get('env')
 
 if env is None or env == "":
     raise ValueError("env is not set")

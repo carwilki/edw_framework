@@ -1,4 +1,3 @@
-import argparse
 from logging import getLogger, INFO
 from pyspark.sql.session import SparkSession
 from pyspark.sql.functions import (
@@ -12,14 +11,15 @@ from pyspark.sql.types import StringType, DecimalType, TimestampType, DateType, 
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import executeMerge
+from Datalake.utils import genericUtilities as gu
 
-parser = argparse.ArgumentParser()
+
 
 spark: SparkSession = SparkSession.getActiveSession()
 
-parser.add_argument("env", type=str, help="Env Variable")
-args = parser.parse_args()
-env = args.env
+
+env=gu.parseArgEnv("env").env
+
 
 if env is None or env == "":
     raise ValueError("env is not set")
