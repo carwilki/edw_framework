@@ -20,22 +20,12 @@ def getSfCredentials(env):
   username = dbutils.secrets.get("databricks_service_account", "username")
   password = dbutils.secrets.get("databricks_service_account", "password")
 
-  if env.lower()=='dev':
-      url="petsmart.us-central1.gcp.snowflakecomputing.com"
-      db="edw_"+env
-      schema = "PUBLIC"
-      warehouse = "IT_WH"
-  if env.lower()=='qa':
-      url="petsmart.us-central1.gcp.snowflakecomputing.com"
-      #db="edw_"+env
-      db="edw_dev"
-      schema = "PUBLIC"
-      warehouse="IT_WH"
-  if env.lower()=="prod":
-      url="petsmart.us-central1.gcp.snowflakecomputing.com"
-      db="edw_prd"
-      schema = "PUBLIC"
-      warehouse="IT_WH"  
+  envSuffix = getSFEnvSuffix(env)
+  url="petsmart.us-central1.gcp.snowflakecomputing.com"
+  db= f"edw{envSuffix}"
+  schema = "PUBLIC"
+  warehouse = "IT_WH"
+ 
 
   sfOptions = {"env": env, "sfUrl": url,"sfUser": username,"sfPassword": password,"sfDatabase": db,"sfSchema": schema,"sfWarehouse": warehouse,"authenticator" : "https://petsmart.okta.com"}
   
@@ -108,7 +98,17 @@ def getEnvPrefix(env:str):
         raise Exception("Invalid environment")
     return envPrefix
 
-
+def getSFEnvSuffix(env:str):
+    print(env)
+    if env.lower()=='dev':
+        envSuffix='_dev'
+    elif env.lower()=='qa':
+        envSuffix='_qa'
+    elif env.lower()=='prod':
+        envSuffix='_prd'
+    else:
+        raise Exception("Invalid environment")
+    return envSuffix
 
 def genPrevRunDt(refine_table_name,refine,raw):
   print("get Prev_run date")
