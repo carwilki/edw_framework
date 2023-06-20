@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "nz-databricks-migration"
+version = "0.1.0"
+description = "Petsmart migration of Netezza to Databricks PySpark"
+authors = ["Carson Wilkins <carson.wilkins@databricks.com>"]
+readme = "README.md"
+packages = [{include = "nz_databricks_migration"}]
+
+[tool.poetry.dependencies]
+python = "3.10.*"
+pyspark = "^3.4.0"
+databricks-connect = "^13.1.0"
+databricks-cli = "^0.17.7"
+deepdiff = "^6.3.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+flake8 = "^6.0.0"
+flake8-black = "^0.3.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
