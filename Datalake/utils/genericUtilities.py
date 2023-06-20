@@ -99,6 +99,7 @@ def getEnvPrefix(env:str):
     return envPrefix
 
 def getSFEnvPrefix(env:str):
+    print(env)
     if env.lower()=='dev':
         envPrefix='_dev'
     elif env.lower()=='qa':

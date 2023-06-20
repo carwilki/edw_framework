@@ -10,6 +10,7 @@ class SnowflakeWriter:
         self.table = table
         self.primary_keys = primary_keys
         self.env=env
+        print(env)
         envSuffix=getSFEnvPrefix(self.env)
         self.sfOptions = {
             "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
