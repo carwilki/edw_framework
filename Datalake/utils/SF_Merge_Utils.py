@@ -1,5 +1,5 @@
 class SnowflakeWriter:
-    def __init__(self, database, schema, table, primary_keys=None, update_excl_columns = [], env):
+    def __init__(self, env, database, schema, table, primary_keys=None, update_excl_columns = []):
         from pyspark.sql import SparkSession
         from Datalake.utils.genericUtilities import getSFEnvPrefix
         spark:SparkSession=SparkSession.getActiveSession()
@@ -9,8 +9,8 @@ class SnowflakeWriter:
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
         self.table = table
         self.primary_keys = primary_keys
-
-        envSuffix=getSFEnvPrefix(env)
+        self.env=env
+        envSuffix=getSFEnvPrefix(self.env)
         self.sfOptions = {
             "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
             "sfUser": dbutils.secrets.get("databricks_service_account", "username"),
