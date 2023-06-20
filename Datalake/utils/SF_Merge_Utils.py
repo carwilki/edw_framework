@@ -17,7 +17,7 @@ class SnowflakeWriter:
             "sfWarehouse": "IT_WH",
             "authenticator": "https://petsmart.okta.com",
             "autopushdown": "on",
-            "sfRole": "edw_qa_owner",
+            "sfRole": "edw_dev_owner",
         }
 
     def run_sf_query(self, query):
