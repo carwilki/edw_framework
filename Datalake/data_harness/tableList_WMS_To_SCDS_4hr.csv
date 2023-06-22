@@ -1,0 +1,4 @@
+tables,source_table,schema,source_schema,source_filter,target_table,snapshot_name
+WM_E_DEPT,WM_E_DEPT,SCDS_PRD,SCDS_PRD,"LOAD_TSTMP >= date_trunc('day', now() - interval '2 days') OR update_tstmp >= date_trunc('day', now() - interval '2 days')",WM_E_DEPT,WM_E_DEPT
+WM_E_CONSOL_PERF_SMRY,WM_E_CONSOL_PERF_SMRY,SCDS_PRD,SCDS_PRD,"LOAD_TSTMP >= date_trunc('day', now() - interval '2 days') OR update_tstmp >= date_trunc('day', now() - interval '2 days')",WM_E_CONSOL_PERF_SMRY,WM_E_CONSOL_PERF_SMRY
+WM_UCL_USER,WM_UCL_USER,SCDS_PRD,SCDS_PRD,"LOAD_TSTMP >= date_trunc('day', now() - interval '2 days') OR update_tstmp >= date_trunc('day', now() - interval '2 days')",WM_UCL_USER,WM_UCL_USER
