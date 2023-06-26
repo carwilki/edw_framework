@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from dbruntime import dbutils
 
-# COMMAND ----------
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -15,7 +15,7 @@ starttime = datetime.now() #start timestamp of the script
 # Read in job variables
 # read_infa_paramfile('', 'm_WM_E_Consol_Perf_Smry') ProcessingUtils
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE, type SOURCE 
 # COLUMN COUNT: 86
 
@@ -112,7 +112,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY, type SOURCE 
 # COLUMN COUNT: 5
 
@@ -129,7 +129,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 86
 
@@ -313,7 +313,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE_temp.selectExpr(
 	"SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE___LOAD_TSTMP as LOAD_TSTMP"
 )
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
@@ -326,13 +326,13 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node JNR_SITE_PROFILE, type JOINER 
 # COLUMN COUNT: 88
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_INT_CONV.DC_NBR],'inner')
 
-# COMMAND ----------
+
 # Processing node JNR_WM_E_CON_PERF_SMRY, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 90
 
@@ -432,7 +432,7 @@ JNR_WM_E_CON_PERF_SMRY = SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY_temp.join(JNR_SITE
 	"SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY___WM_CREATE_TSTMP as in_WM_CREATE_TSTMP",
 	"SQ_Shortcut_to_WM_E_CONSOL_PERF_SMRY___WM_MOD_TSTMP as in_WM_MOD_TSTMP")
 
-# COMMAND ----------
+
 # Processing node FIL_NO_CHANGE_REC, type FILTER 
 # COLUMN COUNT: 90
 
@@ -531,7 +531,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_CON_PERF_SMRY_temp.selectExpr(
 	"JNR_WM_E_CON_PERF_SMRY___in_WM_CREATE_TSTMP as in_WM_CREATE_TSTMP",
 	"JNR_WM_E_CON_PERF_SMRY___in_WM_MOD_TSTMP as in_WM_MOD_TSTMP").filter(f"in_WM_PERF_SMRY_TRAN_ID.isNull() OR ( in_WM_PERF_SMRY_TRAN_ID.isNotNull()  &  ( when((CREATE_DATE_TIME.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(CREATE_DATE_TIME) != when((in_WM_CREATE_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_CREATE_TSTMP) OR when((MOD_DATE_TIME.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(MOD_DATE_TIME) != when((in_WM_MOD_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(in_WM_MOD_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_EVAL_VALUES, type EXPRESSION . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 90
 
@@ -721,7 +721,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr(
 	"FIL_NO_CHANGE_REC___WM_MOD_TSTMP as WM_MOD_TSTMP"
 )
 
-# COMMAND ----------
+
 # Processing node UPD_VALIDATE, type UPDATE_STRATEGY 
 # COLUMN COUNT: 88
 
@@ -819,7 +819,7 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr(
 	"EXP_EVAL_VALUES___in_WM_PERF_SMRY_TRAN_ID as in_WM_PERF_SMRY_TRAN_ID")
 	.withColumn('pyspark_data_action', when((EXP_EVAL_VALUES.in_WM_PERF_SMRY_TRAN_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
 
-# COMMAND ----------
+
 # Processing node Shortcut_to_WM_E_CONSOL_PERF_SMRY, type TARGET 
 # COLUMN COUNT: 87
 

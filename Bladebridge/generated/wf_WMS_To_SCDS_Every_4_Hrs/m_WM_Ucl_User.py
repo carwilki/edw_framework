@@ -7,7 +7,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from dbruntime import dbutils
 
-# COMMAND ----------
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -15,7 +15,7 @@ starttime = datetime.now() #start timestamp of the script
 # Read in job variables
 # read_infa_paramfile('', 'm_WM_Ucl_User') ProcessingUtils
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_UCL_USER_PRE, type SOURCE 
 # COLUMN COUNT: 53
 
@@ -79,7 +79,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_WM_UCL_USER, type SOURCE 
 # COLUMN COUNT: 6
 
@@ -97,7 +97,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
 # COLUMN COUNT: 53
 
@@ -162,7 +162,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_UCL_USER_PRE_temp.selectExpr(
 	"SQ_Shortcut_to_WM_UCL_USER_PRE___SECURITY_POLICY_GROUP_ID as SECURITY_POLICY_GROUP_ID"
 )
 
-# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
@@ -175,7 +175,7 @@ properties={
 'password': os.environ.get('NZ_SCDS_PASSWORD'),
 'driver': os.environ.get('_DRIVER')}).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 55
 
@@ -240,7 +240,7 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE_temp.join(EXP_INT_CONVERSION_temp
 	"SQ_Shortcut_to_SITE_PROFILE___LOCATION_ID as LOCATION_ID1",
 	"SQ_Shortcut_to_SITE_PROFILE___STORE_NBR as STORE_NBR")
 
-# COMMAND ----------
+
 # Processing node JNR_WM_UCL_USER, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 59
 
@@ -309,7 +309,7 @@ JNR_WM_UCL_USER = SQ_Shortcut_to_WM_UCL_USER_temp.join(JNR_SITE_PROFILE_temp,[SQ
 	"SQ_Shortcut_to_WM_UCL_USER___LOAD_TSTMP as i_LOAD_TSTMP",
 	"SQ_Shortcut_to_WM_UCL_USER___USER_NAME as i_USER_NAME")
 
-# COMMAND ----------
+
 # Processing node FIL_UNCHANGED_RECORDS, type FILTER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 59
 
@@ -377,7 +377,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_UCL_USER_temp.selectExpr(
 	"JNR_WM_UCL_USER___i_USER_NAME as i_USER_NAME1",
 	"JNR_WM_UCL_USER___i_LOCATION_ID as i_LOCATION_ID").filter(f"i_USER_NAME1.isNull() OR ( i_USER_NAME1.isNotNull()  &  ( when((CREATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(CREATED_DTTM) != when((i_WM_CREATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(i_WM_CREATED_TSTMP) OR when((LAST_UPDATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(LAST_UPDATED_DTTM) != when((i_WM_LAST_UPDATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(i_WM_LAST_UPDATED_TSTMP) ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+
 # Processing node EXP_UPD_VALIDATOR, type EXPRESSION . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 58
 
@@ -503,7 +503,7 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"when((( ISNULL ( FIL_UNCHANGED_RECORDS___i_USER_NAME1 )  & ISNULL ( FIL_UNCHANGED_RECORDS___i_LOCATION_ID1 ) )),(1)).otherwise(2) as o_UPDATE_VALIDATOR"
 )
 
-# COMMAND ----------
+
 # Processing node UPD_INS_UPD, type UPDATE_STRATEGY 
 # COLUMN COUNT: 56
 
@@ -569,7 +569,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR")
 	.withColumn('pyspark_data_action', lit())
 
-# COMMAND ----------
+
 # Processing node Shortcut_to_WM_UCL_USER, type TARGET 
 # COLUMN COUNT: 53
 

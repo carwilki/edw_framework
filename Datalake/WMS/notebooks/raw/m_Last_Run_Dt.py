@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 #Code converted on 2023-05-16 15:07:04
 import os
 from pyspark.sql import *
