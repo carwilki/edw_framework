@@ -516,7 +516,7 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "dev_snow"
+        "git_branch": "qa"
     },
     "tags": {
         "Department": "Netezza-Migration"
