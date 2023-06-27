@@ -90,23 +90,28 @@ class SnowflakeWriter:
 
 
 
-def getAppendQuery(deltaTable,conditionCols):
-  print("get Append query")
-  from pyspark.sql import SparkSession
-  spark:SparkSession=SparkSession.getActiveSession()
-  import json
-  from datetime import datetime
-  prev_run_dt = spark.sql(f"""select max(prev_run_date)  from qa_raw.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'""").collect()[0][0]
-  prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
-  prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
-  append_query=""
-  for i in json.loads(conditionCols):
-      if json.loads(conditionCols).index(i) == 0:
-          append_query = append_query + f"""{i} >= '{prev_run_dt}'"""
-      else:
-          append_query = append_query + f""" or {i} >= '{prev_run_dt}'"""
+def getAppendQuery(env, deltaTable, conditionCols):
+    print("get Append query")
+    from pyspark.sql import SparkSession
+    from Datalake.utils.genericUtilities import getEnvPrefix
 
-  return append_query
+    spark: SparkSession = SparkSession.getActiveSession()
+    import json
+    from datetime import datetime
+    raw = getEnvPrefix(env) + "raw"
 
+    prev_run_dt = spark.sql(
+        f"""select max(prev_run_date)  from {raw}.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'"""
+    ).collect()[0][0]
+    prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
+    prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
+    append_query = ""
+    for i in json.loads(conditionCols):
+        if json.loads(conditionCols).index(i) == 0:
+            append_query = append_query + f"""{i} >= '{prev_run_dt}'"""
+        else:
+            append_query = append_query + f""" or {i} >= '{prev_run_dt}'"""
+
+    return append_query
 
 
