@@ -51,29 +51,39 @@ def executeMerge(sourceDataFrame,targetTable,primaryKeyString):
     except Exception as e:
         raise e
 
-def MergeToSF(env,deltaTable,primaryKeys,conditionCols):
-  print("Merge_To_SF function")
-  from Datalake.utils.genericUtilities import getSfCredentials
-  from logging import getLogger
-  import json
-  from Datalake.utils.SF_Merge_Utils import SnowflakeWriter,getAppendQuery
-  logger = getLogger()
-  sfOptions = getSfCredentials(env)
-  append_query = getAppendQuery(deltaTable,conditionCols)
-  schemaForDeltaTable = f"{env}_refine"
+def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
+    print("Merge_To_SF function")
+    from Datalake.utils.genericUtilities import getSfCredentials
+    from logging import getLogger
+    import json
+    from Datalake.utils.genericUtilities import getEnvPrefix
+    from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
 
-  mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
-  print(mergeDatasetSql)
+    logger = getLogger()
+    sfOptions = getSfCredentials(env)
+    append_query = getAppendQuery(env, deltaTable, conditionCols)
+    schemaForDeltaTable = getEnvPrefix(env) + "refine"
 
-  df_table = spark.sql(mergeDatasetSql)
+    mergeDatasetSql = (
+        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
+    )
+    print(mergeDatasetSql)
 
-  row_count = df_table.count()
-  SFTable = f"{deltaTable}"
+    df_table = spark.sql(mergeDatasetSql)
 
-  if row_count == 0:
-      logger.info("No new records to insert or update into Snowflake")
-  else:
-      SnowflakeWriter(env, sfOptions["sfDatabase"], sfOptions["sfSchema"], SFTable, json.loads(primaryKeys) ).push_data(
-          df_table, write_mode="merge"
-      )
+    row_count = df_table.count()
+    SFTable = f"{deltaTable}"
+
+    if row_count == 0:
+        logger.info("No new records to insert or update into Snowflake")
+    else:
+        SnowflakeWriter(
+            env,
+            sfOptions["sfDatabase"],
+            sfOptions["sfSchema"],
+            SFTable,
+            json.loads(primaryKeys),
+        ).push_data(df_table, write_mode="merge")
+
+
 
