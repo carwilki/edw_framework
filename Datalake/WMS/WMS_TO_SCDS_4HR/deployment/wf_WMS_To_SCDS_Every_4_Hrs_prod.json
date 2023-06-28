@@ -14,11 +14,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc10",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -45,11 +45,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc12",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -76,11 +76,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc14",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -107,11 +107,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc22",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -138,11 +138,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc36",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -169,11 +169,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc38",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -222,11 +222,11 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_Ucl_User.py",
                     "parameters": [
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -261,11 +261,11 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_E_Dept.py",
                     "parameters": [
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -300,11 +300,11 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_E_Consol_Perf_Smry.py",
                     "parameters": [
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -339,14 +339,14 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                     "parameters": [
-                        "qa",
+                        "prod",
                         "WM_E_CONSOL_PERF_SMRY",
                         "location_id,WM_PERF_SMRY_TRAN_ID",
                         "LOAD_TSTMP, UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -377,11 +377,11 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc41",
-                        "qa"
+                        "prod"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -412,14 +412,14 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                     "parameters": [
-                        "qa",
+                        "prod",
                         "WM_E_CONSOL_PERF_SMRY",
                         "location_id,WM_PERF_SMRY_TRAN_ID",
                         "LOAD_TSTMP, UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "job_cluster_key": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -450,14 +450,14 @@
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                     "parameters": [
-                        "qa",
+                        "prod",
                         "WM_E_CONSOL_PERF_SMRY",
                         "location_id,WM_PERF_SMRY_TRAN_ID",
                         "LOAD_TSTMP, UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "existing_cluster_id": "wms_to_scds_cluster",
                 "libraries": [
                     {
                         "maven": {
@@ -521,7 +521,7 @@
         },
         "format": "MULTI_TASK",
         "run_as": {
-            "user_name": ""
+            "user_name": "sselvarajan@petsmart.com"
         }
     }
 }
