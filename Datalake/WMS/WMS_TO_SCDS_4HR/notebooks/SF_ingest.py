@@ -1,8 +1,5 @@
-from pyspark.dbutils import DBUtils
 from pyspark.sql.session import SparkSession
 from logging import getLogger, INFO
-from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.logger import logPrevRunDt
 from Datalake.utils.mergeUtils import MergeToSF
 import argparse
 import json
@@ -16,7 +13,7 @@ parser.add_argument("conditionCols", type=str, help="condition cols to merge on"
 
 
 args = parser.parse_args()
-env=args.env
+env = args.env
 deltaTable = args.deltaTable
 primaryKeys = [pKey for pKey in args.primaryKeys.split(",")]
 conditionCols = [conditionCol for conditionCol in args.conditionCols.split(",")]
@@ -28,12 +25,10 @@ logger = getLogger()
 logger.setLevel(INFO)
 
 
-
 try:
-  
-    logger.info("Ingesting data to Snowflake tables for table - ",deltaTable)
-    MergeToSF(env,deltaTable, primaryKeys_list, conditionCols_list)
-    logger.info("Data write to SF completed for table - ",deltaTable)
+    logger.info("Ingesting data to Snowflake tables for table - ", deltaTable)
+    MergeToSF(env, deltaTable, primaryKeys_list, conditionCols_list)
+    logger.info("Data write to SF completed for table - ", deltaTable)
 
 except Exception as e:
     raise e
