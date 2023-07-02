@@ -1,0 +1,1726 @@
+{
+   "access_control_list" : [
+      {
+         "permission_level" : "CAN_MANAGE",
+         "user_name" : "jsmith@example.com"
+      }
+   ],
+   "email_notifications" : {
+      "no_alert_for_skipped_runs" : false,
+      "on_failure" : [
+         "user.name@databricks.com"
+      ],
+      "on_start" : [
+         "user.name@databricks.com"
+      ],
+      "on_success" : [
+         "user.name@databricks.com"
+      ]
+   },
+   "format" : "MULTI_TASK",
+   "git_source" : null,
+   "job_clusters" : [
+      {
+         "job_cluster_key" : "auto_scaling_cluster",
+         "new_cluster" : {}
+      }
+   ],
+   "max_concurrent_runs" : "10",
+   "name" : "wkl_SCDS_Base_Load",
+   "schedule" : {
+      "pause_status" : "PAUSED",
+      "quartz_cron_expression" : "20 30 * * * ?",
+      "timezone_id" : "Europe/London"
+   },
+   "tags" : {
+      "cost-center" : "engineering",
+      "team" : "jobs"
+   },
+   "tasks" : [
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Aud_Log.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Aud_Log",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Purchase_Orders_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Purchase_Orders_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Aud_Log"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_Wm_E_Job_Function.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Job_Function",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Trailer_Type.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Trailer_Type",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Msrmnt.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Msrmnt",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Job_Function"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_Wm_Ilm_Appointments.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Appointments",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Lock.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Lock",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Purchase_Orders_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Shipment_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Shipment_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Shipment_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Slot_Item.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Slot_Item",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Audit_Results.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Audit_Results",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Pix_Tran.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Pix_Tran",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Asn.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Asn",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Shift.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Shift",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Asn_Detail_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Asn_Detail_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Business_Partner.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Business_Partner",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Audit_Results"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Appt_Equipments.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Appt_Equipments",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Appointments"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Facility_Mapping_Wms.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Facility_Mapping_Wms",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Msrmnt"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Msrmnt_Rule.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Msrmnt_Rule",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Facility_Mapping_Wms"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Locn_Grp.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Locn_Grp",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Trailer_Type"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_C_TMS_Plan.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_C_TMS_Plan",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Locn_Grp"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Locn_Hdr.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Locn_Hdr",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Slot_Item"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Slot_Item_Score.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Slot_Item_Score",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Slot_Item_Score"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Stop_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Stop_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Lock"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Pick_Locn_Hdr.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Pick_Locn_Hdr",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Pix_Tran"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_Wm_E_Evnt_Smry_Hdr.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_Wm_E_Evnt_Smry_Hdr",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Appt_Equipments"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Facility_Slotting.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Facility_Slotting",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Shift"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Emp_Stat_Code.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Emp_Stat_Code",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Asn_Detail_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Asn_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Asn_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Stop_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Yard_Zone.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Yard_Zone",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Msrmnt_Rule"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Msrmnt_Rule_Calc.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Msrmnt_Rule_Calc",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Business_Partner"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Dock_Door.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Dock_Door",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_Wm_E_Evnt_Smry_Hdr"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Wave_Parm.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Wave_Parm",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Facility_Slotting"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Activity.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Activity",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Asn"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Asn_Detail.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Asn_Detail",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Emp_Stat_Code"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Putaway_Lock.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Putaway_Lock",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Asn_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_C_Leader_Audit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_C_Leader_Audit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Asn_Detail"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Cbo.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Cbo",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_C_TMS_Plan"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Do_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Do_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Putaway_Lock"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Type.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Type",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Yard_Zone"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Yard_Zone_Slot.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Yard_Zone_Slot",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Yard_Zone_Slot"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Size_Type.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Size_Type",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Locn_Hdr"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Detail.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Detail",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Dock_Door"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Emp_Dtl.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Emp_Dtl",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Msrmnt_Rule_Calc"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Msrmnt_Rule_Condition.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Msrmnt_Rule_Condition",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Pick_Locn_Hdr"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Resv_Locn_Hdr.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Resv_Locn_Hdr",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_C_Leader_Audit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Crit_Val.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Crit_Val",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Emp_Dtl"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Group_Wms.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Group_Wms",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Size_Type"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Trailer_Visit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Trailer_Visit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Activity"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Criteria.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Criteria",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Wave_Parm"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Order_Line_Item.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Order_Line_Item",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Type"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Product_Class.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Product_Class",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Do_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Order_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Order_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Product_Class"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Size_Uom.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Size_Uom",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Cbo"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Outpt_Lpn.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Outpt_Lpn",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Outpt_Lpn"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Shipment.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Shipment",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Crit_Val"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Elm.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Elm",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Resv_Locn_Hdr"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Sec_User.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Sec_User",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Detail"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Outpt_Lpn_Detail.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Outpt_Lpn_Detail",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Shipment"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Facility.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Facility",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Criteria"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Facility_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Facility_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Msrmnt_Rule_Condition"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Msg.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Msg",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Group_Wms"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Package_Cbo.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Package_Cbo",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Size_Uom"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Commodity_Code.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Commodity_Code",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Order_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Yard_Activity.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Yard_Activity",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Commodity_Code"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_UN_Number.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Un_Number",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Trailer_Visit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Trailer_Visit_Dtl.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Trailer_Visit_Dtl",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Order_Line_Item"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Orders.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Orders",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Yard_Activity"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Appointment_Type.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Appointment_Type",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Outpt_Lpn_Detail"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Pick_Locn_Dtl.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Pick_Locn_Dtl",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Facility"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Item_Wms.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Item_Wms",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Appointment_Type"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Equipment.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Equipment",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Msg"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Msg_Dtl.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Msg_Dtl",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Package_Cbo"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Act.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Act",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Elm"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Elm_Crit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Elm_Crit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Un_Number"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Standard_UOM.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Standard_Uom",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Act"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Act_Elm.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Act_Elm",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Sec_User"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ship_Via.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ship_Via",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Facility_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Lpn_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Pick_Locn_Hdr_Slotting.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Pick_Locn_Hdr_Slotting",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Trailer_Visit_Dtl"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Trailer_Contents.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Trailer_Contents",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Msg_Dtl"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Msg_Crit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Msg_Crit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Elm_Crit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Labor_Type_Code.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Labor_Type_Code",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Equipment"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Equipment_Instance.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Equipment_Instance",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Trailer_Contents"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Picking_Short_Item.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Picking_Short_Item",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Orders"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Purchase_Orders.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Purchase_Orders",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Act_Elm"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_E_Act_Elm_Crit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_E_Act_Elm_Crit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Item_Wms"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Output_Orders.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Outpt_Orders",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Labor_Type_Code"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Appointment_Objects.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Appointment_Objects",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Pick_Locn_Hdr_Slotting"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Pick_Locn_Dtl_Slotting.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Pick_Locn_Dtl_Slotting",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Pick_Locn_Dtl_Slotting"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Purchase_Orders_Line_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Purchase_Orders_Line_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_E_Act_Elm_Crit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Stop.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Stop",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Appointment_Objects"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Appointment_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Appointment_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Msg_Crit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Msg_Dtl_Crit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Msg_Dtl_Crit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ship_Via"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Sys_Code.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Sys_Code",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Equipment_Instance"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Carrier_Code.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Carrier_Code",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Sys_Code"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Trailer_Ref.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Trailer_Ref",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Purchase_Orders"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Purchase_Orders_Line_Item.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Purchase_Orders_Line_Item",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Msg_Dtl_Crit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Labor_Tran_Dtl_Crit.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Labor_Tran_Dtl_Crit",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Trailer_Ref"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Vend_Perf_Tran.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Vend_Perf_Tran",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Purchase_Orders_Line_Item"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Yard.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Yard",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Outpt_Orders"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Outpt_Order_Line_Item.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Outpt_Order_Line_Item",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Vend_Perf_Tran"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Task_Dtl.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Task_Dtl",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Task_Dtl"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Task_Hdr.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Task_Hdr",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Labor_Tran_Dtl_Crit"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_User_Profile.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_User_Profile",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Ilm_Appointment_Status"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Ilm_Task_Status.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Ilm_Task_Status",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Yard"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Lpn.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Lpn",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Carrier_Code"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Rack_Type.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Rack_Type",
+         "timeout_seconds" : "86400"
+      },
+      {
+         "depends_on" : [
+            {
+               "task_key" : "s_WM_Rack_Type"
+            }
+         ],
+         "description" : "",
+         "max_retries" : "3",
+         "min_retry_interval_millis" : "2000",
+         "notebook_task" : {
+            "notebook_path" : "notebookTestPath/m_WM_Rack_Type_Level.py"
+         },
+         "retry_on_timeout" : false,
+         "task_key" : "s_WM_Rack_Type_Level",
+         "timeout_seconds" : "86400"
+      }
+   ],
+   "timeout_seconds" : "86400"
+}
