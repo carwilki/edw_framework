@@ -1,0 +1,527 @@
+{
+    "new_settings": {
+        "name": "WMS_TO_SCDS_4HR",
+        "email_notifications": {
+            "no_alert_for_skipped_runs": false
+        },
+        "webhook_notifications": {},
+        "timeout_seconds": 0,
+        "max_concurrent_runs": 100,
+        "tasks": [
+            {
+                "task_key": "DC_10_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc10",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "DC_12_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc12",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "DC_14_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc14",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "DC_22_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc22",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "DC_36_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc36",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "DC_38_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc38",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "s_WM_Ucl_User",
+                "depends_on": [
+                    {
+                        "task_key": "DC_38_PRE"
+                    },
+                    {
+                        "task_key": "DC_22_PRE"
+                    },
+                    {
+                        "task_key": "DC_36_PRE"
+                    },
+                    {
+                        "task_key": "DC_14_PRE"
+                    },
+                    {
+                        "task_key": "DC_41_PRE"
+                    },
+                    {
+                        "task_key": "DC_12_PRE"
+                    },
+                    {
+                        "task_key": "DC_10_PRE"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_Ucl_User.py",
+                    "parameters": [
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "max_retries": 3,
+                "min_retry_interval_millis": 2000,
+                "retry_on_timeout": false,
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                },
+                "description": ""
+            },
+            {
+                "task_key": "s_WM_E_Dept",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Ucl_User"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_E_Dept.py",
+                    "parameters": [
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "max_retries": 3,
+                "min_retry_interval_millis": 2000,
+                "retry_on_timeout": false,
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                },
+                "description": ""
+            },
+            {
+                "task_key": "s_WM_E_Consol_Perf_Smry",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_E_Dept"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/m_WM_E_Consol_Perf_Smry.py",
+                    "parameters": [
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "max_retries": 3,
+                "min_retry_interval_millis": 2000,
+                "retry_on_timeout": false,
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                },
+                "description": ""
+            },
+            {
+                "task_key": "SF_Perf_Smry",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_E_Consol_Perf_Smry"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
+                    "parameters": [
+                        "qa",
+                        "WM_E_CONSOL_PERF_SMRY",
+                        "location_id,WM_PERF_SMRY_TRAN_ID",
+                        "LOAD_TSTMP, UPDATE_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "max_retries": 3,
+                "min_retry_interval_millis": 2000,
+                "retry_on_timeout": false,
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                },
+                "description": ""
+            },
+            {
+                "task_key": "DC_41_PRE",
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
+                    "parameters": [
+                        "dc41",
+                        "qa"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Dept",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_E_Consol_Perf_Smry"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
+                    "parameters": [
+                        "qa",
+                        "WM_E_CONSOL_PERF_SMRY",
+                        "location_id,WM_PERF_SMRY_TRAN_ID",
+                        "LOAD_TSTMP, UPDATE_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_User",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_E_Consol_Perf_Smry"
+                    }
+                ],
+                "spark_python_task": {
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
+                    "parameters": [
+                        "qa",
+                        "WM_E_CONSOL_PERF_SMRY",
+                        "location_id,WM_PERF_SMRY_TRAN_ID",
+                        "LOAD_TSTMP, UPDATE_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "job_cluster_key": "wms_to_scds_cluster",
+                "libraries": [
+                    {
+                        "maven": {
+                            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "deepdiff"
+                        }
+                    }
+                ],
+                "timeout_seconds": 86400,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            }
+        ],
+        "job_clusters": [
+            {
+                "job_cluster_key": "wms_to_scds_cluster",
+                "new_cluster": {
+                    "cluster_name": "",
+                    "spark_version": "13.0.x-scala2.12",
+                    "spark_conf": {
+                        "spark.driver.maxResultSize": "64g",
+                        "spark.databricks.delta.preview.enabled": "true",
+                        "spark.sql.hive.metastore.jars": "maven",
+                        "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                        "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                        "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                        "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                        "spark.sql.hive.metastore.version": "3.1.0"
+                    },
+                    "gcp_attributes": {
+                        "use_preemptible_executors": false,
+                        "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+                        "availability": "ON_DEMAND_GCP",
+                        "zone_id": "auto"
+                    },
+                    "node_type_id": "n2-standard-8",
+                    "driver_node_type_id": "n2-standard-8",
+                    "custom_tags": {
+                        "Department": "Netezza-Migration"
+                    },
+                    "enable_elastic_disk": false,
+                    "num_workers": 12
+                }
+            }
+        ],
+        "git_source": {
+            "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+            "git_provider": "gitHubEnterprise",
+            "git_branch": "dev"
+        },
+        "tags": {
+            "Department": "Netezza-Migration"
+        },
+        "format": "MULTI_TASK",
+        "run_as": {
+            "user_name": "pshekhar@petsmart.com"
+        }
+    }
+}
