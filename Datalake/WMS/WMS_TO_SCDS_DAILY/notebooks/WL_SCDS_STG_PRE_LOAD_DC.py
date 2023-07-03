@@ -258,15 +258,20 @@ logger = getLogger()
 
 parser.add_argument("DC_NBR", type=str, help="DC number")
 parser.add_argument("env", type=str, help="Env Variable")
+parser.add_argument("groupNo", type=str, help="group Number Variable")
 args = parser.parse_args()
 dcnbr = args.DC_NBR
 env = args.env
+groupNo = args.groupNo
 
 if dcnbr is None or dcnbr == "":
     raise ValueError("DC_NBR is not set")
 
 if env is None or env == "":
     raise ValueError("env is not set")
+
+if groupNo is None or groupNo == "":
+    raise ValueError("groupNo is not set")
 
 
 ####################################################################
@@ -275,7 +280,7 @@ if env is None or env == "":
 # main section #
 ####################################################################
 
-group1_tbls = [
+group1 = [
     "WM_E_EVNT_SMRY_HDR_PRE",
     "WM_E_JOB_FUNCTION_PRE",
     "WM_FACILITY_PRE",
@@ -287,7 +292,7 @@ group1_tbls = [
     "WM_LPN_LOCK_PRE",
     "WM_SHIP_VIA_PRE",
 ]
-group2_tbls = [
+group2 = [
     "WM_E_Shift_PRE",
     "WM_Putaway_Lock_PRE",
     "WM_E_Emp_Stat_Code_PRE",
@@ -299,7 +304,7 @@ group2_tbls = [
     "WM_Lpn_Type_PRE",
     "WM_Lpn_Size_Type_PRE",
 ]
-group3_tbls = [
+group3 = [
     "WM_E_Crit_Val_PRE",
     "WM_Ilm_Appointment_Status_PRE",
     "WM_Ilm_Appt_Equipments_PRE",
@@ -311,7 +316,7 @@ group3_tbls = [
     "WM_E_Labor_Type_Code_PRE",
     "WM_Ilm_Appointment_Objects_PRE",
 ]
-group4_tbls = [
+group4 = [
     "WM_Asn_Status_PRE",
     "WM_Asn_Detail_Status_PRE",
     "WM_C_Leader_Audit_PRE",
@@ -320,7 +325,7 @@ group4_tbls = [
     "WM_Lpn_Audit_Results_PRE",
     "WM_E_Elm_Crit_PRE",
 ]
-group5_tbls = [
+group5 = [
     "WM_ORDER_LINE_ITEM_PRE",
     "WM_ORDERS_PRE",
     "WM_OUTPT_LPN_PRE",
@@ -331,7 +336,7 @@ group5_tbls = [
     "WM_PIX_TRAN_PRE",
     "WM_TRAILER_REF_PRE",
 ]
-group6_tbls = [
+group6 = [
     "WM_ITEM_FACILITY_MAPPING_WMS_PRE",
     "WM_ITEM_WMS_PRE",
     "WM_LOCN_HDR_PRE",
@@ -342,7 +347,7 @@ group6_tbls = [
     "WM_E_AUD_LOG_PRE",
     "WM_E_EMP_DTL_PRE",
 ]
-group7_tbls = [
+group7 = [
     "WM_Pick_Locn_Hdr_Slotting_PRE",
     "WM_Pick_Locn_Dtl_Slotting_PRE",
     "WM_Purchase_Orders_Line_Status_PRE",
@@ -354,7 +359,7 @@ group7_tbls = [
     "WM_Yard_Zone_PRE",
     "WM_Yard_Zone_Slot_PRE",
 ]
-group8_tbls = [
+group8 = [
     "WM_E_MSRMNT_PRE",
     "WM_E_MSRMNT_RILE_CALC_PRE",
     "WM_E_MSRMNT_RULE_CONDITION_PRE",
@@ -366,7 +371,7 @@ group8_tbls = [
     "WM_LABOR_TRAN_DTL_CRIT_PRE",
     "WM_USER_PROFILE_PRE",
 ]
-group9_tbls = [
+group9 = [
     "WM_PURCHASE_ORDERS_PRE",
     "WM_PURCHASE_ORDERS_LINE_ITEM_PRE",
     "WM_SHIPMENT_PRE",
@@ -377,7 +382,7 @@ group9_tbls = [
     "WM_VEND_PERF_TRAN_PRE",
     "WM_YARD_PRE",
 ]
-group10_tbls = [
+group10 = [
     "WM_Trailer_Type_PRE",
     "WM_Rack_Type_PRE",
     "WM_Rack_Type_Level_PRE",
@@ -390,7 +395,7 @@ group10_tbls = [
     "WM_Carrier_Code_PRE",
     "WM_Ilm_Yard_Activity_PRE",
 ]
-group11_tbls = [
+group11 = [
     "WM_ASN_DETAIL_PRE",
     "WM_ASN_PRE",
     "WM_E_ACT_ELM_CRIT_PRE",
@@ -406,30 +411,15 @@ group11_tbls = [
     "WM_TRAILER_VISIT_DETAIL_PRE",
 ]
 
-groupN_tbls = [
-    group1_tbls,
-    group2_tbls,
-    group3_tbls,
-    group4_tbls,
-    group5_tbls,
-    group6_tbls,
-    group7_tbls,
-    group8_tbls,
-    group9_tbls,
-    group10_tbls,
-    group11_tbls,
-]
 
-
-def tableGroupsNfunc(dcnbr, env, group_tbls):
-    for table in group_tbls:
+def tableGroupsNfunc(dcnbr, env, groupNo):
+    for table in groupNo:
         preTable_func = "m_".join(table)
         preTable_func(dcnbr, env)
         logger.info(f"{0} executed".format(preTable_func))
 
 
-with ThreadPoolExecutor() as executor:
-    results = executor.map(tableGroupsNfunc, dcnbr, env, groupN_tbls)
+tableGroupsNfunc(dcnbr, env, groupNo)
 
 
 """ m_WM_Pick_Locn_Hdr_Slotting_PRE(dcnbr, env)
