@@ -36,8 +36,8 @@ def m_WM_Yard_Zone_PRE(dcnbr, env):
     target_table_name = schemaName + "." + tableName
     refine_table_name = tableName[:-4]
     # prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    prev_run_dt = genPrevRunDt(refine_table_name, refine, raw)
-    print("The prev run date is " + prev_run_dt)
+    Prev_run_dt = genPrevRunDt(refine_table_name, refine, raw)
+    print("The prev run date is " + Prev_run_dt)
 
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
