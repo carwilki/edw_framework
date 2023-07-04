@@ -36,8 +36,8 @@ def m_WM_Yard_Zone_PRE(dcnbr, env):
     target_table_name = schemaName + "." + tableName
     refine_table_name = tableName[:-4]
     # prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    Prev_run_dt = genPrevRunDt(refine_table_name, refine, raw)
-    print("The prev run date is " + Prev_run_dt)
+    prev_run_dt = genPrevRunDt(refine_table_name, refine, raw)
+    print("The prev run date is " + prev_run_dt)
 
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -58,7 +58,7 @@ def m_WM_Yard_Zone_PRE(dcnbr, env):
                     YARD_ZONE.LAST_UPDATED_SOURCE,
                     YARD_ZONE.LAST_UPDATED_SOURCE_TYPE
                 FROM {schema}.YARD_ZONE
-                WHERE  (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM-DD-YYYY HH24:MI:SS'))-14) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','MM-DD-YYYY HH24:MI:SS'))-14)"""
+                WHERE  (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{prev_run_dt}','MM-DD-YYYY HH24:MI:SS'))-14) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{prev_run_dt}','MM-DD-YYYY HH24:MI:SS'))-14)"""
 
     # SQ_Shortcut_to_YARD_ZONE = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     SQ_Shortcut_to_YARD_ZONE = jdbcOracleConnection(
@@ -126,3 +126,4 @@ def m_WM_Yard_Zone_PRE(dcnbr, env):
         "Shortcut_to_WM_YARD_ZONE_PRE is written to the target table - "
         + target_table_name
     )
+
