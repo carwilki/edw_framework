@@ -58,7 +58,7 @@ def m_WM_Yard_Zone_PRE(dcnbr, env):
                     YARD_ZONE.LAST_UPDATED_SOURCE,
                     YARD_ZONE.LAST_UPDATED_SOURCE_TYPE
                 FROM {schema}.YARD_ZONE
-                WHERE  (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{prev_run_dt}','MM-DD-YYYY HH24:MI:SS'))-14) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{prev_run_dt}','MM-DD-YYYY HH24:MI:SS'))-14)"""
+                WHERE  (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{prev_run_dt}','MM/DD/YYYY HH24:MI:SS'))-14)"""
 
     # SQ_Shortcut_to_YARD_ZONE = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     SQ_Shortcut_to_YARD_ZONE = jdbcOracleConnection(
