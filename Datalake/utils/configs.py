@@ -206,8 +206,6 @@ def getMaxDate(refine_table_name, schema):
         metadata_df.select("timestampColumns")
         .where(
             "lower(tablename)='"
-            + schema.lower()
-            + "."
             + refine_table_name.lower()
             + "'"
         )
