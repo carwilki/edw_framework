@@ -179,21 +179,23 @@ def getConfig(DC_NBR, env):
     return select.get(DC_NBR)
 
 
-# def getMaxDate(refine_table_name,schema):
-#     from logging import getLogger, INFO
-#     logger = getLogger()
-#     logger.info("getMaxDate funcation is getting executed")
-#     if refine_table_name=='WM_E_DEPT':
-#         maxDateQuery= f'''select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from {schema}.{refine_table_name}'''
-#     elif refine_table_name=='WM_UCL_USER':
-#         maxDateQuery= f'''select greatest(coalesce(WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP),coalesce(WM_LAST_UPDATED_TSTMP,WM_CREATED_TSTMP) ) as max_date from {schema}.{refine_table_name}'''
-#     elif refine_table_name=='WM_E_CONSOL_PERF_SMRY':
-#         maxDateQuery= f'''select greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP) ) as max_date from {schema}.{refine_table_name}'''
-#     df = spark.sql(maxDateQuery)
-#     maxDate=df.select(F.max(F.col('max_date'))).first()[0]
-#     maxDate= maxDate.strftime('%Y-%m-%d')
-#     logger.info("returnning max date")
-#     return maxDate
+def getMaxDateOld(refine_table_name, schema):
+    from logging import getLogger, INFO
+
+    logger = getLogger()
+    logger.info("getMaxDate funcation is getting executed")
+    if refine_table_name == "WM_E_DEPT":
+        maxDateQuery = f"""select WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP,greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_CREATED_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP,WM_CREATED_TSTMP) ,coalesce(WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP) ) as max_date from {schema}.{refine_table_name}"""
+    elif refine_table_name == "WM_UCL_USER":
+        maxDateQuery = f"""select greatest(coalesce(WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP),coalesce(WM_LAST_UPDATED_TSTMP,WM_CREATED_TSTMP) ) as max_date from {schema}.{refine_table_name}"""
+    elif refine_table_name == "WM_E_CONSOL_PERF_SMRY":
+        maxDateQuery = f"""select greatest(coalesce(WM_CREATE_TSTMP,WM_MOD_TSTMP),coalesce(WM_MOD_TSTMP,WM_CREATE_TSTMP) ) as max_date from {schema}.{refine_table_name}"""
+    df = spark.sql(maxDateQuery)
+    maxDate = df.select(F.max(F.col("max_date"))).first()[0]
+    maxDate = maxDate.strftime("%Y-%m-%d")
+    print("Max date::", maxDate)
+    logger.info("returnning max date")
+    return maxDate
 
 
 def getMaxDate(refine_table_name, schema):
@@ -201,38 +203,40 @@ def getMaxDate(refine_table_name, schema):
 
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
-    metadata_df = spark.table(f"{schema}.metadata_nz")
-    columns = (
-        metadata_df.select("timestampColumns")
-        .where(
-            "lower(tablename)='"
-            + refine_table_name.lower()
-            + "'"
+    metadata_df = spark.table(f"{schema}.ingestion_metadata")
+    try:
+        columns = (
+            metadata_df.select("timestamp_columns")
+            .where("lower(table_name)='" + refine_table_name.lower() + "'")
+            .first()[0]
         )
-        .first()[0]
-    )
+    except Exception as e:
+        logger.info(f"{refine_table_name} not added to ingestion_metadata table")
+        raise e
+
     columnsList = columns.split(",")
     print(columnsList)
-    if len(columnsList) == 1:
-        maxDateQuery = f"select greatest({columns})"
+
+    if len(columnsList) > 4 or len(columnsList) == 0:
+        raise Exception("Invalid number of columns,cannot generate getMaxDate query!")
     else:
-        maxDateQuery = f"select greatest( coalesce({columns}),coalesce("
-        if len(columnsList) == 2:
-            maxDateQuery = maxDateQuery + f"{columnsList[1]},{columnsList[0]}) )"
-        elif len(columnsList) == 3:
-            maxDateQuery = (
-                maxDateQuery
-                + f"{columnsList[1]},{columnsList[0]},{columnsList[2]}) , coalesce({columnsList[2]},{columnsList[0]},{columnsList[1]} ) )"
-            )
-        elif len(columnsList) == 4:
-            maxDateQuery = (
-                maxDateQuery
-                + f"{columnsList[1]},{columnsList[0]},{columnsList[2]},{columnsList[3]}) , coalesce({columnsList[2]},{columnsList[0]},{columnsList[1]},{columnsList[3]} ), coalesce({columnsList[3]},{columnsList[0]},{columnsList[1]},{columnsList[2]} ) )"
-            )
+        logger.info("Generating query for getting the max date!")
+        if len(columnsList) == 1:
+            maxDateQuery = f"select greatest({columns})"
         else:
-            raise Exception(
-                "Invalid number of columns,cannot generate getMaxDate query!"
-            )
+            maxDateQuery = f"select greatest( coalesce({columns}),coalesce("
+            if len(columnsList) == 2:
+                maxDateQuery = maxDateQuery + f"{columnsList[1]},{columnsList[0]}) )"
+            elif len(columnsList) == 3:
+                maxDateQuery = (
+                    maxDateQuery
+                    + f"{columnsList[1]},{columnsList[0]},{columnsList[2]}) , coalesce({columnsList[2]},{columnsList[0]},{columnsList[1]} ) )"
+                )
+            elif len(columnsList) == 4:
+                maxDateQuery = (
+                    maxDateQuery
+                    + f"{columnsList[1]},{columnsList[0]},{columnsList[2]},{columnsList[3]}) , coalesce({columnsList[2]},{columnsList[0]},{columnsList[1]},{columnsList[3]} ), coalesce({columnsList[3]},{columnsList[0]},{columnsList[1]},{columnsList[2]} ) )"
+                )
 
     maxDateQuery = maxDateQuery + f" as max_date from {schema}.{refine_table_name}"
     print(maxDateQuery)
@@ -240,5 +244,6 @@ def getMaxDate(refine_table_name, schema):
     df = spark.sql(maxDateQuery)
     maxDate = df.select(F.max(F.col("max_date"))).first()[0]
     maxDate = maxDate.strftime("%Y-%m-%d")
-    logger.info("returnning max date")
+    print(f"Max date: {maxDate}")
+    logger.info("Returning max date")
     return maxDate
