@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Ilm_Appointment_Objects_PRE(dcnbr, env):
     tableName = "WM_ILM_APPOINTMENT_OBJECTS_PREP"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ILM_APPOINTMENT_OBJECTS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -63,8 +65,8 @@ def m_WM_Ilm_Appointment_Objects_PRE(dcnbr, env):
     ILM_APPOINTMENT_OBJECTS.STOP_SEQ,
     ILM_APPOINTMENT_OBJECTS.CREATED_DTTM,
     ILM_APPOINTMENT_OBJECTS.LAST_UPDATED_DTTM
-    FROM ILM_APPOINTMENT_OBJECTS
-    WHERE  (date_trunc('DD', CREATED_DTTM)>= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR (date_trunc('DD', LAST_UPDATED_DTTM)>= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) AND 
+    FROM {source_schema}.ILM_APPOINTMENT_OBJECTS
+    WHERE  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) AND 
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

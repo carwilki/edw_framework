@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Lpn_Audit_Results_PRE(dcnbr, env):
     tableName = "WM_LPN_AUDIT_RESULTS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LPN_AUDIT_RESULTS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -94,8 +96,8 @@ def m_WM_Lpn_Audit_Results_PRE(dcnbr, env):
     LPN_AUDIT_RESULTS.VALIDATION_LEVEL,
     LPN_AUDIT_RESULTS.TRAN_NAME,
     LPN_AUDIT_RESULTS.FACILITY_ID
-    FROM LPN_AUDIT_RESULTS
-    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.LPN_AUDIT_RESULTS
+    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

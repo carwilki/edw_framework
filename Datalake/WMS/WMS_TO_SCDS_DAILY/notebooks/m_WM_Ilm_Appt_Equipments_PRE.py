@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     tableName = "WM_ILM_APPT_EQUIPMENTS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ILM_APPT_EQUIPMENTS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -62,7 +64,7 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     ILM_APPT_EQUIPMENTS.EQUIPMENT_LICENSE_NUMBER,
     ILM_APPT_EQUIPMENTS.EQUIPMENT_LICENSE_STATE,
     ILM_APPT_EQUIPMENTS.EQUIPMENT_TYPE
-    FROM ILM_APPT_EQUIPMENTS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    FROM {source_schema}.ILM_APPT_EQUIPMENTS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 

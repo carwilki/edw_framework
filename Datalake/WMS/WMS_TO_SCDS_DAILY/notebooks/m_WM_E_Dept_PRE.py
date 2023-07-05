@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_E_Dept_PRE(dcnbr, env):
     tableName = "WM_E_DEPT_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_DEPT"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -71,8 +73,8 @@ def m_WM_E_Dept_PRE(dcnbr, env):
                 E_DEPT.VERSION_ID,
                 E_DEPT.CREATED_DTTM,
                 E_DEPT.LAST_UPDATED_DTTM
-            FROM E_DEPT
-            WHERE (TRUNC( CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( MOD_DATE_TIME) >=  TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.E_DEPT
+            WHERE (TRUNC( CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( MOD_DATE_TIME) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Task_Dtl_PRE(dcnbr, env):
     
     tableName = "WM_TASK_DTL_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_TASK_DTL"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -129,11 +131,11 @@ def m_WM_Task_Dtl_PRE(dcnbr, env):
                     TASK_DTL.WORK_RELEASE_BATCH_NUMBER,
                     TASK_DTL.ALLOCATION_KEY,
                     TASK_DTL.DISTRIBUTION_KEY
-                FROM TASK_DTL
-                WHERE {Initial_Load} (TRUNC(TASK_DTL.CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR ( TRUNC(TASK_DTL.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)"""
+                FROM {source_schema}.TASK_DTL
+                WHERE  (TRUNC(TASK_DTL.CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR ( TRUNC(TASK_DTL.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)"""
     
 
-    SQ_Shortcut_to_TASK_DTL = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_TASK_DTL = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_TASK_DTL is executed and data is loaded using jdbc")
     
     
@@ -145,7 +147,7 @@ def m_WM_Task_Dtl_PRE(dcnbr, env):
     
     EXP_TRN = SQ_Shortcut_to_TASK_DTL_temp.selectExpr( 
     	"SQ_Shortcut_to_TASK_DTL___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_TASK_DTL___TASK_ID as TASK_ID", 
     	"SQ_Shortcut_to_TASK_DTL___TASK_SEQ_NBR as TASK_SEQ_NBR", 
     	"SQ_Shortcut_to_TASK_DTL___CNTR_NBR as CNTR_NBR", 
@@ -331,5 +333,5 @@ def m_WM_Task_Dtl_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_TASK_DTL_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_TASK_DTL_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_TASK_DTL_PRE is written to the target table - " + target_table_name)

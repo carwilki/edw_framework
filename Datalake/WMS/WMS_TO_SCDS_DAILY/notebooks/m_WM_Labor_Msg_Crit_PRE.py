@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Labor_Msg_Crit_PRE(dcnbr, env):
     tableName = "WM_LABOR_MSG_CRIT_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LABOR_MSG_CRIT"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -73,8 +75,8 @@ def m_WM_Labor_Msg_Crit_PRE(dcnbr, env):
     LABOR_MSG_CRIT.MISC_NUM_1,
     LABOR_MSG_CRIT.MISC_NUM_2,
     LABOR_MSG_CRIT.HIBERNATE_VERSION
-    FROM LABOR_MSG_CRIT
-    WHERE (trunc(LABOR_MSG_CRIT.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(LABOR_MSG_CRIT.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.LABOR_MSG_CRIT
+    WHERE (trunc(LABOR_MSG_CRIT.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LABOR_MSG_CRIT.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

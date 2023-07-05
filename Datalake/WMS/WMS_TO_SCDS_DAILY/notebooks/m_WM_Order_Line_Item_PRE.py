@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 def m_WM_Order_Line_Item_PRE(dcnbr, env):
@@ -30,11 +30,13 @@ def m_WM_Order_Line_Item_PRE(dcnbr, env):
     
     tableName = "WM_ORDER_LINE_ITEM_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_ORDER_LINE_ITEM"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -249,10 +251,10 @@ def m_WM_Order_Line_Item_PRE(dcnbr, env):
                     ORDER_LINE_ITEM.REF_SYSCODE3,
                     ORDER_LINE_ITEM.HARD_ALLOC_REASON_CODE,
                     ORDER_LINE_ITEM.LOCKED
-                FROM ORDER_LINE_ITEM
-                WHERE {Initial_Load} (trunc(ORDER_LINE_ITEM.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(ORDER_LINE_ITEM.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+                FROM {source_schema}.ORDER_LINE_ITEM
+                WHERE  (trunc(ORDER_LINE_ITEM.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(ORDER_LINE_ITEM.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
 
-    SQ_Shortcut_to_ORDER_LINE_ITEM = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_ORDER_LINE_ITEM = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_ORDER_LINE_ITEM is executed and data is loaded using jdbc")
 
     
@@ -264,7 +266,7 @@ def m_WM_Order_Line_Item_PRE(dcnbr, env):
     
     EXP_TRN = SQ_Shortcut_to_ORDER_LINE_ITEM_temp.selectExpr( \
     	"SQ_Shortcut_to_ORDER_LINE_ITEM___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR_EXP", \
+    	f"{dcnbr} as DC_NBR_EXP", \
     	"SQ_Shortcut_to_ORDER_LINE_ITEM___ORDER_ID as ORDER_ID", \
     	"SQ_Shortcut_to_ORDER_LINE_ITEM___LINE_ITEM_ID as LINE_ITEM_ID", \
     	"SQ_Shortcut_to_ORDER_LINE_ITEM___PARENT_LINE_ITEM_ID as PARENT_LINE_ITEM_ID", \
@@ -694,5 +696,5 @@ def m_WM_Order_Line_Item_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_ORDER_LINE_ITEM_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_ORDER_LINE_ITEM_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_ORDER_LINE_ITEM_PRE is written to the target table - " + target_table_name)

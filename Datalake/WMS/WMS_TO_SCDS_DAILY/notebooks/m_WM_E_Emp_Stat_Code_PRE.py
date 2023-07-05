@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_E_Emp_Stat_Code_PRE(dcnbr, env):
     tableName = "WM_E_EMP_STAT_CODE_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "TDB"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -68,8 +70,8 @@ def m_WM_E_Emp_Stat_Code_PRE(dcnbr, env):
     E_EMP_STAT_CODE.UNQ_SEED_ID,
     E_EMP_STAT_CODE.CREATED_DTTM,
     E_EMP_STAT_CODE.LAST_UPDATED_DTTM
-    FROM E_EMP_STAT_CODE
-    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14)  AND
+    FROM {source_schema}.E_EMP_STAT_CODE
+    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

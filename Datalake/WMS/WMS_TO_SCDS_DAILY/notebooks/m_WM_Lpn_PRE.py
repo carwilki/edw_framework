@@ -6,10 +6,10 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 def m_WM_Lpn_PRE(dcnbr, env):
@@ -29,11 +29,13 @@ def m_WM_Lpn_PRE(dcnbr, env):
     
     tableName = "WM_LPN_PRE', mode = 'append"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
     refine_table_name = "WM_LPN', mode = 'append"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -321,10 +323,10 @@ def m_WM_Lpn_PRE(dcnbr, env):
                     LPN.RATING_LANE_ID,
                     LPN.RATING_LANE_DETAIL_ID,
                     LPN.PENDING_CANCELLATION
-                    FROM LPN
-                    WHERE {Initial_Load} (date_trunc('DD', LPN.CREATED_DTTM) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (date_trunc('DD', LPN.EXT_CREATED_DTTM) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (date_trunc('DD', LPN.LAST_UPDATED_DTTM) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)"""
+                    FROM {source_schema}.LPN
+                    WHERE  (trunc(LPN.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LPN.EXT_CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LPN.LAST_UPDATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)"""
 
-    SQ_Shortcut_to_LPN = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_LPN = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_LPN is executed and data is loaded using jdbc")
     
     
@@ -336,7 +338,7 @@ def m_WM_Lpn_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_LPN_temp.selectExpr( \
     	"SQ_Shortcut_to_LPN___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR_EXP", \
+    	f"{dcnbr} as DC_NBR_EXP", \
     	"SQ_Shortcut_to_LPN___LPN_ID as LPN_ID", \
     	"SQ_Shortcut_to_LPN___TC_LPN_ID as TC_LPN_ID", \
     	"SQ_Shortcut_to_LPN___BUSINESS_PARTNER_ID as BUSINESS_PARTNER_ID", \
@@ -910,5 +912,5 @@ def m_WM_Lpn_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_LPN_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_LPN_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_LPN_PRE is written to the target table - " + target_table_name)

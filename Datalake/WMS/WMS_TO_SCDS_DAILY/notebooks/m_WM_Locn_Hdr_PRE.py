@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Locn_Hdr_PRE(dcnbr, env):
     tableName = "WM_LOCN_HDR_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LOCN_HDR"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -100,8 +102,8 @@ def m_WM_Locn_Hdr_PRE(dcnbr, env):
     LOCN_HDR.CREATED_DTTM,
     LOCN_HDR.LAST_UPDATED_DTTM,
     LOCN_HDR.FACILITY_ID
-    FROM LOCN_HDR
-    WHERE (trunc(LOCN_HDR.CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (trunc(LOCN_HDR.MOD_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (trunc(LOCN_HDR.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (trunc(LOCN_HDR.LAST_UPDATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) AND 
+    FROM {source_schema}.LOCN_HDR
+    WHERE (trunc(LOCN_HDR.CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LOCN_HDR.MOD_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LOCN_HDR.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LOCN_HDR.LAST_UPDATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) AND 
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

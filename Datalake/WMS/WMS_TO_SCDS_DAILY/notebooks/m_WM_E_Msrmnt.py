@@ -334,29 +334,13 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 # Processing node Shortcut_to_WM_E_MSRMNT, type TARGET 
 # COLUMN COUNT: 22
 
-
-Shortcut_to_WM_E_MSRMNT = UPD_VALIDATE.selectExpr( \
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
-	"CAST(MSRMNT_ID AS BIGINT) as WM_MSRMNT_ID", \
-	"CAST(MSRMNT_CODE AS STRING) as WM_MSRMNT_CD", \
-	"CAST(NAME AS STRING) as WM_MSRMNT_NAME", \
-	"CAST(ORIG_MSRMNT_CODE AS STRING) as WM_ORIG_MSRMNT_CD", \
-	"CAST(ORIG_NAME AS STRING) as WM_ORIG_MSRMNT_NAME", \
-	"CAST(STATUS_FLAG AS STRING) as WM_MSRMNT_STATUS_CD", \
-	"CAST(SYS_CREATED_FLAG AS BIGINT) as SYS_CREATED_FLAG", \
-	"CAST(UNQ_SEED_ID AS BIGINT) as WM_UNIQUE_SEED_ID", \
-	"CAST(SIM_WHSE AS STRING) as SIMULATION_DC_NAME", \
-	"CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", \
-	"CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", \
-	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", \
-	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", \
-	"CAST(USER_ID AS STRING) as WM_USER_ID", \
-	"CAST(VERSION_ID AS BIGINT) as WM_VERSION_ID", \
-	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", \
-	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", \
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
-)
-Shortcut_to_WM_E_MSRMNT.write.saveAsTable(f'{raw}.WM_E_MSRMNT')
+try:
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_MSRMNT_ID = target.WM_MSRMNT_ID"""
+  refined_perf_table = "WM_E_MSRMNT"
+  executeMerge(UPD_VALIDATE, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("WM_E_MSRMNT", "WM_E_MSRMNT", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("WM_E_MSRMNT", "WM_E_MSRMNT","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

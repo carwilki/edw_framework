@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Lpn_Facility_Status_PRE(dcnbr, env):
     tableName = "WM_LPN_FACILITY_STATUS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LPN_FACILITY_STATUS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -57,7 +59,7 @@ def m_WM_Lpn_Facility_Status_PRE(dcnbr, env):
     LPN_FACILITY_STATUS.LPN_FACILITY_STATUS,
     LPN_FACILITY_STATUS.INBOUND_OUTBOUND_INDICATOR,
     LPN_FACILITY_STATUS.DESCRIPTION
-    FROM LPN_FACILITY_STATUS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    FROM {source_schema}.LPN_FACILITY_STATUS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 

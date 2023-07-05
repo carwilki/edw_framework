@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Wave_Parm_PRE(dcnbr, env):
     
     tableName = "WM_WAVE_PARM_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_WAVE_PARM"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -236,11 +238,11 @@ def m_WM_Wave_Parm_PRE(dcnbr, env):
                     WAVE_PARM.FORCE_ORDER_STREAMING,
                     WAVE_PARM.CUBING_ACTION_FOR_FAILED_ORDER,
                     WAVE_PARM.NBR_ALLOCATION_THREAD
-                FROM WAVE_PARM
-                WHERE {Initial_Load} (TRUNC(WAVE_PARM.CREATE_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC(WAVE_PARM.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC(WAVE_PARM.CREATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC(WAVE_PARM.LAST_UPDATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)"""
+                FROM {source_schema}.WAVE_PARM
+                WHERE  (TRUNC(WAVE_PARM.CREATE_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC(WAVE_PARM.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC(WAVE_PARM.CREATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC(WAVE_PARM.LAST_UPDATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)"""
             
 
-    SQ_Shortcut_to_WAVE_PARM = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_WAVE_PARM = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_WAVE_PARM is executed and data is loaded using jdbc")
     
     
@@ -252,7 +254,7 @@ def m_WM_Wave_Parm_PRE(dcnbr, env):
     
     EXP_TRN = SQ_Shortcut_to_WAVE_PARM_temp.selectExpr( 
     	"SQ_Shortcut_to_WAVE_PARM___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_WAVE_PARM___WAVE_PARM_ID as WAVE_PARM_ID", 
     	"SQ_Shortcut_to_WAVE_PARM___WHSE as WHSE", 
     	"SQ_Shortcut_to_WAVE_PARM___DAY_OF_WEEK as DAY_OF_WEEK", 
@@ -652,5 +654,5 @@ def m_WM_Wave_Parm_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_WAVE_PARM_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_WAVE_PARM_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_WAVE_PARM_PRE is written to the target table - " + target_table_name)

@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Business_Partner_PRE(dcnbr, env):
     tableName = "WM_BUSINESS_PARTNER_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "BUSINESS_PARTNER"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -85,8 +87,8 @@ def m_WM_Business_Partner_PRE(dcnbr, env):
                 BUSINESS_PARTNER.ATTRIBUTE_3,
                 BUSINESS_PARTNER.ATTRIBUTE_4,
                 BUSINESS_PARTNER.ATTRIBUTE_5
-            FROM BUSINESS_PARTNER
-            WHERE (TRUNC( BUSINESS_PARTNER.CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( BUSINESS_PARTNER.LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.BUSINESS_PARTNER
+            WHERE (TRUNC( BUSINESS_PARTNER.CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( BUSINESS_PARTNER.LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 

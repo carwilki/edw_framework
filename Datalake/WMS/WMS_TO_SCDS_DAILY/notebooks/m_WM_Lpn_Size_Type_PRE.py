@@ -6,10 +6,10 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 def m_WM_Lpn_Size_Type_PRE(dcnbr, env):
@@ -29,11 +29,13 @@ def m_WM_Lpn_Size_Type_PRE(dcnbr, env):
     
     tableName = "WM_LPN_SIZE_TYPE_PRE', mode = 'append"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
     refine_table_name = "WM_LPN_SIZE_TYPE', mode = 'append"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -72,10 +74,10 @@ def m_WM_Lpn_Size_Type_PRE(dcnbr, env):
                     LPN_SIZE_TYPE.STACK_POSITION,
                     LPN_SIZE_TYPE.LOAD_BEARING_STRENGTH,
                     LPN_SIZE_TYPE.FACILITY_ID
-                FROM LPN_SIZE_TYPE
-                WHERE {Initial_Load}  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)"""
+                FROM {source_schema}.LPN_SIZE_TYPE
+                WHERE   (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)"""
 
-    SQ_Shortcut_to_LPN_SIZE_TYPE = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_LPN_SIZE_TYPE = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_LPN_SIZE_TYPE is executed and data is loaded using jdbc")
     
     
@@ -87,7 +89,7 @@ def m_WM_Lpn_Size_Type_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_LPN_SIZE_TYPE_temp.selectExpr( \
     	"SQ_Shortcut_to_LPN_SIZE_TYPE___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR", \
+    	f"{dcnbr} as DC_NBR", \
     	"SQ_Shortcut_to_LPN_SIZE_TYPE___LPN_SIZE_TYPE_ID as LPN_SIZE_TYPE_ID", \
     	"SQ_Shortcut_to_LPN_SIZE_TYPE___LPN_DESC as LPN_DESC", \
     	"SQ_Shortcut_to_LPN_SIZE_TYPE___LPN_SIZE_DESC as LPN_SIZE_DESC", \
@@ -163,5 +165,5 @@ def m_WM_Lpn_Size_Type_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_LPN_SIZE_TYPE_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_LPN_SIZE_TYPE_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_LPN_SIZE_TYPE_PRE is written to the target table - " + target_table_name)

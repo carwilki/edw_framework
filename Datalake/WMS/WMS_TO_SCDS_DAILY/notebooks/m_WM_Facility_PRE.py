@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Facility_PRE(dcnbr, env):
     tableName = "WM_FACILITY_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "FACILITY"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -281,8 +283,8 @@ def m_WM_Facility_PRE(dcnbr, env):
     FACILITY.REF_FIELD_5,
     FACILITY.WHSE_REGION,
     FACILITY.GEOFENCE_RADIUS
-    FROM FACILITY
-    WHERE (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) AND
+    FROM {source_schema}.FACILITY
+    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------

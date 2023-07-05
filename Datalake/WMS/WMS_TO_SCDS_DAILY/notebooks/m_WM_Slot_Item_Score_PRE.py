@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Slot_Item_Score_PRE(dcnbr, env):
     
     tableName = "WM_SLOT_ITEM_SCORE_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_SLOT_ITEM_SCORE"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -51,11 +53,11 @@ def m_WM_Slot_Item_Score_PRE(dcnbr, env):
                     SLOT_ITEM_SCORE.MOD_DATE_TIME,
                     SLOT_ITEM_SCORE.MOD_USER,
                     SLOT_ITEM_SCORE.SEQ_CNSTR_VIOLATION
-                FROM SLOT_ITEM_SCORE
-                WHERE {Initial_Load} (date_trunc('DD', CREATE_DATE_TIME) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', MOD_DATE_TIME) >=  date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+                FROM {source_schema}.SLOT_ITEM_SCORE
+                WHERE  (trunc(CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(MOD_DATE_TIME) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
     
 
-    SQ_Shortcut_to_SLOT_ITEM_SCORE = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_SLOT_ITEM_SCORE = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_SLOT_ITEM_SCORE is executed and data is loaded using jdbc")
     
     
@@ -67,7 +69,7 @@ def m_WM_Slot_Item_Score_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_SLOT_ITEM_SCORE_temp.selectExpr( 
     	"SQ_Shortcut_to_SLOT_ITEM_SCORE___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR", 
+    	f"{dcnbr} as DC_NBR", 
     	"SQ_Shortcut_to_SLOT_ITEM_SCORE___SLOT_ITEM_SCORE_ID as SLOT_ITEM_SCORE_ID", 
     	"SQ_Shortcut_to_SLOT_ITEM_SCORE___SLOTITEM_ID as SLOTITEM_ID", 
     	"SQ_Shortcut_to_SLOT_ITEM_SCORE___CNSTR_ID as CNSTR_ID", 
@@ -97,5 +99,5 @@ def m_WM_Slot_Item_Score_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_SLOT_ITEM_SCORE_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_SLOT_ITEM_SCORE_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_SLOT_ITEM_SCORE_PRE is written to the target table - " + target_table_name)

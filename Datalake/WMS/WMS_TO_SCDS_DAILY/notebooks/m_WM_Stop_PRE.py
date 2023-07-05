@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Stop_PRE(dcnbr, env):
     
     tableName = "WM_STOP_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_STOP"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -165,9 +167,9 @@ def m_WM_Stop_PRE(dcnbr, env):
                     STOP.ACCESSORIAL_REVENUE,
                     STOP.STOPOFF_REVENUE,
                     STOP.CM_DISCOUNT_REVENUE
-                FROM STOP"""
+                FROM {source_schema}.STOP"""
     
-    SQ_Shortcut_to_STOP = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_STOP = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_STOP is executed and data is loaded using jdbc")
     
     
@@ -179,7 +181,7 @@ def m_WM_Stop_PRE(dcnbr, env):
     
     EXP_TRN = SQ_Shortcut_to_STOP_temp.selectExpr( 
     	"SQ_Shortcut_to_STOP___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_STOP___SHIPMENT_ID as SHIPMENT_ID", 
     	"SQ_Shortcut_to_STOP___STOP_SEQ as STOP_SEQ", 
     	"SQ_Shortcut_to_STOP___TC_COMPANY_ID as TC_COMPANY_ID", 
@@ -437,5 +439,5 @@ def m_WM_Stop_PRE(dcnbr, env):
     	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_STOP_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_STOP_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_STOP_PRE is written to the target table - " + target_table_name)

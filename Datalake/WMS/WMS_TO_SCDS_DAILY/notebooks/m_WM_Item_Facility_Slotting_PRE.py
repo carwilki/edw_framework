@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Item_Facility_Slotting_PRE(dcnbr, env):
     tableName = "WM_ITEM_FACILITY_SLOTTING_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ITEM_FACILITY_SLOTTING"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -145,8 +147,8 @@ def m_WM_Item_Facility_Slotting_PRE(dcnbr, env):
     ITEM_FACILITY_SLOTTING.ITEM_CHAR_4,
     ITEM_FACILITY_SLOTTING.ITEM_CHAR_5,
     ITEM_FACILITY_SLOTTING.SLOTTING_GROUP
-    FROM ITEM_FACILITY_SLOTTING
-    WHERE (date_trunc('DD', CREATE_DATE_TIME)>= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR (date_trunc('DD', MOD_DATE_TIME)>= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) AND 
+    FROM {source_schema}.ITEM_FACILITY_SLOTTING
+    WHERE (trunc(CREATE_DATE_TIME)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (trunc(MOD_DATE_TIME)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) AND 
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
