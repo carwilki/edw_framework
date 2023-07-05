@@ -222,7 +222,7 @@ def getMaxDate(refine_table_name, schema):
     else:
         logger.info("Generating query for getting the max date!")
         if len(columnsList) == 1:
-            maxDateQuery = f"select greatest({columns})"
+            maxDateQuery = f"select max({columns})"
         else:
             maxDateQuery = f"select greatest( coalesce({columns}),coalesce("
             if len(columnsList) == 2:
