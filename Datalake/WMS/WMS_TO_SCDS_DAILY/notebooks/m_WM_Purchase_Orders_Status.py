@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,42 +30,40 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_PURCHASE_ORDERS_STATUS"
+raw_perf_table = f"{raw}.WM_PURCHASE_ORDERS_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_PURCHASE_ORDERS_STATUS, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_PURCHASE_ORDERS_STATUS = spark.sql(f"""SELECT
-WM_PURCHASE_ORDERS_STATUS.LOCATION_ID,
-WM_PURCHASE_ORDERS_STATUS.WM_PURCHASE_ORDERS_STATUS,
-WM_PURCHASE_ORDERS_STATUS.WM_PURCHASE_ORDERS_STATUS_DESC,
-WM_PURCHASE_ORDERS_STATUS.WM_PURCHASE_ORDERS_STATUS_NOTE,
-WM_PURCHASE_ORDERS_STATUS.LOAD_TSTMP
-FROM WM_PURCHASE_ORDERS_STATUS
-WHERE WM_PURCHASE_ORDERS_STATUS IN (SELECT PURCHASE_ORDERS_STATUS FROM WM_PURCHASE_ORDERS_STATUS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_PURCHASE_ORDERS_STATUS,
+WM_PURCHASE_ORDERS_STATUS_DESC,
+WM_PURCHASE_ORDERS_STATUS_NOTE,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_PURCHASE_ORDERS_STATUS IN (SELECT PURCHASE_ORDERS_STATUS FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_PURCHASE_ORDERS_STATUS_PRE, type SOURCE 
 # COLUMN COUNT: 4
 
 SQ_Shortcut_to_WM_PURCHASE_ORDERS_STATUS_PRE = spark.sql(f"""SELECT
-WM_PURCHASE_ORDERS_STATUS_PRE.DC_NBR,
-WM_PURCHASE_ORDERS_STATUS_PRE.PURCHASE_ORDERS_STATUS,
-WM_PURCHASE_ORDERS_STATUS_PRE.DESCRIPTION,
-WM_PURCHASE_ORDERS_STATUS_PRE.NOTE
-FROM WM_PURCHASE_ORDERS_STATUS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+PURCHASE_ORDERS_STATUS,
+DESCRIPTION,
+NOTE
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -155,9 +153,9 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___NOTE as NOTE", 
 	"FIL_UNCHANGED_RECORDS___i_WM_PURCHASE_ORDERS_STATUS as i_WM_PURCHASE_ORDERS_STATUS", 
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
-	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_PURCHASE_ORDERS_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"CURRENT_TIMESTAMP() as UPDATE_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_PURCHASE_ORDERS_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -175,7 +173,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PURCHASE_ORDERS_STATUS1, type TARGET 
@@ -183,7 +181,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_PURCHASE_ORDERS_STATUS = target.WM_PURCHASE_ORDERS_STATUS"""
-  refined_perf_table = "WM_PURCHASE_ORDERS_STATUS"
+  # refined_perf_table = "WM_PURCHASE_ORDERS_STATUS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_PURCHASE_ORDERS_STATUS", "WM_PURCHASE_ORDERS_STATUS", "Completed", "N/A", f"{raw}.log_run_details")

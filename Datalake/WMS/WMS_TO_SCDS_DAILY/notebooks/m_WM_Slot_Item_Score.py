@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,39 +30,40 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_SLOT_ITEM_SCORE"
+raw_perf_table = f"{raw}.WM_SLOT_ITEM_SCORE_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SLOT_ITEM_SCORE, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_SLOT_ITEM_SCORE = spark.sql(f"""SELECT
-WM_SLOT_ITEM_SCORE.LOCATION_ID,
-WM_SLOT_ITEM_SCORE.WM_SLOT_ITEM_SCORE_ID,
-WM_SLOT_ITEM_SCORE.WM_CREATE_TSTMP,
-WM_SLOT_ITEM_SCORE.WM_MOD_TSTMP,
-WM_SLOT_ITEM_SCORE.LOAD_TSTMP
-FROM WM_SLOT_ITEM_SCORE
-WHERE WM_SLOT_ITEM_SCORE_ID IN (SELECT SLOT_ITEM_SCORE_ID FROM WM_SLOT_ITEM_SCORE_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_SLOT_ITEM_SCORE_ID,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_SLOT_ITEM_SCORE_ID IN (SELECT SLOT_ITEM_SCORE_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SLOT_ITEM_SCORE_PRE, type SOURCE 
 # COLUMN COUNT: 10
 
 SQ_Shortcut_to_WM_SLOT_ITEM_SCORE_PRE = spark.sql(f"""SELECT
-WM_SLOT_ITEM_SCORE_PRE.DC_NBR,
-WM_SLOT_ITEM_SCORE_PRE.SLOT_ITEM_SCORE_ID,
-WM_SLOT_ITEM_SCORE_PRE.SLOTITEM_ID,
-WM_SLOT_ITEM_SCORE_PRE.CNSTR_ID,
-WM_SLOT_ITEM_SCORE_PRE.SCORE,
-WM_SLOT_ITEM_SCORE_PRE.CREATE_DATE_TIME,
-WM_SLOT_ITEM_SCORE_PRE.MOD_DATE_TIME,
-WM_SLOT_ITEM_SCORE_PRE.MOD_USER,
-WM_SLOT_ITEM_SCORE_PRE.SEQ_CNSTR_VIOLATION,
-WM_SLOT_ITEM_SCORE_PRE.LOAD_TSTMP
-FROM WM_SLOT_ITEM_SCORE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+SLOT_ITEM_SCORE_ID,
+SLOTITEM_ID,
+CNSTR_ID,
+SCORE,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+MOD_USER,
+SEQ_CNSTR_VIOLATION,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -90,10 +91,7 @@ EXPTRANS = SQ_Shortcut_to_WM_SLOT_ITEM_SCORE_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -168,8 +166,8 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___i_WM_SLOT_ITEM_SCORE_ID as i_WM_SLOT_ITEM_SCORE_ID", 
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_SLOT_ITEM_SCORE_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_SLOT_ITEM_SCORE_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -192,7 +190,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_SLOT_ITEM_SCORE1, type TARGET 
@@ -200,7 +198,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SLOT_ITEM_SCORE_ID = target.WM_SLOT_ITEM_SCORE_ID"""
-  refined_perf_table = "WM_SLOT_ITEM_SCORE"
+  # refined_perf_table = "WM_SLOT_ITEM_SCORE"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_SLOT_ITEM_SCORE", "WM_SLOT_ITEM_SCORE", "Completed", "N/A", f"{raw}.log_run_details")

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -31,6 +31,9 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_ASN_DETAIL"
+raw_perf_table = f"{raw}.WM_ASN_DETAIL_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 
 # COMMAND ----------
@@ -43,8 +46,8 @@ WM_ASN_DETAIL.WM_ASN_DETAIL_ID,
 WM_ASN_DETAIL.WM_CREATED_TSTMP,
 WM_ASN_DETAIL.WM_LAST_UPDATED_TSTMP,
 WM_ASN_DETAIL.LOAD_TSTMP
-FROM WM_ASN_DETAIL
-WHERE WM_ASN_DETAIL_ID IN (SELECT ASN_DETAIL_ID FROM WM_ASN_DETAIL_PRE)""")
+FROM {refined_perf_table}
+WHERE WM_ASN_DETAIL_ID IN (SELECT ASN_DETAIL_ID FROM {raw_perf_table})""")
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -273,7 +276,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_ASN_DETAIL_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = (spark.sql("""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""")
+FROM {site_profile_table}""")
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -849,7 +852,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ASN_DETAIL_ID = target.WM_ASN_DETAIL_ID"""
-  refined_perf_table = "WM_ASN_DETAIL"
+#   refined_perf_table = "WM_ASN_DETAIL"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ASN_DETAIL", "WM_ASN_DETAIL", "Completed", "N/A", f"{raw}.log_run_details")

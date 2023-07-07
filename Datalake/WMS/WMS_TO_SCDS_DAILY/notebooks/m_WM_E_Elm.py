@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -31,8 +31,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 starttime = datetime.now() #start timestamp of the script
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_E_ELM"
+refined_perf_table = f"{refine}.WM_E_ELM_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -61,7 +64,7 @@ WM_E_ELM.WM_CREATE_TSTMP,
 WM_E_ELM.WM_MOD_TSTMP,
 WM_E_ELM.DELETE_FLAG,
 WM_E_ELM.LOAD_TSTMP
-FROM WM_E_ELM
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -90,7 +93,7 @@ WM_E_ELM_PRE.VERSION_ID,
 WM_E_ELM_PRE.UNQ_SEED_ID,
 WM_E_ELM_PRE.SIM_WHSE,
 WM_E_ELM_PRE.ORIG_NAME
-FROM WM_E_ELM_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -129,7 +132,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_ELM_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -518,7 +521,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')) , lit(0)) .when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -540,7 +543,7 @@ UPD_DELETE = RTR_INS_UPD_DEL_DELETE_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ELM_ID = target.WM_ELM_ID"""
-  refined_perf_table = "WM_E_ELM"
+#   refined_perf_table = "WM_E_ELM"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_ELM", "WM_E_ELM", "Completed", "N/A", f"{raw}.log_run_details")
@@ -554,28 +557,28 @@ except Exception as e:
 # COLUMN COUNT: 22
 
 
-Shortcut_to_WM_E_ELM11 = UPD_DELETE.selectExpr( \
-	"CAST(i_LOCATION_ID13 AS BIGINT) as LOCATION_ID", \
-	"CAST(i_WM_ELM_ID3 AS BIGINT) as WM_ELM_ID", \
-	"CAST(NULL AS STRING) as WM_ELM_NAME", \
-	"CAST(NULL AS STRING) as WM_ELM_DESC", \
-	"CAST(NULL AS STRING) as ORIG_NAME", \
-	"CAST(NULL AS BIGINT) as CORE_FLAG", \
-	"CAST(NULL AS BIGINT) as WM_MSRMNT_ID", \
-	"CAST(NULL AS BIGINT) as TIME_ALLOW", \
-	"CAST(NULL AS BIGINT) as WM_ELM_GRP_ID", \
-	"CAST(NULL AS BIGINT) as WM_UNQ_SEED_ID", \
-	"CAST(NULL AS STRING) as WM_SIM_WHSE", \
-	"CAST(NULL AS STRING) as MISC_TXT_1", \
-	"CAST(NULL AS STRING) as MISC_TXT_2", \
-	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
-	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
-	"CAST(NULL AS STRING) as WM_USER_ID", \
-	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
-	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
-	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
-	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
-)
-Shortcut_to_WM_E_ELM11.write.saveAsTable(f'{raw}.WM_E_ELM')
+# Shortcut_to_WM_E_ELM11 = UPD_DELETE.selectExpr( \
+# 	"CAST(i_LOCATION_ID13 AS BIGINT) as LOCATION_ID", \
+# 	"CAST(i_WM_ELM_ID3 AS BIGINT) as WM_ELM_ID", \
+# 	"CAST(NULL AS STRING) as WM_ELM_NAME", \
+# 	"CAST(NULL AS STRING) as WM_ELM_DESC", \
+# 	"CAST(NULL AS STRING) as ORIG_NAME", \
+# 	"CAST(NULL AS BIGINT) as CORE_FLAG", \
+# 	"CAST(NULL AS BIGINT) as WM_MSRMNT_ID", \
+# 	"CAST(NULL AS BIGINT) as TIME_ALLOW", \
+# 	"CAST(NULL AS BIGINT) as WM_ELM_GRP_ID", \
+# 	"CAST(NULL AS BIGINT) as WM_UNQ_SEED_ID", \
+# 	"CAST(NULL AS STRING) as WM_SIM_WHSE", \
+# 	"CAST(NULL AS STRING) as MISC_TXT_1", \
+# 	"CAST(NULL AS STRING) as MISC_TXT_2", \
+# 	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
+# 	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
+# 	"CAST(NULL AS STRING) as WM_USER_ID", \
+# 	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
+# 	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
+# 	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
+# 	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
+# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
+# 	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
+# )
+# Shortcut_to_WM_E_ELM11.write.saveAsTable(f'{raw}.WM_E_ELM')

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+refined_perf_table = f"{refine}.WM_E_EMP_DTL"
+raw_perf_table = f"{raw}.WM_E_EMP_DTL_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_EMP_DTL_PRE, type SOURCE 
@@ -67,7 +72,7 @@ WM_E_EMP_DTL_PRE.CREATED_DTTM,
 WM_E_EMP_DTL_PRE.LAST_UPDATED_DTTM,
 WM_E_EMP_DTL_PRE.EXCLUDE_AUTO_CICO,
 WM_E_EMP_DTL_PRE.LOAD_TSTMP
-FROM WM_E_EMP_DTL_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_EMP_DTL, type SOURCE 
@@ -81,8 +86,8 @@ WM_E_EMP_DTL.WM_LAST_UPDATED_TSTMP,
 WM_E_EMP_DTL.WM_CREATE_TSTMP,
 WM_E_EMP_DTL.WM_MOD_TSTMP,
 WM_E_EMP_DTL.LOAD_TSTMP
-FROM WM_E_EMP_DTL
-WHERE WM_EMP_DTL_ID IN (SELECT EMP_DTL_ID FROM WM_E_EMP_DTL_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_EMP_DTL_ID IN (SELECT EMP_DTL_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -166,7 +171,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_EMP_DTL_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -371,7 +376,7 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_EMP_DTL_ID = target.WM_EMP_DTL_ID"""
-  refined_perf_table = "WM_E_EMP_DTL"
+#   refined_perf_table = "WM_E_EMP_DTL"
   executeMerge(UPD_VALIDATE, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_EMP_DTL", "WM_E_EMP_DTL", "Completed", "N/A", f"{raw}.log_run_details")

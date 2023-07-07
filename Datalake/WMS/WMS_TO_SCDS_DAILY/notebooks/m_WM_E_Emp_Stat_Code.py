@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -32,9 +32,12 @@ starttime = datetime.now() #start timestamp of the script
 
 
 # COMMAND ----------
-# Variable_declaration_comment
+pre_perf_table = f"{raw}.WM_E_EMP_STAT_CODE_PRE"
+refined_perf_table = f"{refine}.WM_E_EMP_STAT_CODE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 Del_Logic=args.Del_Logic
-Prev_Run_Dt=args.Prev_Run_Dt
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_EMP_STAT_CODE, type SOURCE 
@@ -58,7 +61,7 @@ WM_E_EMP_STAT_CODE.WM_CREATED_TSTMP,
 WM_E_EMP_STAT_CODE.WM_LAST_UPDATED_TSTMP,
 WM_E_EMP_STAT_CODE.DELETE_FLAG,
 WM_E_EMP_STAT_CODE.LOAD_TSTMP
-FROM WM_E_EMP_STAT_CODE
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -84,7 +87,7 @@ WM_E_EMP_STAT_CODE_PRE.UNQ_SEED_ID,
 WM_E_EMP_STAT_CODE_PRE.CREATED_DTTM,
 WM_E_EMP_STAT_CODE_PRE.LAST_UPDATED_DTTM,
 WM_E_EMP_STAT_CODE_PRE.LOAD_TSTMP
-FROM WM_E_EMP_STAT_CODE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -120,7 +123,7 @@ EXPTRANS = SQ_Shortcut_to_WM_E_EMP_STAT_CODE_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -384,7 +387,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___o_UPD_VALIDATOR1 as o_UPD_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)) .when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY . Note: using additional SELECT to rename incoming columns
@@ -393,26 +396,26 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 # for each involved DataFrame, append the dataframe name to each column
 RTR_DELETE_DELETE_temp = RTR_DELETE_DELETE.toDF(*["RTR_DELETE_DELETE___" + col for col in RTR_DELETE_DELETE.columns])
 
-UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
-	"RTR_DELETE_DELETE___in_LOCATION_ID3 as in_LOCATION_ID2", \
-	"RTR_DELETE_DELETE___WM_EMP_STAT_ID3 as WM_EMP_STAT_ID2", \
-	"RTR_DELETE_DELETE___WM_EMP_STAT_CODE3 as WM_EMP_STAT_CODE2", \
-	"RTR_DELETE_DELETE___WM_EMP_STAT_DESC3 as WM_EMP_STAT_DESC2", \
-	"RTR_DELETE_DELETE___WM_UNQ_SEED_ID3 as WM_UNQ_SEED_ID2", \
-	"RTR_DELETE_DELETE___in_MISC_TXT_13 as in_MISC_TXT_12", \
-	"RTR_DELETE_DELETE___in_MISC_TXT_23 as in_MISC_TXT_22", \
-	"RTR_DELETE_DELETE___in_MISC_NUM_13 as in_MISC_NUM_12", \
-	"RTR_DELETE_DELETE___in_MISC_NUM_23 as in_MISC_NUM_22", \
-	"RTR_DELETE_DELETE___WM_USER_ID3 as WM_USER_ID2", \
-	"RTR_DELETE_DELETE___WM_VERSION_ID3 as WM_VERSION_ID2", \
-	"RTR_DELETE_DELETE___WM_CREATE_TSTMP3 as WM_CREATE_TSTMP2", \
-	"RTR_DELETE_DELETE___WM_MOD_TSTMP3 as WM_MOD_TSTMP2", \
-	"RTR_DELETE_DELETE___WM_CREATED_TSTMP3 as WM_CREATED_TSTMP2", \
-	"RTR_DELETE_DELETE___WM_LAST_UPDATED_TSTMP3 as WM_LAST_UPDATED_TSTMP2", \
-	"RTR_DELETE_DELETE___DELETE_FLAG3 as DELETE_FLAG2", \
-	"RTR_DELETE_DELETE___UPDATE_TSTMP3 as UPDATE_TSTMP2", \
-	"RTR_DELETE_DELETE___LOAD_TSTMP3 as LOAD_TSTMP2") \
-	.withColumn('pyspark_data_action', lit(1))
+# UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
+# 	"RTR_DELETE_DELETE___in_LOCATION_ID3 as in_LOCATION_ID2", \
+# 	"RTR_DELETE_DELETE___WM_EMP_STAT_ID3 as WM_EMP_STAT_ID2", \
+# 	"RTR_DELETE_DELETE___WM_EMP_STAT_CODE3 as WM_EMP_STAT_CODE2", \
+# 	"RTR_DELETE_DELETE___WM_EMP_STAT_DESC3 as WM_EMP_STAT_DESC2", \
+# 	"RTR_DELETE_DELETE___WM_UNQ_SEED_ID3 as WM_UNQ_SEED_ID2", \
+# 	"RTR_DELETE_DELETE___in_MISC_TXT_13 as in_MISC_TXT_12", \
+# 	"RTR_DELETE_DELETE___in_MISC_TXT_23 as in_MISC_TXT_22", \
+# 	"RTR_DELETE_DELETE___in_MISC_NUM_13 as in_MISC_NUM_12", \
+# 	"RTR_DELETE_DELETE___in_MISC_NUM_23 as in_MISC_NUM_22", \
+# 	"RTR_DELETE_DELETE___WM_USER_ID3 as WM_USER_ID2", \
+# 	"RTR_DELETE_DELETE___WM_VERSION_ID3 as WM_VERSION_ID2", \
+# 	"RTR_DELETE_DELETE___WM_CREATE_TSTMP3 as WM_CREATE_TSTMP2", \
+# 	"RTR_DELETE_DELETE___WM_MOD_TSTMP3 as WM_MOD_TSTMP2", \
+# 	"RTR_DELETE_DELETE___WM_CREATED_TSTMP3 as WM_CREATED_TSTMP2", \
+# 	"RTR_DELETE_DELETE___WM_LAST_UPDATED_TSTMP3 as WM_LAST_UPDATED_TSTMP2", \
+# 	"RTR_DELETE_DELETE___DELETE_FLAG3 as DELETE_FLAG2", \
+# 	"RTR_DELETE_DELETE___UPDATE_TSTMP3 as UPDATE_TSTMP2", \
+# 	"RTR_DELETE_DELETE___LOAD_TSTMP3 as LOAD_TSTMP2") \
+# 	.withColumn('pyspark_data_action', lit(1))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_EMP_STAT_CODE, type TARGET 
@@ -420,7 +423,7 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_EMP_STAT_ID = target.WM_EMP_STAT_ID"""
-  refined_perf_table = "WM_E_EMP_STAT_CODE"
+#   refined_perf_table = "WM_E_EMP_STAT_CODE"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_EMP_STAT_CODE", "WM_E_EMP_STAT_CODE", "Completed", "N/A", f"{raw}.log_run_details")

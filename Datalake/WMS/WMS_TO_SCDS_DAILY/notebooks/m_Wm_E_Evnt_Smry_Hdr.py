@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -32,8 +32,11 @@ starttime = datetime.now() #start timestamp of the script
 
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_E_EVNT_SMRY_HDR_PRE"
+refined_perf_table = f"{refine}.WM_E_EVNT_SMRY_HDR"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 soft_delete_logic_Wm_E_Evnt_Smry_Hdr=args.soft_delete_logic_Wm_E_Evnt_Smry_Hdr
 
@@ -122,7 +125,7 @@ WM_E_EVNT_SMRY_HDR_PRE.ASSIGNMENT_START_TIME,
 WM_E_EVNT_SMRY_HDR_PRE.ASSIGNMENT_END_TIME,
 WM_E_EVNT_SMRY_HDR_PRE.REFLECTIVE_CODE,
 WM_E_EVNT_SMRY_HDR_PRE.COMP_ASSIGNMENT_ID
-FROM WM_E_EVNT_SMRY_HDR_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_TRANS, type EXPRESSION 
@@ -304,7 +307,7 @@ WM_E_EVNT_SMRY_HDR.WM_MOD_TSTMP,
 WM_E_EVNT_SMRY_HDR.DELETE_FLAG,
 WM_E_EVNT_SMRY_HDR.UPDATE_TSTMP,
 WM_E_EVNT_SMRY_HDR.LOAD_TSTMP
-FROM WM_E_EVNT_SMRY_HDR
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -316,7 +319,7 @@ DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -946,7 +949,7 @@ UPD_INS_UPD_DEL = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_EVNT_SMRY_HDR11, type TARGET 
@@ -954,7 +957,7 @@ UPD_INS_UPD_DEL = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ELS_TRAN_ID = target.WM_ELS_TRAN_ID"""
-  refined_perf_table = "WM_E_EVNT_SMRY_HDR"
+#   refined_perf_table = "WM_E_EVNT_SMRY_HDR"
   executeMerge(UPD_INS_UPD_DEL, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_EVNT_SMRY_HDR", "WM_E_EVNT_SMRY_HDR", "Completed", "N/A", f"{raw}.log_run_details")

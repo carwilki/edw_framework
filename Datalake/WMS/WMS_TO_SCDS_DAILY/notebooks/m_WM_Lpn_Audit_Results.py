@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+refined_perf_table = f"{refine}.WM_LPN_AUDIT_RESULTS"
+raw_perf_table = f"{raw}.WM_LPN_AUDIT_RESULTS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_AUDIT_RESULTS, type SOURCE 
@@ -78,10 +83,9 @@ WM_LPN_AUDIT_RESULTS.WM_LAST_UPDATED_SOURCE,
 WM_LPN_AUDIT_RESULTS.WM_WM_LAST_UPDATED_TSTMP,
 WM_LPN_AUDIT_RESULTS.UPDATE_TSTMP,
 WM_LPN_AUDIT_RESULTS.LOAD_TSTMP
-FROM WM_LPN_AUDIT_RESULTS
-WHERE WM_LPN_AUDIT_RESULTS.WM_LPN_AUDIT_RESULTS_ID
-
-IN (SELECT LPN_AUDIT_RESULTS_ID FROM WM_LPN_AUDIT_RESULTS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_LPN_AUDIT_RESULTS_ID
+IN (SELECT LPN_AUDIT_RESULTS_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_AUDIT_RESULTS_PRE, type SOURCE 
@@ -130,7 +134,7 @@ WM_LPN_AUDIT_RESULTS_PRE.VALIDATION_LEVEL,
 WM_LPN_AUDIT_RESULTS_PRE.TRAN_NAME,
 WM_LPN_AUDIT_RESULTS_PRE.FACILITY_ID,
 WM_LPN_AUDIT_RESULTS_PRE.LOAD_TSTMP
-FROM WM_LPN_AUDIT_RESULTS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -139,7 +143,7 @@ FROM WM_LPN_AUDIT_RESULTS_PRE""").withColumn("sys_row_id", monotonically_increas
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_TRANS, type EXPRESSION 
@@ -547,7 +551,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_EXP as LOAD_TSTMP_EXP", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR", \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP_EXP as UPDATE_TSTMP_EXP") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_AUDIT_RESULTS1, type TARGET 
@@ -555,7 +559,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_AUDIT_RESULTS_ID = target.WM_LPN_AUDIT_RESULTS_ID"""
-  refined_perf_table = "WM_LPN_AUDIT_RESULTS"
+#   refined_perf_table = "WM_LPN_AUDIT_RESULTS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_AUDIT_RESULTS", "WM_LPN_AUDIT_RESULTS", "Completed", "N/A", f"{raw}.log_run_details")

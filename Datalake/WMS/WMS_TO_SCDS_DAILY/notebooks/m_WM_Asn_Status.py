@@ -25,6 +25,9 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_ASN_STATUS"
+raw_perf_table = f"{raw}.WM_ASN_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ASN_STATUS, type SOURCE 
@@ -36,8 +39,8 @@ WM_ASN_STATUS.WM_ASN_STATUS,
 WM_ASN_STATUS.WM_CREATED_TSTMP,
 WM_ASN_STATUS.WM_LAST_UPDATED_TSTMP,
 WM_ASN_STATUS.LOAD_TSTMP
-FROM WM_ASN_STATUS
-WHERE WM_ASN_STATUS IN (SELECT ASN_STATUS FROM WM_ASN_STATUS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_ASN_STATUS IN (SELECT ASN_STATUS FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ASN_STATUS_PRE, type SOURCE 
@@ -49,7 +52,7 @@ WM_ASN_STATUS_PRE.ASN_STATUS,
 WM_ASN_STATUS_PRE.DESCRIPTION,
 WM_ASN_STATUS_PRE.CREATED_DTTM,
 WM_ASN_STATUS_PRE.LAST_UPDATED_DTTM
-FROM WM_ASN_STATUS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -74,7 +77,7 @@ EXPTRANS = SQ_Shortcut_to_WM_ASN_STATUS_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,13 +30,17 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_PUTAWAY_LOCK"
+raw_perf_table = f"{raw}.WM_PUTAWAY_LOCK_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_PUTAWAY_LOCK_PRE"
+refined_perf_table = f"{refine}.WM_BUSINESS_PARTNER"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -44,17 +48,17 @@ Del_Logic=args.Del_Logic
 # COLUMN COUNT: 10
 
 SQ_Shortcut_to_WM_PUTAWAY_LOCK_PRE = spark.sql(f"""SELECT
-WM_PUTAWAY_LOCK_PRE.DC_NBR,
-WM_PUTAWAY_LOCK_PRE.LOCN_ID,
-WM_PUTAWAY_LOCK_PRE.LOCK_COUNTER,
-WM_PUTAWAY_LOCK_PRE.CREATED_DTTM,
-WM_PUTAWAY_LOCK_PRE.CREATED_SOURCE_TYPE,
-WM_PUTAWAY_LOCK_PRE.CREATED_SOURCE,
-WM_PUTAWAY_LOCK_PRE.LAST_UPDATED_DTTM,
-WM_PUTAWAY_LOCK_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_PUTAWAY_LOCK_PRE.LAST_UPDATED_SOURCE,
-WM_PUTAWAY_LOCK_PRE.LOAD_TSTMP
-FROM WM_PUTAWAY_LOCK_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+LOCN_ID,
+LOCK_COUNTER,
+CREATED_DTTM,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+LAST_UPDATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -82,18 +86,18 @@ EXPTRANS = SQ_Shortcut_to_WM_PUTAWAY_LOCK_PRE_temp.selectExpr(
 # COLUMN COUNT: 11
 
 SQ_Shortcut_to_WM_PUTAWAY_LOCK = spark.sql(f"""SELECT
-WM_PUTAWAY_LOCK.LOCATION_ID,
-WM_PUTAWAY_LOCK.WM_LOCN_ID,
-WM_PUTAWAY_LOCK.LOCK_COUNTER,
-WM_PUTAWAY_LOCK.WM_CREATED_SOURCE_TYPE,
-WM_PUTAWAY_LOCK.WM_CREATED_SOURCE,
-WM_PUTAWAY_LOCK.WM_CREATED_TSTMP,
-WM_PUTAWAY_LOCK.WM_LAST_UPDATED_SOURCE_TYPE,
-WM_PUTAWAY_LOCK.WM_LAST_UPDATED_SOURCE,
-WM_PUTAWAY_LOCK.WM_LAST_UPDATED_TSTMP,
-WM_PUTAWAY_LOCK.DELETE_FLAG,
-WM_PUTAWAY_LOCK.LOAD_TSTMP
-FROM WM_PUTAWAY_LOCK
+LOCATION_ID,
+WM_LOCN_ID,
+LOCK_COUNTER,
+WM_CREATED_SOURCE_TYPE,
+WM_CREATED_SOURCE,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_SOURCE_TYPE,
+WM_LAST_UPDATED_SOURCE,
+WM_LAST_UPDATED_TSTMP,
+DELETE_FLAG,
+LOAD_TSTMP
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -101,10 +105,7 @@ DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -177,10 +178,10 @@ FIL_UNCHANGED_REC = JNR_WM_PUTAWAY_LOCK_temp.selectExpr(
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_REC_temp = FIL_UNCHANGED_REC.toDF(*["FIL_UNCHANGED_REC___" + col for col in FIL_UNCHANGED_REC.columns]) \
-    .withColumn("v_CREATED_DTTM", expr("""IF (CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
-	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF (LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
-	.withColumn("v_WM_CREATED_TSTMP", expr("""IF (WM_CREATED_TSTMP IS NULL, date'1900-01-01', WM_CREATED_TSTMP)""")) \
-	.withColumn("v_WM_LAST_UPDATED_TSTMP", expr("""IF (WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', WM_LAST_UPDATED_TSTMP)"""))
+    .withColumn("v_CREATED_DTTM", expr("""IF(CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
+	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF(LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
+	.withColumn("v_WM_CREATED_TSTMP", expr("""IF(WM_CREATED_TSTMP IS NULL, date'1900-01-01', WM_CREATED_TSTMP)""")) \
+	.withColumn("v_WM_LAST_UPDATED_TSTMP", expr("""IF(WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', WM_LAST_UPDATED_TSTMP)"""))
     
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_REC_temp.selectExpr( 
 	"FIL_UNCHANGED_REC___sys_row_id as sys_row_id", 
@@ -204,10 +205,10 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_REC_temp.selectExpr(
 	"FIL_UNCHANGED_REC___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP", 
 	"FIL_UNCHANGED_REC___in_DELETE_FLAG as in_DELETE_FLAG", 
 	"FIL_UNCHANGED_REC___in_LOAD_TSTMP as in_LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_REC___LOCN_ID IS NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL, 1, 0) as DELETE_FLAG", 
+	"IF(FIL_UNCHANGED_REC___LOCN_ID IS NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL, 1, 0) as DELETE_FLAG", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_REC___LOCN_ID IS NOT NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NULL, 'INSERT', IF (FIL_UNCHANGED_REC___LOCN_ID IS NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL AND ( FIL_UNCHANGED_REC___v_WM_CREATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_UNCHANGED_REC___v_WM_LAST_UPDATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF (FIL_UNCHANGED_REC___LOCN_ID IS NOT NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL AND ( FIL_UNCHANGED_REC___v_WM_CREATED_TSTMP <> FIL_UNCHANGED_REC___v_CREATED_DTTM OR FIL_UNCHANGED_REC___v_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_REC___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL))) as o_UPD_VALIDATOR" \
+	"IF(FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_REC___LOCN_ID IS NOT NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NULL, 'INSERT', IF(FIL_UNCHANGED_REC___LOCN_ID IS NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL AND ( FIL_UNCHANGED_REC___v_WM_CREATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_UNCHANGED_REC___v_WM_LAST_UPDATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF(FIL_UNCHANGED_REC___LOCN_ID IS NOT NULL AND FIL_UNCHANGED_REC___WM_LOCN_ID IS NOT NULL AND ( FIL_UNCHANGED_REC___v_WM_CREATED_TSTMP <> FIL_UNCHANGED_REC___v_CREATED_DTTM OR FIL_UNCHANGED_REC___v_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_REC___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL))) as o_UPD_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -291,7 +292,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr(
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", 
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", 
 	"RTR_DELETE_INSERT_UPDATE___o_UPD_VALIDATOR1 as o_UPD_VALIDATOR1"
-).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT'))lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE'))lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -321,7 +322,7 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LOCN_ID = target.WM_LOCN_ID"""
-  refined_perf_table = "WM_PUTAWAY_LOCK"
+  # refined_perf_table = "WM_PUTAWAY_LOCK"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_PUTAWAY_LOCK", "WM_PUTAWAY_LOCK", "Completed", "N/A", f"{raw}.log_run_details")

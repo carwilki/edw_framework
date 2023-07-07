@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+refined_perf_table = f"{refine}.WM_LABOR_MSG"
+raw_perf_table = f"{raw}.WM_LABOR_MSG_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LABOR_MSG, type SOURCE 
@@ -116,8 +121,8 @@ WM_LABOR_MSG.WM_CREATED_TSTMP,
 WM_LABOR_MSG.WM_LAST_UPDATED_DTTM,
 WM_LABOR_MSG.UPDATE_TSTMP,
 WM_LABOR_MSG.LOAD_TSTMP
-FROM WM_LABOR_MSG
-WHERE WM_LABOR_MSG_ID IN (SELECT LABOR_MSG_ID FROM WM_LABOR_MSG_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_LABOR_MSG_ID IN (SELECT LABOR_MSG_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -126,7 +131,7 @@ WHERE WM_LABOR_MSG_ID IN (SELECT LABOR_MSG_ID FROM WM_LABOR_MSG_PRE)""").withCol
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LABOR_MSG_PRE, type SOURCE 
@@ -213,7 +218,7 @@ WM_LABOR_MSG_PRE.THRUPUT_MIN,
 WM_LABOR_MSG_PRE.LOCN_GRP_ATTR,
 WM_LABOR_MSG_PRE.RESOURCE_GROUP_ID,
 WM_LABOR_MSG_PRE.LOAD_TSTMP
-FROM WM_LABOR_MSG_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -926,7 +931,7 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LABOR_MSG_ID = target.WM_LABOR_MSG_ID"""
-  refined_perf_table = "WM_LABOR_MSG"
+#   refined_perf_table = "WM_LABOR_MSG"
   executeMerge(UPD_VALIDATE, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LABOR_MSG", "WM_LABOR_MSG", "Completed", "N/A", f"{raw}.log_run_details")

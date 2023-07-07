@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -33,8 +33,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 starttime = datetime.now() #start timestamp of the script
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_E_SHIFT_PRE"
+refined_perf_table = f"{refine}.WM_E_SHIFT"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -67,7 +70,7 @@ WM_E_SHIFT_PRE.SCHED_SHIFT,
 WM_E_SHIFT_PRE.CREATED_DTTM,
 WM_E_SHIFT_PRE.LAST_UPDATED_DTTM,
 WM_E_SHIFT_PRE.LOAD_TSTMP
-FROM WM_E_SHIFT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_SHIFT, type SOURCE 
@@ -100,7 +103,7 @@ WM_E_SHIFT.WM_CREATED_TSTMP,
 WM_E_SHIFT.WM_LAST_UPDATED_TSTMP,
 WM_E_SHIFT.DELETE_FLAG,
 WM_E_SHIFT.LOAD_TSTMP
-FROM WM_E_SHIFT
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -148,7 +151,7 @@ EXPTRANS = SQ_Shortcut_to_WM_E_SHIFT_PRE1_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -618,7 +621,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___o_UPD_VALIDATOR1 as o_UPD_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)) .when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_SHIFT1, type TARGET 
@@ -626,7 +629,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SHIFT_ID = target.WM_SHIFT_ID"""
-  refined_perf_table = "WM_E_SHIFT"
+#   refined_perf_table = "WM_E_SHIFT"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_SHIFT", "WM_E_SHIFT", "Completed", "N/A", f"{raw}.log_run_details")

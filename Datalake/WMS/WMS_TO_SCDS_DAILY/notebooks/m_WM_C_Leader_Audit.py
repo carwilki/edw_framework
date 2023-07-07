@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,9 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_C_LEADER_AUDIT"
+raw_perf_table = f"{raw}.WM_C_LEADER_AUDIT_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_C_LEADER_AUDIT, type SOURCE 
@@ -40,8 +43,8 @@ WM_C_LEADER_AUDIT.WM_C_LEADER_AUDIT_ID,
 WM_C_LEADER_AUDIT.WM_CREATE_TSTMP,
 WM_C_LEADER_AUDIT.WM_MOD_TSTMP,
 WM_C_LEADER_AUDIT.LOAD_TSTMP
-FROM WM_C_LEADER_AUDIT
-WHERE WM_C_LEADER_AUDIT_ID IN (SELECT C_LEADER_AUDIT_ID FROM WM_C_LEADER_AUDIT_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_C_LEADER_AUDIT_ID IN (SELECT C_LEADER_AUDIT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -50,7 +53,7 @@ WHERE WM_C_LEADER_AUDIT_ID IN (SELECT C_LEADER_AUDIT_ID FROM WM_C_LEADER_AUDIT_P
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_C_LEADER_AUDIT_PRE, type SOURCE 
@@ -68,7 +71,7 @@ WM_C_LEADER_AUDIT_PRE.EXPECTED_QTY,
 WM_C_LEADER_AUDIT_PRE.ACTUAL_QTY,
 WM_C_LEADER_AUDIT_PRE.CREATE_DATE_TIME,
 WM_C_LEADER_AUDIT_PRE.MOD_DATE_TIME
-FROM WM_C_LEADER_AUDIT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -199,7 +202,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_C_LEADER_AUDIT1, type TARGET 
@@ -207,7 +210,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_C_LEADER_AUDIT_ID = target.WM_C_LEADER_AUDIT_ID"""
-  refined_perf_table = "WM_C_LEADER_AUDIT"
+#   refined_perf_table = "WM_C_LEADER_AUDIT"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_C_LEADER_AUDIT", "WM_C_LEADER_AUDIT", "Completed", "N/A", f"{raw}.log_run_details")

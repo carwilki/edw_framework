@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -30,6 +30,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+refined_perf_table = f"{refine}.WM_ILM_YARD_ACTIVITY"
+raw_perf_table = f"{raw}.WM_ILM_YARD_ACTIVITY_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_YARD_ACTIVITY, type SOURCE 
@@ -54,8 +59,8 @@ WM_ILM_YARD_ACTIVITY.WM_EQUIP_INS_STATUS_ID,
 WM_ILM_YARD_ACTIVITY.WM_DRIVER_ID,
 WM_ILM_YARD_ACTIVITY.NO_OF_PALLETS,
 WM_ILM_YARD_ACTIVITY.LOAD_TSTMP
-FROM WM_ILM_YARD_ACTIVITY
-WHERE WM_ACTIVITY_ID IN ( SELECT ACTIVITY_ID FROM WM_ILM_YARD_ACTIVITY_PRE )""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_ACTIVITY_ID IN ( SELECT ACTIVITY_ID FROM {raw_perf_table} )""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -64,7 +69,7 @@ WHERE WM_ACTIVITY_ID IN ( SELECT ACTIVITY_ID FROM WM_ILM_YARD_ACTIVITY_PRE )""")
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE, type SOURCE 
@@ -89,7 +94,7 @@ WM_ILM_YARD_ACTIVITY_PRE.FACILITY_ID,
 WM_ILM_YARD_ACTIVITY_PRE.VISIT_DETAIL_ID,
 WM_ILM_YARD_ACTIVITY_PRE.LOCN_ID,
 WM_ILM_YARD_ACTIVITY_PRE.LOAD_TSTMP
-FROM WM_ILM_YARD_ACTIVITY_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -331,7 +336,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_YARD_ACTIVITY, type TARGET 
@@ -339,7 +344,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ACTIVITY_ID = target.WM_ACTIVITY_ID"""
-  refined_perf_table = "WM_ILM_YARD_ACTIVITY"
+#   refined_perf_table = "WM_ILM_YARD_ACTIVITY"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ILM_YARD_ACTIVITY", "WM_ILM_YARD_ACTIVITY", "Completed", "N/A", f"{raw}.log_run_details")

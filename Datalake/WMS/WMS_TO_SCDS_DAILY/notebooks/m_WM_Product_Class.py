@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,28 +30,29 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_PRODUCT_CLASS"
+raw_perf_table = f"{raw}.WM_PRODUCT_CLASS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_PRODUCT_CLASS_PRE, type SOURCE 
 # COLUMN COUNT: 12
 
 SQ_Shortcut_to_WM_PRODUCT_CLASS_PRE = spark.sql(f"""SELECT
-WM_PRODUCT_CLASS_PRE.DC_NBR,
-WM_PRODUCT_CLASS_PRE.PRODUCT_CLASS_ID,
-WM_PRODUCT_CLASS_PRE.TC_COMPANY_ID,
-WM_PRODUCT_CLASS_PRE.PRODUCT_CLASS,
-WM_PRODUCT_CLASS_PRE.DESCRIPTION,
-WM_PRODUCT_CLASS_PRE.MARK_FOR_DELETION,
-WM_PRODUCT_CLASS_PRE.HAS_SPLIT,
-WM_PRODUCT_CLASS_PRE.RANK,
-WM_PRODUCT_CLASS_PRE.MIN_THRESHOLD,
-WM_PRODUCT_CLASS_PRE.CREATED_DTTM,
-WM_PRODUCT_CLASS_PRE.LAST_UPDATED_DTTM,
-WM_PRODUCT_CLASS_PRE.STACKING_FACTOR
-FROM WM_PRODUCT_CLASS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+PRODUCT_CLASS_ID,
+TC_COMPANY_ID,
+PRODUCT_CLASS,
+DESCRIPTION,
+MARK_FOR_DELETION,
+HAS_SPLIT,
+RANK,
+MIN_THRESHOLD,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+STACKING_FACTOR
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -81,30 +82,27 @@ EXPTRANS = SQ_Shortcut_to_WM_PRODUCT_CLASS_PRE_temp.selectExpr(
 # COLUMN COUNT: 13
 
 SQ_Shortcut_to_WM_PRODUCT_CLASS = spark.sql(f"""SELECT
-WM_PRODUCT_CLASS.LOCATION_ID,
-WM_PRODUCT_CLASS.WM_PRODUCT_CLASS_ID,
-WM_PRODUCT_CLASS.WM_PRODUCT_CLASS,
-WM_PRODUCT_CLASS.WM_TC_COMPANY_ID,
-WM_PRODUCT_CLASS.WM_PRODUCT_CLASS_DESC,
-WM_PRODUCT_CLASS.SPLIT_FLAG,
-WM_PRODUCT_CLASS.RANK,
-WM_PRODUCT_CLASS.MIN_THRESHOLD,
-WM_PRODUCT_CLASS.STACKING_FACTOR,
-WM_PRODUCT_CLASS.MARK_FOR_DELETION_FLAG,
-WM_PRODUCT_CLASS.WM_CREATED_TSTMP,
-WM_PRODUCT_CLASS.WM_LAST_UPDATED_TSTMP,
-WM_PRODUCT_CLASS.LOAD_TSTMP
-FROM WM_PRODUCT_CLASS
-WHERE WM_PRODUCT_CLASS_ID IN (SELECT PRODUCT_CLASS_ID FROM WM_PRODUCT_CLASS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_PRODUCT_CLASS_ID,
+WM_PRODUCT_CLASS,
+WM_TC_COMPANY_ID,
+WM_PRODUCT_CLASS_DESC,
+SPLIT_FLAG,
+RANK,
+MIN_THRESHOLD,
+STACKING_FACTOR,
+MARK_FOR_DELETION_FLAG,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_PRODUCT_CLASS_ID IN (SELECT PRODUCT_CLASS_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -216,8 +214,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_REC_temp.selectExpr(
 	"FIL_UNCHANGED_REC___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP", 
 	"FIL_UNCHANGED_REC___in_LOAD_TSTMP as in_LOAD_TSTMP", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_REC___WM_PRODUCT_CLASS_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" 
+	"IF(FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_REC___WM_PRODUCT_CLASS_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -243,7 +241,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR == (lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR == (lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PRODUCT_CLASS, type TARGET 
@@ -251,7 +249,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_PRODUCT_CLASS_ID = target.WM_PRODUCT_CLASS_ID"""
-  refined_perf_table = "WM_PRODUCT_CLASS"
+  # refined_perf_table = "WM_PRODUCT_CLASS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_PRODUCT_CLASS", "WM_PRODUCT_CLASS", "Completed", "N/A", f"{raw}.log_run_details")

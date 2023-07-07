@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,61 +30,62 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_YARD"
+raw_perf_table = f"{raw}.WM_YARD_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_YARD_PRE, type SOURCE 
 # COLUMN COUNT: 32
 
 SQ_Shortcut_to_WM_YARD_PRE = spark.sql(f"""SELECT
-WM_YARD_PRE.DC_NBR,
-WM_YARD_PRE.YARD_ID,
-WM_YARD_PRE.TC_COMPANY_ID,
-WM_YARD_PRE.YARD_NAME,
-WM_YARD_PRE.CREATED_SOURCE_TYPE,
-WM_YARD_PRE.CREATED_SOURCE,
-WM_YARD_PRE.CREATED_DTTM,
-WM_YARD_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_YARD_PRE.LAST_UPDATED_SOURCE,
-WM_YARD_PRE.LAST_UPDATED_DTTM,
-WM_YARD_PRE.DO_GENERATE_MOVE_TASK,
-WM_YARD_PRE.DO_GENERATE_NEXT_EQUIP,
-WM_YARD_PRE.IS_RANGE_TASKS,
-WM_YARD_PRE.IS_SEAL_TASK_TRGD,
-WM_YARD_PRE.DO_OVERRIDE_SYSTEM_TASKS,
-WM_YARD_PRE.IS_TASKING_ALLOWED,
-WM_YARD_PRE.ADDRESS,
-WM_YARD_PRE.CITY,
-WM_YARD_PRE.STATE_PROV,
-WM_YARD_PRE.POSTAL_CODE,
-WM_YARD_PRE.COUNTY,
-WM_YARD_PRE.COUNTRY_CODE,
-WM_YARD_PRE.TIME_ZONE_ID,
-WM_YARD_PRE.MAX_EQUIPMENT_ALLOWED,
-WM_YARD_PRE.UPPER_CHECKIN_TIME_MINS,
-WM_YARD_PRE.LOWER_CHECKIN_TIME_MINS,
-WM_YARD_PRE.FIXED_TIME_MINS,
-WM_YARD_PRE.MARK_FOR_DELETION,
-WM_YARD_PRE.LOCK_TRAILER_ON_MOVE_TO_DOOR,
-WM_YARD_PRE.YARD_SVG_FILE,
-WM_YARD_PRE.LOCATION_ID,
-WM_YARD_PRE.THRESHOLD_PERCENT
-FROM WM_YARD_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+YARD_ID,
+TC_COMPANY_ID,
+YARD_NAME,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+CREATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LAST_UPDATED_DTTM,
+DO_GENERATE_MOVE_TASK,
+DO_GENERATE_NEXT_EQUIP,
+IS_RANGE_TASKS,
+IS_SEAL_TASK_TRGD,
+DO_OVERRIDE_SYSTEM_TASKS,
+IS_TASKING_ALLOWED,
+ADDRESS,
+CITY,
+STATE_PROV,
+POSTAL_CODE,
+COUNTY,
+COUNTRY_CODE,
+TIME_ZONE_ID,
+MAX_EQUIPMENT_ALLOWED,
+UPPER_CHECKIN_TIME_MINS,
+LOWER_CHECKIN_TIME_MINS,
+FIXED_TIME_MINS,
+MARK_FOR_DELETION,
+LOCK_TRAILER_ON_MOVE_TO_DOOR,
+YARD_SVG_FILE,
+LOCATION_ID,
+THRESHOLD_PERCENT
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_YARD, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_YARD = spark.sql(f"""SELECT
-WM_YARD.LOCATION_ID,
-WM_YARD.WM_YARD_ID,
-WM_YARD.WM_CREATED_TSTMP,
-WM_YARD.WM_LAST_UPDATED_TSTMP,
-WM_YARD.LOAD_TSTMP
-FROM WM_YARD
-WHERE WM_YARD_ID IN (SELECT YARD_ID FROM WM_YARD_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_YARD_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_YARD_ID IN (SELECT YARD_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -133,10 +134,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_YARD_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -316,8 +314,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___LOCATION_ID2 as LOCATION_ID2", 
 	"FIL_UNCHANGED_RECORDS___THRESHOLD_PERCENT1 as THRESHOLD_PERCENT1", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -363,7 +361,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_YARD, type TARGET 
@@ -371,7 +369,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID"""
-  refined_perf_table = "WM_YARD"
+  # refined_perf_table = "WM_YARD"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_YARD", "WM_YARD", "Completed", "N/A", f"{raw}.log_run_details")

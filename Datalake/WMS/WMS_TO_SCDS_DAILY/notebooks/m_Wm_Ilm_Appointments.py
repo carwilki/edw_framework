@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -31,6 +31,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+refined_perf_table = f"{refine}.WM_ILM_APPOINTMENTS_PRE"
+raw_perf_table = f"{raw}.WM_ILM_APPOINTMENTS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPOINTMENTS_PRE, type SOURCE 
@@ -104,7 +109,7 @@ WM_ILM_APPOINTMENTS_PRE.ACTUAL_CHECKIN_DTTM,
 WM_ILM_APPOINTMENTS_PRE.SCHEDULED_DTTM,
 WM_ILM_APPOINTMENTS_PRE.CREATED_DTTM,
 WM_ILM_APPOINTMENTS_PRE.BP_ID
-FROM WM_ILM_APPOINTMENTS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_TRANS, type EXPRESSION 
@@ -196,8 +201,8 @@ WM_ILM_APPOINTMENTS.WM_CREATED_TSTMP,
 WM_ILM_APPOINTMENTS.WM_CREATED_SOURCE_TSTMP,
 WM_ILM_APPOINTMENTS.WM_LAST_UPDATED_TSTMP,
 WM_ILM_APPOINTMENTS.LOAD_TSTMP
-FROM WM_ILM_APPOINTMENTS
-WHERE WM_APPOINTMENT_ID IN (SELECT APPOINTMENT_ID FROM WM_ILM_APPOINTMENTS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_APPOINTMENT_ID IN (SELECT APPOINTMENT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -206,7 +211,7 @@ WHERE WM_APPOINTMENT_ID IN (SELECT APPOINTMENT_ID FROM WM_ILM_APPOINTMENTS_PRE)"
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -555,7 +560,7 @@ UPD_INS_UPD = EXP_UNCHANGED_VAL_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_APPOINTMENT_ID = target.WM_APPOINTMENT_ID"""
-  refined_perf_table = "WM_ILM_APPOINTMENTS"
+#   refined_perf_table = "WM_ILM_APPOINTMENTS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ILM_APPOINTMENTS", "WM_ILM_APPOINTMENTS", "Completed", "N/A", f"{raw}.log_run_details")

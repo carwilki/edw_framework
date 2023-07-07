@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -26,6 +26,11 @@ if env is None or env == '':
 refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
+
+refined_perf_table = f"{refine}.WM_ITEM_PACKAGE_CBO_PRE"
+raw_perf_table = f"{raw}.WM_ITEM_PACKAGE_CBO_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -60,7 +65,7 @@ WM_ITEM_PACKAGE_CBO_PRE.HIBERNATE_VERSION,
 WM_ITEM_PACKAGE_CBO_PRE.IS_STD,
 WM_ITEM_PACKAGE_CBO_PRE.BUSINESS_PARTNER_ID,
 WM_ITEM_PACKAGE_CBO_PRE.LOAD_TSTMP
-FROM WM_ITEM_PACKAGE_CBO_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -133,8 +138,8 @@ WM_ITEM_PACKAGE_CBO.WM_ITEM_PACKAGE_ID,
 WM_ITEM_PACKAGE_CBO.WM_CREATED_TSTMP,
 WM_ITEM_PACKAGE_CBO.WM_LAST_UPDATED_TSTMP,
 WM_ITEM_PACKAGE_CBO.LOAD_TSTMP
-FROM WM_ITEM_PACKAGE_CBO
-WHERE WM_ITEM_PACKAGE_ID IN (SELECT ITEM_PACKAGE_ID FROM WM_ITEM_PACKAGE_CBO_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_ITEM_PACKAGE_ID IN (SELECT ITEM_PACKAGE_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -143,7 +148,7 @@ WHERE WM_ITEM_PACKAGE_ID IN (SELECT ITEM_PACKAGE_ID FROM WM_ITEM_PACKAGE_CBO_PRE
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -331,7 +336,7 @@ UPD_INS_UPD = EXP_EVALUATE_temp.selectExpr( \
 	"EXP_EVALUATE___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVALUATE___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_EVALUATE___in_WM_ITEM_PACKAGE_ID as in_WM_ITEM_PACKAGE_ID") \
-	.withColumn('pyspark_data_action', when((in_WM_ITEM_PACKAGE_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_WM_ITEM_PACKAGE_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ITEM_PACKAGE_CBO, type TARGET 
@@ -339,7 +344,7 @@ UPD_INS_UPD = EXP_EVALUATE_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ITEM_PACKAGE_ID = target.WM_ITEM_PACKAGE_ID"""
-  refined_perf_table = "WM_ITEM_PACKAGE_CBO"
+#   refined_perf_table = "WM_ITEM_PACKAGE_CBO"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ITEM_PACKAGE_CBO", "WM_ITEM_PACKAGE_CBO", "Completed", "N/A", f"{raw}.log_run_details")

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -32,8 +32,11 @@ starttime = datetime.now() #start timestamp of the script
 
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_LPN_LOCK_PRE"
+refined_perf_table = f"{refine}.WM_LPN_LOCK"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 soft_delete_logic_WM_Lpn_Lock=args.soft_delete_logic_WM_Lpn_Lock
 
@@ -58,7 +61,7 @@ WM_LPN_LOCK.WM_LAST_UPDATED_TSTMP,
 WM_LPN_LOCK.DELETE_FLAG,
 WM_LPN_LOCK.UPDATE_TSTMP,
 WM_LPN_LOCK.LOAD_TSTMP
-FROM WM_LPN_LOCK
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -82,7 +85,7 @@ WM_LPN_LOCK_PRE.LAST_UPDATED_SOURCE_TYPE,
 WM_LPN_LOCK_PRE.LAST_UPDATED_SOURCE,
 WM_LPN_LOCK_PRE.LAST_UPDATED_DTTM,
 WM_LPN_LOCK_PRE.LOAD_TSTMP
-FROM WM_LPN_LOCK_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -116,7 +119,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_LPN_LOCK_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -299,7 +302,7 @@ UPD_INSERT_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP_EXP as UPDATE_TSTMP_EXP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_LOCK3, type TARGET 
@@ -307,7 +310,7 @@ UPD_INSERT_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_LOCK_ID = target.WM_LPN_LOCK_ID"""
-  refined_perf_table = "WM_LPN_LOCK"
+#   refined_perf_table = "WM_LPN_LOCK"
   executeMerge(UPD_INSERT_UPDATE, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_LOCK", "WM_LPN_LOCK", "Completed", "N/A", f"{raw}.log_run_details")

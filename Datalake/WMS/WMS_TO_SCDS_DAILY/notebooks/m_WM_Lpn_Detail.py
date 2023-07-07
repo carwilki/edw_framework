@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,6 +30,10 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
+refined_perf_table = f"{refine}.WM_LPN_DETAIL"
+raw_perf_table = f"{raw}.WM_LPN_DETAIL_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_DETAIL, type SOURCE 
 # COLUMN COUNT: 6
@@ -41,8 +45,8 @@ WM_LPN_DETAIL.WM_LPN_DETAIL_ID,
 WM_LPN_DETAIL.WM_CREATED_TSTMP,
 WM_LPN_DETAIL.WM_LAST_UPDATED_TSTMP,
 WM_LPN_DETAIL.LOAD_TSTMP
-FROM WM_LPN_DETAIL
-WHERE WM_LPN_DETAIL_ID IN (SELECT LPN_DETAIL_ID FROM WM_LPN_DETAIL_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_LPN_DETAIL_ID IN (SELECT LPN_DETAIL_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_DETAIL_PRE, type SOURCE 
@@ -137,7 +141,7 @@ WM_LPN_DETAIL_PRE.REF_NUM3,
 WM_LPN_DETAIL_PRE.REF_NUM4,
 WM_LPN_DETAIL_PRE.REF_NUM5,
 WM_LPN_DETAIL_PRE.CHASE_WAVE_NBR
-FROM WM_LPN_DETAIL_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -245,7 +249,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_LPN_DETAIL_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -663,7 +667,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_DETAIL1, type TARGET 
@@ -671,7 +675,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_ID = target.WM_LPN_ID AND source.WM_LPN_DETAIL_ID = target.WM_LPN_DETAIL_ID"""
-  refined_perf_table = "WM_LPN_DETAIL"
+#   refined_perf_table = "WM_LPN_DETAIL"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_DETAIL", "WM_LPN_DETAIL", "Completed", "N/A", f"{raw}.log_run_details")

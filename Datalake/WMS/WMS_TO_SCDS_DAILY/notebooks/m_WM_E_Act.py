@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -31,8 +31,13 @@ legacy = getEnvPrefix(env) + 'legacy'
 starttime = datetime.now() #start timestamp of the script
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_E_ACT_PRE"
+refined_perf_table = f"{refine}.WM_E_ACT"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+refined_perf_table = "WM_E_ACT"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -67,7 +72,7 @@ WM_E_ACT_PRE.LAST_UPDATED_DTTM,
 WM_E_ACT_PRE.DISPLAY_UOM,
 WM_E_ACT_PRE.THRUPUT_GOAL,
 WM_E_ACT_PRE.LOAD_TSTMP
-FROM WM_E_ACT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -168,7 +173,7 @@ WM_E_ACT.WM_LAST_UPDATED_TSTMP,
 WM_E_ACT.DELETE_FLAG,
 WM_E_ACT.UPDATE_TSTMP,
 WM_E_ACT.LOAD_TSTMP
-FROM WM_E_ACT
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -180,7 +185,7 @@ DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -816,7 +821,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INS_UPD_temp.selectExpr( \
 	"RTR_INS_UPD_DEL_INS_UPD___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_INS_UPD_DEL_INS_UPD___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_INS_UPD_DEL_INS_UPD___LOAD_FLAG1 as LOAD_FLAG1") \
-	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('INSERT')) , lit(0)) .when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('INSERT')) , lit(0)).when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_ACT1, type TARGET 
@@ -824,7 +829,6 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INS_UPD_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ACT_ID = target.WM_ACT_ID"""
-  refined_perf_table = "WM_E_ACT"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_ACT", "WM_E_ACT", "Completed", "N/A", f"{raw}.log_run_details")

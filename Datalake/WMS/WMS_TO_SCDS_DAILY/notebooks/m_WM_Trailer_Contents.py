@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,13 +30,12 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_TRAILER_CONTENTS"
+raw_perf_table = f"{raw}.WM_TRAILER_CONTENTS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
-# COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 Soft_Delete_Logic_trailer_contents1=args.Soft_Delete_Logic_trailer_contents1
 
@@ -45,20 +44,20 @@ Soft_Delete_Logic_trailer_contents1=args.Soft_Delete_Logic_trailer_contents1
 # COLUMN COUNT: 13
 
 SQ_Shortcut_to_WM_TRAILER_CONTENTS_PRE = spark.sql(f"""SELECT
-WM_TRAILER_CONTENTS_PRE.DC_NBR,
-WM_TRAILER_CONTENTS_PRE.TRAILER_CONTENTS_ID,
-WM_TRAILER_CONTENTS_PRE.VISIT_DETAIL_ID,
-WM_TRAILER_CONTENTS_PRE.IS_PLANNED,
-WM_TRAILER_CONTENTS_PRE.SHIPMENT_ID,
-WM_TRAILER_CONTENTS_PRE.ASN_ID,
-WM_TRAILER_CONTENTS_PRE.PO_ID,
-WM_TRAILER_CONTENTS_PRE.CREATED_DTTM,
-WM_TRAILER_CONTENTS_PRE.CREATED_SOURCE_TYPE,
-WM_TRAILER_CONTENTS_PRE.CREATED_SOURCE,
-WM_TRAILER_CONTENTS_PRE.LAST_UPDATED_DTTM,
-WM_TRAILER_CONTENTS_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_TRAILER_CONTENTS_PRE.LAST_UPDATED_SOURCE
-FROM WM_TRAILER_CONTENTS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+TRAILER_CONTENTS_ID,
+VISIT_DETAIL_ID,
+IS_PLANNED,
+SHIPMENT_ID,
+ASN_ID,
+PO_ID,
+CREATED_DTTM,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+LAST_UPDATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -89,32 +88,29 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_TRAILER_CONTENTS_PRE_temp.selectExpr(
 # COLUMN COUNT: 15
 
 SQ_Shortcut_to_WM_TRAILER_CONTENTS = spark.sql(f"""SELECT
-WM_TRAILER_CONTENTS.LOCATION_ID,
-WM_TRAILER_CONTENTS.WM_TRAILER_CONTENTS_ID,
-WM_TRAILER_CONTENTS.WM_VISIT_DETAIL_ID,
-WM_TRAILER_CONTENTS.WM_PLANNED_FLAG,
-WM_TRAILER_CONTENTS.WM_SHIPMENT_ID,
-WM_TRAILER_CONTENTS.WM_ASN_ID,
-WM_TRAILER_CONTENTS.WM_PO_ID,
-WM_TRAILER_CONTENTS.WM_CREATED_TSTMP,
-WM_TRAILER_CONTENTS.WM_CREATED_SOURCE_TYPE,
-WM_TRAILER_CONTENTS.WM_CREATED_SOURCE,
-WM_TRAILER_CONTENTS.WM_LAST_UPDATED_TSTMP,
-WM_TRAILER_CONTENTS.WM_LAST_UPDATED_SOURCE_TYPE,
-WM_TRAILER_CONTENTS.WM_LAST_UPDATED_SOURCE,
-WM_TRAILER_CONTENTS.DELETE_FLAG,
-WM_TRAILER_CONTENTS.LOAD_TSTMP
-FROM WM_TRAILER_CONTENTS
+LOCATION_ID,
+WM_TRAILER_CONTENTS_ID,
+WM_VISIT_DETAIL_ID,
+WM_PLANNED_FLAG,
+WM_SHIPMENT_ID,
+WM_ASN_ID,
+WM_PO_ID,
+WM_CREATED_TSTMP,
+WM_CREATED_SOURCE_TYPE,
+WM_CREATED_SOURCE,
+WM_LAST_UPDATED_TSTMP,
+WM_LAST_UPDATED_SOURCE_TYPE,
+WM_LAST_UPDATED_SOURCE,
+DELETE_FLAG,
+LOAD_TSTMP
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -235,9 +231,9 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
 	"FIL_UNCHANGED_RECORDS___i_LOCATION_ID1 as i_LOCATION_ID1", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___TRAILER_CONTENTS_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_TRAILER_CONTENTS_ID IS NOT NULL, 1, 0) as DELETE_FLAG_EXP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_TRAILER_CONTENTS_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___TRAILER_CONTENTS_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_TRAILER_CONTENTS_ID IS NOT NULL, 1, 0) as DELETE_FLAG_EXP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_TRAILER_CONTENTS_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -265,7 +261,7 @@ UPD_UPDATE_INSERT = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___DELETE_FLAG_EXP as DELETE_FLAG_EXP", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_TRAILER_CONTENTS_1, type TARGET 
@@ -273,7 +269,7 @@ UPD_UPDATE_INSERT = EXP_UPD_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_TRAILER_CONTENTS_ID = target.WM_TRAILER_CONTENTS_ID"""
-  refined_perf_table = "WM_TRAILER_CONTENTS"
+  # refined_perf_table = "WM_TRAILER_CONTENTS"
   executeMerge(UPD_UPDATE_INSERT, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_TRAILER_CONTENTS", "WM_TRAILER_CONTENTS", "Completed", "N/A", f"{raw}.log_run_details")

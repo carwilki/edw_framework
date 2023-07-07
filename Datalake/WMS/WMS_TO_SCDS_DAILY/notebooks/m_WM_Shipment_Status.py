@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,43 +30,40 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
+refined_perf_table = f"{refine}.WM_SHIPMENT_STATUS"
+raw_perf_table = f"{raw}.WM_SHIPMENT_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SHIPMENT_STATUS, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_SHIPMENT_STATUS = spark.sql(f"""SELECT
-WM_SHIPMENT_STATUS.LOCATION_ID,
-WM_SHIPMENT_STATUS.WM_SHIPMENT_STATUS,
-WM_SHIPMENT_STATUS.WM_SHIPMENT_STATUS_DESC,
-WM_SHIPMENT_STATUS.WM_SHIPMENT_STATUS_SHORT_DESC,
-WM_SHIPMENT_STATUS.LOAD_TSTMP
-FROM WM_SHIPMENT_STATUS
-WHERE WM_SHIPMENT_STATUS IN (SELECT SHIPMENT_STATUS FROM WM_SHIPMENT_STATUS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_SHIPMENT_STATUS,
+WM_SHIPMENT_STATUS_DESC,
+WM_SHIPMENT_STATUS_SHORT_DESC,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_SHIPMENT_STATUS IN (SELECT SHIPMENT_STATUS FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SHIPMENT_STATUS_PRE, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_SHIPMENT_STATUS_PRE = spark.sql(f"""SELECT
-WM_SHIPMENT_STATUS_PRE.DC_NBR,
-WM_SHIPMENT_STATUS_PRE.SHIPMENT_STATUS,
-WM_SHIPMENT_STATUS_PRE.DESCRIPTION,
-WM_SHIPMENT_STATUS_PRE.SHORT_DESC,
-WM_SHIPMENT_STATUS_PRE.LOAD_TSTMP
-FROM WM_SHIPMENT_STATUS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+SHIPMENT_STATUS,
+DESCRIPTION,
+SHORT_DESC,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_TRANS, type EXPRESSION 
@@ -146,8 +143,8 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___i_WM_SHIPMENT_STATUS_SHORT_DESC as i_WM_SHIPMENT_STATUS_SHORT_DESC", 
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_SHIPMENT_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_SHIPMENT_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -164,7 +161,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___SHORT_DESC as SHORT_DESC", 
 	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
-	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR").withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR").withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_SHIPMENT_STATUS1, type TARGET 
@@ -172,7 +169,6 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SHIPMENT_STATUS = target.WM_SHIPMENT_STATUS"""
-  refined_perf_table = "WM_SHIPMENT_STATUS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_SHIPMENT_STATUS", "WM_SHIPMENT_STATUS", "Completed", "N/A", f"{raw}.log_run_details")

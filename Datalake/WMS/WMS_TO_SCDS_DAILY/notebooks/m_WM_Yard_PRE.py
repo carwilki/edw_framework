@@ -92,7 +92,7 @@ def m_WM_Yard_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_YARD_temp.selectExpr( 
     	"SQ_Shortcut_to_YARD___sys_row_id as sys_row_id", 
-    	f"{dcnbr}as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_YARD___YARD_ID as YARD_ID", 
     	"SQ_Shortcut_to_YARD___TC_COMPANY_ID as TC_COMPANY_ID", 
     	"SQ_Shortcut_to_YARD___YARD_NAME as YARD_NAME", 

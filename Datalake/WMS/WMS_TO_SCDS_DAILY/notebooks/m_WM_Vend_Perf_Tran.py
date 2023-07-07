@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,56 +30,57 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_VEND_PERF_TRAN"
+raw_perf_table = f"{raw}.WM_VEND_PERF_TRAN_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_VEND_PERF_TRAN, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_VEND_PERF_TRAN = spark.sql(f"""SELECT
-WM_VEND_PERF_TRAN.LOCATION_ID,
-WM_VEND_PERF_TRAN.WM_VEND_PERF_TRAN_ID,
-WM_VEND_PERF_TRAN.WM_CREATE_TSTMP,
-WM_VEND_PERF_TRAN.WM_MOD_TSTMP,
-WM_VEND_PERF_TRAN.LOAD_TSTMP
-FROM WM_VEND_PERF_TRAN
-WHERE WM_VEND_PERF_TRAN_ID IN (SELECT VEND_PERF_TRAN_ID FROM WM_VEND_PERF_TRAN_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_VEND_PERF_TRAN_ID,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_VEND_PERF_TRAN_ID IN (SELECT VEND_PERF_TRAN_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_VEND_PERF_TRAN_PRE, type SOURCE 
 # COLUMN COUNT: 27
 
 SQ_Shortcut_to_WM_VEND_PERF_TRAN_PRE = spark.sql(f"""SELECT
-WM_VEND_PERF_TRAN_PRE.DC_NBR,
-WM_VEND_PERF_TRAN_PRE.VEND_PERF_TRAN_ID,
-WM_VEND_PERF_TRAN_PRE.PERF_CODE,
-WM_VEND_PERF_TRAN_PRE.WHSE,
-WM_VEND_PERF_TRAN_PRE.SHPMT_NBR,
-WM_VEND_PERF_TRAN_PRE.PO_NBR,
-WM_VEND_PERF_TRAN_PRE.CASE_NBR,
-WM_VEND_PERF_TRAN_PRE.UOM,
-WM_VEND_PERF_TRAN_PRE.QTY,
-WM_VEND_PERF_TRAN_PRE.SAMS,
-WM_VEND_PERF_TRAN_PRE.STAT_CODE,
-WM_VEND_PERF_TRAN_PRE.CREATE_DATE_TIME,
-WM_VEND_PERF_TRAN_PRE.MOD_DATE_TIME,
-WM_VEND_PERF_TRAN_PRE.USER_ID,
-WM_VEND_PERF_TRAN_PRE.CHRG_AMT,
-WM_VEND_PERF_TRAN_PRE.BILL_FLAG,
-WM_VEND_PERF_TRAN_PRE.LOAD_NBR,
-WM_VEND_PERF_TRAN_PRE.ILM_APPT_NBR,
-WM_VEND_PERF_TRAN_PRE.VENDOR_MASTER_ID,
-WM_VEND_PERF_TRAN_PRE.CD_MASTER_ID,
-WM_VEND_PERF_TRAN_PRE.CMNT,
-WM_VEND_PERF_TRAN_PRE.CREATED_BY_USER_ID,
-WM_VEND_PERF_TRAN_PRE.WM_VERSION_ID,
-WM_VEND_PERF_TRAN_PRE.PO_HDR_ID,
-WM_VEND_PERF_TRAN_PRE.ASN_HDR_ID,
-WM_VEND_PERF_TRAN_PRE.CASE_HDR_ID,
-WM_VEND_PERF_TRAN_PRE.ITEM_ID
-FROM WM_VEND_PERF_TRAN_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+VEND_PERF_TRAN_ID,
+PERF_CODE,
+WHSE,
+SHPMT_NBR,
+PO_NBR,
+CASE_NBR,
+UOM,
+QTY,
+SAMS,
+STAT_CODE,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+USER_ID,
+CHRG_AMT,
+BILL_FLAG,
+LOAD_NBR,
+ILM_APPT_NBR,
+VENDOR_MASTER_ID,
+CD_MASTER_ID,
+CMNT,
+CREATED_BY_USER_ID,
+WM_VERSION_ID,
+PO_HDR_ID,
+ASN_HDR_ID,
+CASE_HDR_ID,
+ITEM_ID
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -123,10 +124,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_VEND_PERF_TRAN_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -291,8 +289,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___CASE_HDR_ID as CASE_HDR_ID", 
 	"FIL_UNCHANGED_RECORDS___ITEM_ID as ITEM_ID", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_VEND_PERF_TRAN_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_VEND_PERF_TRAN_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -333,7 +331,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_VEND_PERF_TRAN, type TARGET 
@@ -341,7 +339,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_VEND_PERF_TRAN_ID = target.WM_VEND_PERF_TRAN_ID"""
-  refined_perf_table = "WM_VEND_PERF_TRAN"
+  # refined_perf_table = "WM_VEND_PERF_TRAN"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_VEND_PERF_TRAN", "WM_VEND_PERF_TRAN", "Completed", "N/A", f"{raw}.log_run_details")

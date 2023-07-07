@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -31,8 +31,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 starttime = datetime.now() #start timestamp of the script
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_LABOR_CRITERIA_PRE"
+refined_perf_table = f"{refine}.WM_LABOR_CRITERIA"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -56,7 +59,7 @@ WM_LABOR_CRITERIA_PRE.LAST_UPDATED_SOURCE,
 WM_LABOR_CRITERIA_PRE.LAST_UPDATED_DTTM,
 WM_LABOR_CRITERIA_PRE.COMPANY_ID,
 WM_LABOR_CRITERIA_PRE.LOAD_TSTMP
-FROM WM_LABOR_CRITERIA_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LABOR_CRITERIA, type SOURCE 
@@ -80,7 +83,7 @@ WM_LABOR_CRITERIA.WM_LAST_UPDATED_SOURCE,
 WM_LABOR_CRITERIA.WM_LAST_UPDATED_TSTMP,
 WM_LABOR_CRITERIA.DELETE_FLAG,
 WM_LABOR_CRITERIA.LOAD_TSTMP
-FROM WM_LABOR_CRITERIA
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -118,7 +121,7 @@ EXPTRANS = SQ_Shortcut_to_WM_LABOR_CRITERIA_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -479,7 +482,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_DELETE_INSERT_UPDATE___o_UPD_VALIDATOR1 as o_UPD_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)) .when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -514,27 +517,27 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 # COLUMN COUNT: 18
 
 
-Shortcut_to_WM_LABOR_CRITERIA2 = UPD_DELETE.selectExpr( \
-	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
-	"CAST(WM_CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
-	"CAST(lit(None) AS STRING) as WM_CRIT_CD", \
-	"CAST(lit(None) AS STRING) as WM_CRIT_DESC", \
-	"CAST(lit(None) AS BIGINT) as RULE_FILTER_FLAG", \
-	"CAST(lit(None) AS STRING) as DATA_TYPE", \
-	"CAST(lit(None) AS BIGINT) as DATA_SIZE", \
-	"CAST(lit(None) AS BIGINT) as WM_COMPANY_ID", \
-	"CAST(lit(None) AS BIGINT) as WM_HIBERNATE_VERSION", \
-	"CAST(lit(None) AS BIGINT) as WM_CREATED_SOURCE_TYPE", \
-	"CAST(lit(None) AS STRING) as WM_CREATED_SOURCE", \
-	"CAST(lit(None) AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(lit(None) AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", \
-	"CAST(lit(None) AS STRING) as WM_LAST_UPDATED_SOURCE", \
-	"CAST(lit(None) AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
-	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(LOAD_TSTMP3 AS TIMESTAMP) as LOAD_TSTMP" \
-)
-Shortcut_to_WM_LABOR_CRITERIA2.write.saveAsTable(f'{raw}.WM_LABOR_CRITERIA')
+# Shortcut_to_WM_LABOR_CRITERIA2 = UPD_DELETE.selectExpr( \
+# 	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
+# 	"CAST(WM_CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
+# 	"CAST(lit(None) AS STRING) as WM_CRIT_CD", \
+# 	"CAST(lit(None) AS STRING) as WM_CRIT_DESC", \
+# 	"CAST(lit(None) AS BIGINT) as RULE_FILTER_FLAG", \
+# 	"CAST(lit(None) AS STRING) as DATA_TYPE", \
+# 	"CAST(lit(None) AS BIGINT) as DATA_SIZE", \
+# 	"CAST(lit(None) AS BIGINT) as WM_COMPANY_ID", \
+# 	"CAST(lit(None) AS BIGINT) as WM_HIBERNATE_VERSION", \
+# 	"CAST(lit(None) AS BIGINT) as WM_CREATED_SOURCE_TYPE", \
+# 	"CAST(lit(None) AS STRING) as WM_CREATED_SOURCE", \
+# 	"CAST(lit(None) AS TIMESTAMP) as WM_CREATED_TSTMP", \
+# 	"CAST(lit(None) AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", \
+# 	"CAST(lit(None) AS STRING) as WM_LAST_UPDATED_SOURCE", \
+# 	"CAST(lit(None) AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+# 	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
+# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
+# 	"CAST(LOAD_TSTMP3 AS TIMESTAMP) as LOAD_TSTMP" \
+# )
+# Shortcut_to_WM_LABOR_CRITERIA2.write.saveAsTable(f'{raw}.WM_LABOR_CRITERIA')
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LABOR_CRITERIA1, type TARGET 
@@ -542,7 +545,7 @@ Shortcut_to_WM_LABOR_CRITERIA2.write.saveAsTable(f'{raw}.WM_LABOR_CRITERIA')
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_CRIT_ID = target.WM_CRIT_ID"""
-  refined_perf_table = "WM_LABOR_CRITERIA"
+#   refined_perf_table = "WM_LABOR_CRITERIA"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LABOR_CRITERIA", "WM_LABOR_CRITERIA", "Completed", "N/A", f"{raw}.log_run_details")

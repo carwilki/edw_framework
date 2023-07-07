@@ -81,7 +81,7 @@ def m_Yard_Zone_Slot_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_YARD_ZONE_SLOT_temp.selectExpr( 
     	"SQ_Shortcut_to_YARD_ZONE_SLOT___sys_row_id as sys_row_id", 
-    	f"{dcnbr}as DC_NBR", 
+    	f"{dcnbr} as DC_NBR", 
     	"SQ_Shortcut_to_YARD_ZONE_SLOT___YARD_ID as YARD_ID", 
     	"SQ_Shortcut_to_YARD_ZONE_SLOT___YARD_ZONE_ID as YARD_ZONE_ID", 
     	"SQ_Shortcut_to_YARD_ZONE_SLOT___YARD_ZONE_SLOT_ID as YARD_ZONE_SLOT_ID", 

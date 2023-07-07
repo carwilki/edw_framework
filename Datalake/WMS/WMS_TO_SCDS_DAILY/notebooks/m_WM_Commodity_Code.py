@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -29,6 +29,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+
+
+refined_perf_table = f"{refine}.WM_COMMODITY_CODE"
+raw_perf_table = f"{raw}.WM_COMMODITY_CODE_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_COMMODITY_CODE_PRE, type SOURCE 
@@ -49,7 +54,7 @@ WM_COMMODITY_CODE_PRE.CREATED_DTTM,
 WM_COMMODITY_CODE_PRE.LAST_UPDATED_SOURCE_TYPE,
 WM_COMMODITY_CODE_PRE.LAST_UPDATED_SOURCE,
 WM_COMMODITY_CODE_PRE.LAST_UPDATED_DTTM
-FROM WM_COMMODITY_CODE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_COMMODITY_CODE, type SOURCE 
@@ -61,8 +66,8 @@ WM_COMMODITY_CODE.WM_COMMODITY_CD_ID,
 WM_COMMODITY_CODE.WM_CREATED_TSTMP,
 WM_COMMODITY_CODE.WM_LAST_UPDATED_TSTMP,
 WM_COMMODITY_CODE.LOAD_TSTMP
-FROM WM_COMMODITY_CODE
-WHERE WM_COMMODITY_CD_ID IN (SELECT COMMODITY_CODE_ID FROM WM_COMMODITY_CODE_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_COMMODITY_CD_ID IN (SELECT COMMODITY_CODE_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -96,7 +101,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_COMMODITY_CODE_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -224,7 +229,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_COMMODITY_CD_ID = target.WM_COMMODITY_CD_ID"""
-  refined_perf_table = "WM_COMMODITY_CODE"
+#   refined_perf_table = "WM_COMMODITY_CODE"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_COMMODITY_CODE", "WM_COMMODITY_CODE", "Completed", "N/A", f"{raw}.log_run_details")

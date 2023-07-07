@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -33,13 +33,14 @@ starttime = datetime.now() #start timestamp of the script
 
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_ILM_APPT_EQUIPMENTS_PRE"
+refined_perf_table = f"{refine}.WM_ILM_APPT_EQUIPMENTS"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_logic=args.Del_logic
 soft_delete_logic_WM_Ilm_Appt_Equipments=args.soft_delete_logic_WM_Ilm_Appt_Equipments
 
-# Read in relation source variables
-(username, password, connection_string) = getConfig(DC_NBR, env)
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPT_EQUIPMENTS, type SOURCE 
 # COLUMN COUNT: 10
@@ -55,7 +56,7 @@ WM_ILM_APPT_EQUIPMENTS.WM_EQUIPMENT_LICENSE_STATE,
 WM_ILM_APPT_EQUIPMENTS.WM_EQUIPMENT_TYPE,
 WM_ILM_APPT_EQUIPMENTS.DELETE_FLAG,
 WM_ILM_APPT_EQUIPMENTS.LOAD_TSTMP
-FROM WM_ILM_APPT_EQUIPMENTS
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -67,7 +68,7 @@ SQ_Shortcut_to_WM_ILM_APPOINTMENTS = spark.sql(f"""SELECT
 WM_ILM_APPOINTMENTS.WM_APPOINTMENT_ID,
 WM_ILM_APPOINTMENTS.WM_CREATED_TSTMP,
 WM_ILM_APPOINTMENTS.WM_LAST_UPDATED_TSTMP
-FROM WM_ILM_APPOINTMENTS""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refine}.WM_ILM_APPOINTMENTS""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPT_EQUIPMENTS_PRE, type SOURCE 
@@ -83,7 +84,7 @@ WM_ILM_APPT_EQUIPMENTS_PRE.EQUIPMENT_LICENSE_NUMBER,
 WM_ILM_APPT_EQUIPMENTS_PRE.EQUIPMENT_LICENSE_STATE,
 WM_ILM_APPT_EQUIPMENTS_PRE.EQUIPMENT_TYPE,
 WM_ILM_APPT_EQUIPMENTS_PRE.LOAD_TSTMP
-FROM WM_ILM_APPT_EQUIPMENTS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -92,7 +93,7 @@ FROM WM_ILM_APPT_EQUIPMENTS_PRE""").withColumn("sys_row_id", monotonically_incre
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -277,7 +278,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_APPOINTMENT_ID = target.WM_APPOINTMENT_ID AND source.WM_COMPANY_ID = target.WM_COMPANY_ID AND source.WM_EQUIPMENT_INSTANCE_ID = target.WM_EQUIPMENT_INSTANCE_ID"""
-  refined_perf_table = "WM_ILM_APPT_EQUIPMENTS"
+#   refined_perf_table = "WM_ILM_APPT_EQUIPMENTS"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ILM_APPT_EQUIPMENTS", "WM_ILM_APPT_EQUIPMENTS", "Completed", "N/A", f"{raw}.log_run_details")

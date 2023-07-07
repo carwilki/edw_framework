@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -31,9 +31,13 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
+
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_ITEM_FACILITY_SLOTTING_PRE"
+refined_perf_table = f"{refine}.WM_ITEM_FACILITY_SLOTTING"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -133,7 +137,7 @@ WM_ITEM_FACILITY_SLOTTING_PRE.ITEM_CHAR_3,
 WM_ITEM_FACILITY_SLOTTING_PRE.ITEM_CHAR_4,
 WM_ITEM_FACILITY_SLOTTING_PRE.ITEM_CHAR_5,
 WM_ITEM_FACILITY_SLOTTING_PRE.SLOTTING_GROUP
-FROM WM_ITEM_FACILITY_SLOTTING_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ITEM_FACILITY_SLOTTING, type SOURCE 
@@ -234,8 +238,9 @@ WM_ITEM_FACILITY_SLOTTING.WM_CREATE_TSTMP,
 WM_ITEM_FACILITY_SLOTTING.WM_MOD_TSTMP,
 WM_ITEM_FACILITY_SLOTTING.DELETE_FLAG,
 WM_ITEM_FACILITY_SLOTTING.LOAD_TSTMP
-FROM WM_ITEM_FACILITY_SLOTTING
-WHERE {Del_Logic} 1=0 and 
+FROM {refined_perf_table}
+WHERE {Del_Logic} 
+1=0 and 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -348,7 +353,7 @@ EXP_TRANS = SQ_Shortcut_to_WM_ITEM_FACILITY_SLOTTING_PRE_temp.selectExpr( \
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -2049,7 +2054,7 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ITEM_FACILITY_MAPPING_ID = target.WM_ITEM_FACILITY_MAPPING_ID"""
-  refined_perf_table = "WM_ITEM_FACILITY_SLOTTING"
+#   refined_perf_table = "WM_ITEM_FACILITY_SLOTTING"
   executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ITEM_FACILITY_SLOTTING", "WM_ITEM_FACILITY_SLOTTING", "Completed", "N/A", f"{raw}.log_run_details")
