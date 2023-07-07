@@ -93,7 +93,7 @@ def m_WM_C_TMS_Plan_PRE(dcnbr, env):
                 C_TMS_PLAN.DEL_TYPE,
                 C_TMS_PLAN.TMS_TRAILER_ID,
                 C_TMS_PLAN.CARRIER_REF_NUM,
-                cast(C_TMS_PLAN.TMS_PLAN_TIME as timestamp),
+                cast(C_TMS_PLAN.TMS_PLAN_TIME as timestamp) as TMS_PLAN_TIME,
                 C_TMS_PLAN.PLT_WEIGHT,
                 C_TMS_PLAN.ERROR_SEQ_NBR,
                 C_TMS_PLAN.STAT_CODE,
