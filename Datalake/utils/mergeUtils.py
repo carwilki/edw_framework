@@ -105,3 +105,36 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
             SFTable,
             json.loads(primaryKeys),
         ).push_data(df_table, write_mode="merge")
+
+
+def IngestFromSFHistoricalData(env, deltaTable):
+    print("Ingest_historical_data_from_Snowflake")
+    from Datalake.utils.genericUtilities import getSfCredentials
+    from logging import getLogger
+    import json
+    from Datalake.utils.genericUtilities import getEnvPrefix
+    from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
+
+    logger = getLogger()
+    sfOptions = getSfCredentials(env)
+
+    schemaForDeltaTable = getEnvPrefix(env) + "refine"
+
+    ingestDatasetSql = f"""insert overwrite table `{schemaForDeltaTable}`.`{deltaTable}` select * from `{sfOptions.sfDatabase}`.`{deltaTable}`"""
+    print(mergeDatasetSql)
+
+    df_table = spark.sql(mergeDatasetSql)
+
+    row_count = df_table.count()
+    SFTable = f"{deltaTable}"
+
+    if row_count == 0:
+        logger.info("No new records to insert or update into Snowflake")
+    else:
+        SnowflakeWriter(
+            env,
+            sfOptions["sfDatabase"],
+            sfOptions["sfSchema"],
+            SFTable,
+            json.loads(primaryKeys),
+        ).push_data(df_table, write_mode="merge")
