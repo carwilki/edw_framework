@@ -203,19 +203,37 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr(
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
+).withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_STANDARD_UOM1, type TARGET 
 # COLUMN COUNT: 14
 
+
+Shortcut_to_WM_STANDARD_UOM1 = UPD_INS_UPD.selectExpr( \
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
+	"CAST(STANDARD_UOM AS BIGINT) as WM_STANDARD_UOM_ID", \
+	"CAST(STANDARD_UOM_TYPE AS BIGINT) as WM_STANDARD_UOM_TYPE_ID", \
+	"CAST(UOM_SYSTEM AS STRING) as WM_UOM_SYSTEM", \
+	"CAST(ABBREVIATION AS STRING) as WM_STANDARD_UOM_ABBREVIATION", \
+	"CAST(DESCRIPTION AS STRING) as WM_STANDARD_UOM_DESC", \
+	"CAST(IS_TYPE_SYS_DFLT AS BIGINT) as WM_TYPE_SYSTEM_DEFAULT_FLAG", \
+	"CAST(UNITS_IN_TYPE_SYS_DFLT AS BIGINT) as WM_UNITS_IN_TYPE_SYSTEM_DEFAULT", \
+	"CAST(IS_DB_UOM AS BIGINT) as WM_DB_UOM_FLAG", \
+	"CAST(IS_SYSTEM_DEFINED AS BIGINT) as WM_SYSTEM_DEFINED_FLAG", \
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_STANDARD_UOM_ID = target.WM_STANDARD_UOM_ID"""
   # refined_perf_table = "WM_STANDARD_UOM"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_STANDARD_UOM1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

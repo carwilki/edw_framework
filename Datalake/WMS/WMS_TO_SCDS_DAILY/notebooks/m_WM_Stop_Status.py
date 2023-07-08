@@ -31,8 +31,6 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STOP_STATUS, type SOURCE 
@@ -142,8 +140,8 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___i_WM_STOP_STATUS_SHORT_DESC as i_WM_STOP_STATUS_SHORT_DESC", 
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_STOP_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_STOP_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -167,13 +165,22 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 # Processing node Shortcut_to_WM_STOP_STATUS1, type TARGET 
 # COLUMN COUNT: 6
 
+
+Shortcut_to_WM_STOP_STATUS1 = UPD_INS_UPD.selectExpr( \
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
+	"CAST(STOP_STATUS AS BIGINT) as WM_STOP_STATUS", \
+	"CAST(DESCRIPTION AS STRING) as WM_STOP_STATUS_DESC", \
+	"CAST(SHORT_DESC AS STRING) as WM_STOP_STATUS_SHORT_DESC", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+)
+
 try:
-  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_STOP_STATUS = target.WM_STOP_STATUS"""
-  refined_perf_table = "WM_STOP_STATUS"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.STOP_STATUS = target.WM_STOP_STATUS"""
+  # refined_perf_table = "WM_STANDARD_UOM"
+  executeMerge(Shortcut_to_WM_STOP_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
-  logPrevRunDt("WM_STOP_STATUS", "WM_STOP_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
+  logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-  logPrevRunDt("WM_STOP_STATUS", "WM_STOP_STATUS","Failed",str(e), f"{raw}.log_run_details", )
+  logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

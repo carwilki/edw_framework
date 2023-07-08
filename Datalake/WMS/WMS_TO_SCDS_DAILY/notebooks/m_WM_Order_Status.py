@@ -174,12 +174,23 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 # Processing node Shortcut_to_WM_ORDER_STATUS1, type TARGET 
 # COLUMN COUNT: 7
 
+
+Shortcut_to_WM_ORDER_STATUS1 = UPD_INS_UPD.selectExpr( \
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
+	"CAST(ORDER_STATUS AS BIGINT) as WM_ORDER_STATUS_ID", \
+	"CAST(DESCRIPTION AS STRING) as WM_ORDER_STATUS_DESC", \
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP", \
+    "pyspark_data_action"\
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ORDER_STATUS_ID = target.WM_ORDER_STATUS_ID"""
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_ORDER_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ORDER_STATUS", "WM_ORDER_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_ORDER_STATUS", "WM_ORDER_STATUS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

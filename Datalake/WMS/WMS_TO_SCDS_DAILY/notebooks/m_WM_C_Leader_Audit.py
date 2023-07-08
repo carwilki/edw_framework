@@ -16,6 +16,7 @@ from Datalake.utils.logger import *
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -38,11 +39,11 @@ site_profile_table = f"{legacy}.SITE_PROFILE"
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_C_LEADER_AUDIT = spark.sql(f"""SELECT
-WM_C_LEADER_AUDIT.LOCATION_ID,
-WM_C_LEADER_AUDIT.WM_C_LEADER_AUDIT_ID,
-WM_C_LEADER_AUDIT.WM_CREATE_TSTMP,
-WM_C_LEADER_AUDIT.WM_MOD_TSTMP,
-WM_C_LEADER_AUDIT.LOAD_TSTMP
+LOCATION_ID,
+WM_C_LEADER_AUDIT_ID,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+LOAD_TSTMP
 FROM {refined_perf_table}
 WHERE WM_C_LEADER_AUDIT_ID IN (SELECT C_LEADER_AUDIT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -50,27 +51,24 @@ WHERE WM_C_LEADER_AUDIT_ID IN (SELECT C_LEADER_AUDIT_ID FROM {raw_perf_table})""
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_C_LEADER_AUDIT_PRE, type SOURCE 
 # COLUMN COUNT: 11
 
 SQ_Shortcut_to_WM_C_LEADER_AUDIT_PRE = spark.sql(f"""SELECT
-WM_C_LEADER_AUDIT_PRE.DC_NBR,
-WM_C_LEADER_AUDIT_PRE.C_LEADER_AUDIT_ID,
-WM_C_LEADER_AUDIT_PRE.LEADER_USER_ID,
-WM_C_LEADER_AUDIT_PRE.PICKER_USER_ID,
-WM_C_LEADER_AUDIT_PRE.STATUS,
-WM_C_LEADER_AUDIT_PRE.ITEM_NAME,
-WM_C_LEADER_AUDIT_PRE.LPN,
-WM_C_LEADER_AUDIT_PRE.EXPECTED_QTY,
-WM_C_LEADER_AUDIT_PRE.ACTUAL_QTY,
-WM_C_LEADER_AUDIT_PRE.CREATE_DATE_TIME,
-WM_C_LEADER_AUDIT_PRE.MOD_DATE_TIME
+DC_NBR,
+C_LEADER_AUDIT_ID,
+LEADER_USER_ID,
+PICKER_USER_ID,
+STATUS,
+ITEM_NAME,
+LPN,
+EXPECTED_QTY,
+ACTUAL_QTY,
+CREATE_DATE_TIME,
+MOD_DATE_TIME
 FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -149,7 +147,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_C_LEADER_AUDIT_temp.selectExpr( \
 	"JNR_WM_C_LEADER_AUDIT___i_WM_C_LEADER_AUDIT_ID as i_WM_C_LEADER_AUDIT_ID", \
 	"JNR_WM_C_LEADER_AUDIT___i_WM_CREATE_TSTMP as i_WM_CREATE_TSTMP", \
 	"JNR_WM_C_LEADER_AUDIT___i_WM_MOD_TSTMP as i_WM_MOD_TSTMP", \
-	"JNR_WM_C_LEADER_AUDIT___i_LOAD_TSTMP as i_LOAD_TSTMP")\
+	"JNR_WM_C_LEADER_AUDIT___i_LOAD_TSTMP as i_LOAD_TSTMP") \
     .filter("i_WM_C_LEADER_AUDIT_ID is Null OR (  i_WM_C_LEADER_AUDIT_ID is NOT Null AND\
              ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01') \
              OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
@@ -176,8 +174,8 @@ EXP_OUTPUT_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME as CREATE_DATE_TIME", \
 	"FIL_UNCHANGED_RECORDS___MOD_DATE_TIME as MOD_DATE_TIME", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_C_LEADER_AUDIT_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" \
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_C_LEADER_AUDIT_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -202,16 +200,33 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)), lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_C_LEADER_AUDIT1, type TARGET 
 # COLUMN COUNT: 13
 
+Shortcut_to_WM_C_LEADER_AUDIT1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(C_LEADER_AUDIT_ID AS BIGINT) as WM_C_LEADER_AUDIT_ID", 
+	"CAST(LEADER_USER_ID AS STRING) as WM_LEADER_USER_ID", 
+	"CAST(PICKER_USER_ID AS STRING) as WM_PICKER_USER_ID", 
+	"CAST(STATUS AS BIGINT) as WM_STATUS", 
+	"CAST(ITEM_NAME AS STRING) as WM_ITEM_NAME", 
+	"CAST(LPN AS STRING) as WM_LPN", 
+	"CAST(EXPECTED_QTY AS BIGINT) as EXPECTED_QTY", 
+	"CAST(ACTUAL_QTY AS BIGINT) as ACTUAL_QTY", 
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_C_LEADER_AUDIT_ID = target.WM_C_LEADER_AUDIT_ID"""
 #   refined_perf_table = "WM_C_LEADER_AUDIT"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_C_LEADER_AUDIT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_C_LEADER_AUDIT", "WM_C_LEADER_AUDIT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

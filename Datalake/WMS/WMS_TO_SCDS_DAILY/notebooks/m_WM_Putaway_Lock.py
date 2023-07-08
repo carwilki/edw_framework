@@ -292,7 +292,7 @@ UPD_INS_UPD = RTR_DELETE_INSERT_UPDATE_temp.selectExpr(
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", 
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", 
 	"RTR_DELETE_INSERT_UPDATE___o_UPD_VALIDATOR1 as o_UPD_VALIDATOR1"
-).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT'))lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE'))lit(1)))
+).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('INSERT')),lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPD_VALIDATOR1 ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -320,16 +320,34 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr(
 # Processing node Shortcut_to_WM_PUTAWAY_LOCK1, type TARGET 
 # COLUMN COUNT: 12
 
+
+Shortcut_to_WM_PUTAWAY_LOCK1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID", 
+	"CAST(LOCN_ID1 AS STRING) as WM_LOCN_ID", 
+	"CAST(LOCK_COUNTER1 AS BIGINT) as LOCK_COUNTER", 
+	"CAST(CREATED_SOURCE_TYPE1 AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE1 AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE1 AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE1 AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(DELETE_FLAG1 AS BIGINT) as DELETE_FLAG", 
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LOCN_ID = target.WM_LOCN_ID"""
   # refined_perf_table = "WM_PUTAWAY_LOCK"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_PUTAWAY_LOCK1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_PUTAWAY_LOCK", "WM_PUTAWAY_LOCK", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_PUTAWAY_LOCK", "WM_PUTAWAY_LOCK","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 	
+
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PUTAWAY_LOCK2, type TARGET 

@@ -16,6 +16,7 @@ from Datalake.utils.logger import *
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,9 +30,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-
-# COMMAND ----------
-pre_perf_table = f"{raw}.WM_E_ACT_ELM_PRE"
+raw_perf_table = f"{raw}.WM_E_ACT_ELM_PRE"
 refined_perf_table = f"{refine}.WM_E_ACT_ELM"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
@@ -43,53 +42,51 @@ Del_Logic=args.Del_Logic
 # COLUMN COUNT: 19
 
 SQ_Shortcut_to_WM_E_ACT_ELM = spark.sql(f"""SELECT
-WM_E_ACT_ELM.LOCATION_ID,
-WM_E_ACT_ELM.WM_ACT_ID,
-WM_E_ACT_ELM.WM_ELM_ID,
-WM_E_ACT_ELM.WM_SEQ_NBR,
-WM_E_ACT_ELM.TIME_ALLOW,
-WM_E_ACT_ELM.WM_THRUPUT_MSRMNT,
-WM_E_ACT_ELM.WM_AVG_ACT_ID,
-WM_E_ACT_ELM.WM_AVG_BY,
-WM_E_ACT_ELM.MISC_TXT_1,
-WM_E_ACT_ELM.MISC_TXT_2,
-WM_E_ACT_ELM.MISC_NUM_1,
-WM_E_ACT_ELM.MISC_NUM_2,
-WM_E_ACT_ELM.WM_USER_ID,
-WM_E_ACT_ELM.WM_VERSION_ID,
-WM_E_ACT_ELM.WM_CREATE_TSTMP,
-WM_E_ACT_ELM.WM_MOD_TSTMP,
-WM_E_ACT_ELM.DELETE_FLAG,
-WM_E_ACT_ELM.UPDATE_TSTMP,
-WM_E_ACT_ELM.LOAD_TSTMP
+LOCATION_ID,
+WM_ACT_ID,
+WM_ELM_ID,
+WM_SEQ_NBR,
+TIME_ALLOW,
+WM_THRUPUT_MSRMNT,
+WM_AVG_ACT_ID,
+WM_AVG_BY,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+WM_USER_ID,
+WM_VERSION_ID,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+DELETE_FLAG,
+UPDATE_TSTMP,
+LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE {Del_Logic} 
-1=0 and 
-DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
+WHERE {Del_Logic} 1=0 and DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_ACT_ELM_PRE, type SOURCE 
 # COLUMN COUNT: 17
 
 SQ_Shortcut_to_WM_E_ACT_ELM_PRE = spark.sql(f"""SELECT
-WM_E_ACT_ELM_PRE.DC_NBR,
-WM_E_ACT_ELM_PRE.ACT_ID,
-WM_E_ACT_ELM_PRE.ELM_ID,
-WM_E_ACT_ELM_PRE.TIME_ALLOW,
-WM_E_ACT_ELM_PRE.THRUPUT_MSRMNT,
-WM_E_ACT_ELM_PRE.SEQ_NBR,
-WM_E_ACT_ELM_PRE.CREATE_DATE_TIME,
-WM_E_ACT_ELM_PRE.MOD_DATE_TIME,
-WM_E_ACT_ELM_PRE.USER_ID,
-WM_E_ACT_ELM_PRE.MISC_TXT_1,
-WM_E_ACT_ELM_PRE.MISC_TXT_2,
-WM_E_ACT_ELM_PRE.MISC_NUM_1,
-WM_E_ACT_ELM_PRE.MISC_NUM_2,
-WM_E_ACT_ELM_PRE.VERSION_ID,
-WM_E_ACT_ELM_PRE.AVG_ACT_ID,
-WM_E_ACT_ELM_PRE.AVG_BY,
-WM_E_ACT_ELM_PRE.LOAD_TSTMP
-FROM {pre_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+ACT_ID,
+ELM_ID,
+TIME_ALLOW,
+THRUPUT_MSRMNT,
+SEQ_NBR,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+USER_ID,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+VERSION_ID,
+AVG_ACT_ID,
+AVG_BY,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -140,10 +137,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_ACT_ELM_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -238,7 +232,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_ACT_ELM_temp.selectExpr( \
 	"JNR_WM_E_ACT_ELM___in_WM_AVG_BY as in_WM_AVG_BY", \
 	"JNR_WM_E_ACT_ELM___in_DELETE_FLAG as in_DELETE_FLAG", \
 	"JNR_WM_E_ACT_ELM___in_UPDATE_TSTMP as in_UPDATE_TSTMP", \
-	"JNR_WM_E_ACT_ELM___in_LOAD_TSTMP as in_LOAD_TSTMP")\
+	"JNR_WM_E_ACT_ELM___in_LOAD_TSTMP as in_LOAD_TSTMP") \
     .filter("( ACT_ID IS NULL OR ELM_ID IS NULL ) OR ( in_WM_ACT_ID IS NULL OR in_WM_ELM_ID IS NULL ) OR ( ( in_WM_ACT_ID IS NUT NULL OR  in_WM_ELM_ID IS NUT NULL ) \
              AND ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(in_WM_CREATE_TSTMP, date'1900-01-01') \
              OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(in_WM_MOD_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
@@ -249,11 +243,11 @@ FIL_NO_CHANGE_REC = JNR_WM_E_ACT_ELM_temp.selectExpr( \
 # COLUMN COUNT: 36
 
 # for each involved DataFrame, append the dataframe name to each column
-FIL_NO_CHANGE_REC_temp = FIL_NO_CHANGE_REC.toDF(*["FIL_NO_CHANGE_REC___" + col for col in FIL_NO_CHANGE_REC.columns])\
-.withColumn("v_CREATE_DATE_TIME", expr("""IF (CREATE_DATE_TIME IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), CREATE_DATE_TIME)""")) \
-	.withColumn("v_MOD_DATE_TIME", expr("""IF (MOD_DATE_TIME IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), MOD_DATE_TIME)""")) \
-	.withColumn("v_in_WM_CREATE_TSTMP", expr("""IF (in_WM_CREATE_TSTMP IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), in_WM_CREATE_TSTMP)""")) \
-	.withColumn("v_in_WM_MOD_TSTMP", expr("""IF (in_WM_MOD_TSTMP IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), in_WM_MOD_TSTMP)"""))
+FIL_NO_CHANGE_REC_temp = FIL_NO_CHANGE_REC.toDF(*["FIL_NO_CHANGE_REC___" + col for col in FIL_NO_CHANGE_REC.columns]) \
+.withColumn("v_CREATE_DATE_TIME", expr("""IF(CREATE_DATE_TIME IS NULL, date'1900-01-01', CREATE_DATE_TIME)""")) \
+	.withColumn("v_MOD_DATE_TIME", expr("""IF(MOD_DATE_TIME IS NULL, date'1900-01-01', MOD_DATE_TIME)""")) \
+	.withColumn("v_in_WM_CREATE_TSTMP", expr("""IF(in_WM_CREATE_TSTMP IS NULL, date'1900-01-01', in_WM_CREATE_TSTMP)""")) \
+	.withColumn("v_in_WM_MOD_TSTMP", expr("""IF(in_WM_MOD_TSTMP IS NULL, date'1900-01-01', in_WM_MOD_TSTMP)"""))
              
 EXP_EVALUATE = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___sys_row_id as sys_row_id", \
@@ -289,10 +283,10 @@ EXP_EVALUATE = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___in_WM_VERSION_ID as in_WM_VERSION_ID", \
 	"FIL_NO_CHANGE_REC___in_WM_AVG_ACT_ID as in_WM_AVG_ACT_ID", \
 	"FIL_NO_CHANGE_REC___in_WM_AVG_BY as in_WM_AVG_BY", \
-	"IF (FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL, 1, 0) as DELETE_FLAG", \
+	"IF(FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL, 1, 0) as DELETE_FLAG", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NULL, 'INSERT', IF (FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF (FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP <> FIL_NO_CHANGE_REC___v_CREATE_DATE_TIME OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP <> FIL_NO_CHANGE_REC___v_MOD_DATE_TIME ), 'UPDATE', NULL))) as LOAD_FLAG" \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NULL, 'INSERT', IF(FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP <> FIL_NO_CHANGE_REC___v_CREATE_DATE_TIME OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP <> FIL_NO_CHANGE_REC___v_MOD_DATE_TIME ), 'UPDATE', NULL))) as LOAD_FLAG" \
 )
 
 # COMMAND ----------
@@ -523,7 +517,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INS_UPD_temp.selectExpr( \
 	"RTR_INS_UPD_DEL_INS_UPD___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_INS_UPD_DEL_INS_UPD___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_INS_UPD_DEL_INS_UPD___LOAD_FLAG1 as LOAD_FLAG1") \
-	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('INSERT')) , lit(0)).when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('INSERT')), lit(0)).when(RTR_INS_UPD_DEL_INS_UPD.LOAD_FLAG1 ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_ACT_ELM1, type TARGET 
@@ -557,10 +551,33 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INS_UPD_temp.selectExpr( \
 # Processing node Shortcut_to_WM_E_ACT_ELM2, type TARGET 
 # COLUMN COUNT: 19
 
+Shortcut_to_WM_E_ACT_ELM2 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID", 
+	"CAST(ACT_ID1 AS BIGINT) as WM_ACT_ID", 
+	"CAST(ELM_ID1 AS BIGINT) as WM_ELM_ID", 
+	"CAST(SEQ_NBR1 AS BIGINT) as WM_SEQ_NBR", 
+	"CAST(TIME_ALLOW1 AS BIGINT) as TIME_ALLOW", 
+	"CAST(THRUPUT_MSRMNT1 AS STRING) as WM_THRUPUT_MSRMNT", 
+	"CAST(AVG_ACT_ID1 AS BIGINT) as WM_AVG_ACT_ID", 
+	"CAST(AVG_BY1 AS STRING) as WM_AVG_BY", 
+	"CAST(MISC_TXT_11 AS STRING) as MISC_TXT_1", 
+	"CAST(MISC_TXT_21 AS STRING) as MISC_TXT_2", 
+	"CAST(MISC_NUM_11 AS BIGINT) as MISC_NUM_1", 
+	"CAST(MISC_NUM_21 AS BIGINT) as MISC_NUM_2", 
+	"CAST(USER_ID1 AS STRING) as WM_USER_ID", 
+	"CAST(VERSION_ID1 AS BIGINT) as WM_VERSION_ID", 
+	"CAST(CREATE_DATE_TIME1 AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME1 AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(DELETE_FLAG1 AS BIGINT) as DELETE_FLAG", 
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ACT_ID = target.WM_ACT_ID AND source.WM_ELM_ID = target.WM_ELM_ID"""
 #   refined_perf_table = "WM_E_ACT_ELM"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_E_ACT_ELM2, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_ACT_ELM", "WM_E_ACT_ELM", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

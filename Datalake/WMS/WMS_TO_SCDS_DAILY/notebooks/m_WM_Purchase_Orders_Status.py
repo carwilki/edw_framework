@@ -173,16 +173,27 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1))lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2))lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_UPDATE_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PURCHASE_ORDERS_STATUS1, type TARGET 
 # COLUMN COUNT: 6
 
+
+Shortcut_to_WM_PURCHASE_ORDERS_STATUS1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(PURCHASE_ORDERS_STATUS AS BIGINT) as WM_PURCHASE_ORDERS_STATUS", 
+	"CAST(DESCRIPTION AS STRING) as WM_PURCHASE_ORDERS_STATUS_DESC", 
+	"CAST(NOTE AS STRING) as WM_PURCHASE_ORDERS_STATUS_NOTE", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_PURCHASE_ORDERS_STATUS = target.WM_PURCHASE_ORDERS_STATUS"""
   # refined_perf_table = "WM_PURCHASE_ORDERS_STATUS"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_PURCHASE_ORDERS_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_PURCHASE_ORDERS_STATUS", "WM_PURCHASE_ORDERS_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

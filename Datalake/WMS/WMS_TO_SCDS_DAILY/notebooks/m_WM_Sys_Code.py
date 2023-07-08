@@ -61,7 +61,8 @@ WM_MOD_TSTMP,
 DELETE_FLAG,
 LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE {Del_Logic} 1=0 and DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
+WHERE {Del_Logic} 1=0 and 
+DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SYS_CODE_PRE, type SOURCE 
@@ -427,19 +428,41 @@ UPD_INSERT_UPDATE = RTR_DELETE_INSERT_UPDATE_temp.selectExpr(
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", 
 	"RTR_DELETE_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1", 
 	"RTR_DELETE_INSERT_UPDATE___DELETE_FLAG_EXP1 as DELETE_FLAG_EXP1"
-).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT'))lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE'))lit(1)))
+).withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')),lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_SYS_CODE, type TARGET 
 # COLUMN COUNT: 18
 
+
+Shortcut_to_WM_SYS_CODE = UPD_INSERT_UPDATE.selectExpr( 
+	"CAST(LOCATION_ID11 AS BIGINT) as LOCATION_ID", 
+	"CAST(REC_TYPE1 AS STRING) as WM_REC_TYPE", 
+	"CAST(CODE_TYPE1 AS STRING) as WM_CD_TYPE", 
+	"CAST(CODE_ID1 AS STRING) as WM_CD_ID", 
+	"CAST(SYS_CODE_TYPE_ID1 AS BIGINT) as WM_SYS_CD_TYPE_ID", 
+	"CAST(SYS_CODE_ID1 AS BIGINT) as WM_SYS_CD_ID", 
+	"CAST(CODE_DESC1 AS STRING) as WM_CD_DESC", 
+	"CAST(SHORT_DESC1 AS STRING) as WM_CD_SHORT_DESC", 
+	"CAST(MISC_FLAGS1 AS STRING) as WM_MISC_FLAGS", 
+	"CAST(USER_ID1 AS STRING) as WM_USER_ID", 
+	"CAST(WM_VERSION_ID12 AS BIGINT) as WM_VERSION_ID", 
+	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(CREATE_DATE_TIME1 AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME1 AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(DELETE_FLAG_EXP1 AS BIGINT) as DELETE_FLAG", 
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_REC_TYPE = target.WM_REC_TYPE AND source.WM_CD_TYPE = target.WM_CD_TYPE AND source.WM_CD_ID = target.WM_CD_ID"""
   # refined_perf_table = "WM_SYS_CODE"
-  executeMerge(UPD_INSERT_UPDATE, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_SYS_CODE, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_SYS_CODE", "WM_SYS_CODE", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_SYS_CODE", "WM_SYS_CODE","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

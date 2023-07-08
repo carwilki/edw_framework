@@ -1338,7 +1338,7 @@ UPD_INS_UPD = EXP_EVALUATE_temp.selectExpr( \
 	"EXP_EVALUATE___in_WM_OUTPT_ORDERS_ID as in_WM_OUTPT_ORDERS_ID", \
 	"EXP_EVALUATE___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVALUATE___UPDATE_TSTMP as UPDATE_TSTMP") \
-	.withColumn('pyspark_data_action', when((in_WM_OUTPT_ORDERS_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_WM_OUTPT_ORDERS_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_OUTPT_ORDERS, type TARGET 
@@ -1517,6 +1517,18 @@ Shortcut_to_WM_OUTPT_ORDERS = UPD_INS_UPD.selectExpr( \
 	"CAST(LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", \
 	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
 	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , \
+    "pyspark_data_action"\
 )
-Shortcut_to_WM_OUTPT_ORDERS.write.saveAsTable(f'{raw}.WM_OUTPT_ORDERS')
+
+#  TODO manual
+try:
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.OUTPT_ORDERS_ID = target.WM_OUTPT_ORDERS_ID"""
+  # refined_perf_table = "WM_OUTPT_ORDER_LINE_ITEM"
+  executeMerge(Shortcut_to_WM_OUTPT_ORDERS, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("WM_OUTPT_ORDER_LINE_ITEM", "WM_OUTPT_ORDER_LINE_ITEM", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("WM_OUTPT_ORDER_LINE_ITEM", "WM_OUTPT_ORDER_LINE_ITEM","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	
