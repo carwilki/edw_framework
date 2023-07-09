@@ -61,7 +61,8 @@ UPDATE_TSTMP,
 LOAD_TSTMP,
 DELETE_FLAG
 FROM {refined_perf_table}
-WHERE {Del_Logic} 1=0 and DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id())
+WHERE {Del_Logic} 1=0 and 
+DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id()).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_MSRMNT_RULE_CALC_PRE, type SOURCE 

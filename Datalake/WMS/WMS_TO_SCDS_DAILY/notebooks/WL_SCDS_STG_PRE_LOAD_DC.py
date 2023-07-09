@@ -258,11 +258,11 @@ logger = getLogger()
 
 parser.add_argument("DC_NBR", type=str, help="DC number")
 parser.add_argument("env", type=str, help="Env Variable")
-parser.add_argument("groupNo", type=str, help="group Number Variable")
+parser.add_argument("setNo", type=str, help="setNo Variable")
 args = parser.parse_args()
 dcnbr = args.DC_NBR
 env = args.env
-groupNo = args.groupNo
+setNo = args.setNo
 
 if dcnbr is None or dcnbr == "":
     raise ValueError("DC_NBR is not set")
@@ -270,8 +270,8 @@ if dcnbr is None or dcnbr == "":
 if env is None or env == "":
     raise ValueError("env is not set")
 
-if groupNo is None or groupNo == "":
-    raise ValueError("groupNo is not set")
+if setNo is None or setNo == "":
+    raise ValueError("setNo is not set")
 
 
 ####################################################################
@@ -280,7 +280,7 @@ if groupNo is None or groupNo == "":
 # main section #
 ####################################################################
 
-group1 = [
+""" group1 = [
     "WM_E_EVNT_SMRY_HDR_PRE",
     "WM_E_JOB_FUNCTION_PRE",
     "WM_FACILITY_PRE",
@@ -409,17 +409,160 @@ group11 = [
     "WM_TRAILER_CONTENTS_PRE",
     "WM_TRAILER_VISIT_PRE",
     "WM_TRAILER_VISIT_DETAIL_PRE",
+] """
+
+set_P_Y_lst = [
+    "WM_PICKING_SHORT_ITEM",
+    "WM_PIX_TRAN",
+    "WM_PRODUCT_CLASS",
+    "WM_PURCHASE_ORDERS",
+    "WM_PURCHASE_ORDERS_LINE_ITEM",
+    "WM_PURCHASE_ORDERS_LINE_STATUS",
+    "WM_PURCHASE_ORDERS_STATUS",
+    "WM_PUTAWAY_LOCK",
+    "WM_RACK_TYPE",
+    "WM_RACK_TYPE_LEVEL",
+    "WM_RESV_LOCN_HDR",
+    "WM_SEC_USER",
+    "WM_SHIP_VIA",
+    "WM_SHIPMENT",
+    "WM_SHIPMENT_STATUS",
+    "WM_SIZE_UOM",
+    "WM_SLOT_ITEM",
+    "WM_SLOT_ITEM_SCORE",
+    "WM_STANDARD_UOM",
+    "WM_STOP",
+    "WM_STOP_STATUS",
+    "WM_SYS_CODE",
+    "WM_TASK_DTL",
+    "WM_TASK_HDR",
+    "WM_TRAILER_CONTENTS",
+    "WM_TRAILER_REF",
+    "WM_TRAILER_TYPE",
+    "WM_TRAILER_VISIT",
+    "WM_TRAILER_VISIT_DTL",
+    "WM_UN_NUMBER",
+    "WM_USER_PROFILE",
+    "WM_VEND_PERF_TRAN",
+    "WM_WAVE_PARM",
+    "WM_YARD",
+    "WM_YARD_ZONE",
+    "WM_YARD_ZONE_SLOT",
+]
+
+set_I_P_lst = [
+    "WM_ILM_TASK_STATUS",
+    "WM_ILM_YARD_ACTIVITY",
+    "WM_ITEM_CBO",
+    "WM_ITEM_FACILITY_MAPPING_WMS",
+    "WM_ITEM_FACILITY_SLOTTING",
+    "WM_ITEM_GROUP_WMS",
+    "WM_ITEM_PACKAGE_CBO",
+    "WM_ITEM_WMS",
+    "WM_LABOR_ACTIVITY",
+    "WM_LABOR_CRITERIA",
+    "WM_LABOR_MSG",
+    "WM_LABOR_MSG_CRIT",
+    "WM_LABOR_MSG_DTL",
+    "WM_LABOR_MSG_DTL_CRIT",
+    "WM_LABOR_TRAN_DTL_CRIT",
+    "WM_LOCN_GRP",
+    "WM_LOCN_HDR",
+    "WM_LPN",
+    "WM_LPN_AUDIT_RESULTS",
+    "WM_LPN_DETAIL",
+    "WM_LPN_FACILITY_STATUS",
+    "WM_LPN_LOCK",
+    "WM_LPN_SIZE_TYPE",
+    "WM_LPN_STATUS",
+    "WM_LPN_TYPE",
+    "WM_ORDER_LINE_ITEM",
+    "WM_ORDER_STATUS",
+    "WM_ORDERS",
+    "WM_OUTPT_LPN",
+    "WM_OUTPT_LPN_DETAIL",
+    "WM_OUTPT_ORDER_LINE_ITEM",
+    "WM_OUTPT_ORDERS",
+    "WM_PICK_LOCN_DTL",
+    "WM_PICK_LOCN_DTL_SLOTTING",
+    "WM_PICK_LOCN_HDR",
+    "WM_PICK_LOCN_HDR_SLOTTING",
+]
+
+set_A_I_lst = [
+    "WM_ASN",
+    "WM_ASN_DETAIL",
+    "WM_ASN_DETAIL_STATUS",
+    "WM_ASN_STATUS",
+    "WM_BUSINESS_PARTNER",
+    "WM_C_LEADER_AUDIT",
+    "WM_C_TMS_PLAN",
+    "WM_CARRIER_CODE",
+    "WM_COMMODITY_CODE",
+    "WM_DO_STATUS",
+    "WM_DOCK_DOOR",
+    "WM_E_ACT",
+    "WM_E_ACT_ELM",
+    "WM_E_ACT_ELM_CRIT",
+    "WM_E_AUD_LOG",
+    "WM_E_CRIT_VAL",
+    "WM_E_ELM",
+    "WM_E_ELM_CRIT",
+    "WM_E_EMP_DTL",
+    "WM_E_EMP_STAT_CODE",
+    "WM_E_EVNT_SMRY_HDR",
+    "WM_E_JOB_FUNCTION",
+    "WM_E_LABOR_TYPE_CODE",
+    "WM_E_MSRMNT",
+    "WM_E_MSRMNT_RULE",
+    "WM_E_MSRMNT_RULE_CALC",
+    "WM_E_MSRMNT_RULE_CONDITION",
+    "WM_E_SHIFT",
+    "WM_EQUIPMENT",
+    "WM_EQUIPMENT_INSTANCE",
+    "WM_FACILITY",
+    "WM_ILM_APPOINTMENT_OBJECTS",
+    "WM_ILM_APPOINTMENT_STATUS",
+    "WM_ILM_APPOINTMENT_TYPE",
+    "WM_ILM_APPOINTMENTS",
+    "WM_ILM_APPT_EQUIPMENTS",
 ]
 
 
-def tableGroupsNfunc(dcnbr, env, groupNo):
-    for table in groupNo:
-        preTable_func = "m_".join(table)
-        preTable_func(dcnbr, env)
-        logger.info(f"{0} executed".format(preTable_func))
+def tableGroupsNfunc(dcnbr, env, setNo):
+    if setNo == "set_A_I_1":
+        for table in set_A_I_lst[:18]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
+    elif setNo == "set_A_I_2":
+        for table in set_A_I_lst[18:36]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
+    elif setNo == "set_I_P_1":
+        for table in set_I_P_lst[:18]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
+    elif setNo == "set_I_P_2":
+        for table in set_I_P_lst[18:36]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
+    elif setNo == "set_P_Y_1":
+        for table in set_I_P_lst[:18]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
+    else:
+        for table in set_I_P_lst[18:36]:
+            preTable_func = "m_".join(table)
+            preTable_func(dcnbr, env)
+            logger.info(f"{0} executed".format(preTable_func))
 
 
-tableGroupsNfunc(dcnbr, env, groupNo)
+tableGroupsNfunc(dcnbr, env, setNo)
 
 
 """ m_WM_Pick_Locn_Hdr_Slotting_PRE(dcnbr, env)

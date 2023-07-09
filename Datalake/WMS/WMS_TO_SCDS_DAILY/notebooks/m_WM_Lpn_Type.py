@@ -31,7 +31,6 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-
 refined_perf_table = f"{refine}.WM_LPN_TYPE"
 raw_perf_table = f"{raw}.WM_LPN_TYPE_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
@@ -42,11 +41,11 @@ site_profile_table = f"{legacy}.SITE_PROFILE"
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_LPN_TYPE = spark.sql(f"""SELECT
-WM_LPN_TYPE.LOCATION_ID,
-WM_LPN_TYPE.WM_LPN_TYPE,
-WM_LPN_TYPE.WM_LPN_TYPE_DESC,
-WM_LPN_TYPE.WM_PHYSICAL_ENTITY_CD,
-WM_LPN_TYPE.LOAD_TSTMP
+LOCATION_ID,
+WM_LPN_TYPE,
+WM_LPN_TYPE_DESC,
+WM_PHYSICAL_ENTITY_CD,
+LOAD_TSTMP
 FROM {refined_perf_table}
 WHERE WM_LPN_TYPE IN (SELECT LPN_TYPE FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -55,11 +54,11 @@ WHERE WM_LPN_TYPE IN (SELECT LPN_TYPE FROM {raw_perf_table})""").withColumn("sys
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_LPN_TYPE_PRE = spark.sql(f"""SELECT
-WM_LPN_TYPE_PRE.DC_NBR,
-WM_LPN_TYPE_PRE.LPN_TYPE,
-WM_LPN_TYPE_PRE.DESCRIPTION,
-WM_LPN_TYPE_PRE.PHYSICAL_ENTITY_CODE,
-WM_LPN_TYPE_PRE.LOAD_TSTMP
+DC_NBR,
+LPN_TYPE,
+DESCRIPTION,
+PHYSICAL_ENTITY_CODE,
+LOAD_TSTMP
 FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -82,10 +81,7 @@ EXPTRANS = SQ_Shortcut_to_WM_LPN_TYPE_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_STE_PROFILE, type JOINER 
@@ -129,10 +125,10 @@ FIL_UNCHANGED_REC = JNR_WM_LPN_TYPE_temp.selectExpr( \
 	"JNR_WM_LPN_TYPE___WM_LPN_TYPE as WM_LPN_TYPE", \
 	"JNR_WM_LPN_TYPE___WM_LPN_TYPE_DESC as WM_LPN_TYPE_DESC", \
 	"JNR_WM_LPN_TYPE___WM_PHYSICAL_ENTITY_CD as WM_PHYSICAL_ENTITY_CD", \
-	"JNR_WM_LPN_TYPE___in_LOAD_TSTMP as in_LOAD_TSTMP")\
-    .filter("WM_LPN_TYPE is Null OR (WM_LPN_TYPE is not Null AND\
-     ( COALESCE( DESCRIPTION , '') != COALESCE( WM_LPN_TYPE_DESC, '') \
-		OR COALESCE( PHYSICAL_ENTITY_CODE , '') != COALESCE( WM_PHYSICAL_ENTITY_CD, '')))").withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_LPN_TYPE___in_LOAD_TSTMP as in_LOAD_TSTMP") \
+    .filter("WM_LPN_TYPE is Null OR (WM_LPN_TYPE is not Null AND \
+     ( COALESCE( DESCRIPTION, '') != COALESCE( WM_LPN_TYPE_DESC, '') \
+		OR COALESCE( PHYSICAL_ENTITY_CODE, '') != COALESCE( WM_PHYSICAL_ENTITY_CD, '')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 
 # COMMAND ----------
@@ -154,8 +150,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_REC_temp.selectExpr( \
 	"FIL_UNCHANGED_REC___WM_PHYSICAL_ENTITY_CD as WM_PHYSICAL_ENTITY_CD", \
 	"FIL_UNCHANGED_REC___in_LOAD_TSTMP as in_LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_UNCHANGED_REC___WM_LPN_TYPE IS NULL, 1, 2) as o_UPD_VALIDATOR" \
+	"IF(FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_UNCHANGED_REC___WM_LPN_TYPE IS NULL, 1, 2) as o_UPD_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -173,16 +169,26 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_TYPE1, type TARGET 
 # COLUMN COUNT: 6
 
+Shortcut_to_WM_LPN_TYPE1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(LPN_TYPE AS BIGINT) as WM_LPN_TYPE", 
+	"CAST(DESCRIPTION AS STRING) as WM_LPN_TYPE_DESC", 
+	"CAST(PHYSICAL_ENTITY_CODE AS STRING) as WM_PHYSICAL_ENTITY_CD", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_TYPE = target.WM_LPN_TYPE"""
 #   refined_perf_table = "WM_LPN_TYPE"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  executeMerge(Shortcut_to_WM_LPN_TYPE1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_TYPE", "WM_LPN_TYPE", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
