@@ -273,7 +273,7 @@ from Datalake.WMS.WMS_TO_SCDS_DAILY.notebooks.m_WM_Trailer_Visit_Pre import (
     m_WM_Trailer_Visit_PRE,
 )
 from Datalake.WMS.WMS_TO_SCDS_DAILY.notebooks.m_WM_Trailer_Visit_Detail_Pre import (
-    m_WM_Trailer_Visit_Detail_Pre,
+    m_WM_Trailer_Visit_Detail_PRE,
 )
 
 from logging import getLogger, INFO
