@@ -384,55 +384,15 @@ set_I_P_lst = [
     "WM_PICK_LOCN_HDR_SLOTTING",
 ]
 
-set_A_I_lst = [
-    "WM_ASN",
-    "WM_ASN_DETAIL",
-    "WM_ASN_DETAIL_STATUS",
-    "WM_ASN_STATUS",
-    "WM_BUSINESS_PARTNER",
-    "WM_C_LEADER_AUDIT",
-    "WM_C_TMS_PLAN",
-    "WM_CARRIER_CODE",
-    "WM_COMMODITY_CODE",
-    "WM_DO_STATUS",
-    "WM_DOCK_DOOR",
-    "WM_E_ACT",
-    "WM_E_ACT_ELM",
-    "WM_E_ACT_ELM_CRIT",
-    "WM_E_AUD_LOG",
-    "WM_E_CRIT_VAL",
-    "WM_E_ELM",
-    "WM_E_ELM_CRIT",
-    "WM_E_EMP_DTL",
-    "WM_E_EMP_STAT_CODE",
-    "WM_E_EVNT_SMRY_HDR",
-    "WM_E_JOB_FUNCTION",
-    "WM_E_LABOR_TYPE_CODE",
-    "WM_E_MSRMNT",
-    "WM_E_MSRMNT_RULE",
-    "WM_E_MSRMNT_RULE_CALC",
-    "WM_E_MSRMNT_RULE_CONDITION",
-    "WM_E_SHIFT",
-    "WM_EQUIPMENT",
-    "WM_EQUIPMENT_INSTANCE",
-    "WM_FACILITY",
-    "WM_ILM_APPOINTMENT_OBJECTS",
-    "WM_ILM_APPOINTMENT_STATUS",
-    "WM_ILM_APPOINTMENT_TYPE",
-    "WM_ILM_APPOINTMENTS",
-    "WM_ILM_APPT_EQUIPMENTS",
-]
+set_A_I_lst = [m_WM_Asn_PRE]
 
 
 def tableGroupsNfunc(dcnbr, env, setNo):
     if setNo == "set_A_I_1":
         for table in set_A_I_lst[:18]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_A_I_2":
         for table in set_A_I_lst[18:36]:
             preTable_method_name = "m_".join(table).join("_PRE")
