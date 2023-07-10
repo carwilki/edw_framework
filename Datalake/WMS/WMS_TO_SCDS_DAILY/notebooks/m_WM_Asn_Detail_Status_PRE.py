@@ -82,12 +82,13 @@ def m_WM_Asn_Detail_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 4
 
 
-    Shortcut_to_WM_ASN_DETAIL_STATUS_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(ASN_DETAIL_STATUS AS BIGINT) as ASN_DETAIL_STATUS", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_ASN_DETAIL_STATUS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ASN_DETAIL_STATUS AS SMALLINT) as ASN_DETAIL_STATUS",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+    
     overwriteDeltaPartition(Shortcut_to_WM_ASN_DETAIL_STATUS_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_ASN_DETAIL_STATUS_PRE is written to the target table - "

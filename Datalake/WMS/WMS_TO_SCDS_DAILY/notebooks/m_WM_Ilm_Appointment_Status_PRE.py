@@ -86,17 +86,18 @@ def m_WM_Ilm_Appointment_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 6
 
 
-    Shortcut_to_WM_ILM_APPOINTMENT_STATUS_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(APPT_STATUS_CODE AS BIGINT) as APPT_STATUS_CODE", \
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_ILM_APPOINTMENT_STATUS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(APPT_STATUS_CODE AS SMALLINT) as APPT_STATUS_CODE",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_ILM_APPOINTMENT_STATUS_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_ILM_APPOINTMENT_STATUS_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

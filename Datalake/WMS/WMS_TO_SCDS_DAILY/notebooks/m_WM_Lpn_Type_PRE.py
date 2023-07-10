@@ -72,13 +72,14 @@ def m_WM_Lpn_Type_PRE(dcnbr, env):
     # COLUMN COUNT: 5
     
     
-    Shortcut_to_WM_LPN_TYPE_PRE = EXPTRANS.selectExpr( \
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-    	"CAST(LPN_TYPE AS BIGINT) as LPN_TYPE", \
-    	"CAST(DESCRIPTION AS STRING) as DESCRIPTION", \
-    	"CAST(PHYSICAL_ENTITY_CODE AS STRING) as PHYSICAL_ENTITY_CODE", \
-    	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LPN_TYPE_PRE = EXPTRANS.selectExpr(
+    "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+    "CAST(LPN_TYPE AS SMALLINT) as LPN_TYPE",
+    "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+    "CAST(PHYSICAL_ENTITY_CODE AS STRING) as PHYSICAL_ENTITY_CODE",
+    "CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
     
     overwriteDeltaPartition(Shortcut_to_WM_LPN_TYPE_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_LPN_TYPE_PRE is written to the target table - " + target_table_name)

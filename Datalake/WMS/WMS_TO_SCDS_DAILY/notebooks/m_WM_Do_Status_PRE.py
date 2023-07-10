@@ -82,11 +82,11 @@ def m_WM_Do_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 4
 
 
-    Shortcut_to_WM_DO_STATUS_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_exp AS BIGINT) as DC_NBR", 
-        "CAST(ORDER_STATUS AS BIGINT) as ORDER_STATUS", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(LOADTSTAMP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_DO_STATUS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_exp AS SMALLINT) as DC_NBR",
+        "CAST(ORDER_STATUS AS SMALLINT) as ORDER_STATUS",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(LOADTSTAMP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
     overwriteDeltaPartition(Shortcut_to_WM_DO_STATUS_PRE,"DC_NBR",dcnbr,target_table_name)

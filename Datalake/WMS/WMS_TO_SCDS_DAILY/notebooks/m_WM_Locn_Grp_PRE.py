@@ -100,24 +100,25 @@ def m_WM_Locn_Grp_PRE(dcnbr, env):
     # COLUMN COUNT: 13
 
 
-    Shortcut_to_WM_LOCN_GRP_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LOCN_GRP_ID AS BIGINT) as LOCN_GRP_ID", \
-        "CAST(GRP_TYPE AS BIGINT) as GRP_TYPE", \
-        "CAST(LOCN_ID AS STRING) as LOCN_ID", \
-        "CAST(GRP_ATTR AS STRING) as GRP_ATTR", \
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", \
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", \
-        "CAST(USER_ID AS STRING) as USER_ID", \
-        "CAST(LOCN_HDR_ID AS BIGINT) as LOCN_HDR_ID", \
-        "CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LOCN_GRP_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(LOCN_GRP_ID AS INT) as LOCN_GRP_ID",
+        "CAST(GRP_TYPE AS SMALLINT) as GRP_TYPE",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(GRP_ATTR AS STRING) as GRP_ATTR",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(LOCN_HDR_ID AS INT) as LOCN_HDR_ID",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_LOCN_GRP_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

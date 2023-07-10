@@ -109,28 +109,28 @@ def m_WM_E_Act_Elm_PRE(dcnbr, env):
     # COLUMN COUNT: 17
 
 
-    Shortcut_to_WM_E_ACT_ELM_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(ACT_ID AS BIGINT) as ACT_ID", 
-        "CAST(ELM_ID AS BIGINT) as ELM_ID", 
-        "CAST(TIME_ALLOW AS BIGINT) as TIME_ALLOW", 
-        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT", 
-        "CAST(SEQ_NBR AS BIGINT) as SEQ_NBR", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(USER_ID AS STRING) as USER_ID", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(AVG_ACT_ID AS BIGINT) as AVG_ACT_ID", 
-        "CAST(AVG_BY AS STRING) as AVG_BY", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_ACT_ELM_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ACT_ID AS INT) as ACT_ID",
+        "CAST(ELM_ID AS INT) as ELM_ID",
+        "CAST(TIME_ALLOW AS DECIMAL(9,4)) as TIME_ALLOW",
+        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT",
+        "CAST(SEQ_NBR AS INT) as SEQ_NBR",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(AVG_ACT_ID AS INT) as AVG_ACT_ID",
+        "CAST(AVG_BY AS STRING) as AVG_BY",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
-
+    
     overwriteDeltaPartition(Shortcut_to_WM_E_ACT_ELM_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_ACT_ELM_PRE is written to the target table - "
         + target_table_name
-    )
+    )    
