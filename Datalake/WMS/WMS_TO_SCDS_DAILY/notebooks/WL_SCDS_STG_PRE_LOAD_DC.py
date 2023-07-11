@@ -432,44 +432,29 @@ def tableGroupsNfunc(dcnbr, env, setNo):
             logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_A_I_2":
         for table in set_A_I_lst[18:36]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_I_P_1":
         for table in set_I_P_lst[:18]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_I_P_2":
         for table in set_I_P_lst[18:36]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_P_Y_1":
         for table in set_I_P_lst[:18]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
     else:
         for table in set_I_P_lst[18:36]:
-            preTable_method_name = "m_".join(table).join("_PRE")
-            possibles = globals().copy()
-            possibles.update(locals())
-            preTable_func = possibles.get(preTable_method_name)
-            preTable_func(dcnbr, env)
-            logger.info(f"{0} executed".format(preTable_func))
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))
 
 
 tableGroupsNfunc(dcnbr, env, setNo)
