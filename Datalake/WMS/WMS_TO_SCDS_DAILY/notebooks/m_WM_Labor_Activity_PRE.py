@@ -114,7 +114,7 @@ def m_WM_Labor_Activity_PRE(dcnbr, env):
     # COLUMN COUNT: 20
 
 
-Shortcut_to_WM_LABOR_ACTIVITY_PRE = EXPTRANS.selectExpr(
+    Shortcut_to_WM_LABOR_ACTIVITY_PRE = EXPTRANS.selectExpr(
         "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
         "CAST(LABOR_ACTIVITY_ID AS INT) as LABOR_ACTIVITY_ID",
         "CAST(NAME AS STRING) as NAME",
