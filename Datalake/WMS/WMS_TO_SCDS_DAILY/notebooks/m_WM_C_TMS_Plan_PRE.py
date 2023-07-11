@@ -80,7 +80,7 @@ def m_WM_C_TMS_Plan_PRE(dcnbr, env):
                 C_TMS_PLAN.NUM_PALLETS,
                 C_TMS_PLAN.WEIGHT,
                 C_TMS_PLAN.VOLUME,
-                C_TMS_PLAN.DROP_DEAD_DT,
+                cast(C_TMS_PLAN.DROP_DEAD_DT as timestamp) as DROP_DEAD_DT,
                 C_TMS_PLAN.ETA,
                 C_TMS_PLAN.SPLIT_ROUTE,
                 C_TMS_PLAN.TMS_CARRIER_ID,
@@ -93,7 +93,7 @@ def m_WM_C_TMS_Plan_PRE(dcnbr, env):
                 C_TMS_PLAN.DEL_TYPE,
                 C_TMS_PLAN.TMS_TRAILER_ID,
                 C_TMS_PLAN.CARRIER_REF_NUM,
-                C_TMS_PLAN.TMS_PLAN_TIME,
+                cast(C_TMS_PLAN.TMS_PLAN_TIME as timestamp) as TMS_PLAN_TIME,
                 C_TMS_PLAN.PLT_WEIGHT,
                 C_TMS_PLAN.ERROR_SEQ_NBR,
                 C_TMS_PLAN.STAT_CODE,
@@ -102,7 +102,6 @@ def m_WM_C_TMS_Plan_PRE(dcnbr, env):
                 C_TMS_PLAN.USER_ID
             FROM {source_schema}.C_TMS_PLAN
             WHERE (TRUNC( CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( MOD_DATE_TIME) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
-
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
     # COLUMN COUNT: 44
