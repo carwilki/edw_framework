@@ -63,7 +63,7 @@ def m_WM_E_Evnt_Smry_Hdr_PRE(dcnbr, env):
                 E_EVNT_SMRY_HDR.TRAN_NBR,
                 E_EVNT_SMRY_HDR.CO,
                 E_EVNT_SMRY_HDR.DIV,
-                E_EVNT_SMRY_HDR.SCHED_START_DATE,
+                cast(E_EVNT_SMRY_HDR.SCHED_START_DATE as timestamp) as SCHED_START_DATE,
                 E_EVNT_SMRY_HDR.REF_CODE,
                 E_EVNT_SMRY_HDR.REF_NBR,
                 E_EVNT_SMRY_HDR.LOGIN_USER_ID,
@@ -108,7 +108,7 @@ def m_WM_E_Evnt_Smry_Hdr_PRE(dcnbr, env):
                 E_EVNT_SMRY_HDR.APRV_SPVSR_DATE_TIME,
                 E_EVNT_SMRY_HDR.VERSION_ID,
                 E_EVNT_SMRY_HDR.TEAM_CHG_ID,
-                E_EVNT_SMRY_HDR.ACTUAL_END_DATE,
+                cast(E_EVNT_SMRY_HDR.ACTUAL_END_DATE as timestamp) as ACTUAL_END_DATE,
                 E_EVNT_SMRY_HDR.SPVSR_LOGIN_USER_ID,
                 E_EVNT_SMRY_HDR.PAID_BRK_OVERLAP,
                 E_EVNT_SMRY_HDR.UNPAID_BRK_OVERLAP,
@@ -116,12 +116,12 @@ def m_WM_E_Evnt_Smry_Hdr_PRE(dcnbr, env):
                 E_EVNT_SMRY_HDR.HDR_MSG_ID,
                 E_EVNT_SMRY_HDR.ACT_ID,
                 E_EVNT_SMRY_HDR.PERF_SMRY_TRAN_ID,
-                E_EVNT_SMRY_HDR.ORIG_EVNT_START_TIME,
-                E_EVNT_SMRY_HDR.ORIG_EVNT_END_TIME,
+                cast(E_EVNT_SMRY_HDR.ORIG_EVNT_START_TIME as timestamp) as ORIG_EVNT_START_TIME,
+                cast(E_EVNT_SMRY_HDR.ORIG_EVNT_END_TIME as timestamp) as ORIG_EVNT_END_TIME,
                 E_EVNT_SMRY_HDR.ADJ_REASON_CODE,
                 E_EVNT_SMRY_HDR.ADJ_REF_TRAN_NBR,
                 E_EVNT_SMRY_HDR.CONFLICT,
-                E_EVNT_SMRY_HDR.TEAM_BEGIN_TIME,
+                cast(E_EVNT_SMRY_HDR.TEAM_BEGIN_TIME as timestamp) as TEAM_BEGIN_TIME,
                 E_EVNT_SMRY_HDR.THRUPUT_GOAL,
                 E_EVNT_SMRY_HDR.THRUPUT_MIN,
                 E_EVNT_SMRY_HDR.DISPLAY_UOM,
@@ -133,12 +133,14 @@ def m_WM_E_Evnt_Smry_Hdr_PRE(dcnbr, env):
                 E_EVNT_SMRY_HDR.JOB_FUNC_ID,
                 E_EVNT_SMRY_HDR.COMP_EMPLOYEE_DAY_ID,
                 E_EVNT_SMRY_HDR.COMP_EVENT_SUMMARY_HEADER_ID,
-                E_EVNT_SMRY_HDR.ASSIGNMENT_START_TIME,
-                E_EVNT_SMRY_HDR.ASSIGNMENT_END_TIME,
+                cast(E_EVNT_SMRY_HDR.ASSIGNMENT_START_TIME as timestamp) as ASSIGNMENT_START_TIME,
+                cast(E_EVNT_SMRY_HDR.ASSIGNMENT_END_TIME as timestamp) as ASSIGNMENT_END_TIME,
                 E_EVNT_SMRY_HDR.REFLECTIVE_CODE,
                 E_EVNT_SMRY_HDR.COMP_ASSIGNMENT_ID
             FROM {source_schema}.E_EVNT_SMRY_HDR
             WHERE (TRUNC( E_EVNT_SMRY_HDR.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (TRUNC( E_EVNT_SMRY_HDR.MOD_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+
+
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
