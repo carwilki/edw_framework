@@ -75,12 +75,12 @@ def m_WM_Stop_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 5
     
     
-    Shortcut_to_WM_STOP_STATUS_PRE = EXPTRANS.selectExpr( 
-    	"CAST(DC_NBR AS BIGINT) as DC_NBR", 
-    	"CAST(STOP_STATUS AS BIGINT) as STOP_STATUS", 
-    	"CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-    	"CAST(SHORT_DESC AS STRING) as SHORT_DESC", 
-    	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_STOP_STATUS_PRE = EXPTRANS.selectExpr(
+    "CAST(DC_NBR AS SMALLINT) as DC_NBR",
+    "CAST(STOP_STATUS AS SMALLINT) as STOP_STATUS",
+    "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+    "CAST(SHORT_DESC AS STRING) as SHORT_DESC",
+    "CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
     overwriteDeltaPartition(Shortcut_to_WM_STOP_STATUS_PRE, "DC_NBR", dcnbr, target_table_name)
