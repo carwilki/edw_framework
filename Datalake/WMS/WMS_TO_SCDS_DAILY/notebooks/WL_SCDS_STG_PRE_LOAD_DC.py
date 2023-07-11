@@ -384,7 +384,44 @@ set_I_P_lst = [
     "WM_PICK_LOCN_HDR_SLOTTING",
 ]
 
-set_A_I_lst = [m_WM_Asn_PRE]
+set_A_I_lst = [
+    m_WM_Asn_PRE,
+    m_WM_Asn_Detail_PRE,
+    m_WM_Asn_Detail_Status_PRE,
+    m_WM_Asn_Status_PRE,
+    m_WM_Business_Partner_PRE,
+    m_WM_C_Leader_Audit_PRE,
+    m_WM_C_TMS_Plan_PRE,
+    m_WM_Carrier_Code_PRE,
+    m_WM_Commodity_Code_PRE,
+    m_WM_Do_Status_PRE,
+    m_WM_Dock_Door_PRE,
+    m_WM_E_Act_PRE,
+    m_WM_E_Act_Elm_PRE,
+    m_WM_E_Act_Elm_Crit_PRE,
+    m_WM_E_Aud_Log_PRE,
+    m_WM_E_Crit_Val_PRE,
+    m_WM_E_Elm_PRE,
+    m_WM_E_Elm_Crit_PRE,
+    m_WM_E_Emp_Dtl_PRE,
+    m_WM_E_Emp_Stat_Code_PRE,
+    m_WM_E_Evnt_Smry_Hdr_PRE,
+    m_WM_E_Job_Function_PRE,
+    m_WM_E_Labor_Type_Code_PRE,
+    m_WM_E_Msrmnt_PRE,
+    m_WM_E_Msrmnt_Rule_PRE,
+    m_WM_E_Msrmnt_Rule_Calc_PRE,
+    m_WM_E_Msrmnt_Rule_Condition_PRE,
+    m_WM_E_Shift_PRE,
+    m_WM_Equipment_PRE,
+    m_WM_Equipment_Instance_PRE,
+    m_WM_Facility_PRE,
+    m_WM_Ilm_Appointment_Objects_PRE,
+    m_WM_Ilm_Appointment_Status_PRE,
+    m_WM_Ilm_Appointment_Type_PRE,
+    m_WM_Ilm_Appointments_PRE,
+    m_WM_Ilm_Appt_Equipments_PRE,
+]
 
 
 def tableGroupsNfunc(dcnbr, env, setNo):
