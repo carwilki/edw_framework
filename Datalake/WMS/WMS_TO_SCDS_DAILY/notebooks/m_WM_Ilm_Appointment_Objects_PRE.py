@@ -26,7 +26,7 @@ def m_WM_Ilm_Appointment_Objects_PRE(dcnbr, env):
 
     refine = getEnvPrefix(env) + 'refine'
     raw = getEnvPrefix(env) + 'raw'
-    tableName = "WM_ILM_APPOINTMENT_OBJECTS_PREP"
+    tableName = "WM_ILM_APPOINTMENT_OBJECTS_PRE"
 
     schemaName = raw
     source_schema = "WMSMIS"
@@ -46,11 +46,12 @@ def m_WM_Ilm_Appointment_Objects_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
 
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ILM_APPOINTMENT_OBJECTS, type SOURCE 
