@@ -42,6 +42,9 @@ def m_WM_Facility_PRE(dcnbr, env):
         raise ValueError("DC_NBR is not set")
 
     starttime = datetime.now() #start timestamp of the script
+    
+    # Read in relation source variables
+    (username, password, connection_string) = getConfig(dcnbr, env)
 
 
     # COMMAND ----------
@@ -49,8 +52,7 @@ def m_WM_Facility_PRE(dcnbr, env):
     dcnbr = dcnbr.strip()[2:]
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
-    # Read in relation source variables
-    (username, password, connection_string) = getConfig(dcnbr, env)
+    
 
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_FACILITY, type SOURCE 
