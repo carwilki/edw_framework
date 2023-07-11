@@ -1,4 +1,4 @@
-#Code converted on 2023-06-24 13:37:55
+# Code converted on 2023-06-24 13:37:55
 import os
 import argparse
 from pyspark.sql import *
@@ -13,36 +13,34 @@ from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
-
 def m_WM_E_Emp_Dtl_PRE(dcnbr, env):
     from logging import getLogger, INFO
+
     logger = getLogger()
     logger.info("inside m_WM_E_Emp_Dtl_PRE function")
 
     spark = SparkSession.getActiveSession()
     dbutils = DBUtils(spark)
 
-    if env is None or env == '':
-        raise ValueError('env is not set')
+    if env is None or env == "":
+        raise ValueError("env is not set")
 
-    refine = getEnvPrefix(env) + 'refine'
-    raw = getEnvPrefix(env) + 'raw'
+    refine = getEnvPrefix(env) + "refine"
+    raw = getEnvPrefix(env) + "raw"
     tableName = "WM_E_EMP_DTL_PRE"
 
     schemaName = raw
     source_schema = "WMSMIS"
 
-
     target_table_name = schemaName + "." + tableName
 
     refine_table_name = tableName[:-4]
-
 
     # Set global variables
     if dcnbr is None or dcnbr == "":
         raise ValueError("DC_NBR is not set")
 
-    starttime = datetime.now() #start timestamp of the script
+    starttime = datetime.now()  # start timestamp of the script
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
@@ -50,10 +48,10 @@ def m_WM_E_Emp_Dtl_PRE(dcnbr, env):
     # COMMAND ----------
     # Variable_declaration_comment
     dcnbr = dcnbr.strip()[2:]
-    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    Prev_Run_Dt = genPrevRunDt(refine_table_name, refine, raw)
 
     # COMMAND ----------
-    # Processing node SQ_Shortcut_to_E_EMP_DTL, type SOURCE 
+    # Processing node SQ_Shortcut_to_E_EMP_DTL, type SOURCE
     # COLUMN COUNT: 30
 
     SQ_Shortcut_to_E_EMP_DTL = jdbcOracleConnection(
@@ -89,60 +87,68 @@ def m_WM_E_Emp_Dtl_PRE(dcnbr, env):
                 E_EMP_DTL.LAST_UPDATED_DTTM,
                 E_EMP_DTL.EXCLUDE_AUTO_CICO
             FROM {source_schema}.E_EMP_DTL
-            WHERE (TRUNC( E_EMP_DTL.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.MOD_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.LAST_UPDATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            WHERE (TRUNC( E_EMP_DTL.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.MOD_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_EMP_DTL.LAST_UPDATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",
+        username,
+        password,
+        connection_string,
+    ).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
-    # Processing node EXPTRANS, type EXPRESSION 
+    # Processing node EXPTRANS, type EXPRESSION
     # COLUMN COUNT: 32
 
     # for each involved DataFrame, append the dataframe name to each column
-    SQ_Shortcut_to_E_EMP_DTL_temp = SQ_Shortcut_to_E_EMP_DTL.toDF(*["SQ_Shortcut_to_E_EMP_DTL___" + col for col in SQ_Shortcut_to_E_EMP_DTL.columns])
+    SQ_Shortcut_to_E_EMP_DTL_temp = SQ_Shortcut_to_E_EMP_DTL.toDF(
+        *[
+            "SQ_Shortcut_to_E_EMP_DTL___" + col
+            for col in SQ_Shortcut_to_E_EMP_DTL.columns
+        ]
+    )
 
-    EXPTRANS = SQ_Shortcut_to_E_EMP_DTL_temp.selectExpr( 
-        "SQ_Shortcut_to_E_EMP_DTL___sys_row_id as sys_row_id", 
-        f"{dcnbr} as DC_NBR_EXP", 
-        "SQ_Shortcut_to_E_EMP_DTL___EMP_ID as EMP_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___EFF_DATE_TIME as EFF_DATE_TIME", 
-        "SQ_Shortcut_to_E_EMP_DTL___EMP_STAT_ID as EMP_STAT_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___PAY_RATE as PAY_RATE", 
-        "SQ_Shortcut_to_E_EMP_DTL___PAY_SCALE_ID as PAY_SCALE_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___SPVSR_EMP_ID as SPVSR_EMP_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___DEPT_ID as DEPT_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___SHIFT_ID as SHIFT_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___ROLE_ID as ROLE_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___USER_DEF_FIELD_1 as USER_DEF_FIELD_1", 
-        "SQ_Shortcut_to_E_EMP_DTL___USER_DEF_FIELD_2 as USER_DEF_FIELD_2", 
-        "SQ_Shortcut_to_E_EMP_DTL___CMNT as CMNT", 
-        "SQ_Shortcut_to_E_EMP_DTL___CREATE_DATE_TIME as CREATE_DATE_TIME", 
-        "SQ_Shortcut_to_E_EMP_DTL___MOD_DATE_TIME as MOD_DATE_TIME", 
-        "SQ_Shortcut_to_E_EMP_DTL___USER_ID as USER_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___WHSE as WHSE", 
-        "SQ_Shortcut_to_E_EMP_DTL___JOB_FUNC_ID as JOB_FUNC_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___STARTUP_TIME as STARTUP_TIME", 
-        "SQ_Shortcut_to_E_EMP_DTL___CLEANUP_TIME as CLEANUP_TIME", 
-        "SQ_Shortcut_to_E_EMP_DTL___MISC_TXT_1 as MISC_TXT_1", 
-        "SQ_Shortcut_to_E_EMP_DTL___MISC_TXT_2 as MISC_TXT_2", 
-        "SQ_Shortcut_to_E_EMP_DTL___MISC_NUM_1 as MISC_NUM_1", 
-        "SQ_Shortcut_to_E_EMP_DTL___MISC_NUM_2 as MISC_NUM_2", 
-        "SQ_Shortcut_to_E_EMP_DTL___DFLT_PERF_GOAL as DFLT_PERF_GOAL", 
-        "SQ_Shortcut_to_E_EMP_DTL___VERSION_ID as VERSION_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___IS_SUPER as IS_SUPER", 
-        "SQ_Shortcut_to_E_EMP_DTL___EMP_DTL_ID as EMP_DTL_ID", 
-        "SQ_Shortcut_to_E_EMP_DTL___CREATED_DTTM as CREATED_DTTM", 
-        "SQ_Shortcut_to_E_EMP_DTL___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", 
-        "SQ_Shortcut_to_E_EMP_DTL___EXCLUDE_AUTO_CICO as EXCLUDE_AUTO_CICO", 
-        "CURRENT_TIMESTAMP() as LOAD_TSTMP_EXP" 
+    EXPTRANS = SQ_Shortcut_to_E_EMP_DTL_temp.selectExpr(
+        "SQ_Shortcut_to_E_EMP_DTL___sys_row_id as sys_row_id",
+        f"{dcnbr} as DC_NBR_EXP",
+        "SQ_Shortcut_to_E_EMP_DTL___EMP_ID as EMP_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___EFF_DATE_TIME as EFF_DATE_TIME",
+        "SQ_Shortcut_to_E_EMP_DTL___EMP_STAT_ID as EMP_STAT_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___PAY_RATE as PAY_RATE",
+        "SQ_Shortcut_to_E_EMP_DTL___PAY_SCALE_ID as PAY_SCALE_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___SPVSR_EMP_ID as SPVSR_EMP_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___DEPT_ID as DEPT_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___SHIFT_ID as SHIFT_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___ROLE_ID as ROLE_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___USER_DEF_FIELD_1 as USER_DEF_FIELD_1",
+        "SQ_Shortcut_to_E_EMP_DTL___USER_DEF_FIELD_2 as USER_DEF_FIELD_2",
+        "SQ_Shortcut_to_E_EMP_DTL___CMNT as CMNT",
+        "SQ_Shortcut_to_E_EMP_DTL___CREATE_DATE_TIME as CREATE_DATE_TIME",
+        "SQ_Shortcut_to_E_EMP_DTL___MOD_DATE_TIME as MOD_DATE_TIME",
+        "SQ_Shortcut_to_E_EMP_DTL___USER_ID as USER_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___WHSE as WHSE",
+        "SQ_Shortcut_to_E_EMP_DTL___JOB_FUNC_ID as JOB_FUNC_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___STARTUP_TIME as STARTUP_TIME",
+        "SQ_Shortcut_to_E_EMP_DTL___CLEANUP_TIME as CLEANUP_TIME",
+        "SQ_Shortcut_to_E_EMP_DTL___MISC_TXT_1 as MISC_TXT_1",
+        "SQ_Shortcut_to_E_EMP_DTL___MISC_TXT_2 as MISC_TXT_2",
+        "SQ_Shortcut_to_E_EMP_DTL___MISC_NUM_1 as MISC_NUM_1",
+        "SQ_Shortcut_to_E_EMP_DTL___MISC_NUM_2 as MISC_NUM_2",
+        "SQ_Shortcut_to_E_EMP_DTL___DFLT_PERF_GOAL as DFLT_PERF_GOAL",
+        "SQ_Shortcut_to_E_EMP_DTL___VERSION_ID as VERSION_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___IS_SUPER as IS_SUPER",
+        "SQ_Shortcut_to_E_EMP_DTL___EMP_DTL_ID as EMP_DTL_ID",
+        "SQ_Shortcut_to_E_EMP_DTL___CREATED_DTTM as CREATED_DTTM",
+        "SQ_Shortcut_to_E_EMP_DTL___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM",
+        "SQ_Shortcut_to_E_EMP_DTL___EXCLUDE_AUTO_CICO as EXCLUDE_AUTO_CICO",
+        "CURRENT_TIMESTAMP() as LOAD_TSTMP_EXP",
     )
 
     # COMMAND ----------
-    # Processing node Shortcut_to_WM_E_EMP_DTL_PRE, type TARGET 
+    # Processing node Shortcut_to_WM_E_EMP_DTL_PRE, type TARGET
     # COLUMN COUNT: 32
-
 
     Shortcut_to_WM_E_EMP_DTL_PRE = EXPTRANS.selectExpr(
         "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
         "CAST(EMP_DTL_ID AS INT) as EMP_DTL_ID",
-        "CAST(EMP_ID AS DECIMAL(18,0)) as EMP_ID",
+        "CAST(EMP_ID AS BIGINT) as EMP_ID",
         "CAST(EFF_DATE_TIME AS TIMESTAMP) as EFF_DATE_TIME",
         "CAST(EMP_STAT_ID AS INT) as EMP_STAT_ID",
         "CAST(PAY_RATE AS DECIMAL(9,2)) as PAY_RATE",
@@ -171,11 +177,13 @@ def m_WM_E_Emp_Dtl_PRE(dcnbr, env):
         "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
         "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
         "CAST(EXCLUDE_AUTO_CICO AS STRING) as EXCLUDE_AUTO_CICO",
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP",
     )
 
-    overwriteDeltaPartition(Shortcut_to_WM_E_EMP_DTL_PRE,"DC_NBR",dcnbr,target_table_name)
+    overwriteDeltaPartition(
+        Shortcut_to_WM_E_EMP_DTL_PRE, "DC_NBR", dcnbr, target_table_name
+    )
     logger.info(
         "Shortcut_to_WM_E_EMP_DTL_PRE is written to the target table - "
         + target_table_name
-    )    
+    )
