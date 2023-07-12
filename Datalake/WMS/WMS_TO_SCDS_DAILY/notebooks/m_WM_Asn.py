@@ -13,13 +13,16 @@ from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
 # COMMAND ----------
 
-parser = argparse.ArgumentParser()
+# parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
-parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+# parser.add_argument('env', type=str, help='Env Variable')
+# args = parser.parse_args()
+# env = args.env
+# env = args.env
+env = 'dev'
+
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -776,9 +779,9 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", \
 	"FIL_UNCHANGED_RECORDS___SHIPMENT_ID as SHIPMENT_ID", \
 	"FIL_UNCHANGED_RECORDS___TC_SHIPMENT_ID as TC_SHIPMENT_ID", \
-    "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___VERIFICATION_ATTEMPTED)) IN ('Y', '1') THEN '1' ELSE '0' END as VERIFICATION_ATTEMPTED_EXP", \	
-    "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___FLOW_THRU_ALLOC_IN_PROG)) IN ('Y', '1') THEN '1' ELSE '0' END as FLOW_THRU_ALLOC_IN_PROG_EXP", \
-    "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___ALLOCATION_COMPLETED)) IN ('Y', '1') THEN '1' ELSE '0' END as ALLOCATION_COMPLETED_EXP", \
+  "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___VERIFICATION_ATTEMPTED)) IN ('Y', '1') THEN '1' ELSE '0' END as VERIFICATION_ATTEMPTED_EXP", \
+  "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___FLOW_THRU_ALLOC_IN_PROG)) IN ('Y', '1') THEN '1' ELSE '0' END as FLOW_THRU_ALLOC_IN_PROG_EXP", \
+  "CASE WHEN TRIM(UPPER(FIL_UNCHANGED_RECORDS___ALLOCATION_COMPLETED)) IN ('Y', '1') THEN '1' ELSE '0' END as ALLOCATION_COMPLETED_EXP", \
 	"FIL_UNCHANGED_RECORDS___EQUIPMENT_TYPE as EQUIPMENT_TYPE", \
 	"FIL_UNCHANGED_RECORDS___ASN_ORGN_TYPE as ASN_ORGN_TYPE", \
 	"FIL_UNCHANGED_RECORDS___DC_ORD_NBR as DC_ORD_NBR", \
@@ -984,7 +987,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)) , lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ASN1, type TARGET 
