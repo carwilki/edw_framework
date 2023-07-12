@@ -14,12 +14,13 @@ from Datalake.utils.logger import *
 
 # COMMAND ----------
 
-# parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
-# parser.add_argument('env', type=str, help='Env Variable')
+parser.add_argument('env', type=str, help='Env Variable')
 # args = parser.parse_args()
+# env = args.env
 env = 'dev'
 
 if env is None or env == '':
@@ -174,7 +175,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 
 Shortcut_to_WM_ASN_DETAIL_STATUS1 = UPD_INS_UPD.selectExpr( 
 	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(ASN_DETAIL_STATUS AS BIGINT) as WM_ASN_DETAIL_STATUS", 
+	"CAST(ASN_DETAIL_STATUS AS SMALLINT) as WM_ASN_DETAIL_STATUS",
 	"CAST(DESCRIPTION AS STRING) as WM_ASN_DETAIL_STATUS_DESC", 
 	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
