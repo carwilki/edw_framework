@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -32,7 +32,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 refined_perf_table = f"{refine}.WM_CARRIER_CODE"
-raw_perf_table = f"{raw}.WM_CARRIER_CODEL_PRE"
+raw_perf_table = f"{raw}.WM_CARRIER_CODE_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 

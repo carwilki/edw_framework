@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -161,7 +161,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_COMMODITY_CODE_temp.selectExpr( \
 	"JNR_WM_COMMODITY_CODE___i_WM_CREATED_TSTMP as i_WM_CREATED_TSTMP", \
 	"JNR_WM_COMMODITY_CODE___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
 	"JNR_WM_COMMODITY_CODE___i_LOAD_TSTMP as i_LOAD_TSTMP") \
-    .filter("i_WM_COMMODITY_CD_ID is Null OR (  i_WM_COMMODITY_CD_ID is NOT Null AND ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01') \
+    .filter("i_WM_COMMODITY_CD_ID is Null OR (  i_WM_COMMODITY_CD_ID is NOT Null AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') \
             OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
