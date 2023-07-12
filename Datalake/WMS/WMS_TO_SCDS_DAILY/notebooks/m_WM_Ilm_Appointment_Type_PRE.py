@@ -46,10 +46,11 @@ def m_WM_Ilm_Appointment_Type_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
 
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ILM_APPOINTMENT_TYPE, type SOURCE 
