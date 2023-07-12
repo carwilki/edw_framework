@@ -446,10 +446,15 @@ def tableGroupsNfunc(dcnbr, env, setNo):
             table(dcnbr, env)
             logger.info(f"{0} executed".format(str(table)))
     elif setNo == "set_P_Y_1":
-        for table in set_I_P_lst[:18]:
+        for table in set_P_Y_lst[:18]:
             # preTable_method_name = "m_".join(table).join("_PRE")
             table(dcnbr, env)
             logger.info(f"{0} executed".format(str(table)))
+    elif setNo == "set_P_Y_2":
+        for table in set_P_Y_lst[18:36]:
+            # preTable_method_name = "m_".join(table).join("_PRE")
+            table(dcnbr, env)
+            logger.info(f"{0} executed".format(str(table)))            
     else:
         for table in set_I_P_lst[18:36]:
             # preTable_method_name = "m_".join(table).join("_PRE")
