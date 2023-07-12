@@ -130,7 +130,7 @@ def m_WM_E_Shift_PRE(dcnbr, env):
 
     Shortcut_to_WM_E_SHIFT_PRE1 = EXPTRANS.selectExpr(
         "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
-        "CAST(SHIFT_ID AS BIGINT) as SHIFT_ID",
+        "CAST(SHIFT_ID AS INT) as SHIFT_ID",
         "CAST(EFF_DATE AS TIMESTAMP) as EFF_DATE",
         "CAST(SHIFT_CODE AS STRING) as SHIFT_CODE",
         "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
