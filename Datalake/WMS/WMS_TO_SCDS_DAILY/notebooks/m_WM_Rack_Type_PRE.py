@@ -140,7 +140,7 @@ def m_WM_Rack_Type_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_RACK_TYPE_temp.selectExpr( 
         "SQ_Shortcut_to_RACK_TYPE___sys_row_id as sys_row_id", 
-        "{DC_NBR} as DC_NBR_exp", 
+        f"{dcnbr} as DC_NBR_exp", 
         "SQ_Shortcut_to_RACK_TYPE___RACK_TYPE as RACK_TYPE", 
         "SQ_Shortcut_to_RACK_TYPE___WHSE_CODE as WHSE_CODE", 
         "SQ_Shortcut_to_RACK_TYPE___RT_NAME as RT_NAME", 
