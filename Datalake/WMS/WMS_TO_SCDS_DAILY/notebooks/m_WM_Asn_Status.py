@@ -6,16 +6,19 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from Utils import getEnvPrefix,getConfig
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 
 if env is None or env == '':
@@ -121,7 +124,7 @@ FIL_UNCHANGED_RECORDS = JNR_ASN_STATUS_temp.selectExpr( \
 	"JNR_ASN_STATUS___i_WM_CREATED_TSTMP as i_WM_CREATED_TSTMP", \
 	"JNR_ASN_STATUS___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
 	"JNR_ASN_STATUS___i_LOAD_TSTMP as i_LOAD_TSTMP") \
-    .filter("i_WM_ASN_STATUS is Null OR (  i_WM_ASN_STATUSis Null AND \
+	    .filter("i_WM_ASN_STATUS is Null OR (  i_WM_ASN_STATUS is Null AND \
              ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') \
              OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
