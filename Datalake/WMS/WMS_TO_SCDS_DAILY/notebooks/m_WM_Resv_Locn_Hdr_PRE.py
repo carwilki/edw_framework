@@ -70,7 +70,7 @@ def m_WM_Resv_Locn_Hdr_PRE(dcnbr, env):
                     RESV_LOCN_HDR.WM_VERSION_ID,
                     RESV_LOCN_HDR.DEDCTN_ITEM_ID,
                     RESV_LOCN_HDR.LOCN_HDR_ID
-                FROM RESV_LOCN_HDR
+                FROM {source_schema}.RESV_LOCN_HDR
                 WHERE  (TRUNC(CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (TRUNC(MOD_DATE_TIME) >=  TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14)"""
     
 
