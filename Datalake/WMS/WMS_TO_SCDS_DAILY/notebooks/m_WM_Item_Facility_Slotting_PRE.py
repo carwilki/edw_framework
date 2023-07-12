@@ -46,11 +46,12 @@ def m_WM_Item_Facility_Slotting_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_FACILITY_SLOTTING, type SOURCE 
     # COLUMN COUNT: 91

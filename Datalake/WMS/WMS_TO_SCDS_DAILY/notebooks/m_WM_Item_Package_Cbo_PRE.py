@@ -45,11 +45,12 @@ def m_WM_Item_Package_Cbo_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_PACKAGE_CBO, type SOURCE 
     # COLUMN COUNT: 23
