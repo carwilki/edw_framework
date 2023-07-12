@@ -246,9 +246,9 @@ def m_WM_Slot_Item_PRE(dcnbr, env):
     
     Shortcut_to_WM_SLOT_ITEM_PRE = EXPTRANS.selectExpr(
         "CAST(DC_NBR AS SMALLINT) as DC_NBR",
-        "CAST(SLOTITEM_ID AS BIGINT) as SLOT_ITEM_ID",
-        "CAST(SLOT_ID AS BIGINT) as SLOT_ID",
-        "CAST(SKU_ID AS BIGINT) as SKU_ID",
+        "CAST(SLOTITEM_ID AS DECIMAL(19,0)) as SLOT_ITEM_ID",
+        "CAST(SLOT_ID AS DECIMAL(19,0)) as SLOT_ID",
+        "CAST(SKU_ID AS DECIMAL(19,0)) as SKU_ID",
         "CAST(SLOT_UNIT AS BIGINT) as SLOT_UNIT",
         "CAST(SHIP_UNIT AS BIGINT) as SHIP_UNIT",
         "CAST(MAX_LANES AS BIGINT) as MAX_LANES",
