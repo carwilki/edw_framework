@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Business_Partner_PRE(dcnbr, env):
     tableName = "WM_BUSINESS_PARTNER_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "BUSINESS_PARTNER"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -85,8 +87,8 @@ def m_WM_Business_Partner_PRE(dcnbr, env):
                 BUSINESS_PARTNER.ATTRIBUTE_3,
                 BUSINESS_PARTNER.ATTRIBUTE_4,
                 BUSINESS_PARTNER.ATTRIBUTE_5
-            FROM BUSINESS_PARTNER
-            WHERE (TRUNC( BUSINESS_PARTNER.CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( BUSINESS_PARTNER.LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.BUSINESS_PARTNER
+            WHERE (TRUNC( BUSINESS_PARTNER.CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( BUSINESS_PARTNER.LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -135,41 +137,42 @@ def m_WM_Business_Partner_PRE(dcnbr, env):
     # COLUMN COUNT: 31
 
 
-    Shortcut_to_WM_BUSINESS_PARTNER_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", 
-        "CAST(BUSINESS_PARTNER_ID AS STRING) as BUSINESS_PARTNER_ID", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION", 
-        "CAST(BP_ID AS BIGINT) as BP_ID", 
-        "CAST(BP_COMPANY_ID AS BIGINT) as BP_COMPANY_ID", 
-        "CAST(ACCREDITED_BP AS BIGINT) as ACCREDITED_BP", 
-        "CAST(BUSINESS_NUMBER AS STRING) as BUSINESS_NUMBER", 
-        "CAST(ADDRESS_1 AS STRING) as ADDRESS_1", 
-        "CAST(CITY AS STRING) as CITY", 
-        "CAST(STATE_PROV AS STRING) as STATE_PROV", 
-        "CAST(POSTAL_CODE AS STRING) as POSTAL_CODE", 
-        "CAST(COUNTY AS STRING) as COUNTY", 
-        "CAST(COUNTRY_CODE AS STRING) as COUNTRY_CODE", 
-        "CAST(COMMENTS AS STRING) as COMMENTS", 
-        "CAST(TEL_NBR AS STRING) as TEL_NBR", 
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", 
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", 
-        "CAST(ADDRESS_2 AS STRING) as ADDRESS_2", 
-        "CAST(ADDRESS_3 AS STRING) as ADDRESS_3", 
-        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", 
-        "CAST(PREFIX AS STRING) as PREFIX", 
-        "CAST(ATTRIBUTE_1 AS BIGINT) as ATTRIBUTE_1", 
-        "CAST(ATTRIBUTE_2 AS STRING) as ATTRIBUTE_2", 
-        "CAST(ATTRIBUTE_3 AS STRING) as ATTRIBUTE_3", 
-        "CAST(ATTRIBUTE_4 AS STRING) as ATTRIBUTE_4", 
-        "CAST(ATTRIBUTE_5 AS STRING) as ATTRIBUTE_5", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_BUSINESS_PARTNER_PRE = EXPTRANS.selectExpr(
+    "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+    "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+    "CAST(BUSINESS_PARTNER_ID AS STRING) as BUSINESS_PARTNER_ID",
+    "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+    "CAST(MARK_FOR_DELETION AS TINYINT) as MARK_FOR_DELETION",
+    "CAST(BP_ID AS BIGINT) as BP_ID",
+    "CAST(BP_COMPANY_ID AS INT) as BP_COMPANY_ID",
+    "CAST(ACCREDITED_BP AS TINYINT) as ACCREDITED_BP",
+    "CAST(BUSINESS_NUMBER AS STRING) as BUSINESS_NUMBER",
+    "CAST(ADDRESS_1 AS STRING) as ADDRESS_1",
+    "CAST(CITY AS STRING) as CITY",
+    "CAST(STATE_PROV AS STRING) as STATE_PROV",
+    "CAST(POSTAL_CODE AS STRING) as POSTAL_CODE",
+    "CAST(COUNTY AS STRING) as COUNTY",
+    "CAST(COUNTRY_CODE AS STRING) as COUNTRY_CODE",
+    "CAST(COMMENTS AS STRING) as COMMENTS",
+    "CAST(TEL_NBR AS STRING) as TEL_NBR",
+    "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+    "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+    "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+    "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+    "CAST(ADDRESS_2 AS STRING) as ADDRESS_2",
+    "CAST(ADDRESS_3 AS STRING) as ADDRESS_3",
+    "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION",
+    "CAST(PREFIX AS STRING) as PREFIX",
+    "CAST(ATTRIBUTE_1 AS TINYINT) as ATTRIBUTE_1",
+    "CAST(ATTRIBUTE_2 AS STRING) as ATTRIBUTE_2",
+    "CAST(ATTRIBUTE_3 AS STRING) as ATTRIBUTE_3",
+    "CAST(ATTRIBUTE_4 AS STRING) as ATTRIBUTE_4",
+    "CAST(ATTRIBUTE_5 AS STRING) as ATTRIBUTE_5",
+    "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+    
     overwriteDeltaPartition(Shortcut_to_WM_BUSINESS_PARTNER_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_BUSINESS_PARTNER_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

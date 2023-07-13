@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,50 +30,51 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_SEC_USER"
+raw_perf_table = f"{raw}.WM_SEC_USER_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SEC_USER_PRE, type SOURCE 
 # COLUMN COUNT: 21
 
 SQ_Shortcut_to_WM_SEC_USER_PRE = spark.sql(f"""SELECT
-WM_SEC_USER_PRE.DC_NBR,
-WM_SEC_USER_PRE.SEC_USER_ID,
-WM_SEC_USER_PRE.LOGIN_USER_ID,
-WM_SEC_USER_PRE.USER_NAME,
-WM_SEC_USER_PRE.USER_DESC,
-WM_SEC_USER_PRE.PSWD,
-WM_SEC_USER_PRE.PSWD_EXP_DATE,
-WM_SEC_USER_PRE.PSWD_CHANGE_AT_LOGIN,
-WM_SEC_USER_PRE.CAN_CHNG_PSWD,
-WM_SEC_USER_PRE.DISABLED,
-WM_SEC_USER_PRE.LOCKED_OUT,
-WM_SEC_USER_PRE.LAST_LOGIN,
-WM_SEC_USER_PRE.GRACE_LOGINS,
-WM_SEC_USER_PRE.LOCKED_OUT_EXPIRATION,
-WM_SEC_USER_PRE.FAILED_LOGIN_ATTEMPTS,
-WM_SEC_USER_PRE.CREATE_DATE_TIME,
-WM_SEC_USER_PRE.MOD_DATE_TIME,
-WM_SEC_USER_PRE.USER_ID,
-WM_SEC_USER_PRE.SEC_POLICY_SET_ID,
-WM_SEC_USER_PRE.WM_VERSION_ID,
-WM_SEC_USER_PRE.LOAD_TSTMP
-FROM WM_SEC_USER_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+SEC_USER_ID,
+LOGIN_USER_ID,
+USER_NAME,
+USER_DESC,
+PSWD,
+PSWD_EXP_DATE,
+PSWD_CHANGE_AT_LOGIN,
+CAN_CHNG_PSWD,
+DISABLED,
+LOCKED_OUT,
+LAST_LOGIN,
+GRACE_LOGINS,
+LOCKED_OUT_EXPIRATION,
+FAILED_LOGIN_ATTEMPTS,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+USER_ID,
+SEC_POLICY_SET_ID,
+WM_VERSION_ID,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SEC_USER, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_SEC_USER = spark.sql(f"""SELECT
-WM_SEC_USER.LOCATION_ID,
-WM_SEC_USER.WM_SEC_USER_ID,
-WM_SEC_USER.WM_CREATE_TSTMP,
-WM_SEC_USER.WM_MOD_TSTMP,
-WM_SEC_USER.LOAD_TSTMP
-FROM WM_SEC_USER
-WHERE WM_SEC_USER_ID IN (SELECT SEC_USER_ID FROM WM_SEC_USER_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_SEC_USER_ID,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_SEC_USER_ID IN (SELECT SEC_USER_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -111,10 +112,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_SEC_USER_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -220,8 +218,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___SEC_POLICY_SET_ID as SEC_POLICY_SET_ID", 
 	"FIL_UNCHANGED_RECORDS___WM_VERSION_ID1 as WM_VERSION_ID1", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_SEC_USER_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_SEC_USER_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -255,16 +253,43 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_SEC_USER, type TARGET 
 # COLUMN COUNT: 22
 
+
+Shortcut_to_WM_SEC_USER = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID", 
+	"CAST(SEC_USER_ID AS BIGINT) as WM_SEC_USER_ID", 
+	"CAST(LOGIN_USER_ID AS STRING) as WM_LOGIN_USER_ID", 
+	"CAST(USER_NAME AS STRING) as WM_USER_NAME", 
+	"CAST(USER_DESC AS STRING) as WM_USER_DESC", 
+	"CAST(SEC_POLICY_SET_ID AS BIGINT) as WM_SEC_POLICY_SET_ID", 
+	"CAST(PSWD AS STRING) as WM_PSWD", 
+	"CAST(PSWD_EXP_DATE AS DATE) as WM_PSWD_EXP_DT", 
+	"CAST(PSWD_CHANGE_AT_LOGIN AS STRING) as PSWD_CHANGE_AT_LOGIN_FLAG", 
+	"CAST(CAN_CHNG_PSWD AS STRING) as CAN_CHNG_PSWD_FLAG", 
+	"CAST(DISABLED AS STRING) as DISABLED_FLAG", 
+	"CAST(LOCKED_OUT AS STRING) as LOCKED_OUT_FLAG", 
+	"CAST(LAST_LOGIN AS TIMESTAMP) as LAST_LOGIN_TSTMP", 
+	"CAST(GRACE_LOGINS1 AS BIGINT) as GRACE_LOGINS", 
+	"CAST(LOCKED_OUT_EXPIRATION AS TIMESTAMP) as LOCKED_OUT_EXP_TSTMP", 
+	"CAST(FAILED_LOGIN_ATTEMPTS1 AS BIGINT) as FAILED_LOGIN_ATTEMPTS", 
+	"CAST(USER_ID AS STRING) as WM_USER_ID", 
+	"CAST(WM_VERSION_ID1 AS BIGINT) as WM_VERSION_ID", 
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SEC_USER_ID = target.WM_SEC_USER_ID"""
-  refined_perf_table = "WM_SEC_USER"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  # refined_perf_table = "WM_SEC_USER"
+  executeMerge(Shortcut_to_WM_SEC_USER, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_SEC_USER", "WM_SEC_USER", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

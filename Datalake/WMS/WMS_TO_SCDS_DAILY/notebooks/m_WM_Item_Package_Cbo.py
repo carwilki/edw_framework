@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -28,39 +29,41 @@ raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
-starttime = datetime.now() #start timestamp of the script
+starttime = datetime.now() #start timestamp of the script# Processing node SQ_Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE, type SOURCE 
+refined_perf_table = f"{refine}.WM_ITEM_PACKAGE_CBO_PRE"
+raw_perf_table = f"{raw}.WM_ITEM_PACKAGE_CBO_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# COMMAND ----------
-# Processing node SQ_Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE, type SOURCE 
+
 # COLUMN COUNT: 25
 
 SQ_Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE = spark.sql(f"""SELECT
-WM_ITEM_PACKAGE_CBO_PRE.DC_NBR,
-WM_ITEM_PACKAGE_CBO_PRE.ITEM_PACKAGE_ID,
-WM_ITEM_PACKAGE_CBO_PRE.ITEM_ID,
-WM_ITEM_PACKAGE_CBO_PRE.PACKAGE_UOM_ID,
-WM_ITEM_PACKAGE_CBO_PRE.QUANTITY,
-WM_ITEM_PACKAGE_CBO_PRE.WEIGHT,
-WM_ITEM_PACKAGE_CBO_PRE.WEIGHT_UOM_ID,
-WM_ITEM_PACKAGE_CBO_PRE.GTIN,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_CREATED_SOURCE,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_CREATED_SOURCE_TYPE,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_CREATED_DTTM,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_LAST_UPDATED_SOURCE,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_LAST_UPDATED_SOURCE_TYPE,
-WM_ITEM_PACKAGE_CBO_PRE.AUDIT_LAST_UPDATED_DTTM,
-WM_ITEM_PACKAGE_CBO_PRE.MARK_FOR_DELETION,
-WM_ITEM_PACKAGE_CBO_PRE.DIMENSION_UOM_ID,
-WM_ITEM_PACKAGE_CBO_PRE.VOLUME,
-WM_ITEM_PACKAGE_CBO_PRE.VOLUME_UOM_ID,
-WM_ITEM_PACKAGE_CBO_PRE.LENGTH,
-WM_ITEM_PACKAGE_CBO_PRE.HEIGHT,
-WM_ITEM_PACKAGE_CBO_PRE.WIDTH,
-WM_ITEM_PACKAGE_CBO_PRE.HIBERNATE_VERSION,
-WM_ITEM_PACKAGE_CBO_PRE.IS_STD,
-WM_ITEM_PACKAGE_CBO_PRE.BUSINESS_PARTNER_ID,
-WM_ITEM_PACKAGE_CBO_PRE.LOAD_TSTMP
-FROM WM_ITEM_PACKAGE_CBO_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+ITEM_PACKAGE_ID,
+ITEM_ID,
+PACKAGE_UOM_ID,
+QUANTITY,
+WEIGHT,
+WEIGHT_UOM_ID,
+GTIN,
+AUDIT_CREATED_SOURCE,
+AUDIT_CREATED_SOURCE_TYPE,
+AUDIT_CREATED_DTTM,
+AUDIT_LAST_UPDATED_SOURCE,
+AUDIT_LAST_UPDATED_SOURCE_TYPE,
+AUDIT_LAST_UPDATED_DTTM,
+MARK_FOR_DELETION,
+DIMENSION_UOM_ID,
+VOLUME,
+VOLUME_UOM_ID,
+LENGTH,
+HEIGHT,
+WIDTH,
+HIBERNATE_VERSION,
+IS_STD,
+BUSINESS_PARTNER_ID,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -133,17 +136,14 @@ WM_ITEM_PACKAGE_CBO.WM_ITEM_PACKAGE_ID,
 WM_ITEM_PACKAGE_CBO.WM_CREATED_TSTMP,
 WM_ITEM_PACKAGE_CBO.WM_LAST_UPDATED_TSTMP,
 WM_ITEM_PACKAGE_CBO.LOAD_TSTMP
-FROM WM_ITEM_PACKAGE_CBO
-WHERE WM_ITEM_PACKAGE_ID IN (SELECT ITEM_PACKAGE_ID FROM WM_ITEM_PACKAGE_CBO_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refined_perf_table}
+WHERE WM_ITEM_PACKAGE_ID IN (SELECT ITEM_PACKAGE_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -226,8 +226,8 @@ FIL_NO_CHANGE_REC = JNR_WM_ITEM_PACK_CBO_temp.selectExpr( \
 	"JNR_WM_ITEM_PACK_CBO___in_WM_ITEM_PACKAGE_ID as in_WM_ITEM_PACKAGE_ID", \
 	"JNR_WM_ITEM_PACK_CBO___in_LOAD_TSTMP as in_LOAD_TSTMP", \
 	"JNR_WM_ITEM_PACK_CBO___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
-	"JNR_WM_ITEM_PACK_CBO___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP")\
-    .filter("in_WM_ITEM_PACKAGE_ID is Null OR (in_WM_ITEM_PACKAGE_ID is not Null AND\
+	"JNR_WM_ITEM_PACK_CBO___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP") \
+    .filter("in_WM_ITEM_PACKAGE_ID is Null OR (in_WM_ITEM_PACKAGE_ID is not Null AND \
      ( COALESCE(AUDIT_CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') \
     OR COALESCE(AUDIT_LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -289,9 +289,9 @@ EXP_EVALUATE = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___HEIGHT as HEIGHT", \
 	"FIL_NO_CHANGE_REC___WIDTH as WIDTH", \
 	"FIL_NO_CHANGE_REC___HIBERNATE_VERSION as HIBERNATE_VERSION", \
-	"decode ( ltrim ( rtrim ( upper ( FIL_NO_CHANGE_REC___IS_STD1 ) ) ) , '1','1' , 'Y','1','0' ) as IS_STD1_EXP", \
+    "CASE WHEN TRIM(UPPER(FIL_NO_CHANGE_REC___IS_STD1)) IN ('Y', '1') THEN '1' ELSE '0' END as IS_STD1_EXP", \
 	"FIL_NO_CHANGE_REC___BUSINESS_PARTNER_ID as BUSINESS_PARTNER_ID", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
 	"FIL_NO_CHANGE_REC___in_WM_ITEM_PACKAGE_ID as in_WM_ITEM_PACKAGE_ID" \
 )
@@ -331,16 +331,46 @@ UPD_INS_UPD = EXP_EVALUATE_temp.selectExpr( \
 	"EXP_EVALUATE___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVALUATE___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_EVALUATE___in_WM_ITEM_PACKAGE_ID as in_WM_ITEM_PACKAGE_ID") \
-	.withColumn('pyspark_data_action', when((in_WM_ITEM_PACKAGE_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_WM_ITEM_PACKAGE_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ITEM_PACKAGE_CBO, type TARGET 
 # COLUMN COUNT: 26
 
+Shortcut_to_WM_ITEM_PACKAGE_CBO = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(ITEM_PACKAGE_ID AS BIGINT) as WM_ITEM_PACKAGE_ID", 
+	"CAST(ITEM_ID AS BIGINT) as WM_ITEM_ID", 
+	"CAST(PACKAGE_UOM_ID AS BIGINT) as WM_PACKAGE_UOM_ID", 
+	"CAST(GTIN1 AS STRING) as GTIN", 
+	"CAST(BUSINESS_PARTNER_ID AS STRING) as WM_BUSINESS_PARTNER_ID", 
+	"CAST(IS_STD1 AS BIGINT) as STANDARD_UOM_FLAG", 
+	"CAST(QUANTITY AS BIGINT) as ITEM_PACKAGE_QTY", 
+	"CAST(WEIGHT AS BIGINT) as ITEM_PACKAGE_WEIGHT", 
+	"CAST(WEIGHT_UOM_ID AS BIGINT) as WM_WEIGHT_UOM_ID", 
+	"CAST(VOLUME AS BIGINT) as ITEM_PACKAGE_VOLUME", 
+	"CAST(VOLUME_UOM_ID AS BIGINT) as WM_VOLUME_UOM_ID", 
+	"CAST(LENGTH AS BIGINT) as ITEM_PACKAGE_LENGTH", 
+	"CAST(HEIGHT AS BIGINT) as ITEM_PACKAGE_HEIGHT", 
+	"CAST(WIDTH AS BIGINT) as ITEM_PACKAGE_WIDTH", 
+	"CAST(DIMENSION_UOM_ID AS BIGINT) as WM_DIMENSION_UOM_ID", 
+	"CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION_FLAG", 
+	"CAST(HIBERNATE_VERSION AS BIGINT) as WM_HIBERNATE_VERSION", 
+	"CAST(AUDIT_CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(AUDIT_CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(AUDIT_CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(AUDIT_LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(AUDIT_LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(AUDIT_LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ITEM_PACKAGE_ID = target.WM_ITEM_PACKAGE_ID"""
-  refined_perf_table = "WM_ITEM_PACKAGE_CBO"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_ITEM_PACKAGE_CBO"
+  executeMerge(Shortcut_to_WM_ITEM_PACKAGE_CBO, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ITEM_PACKAGE_CBO", "WM_ITEM_PACKAGE_CBO", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

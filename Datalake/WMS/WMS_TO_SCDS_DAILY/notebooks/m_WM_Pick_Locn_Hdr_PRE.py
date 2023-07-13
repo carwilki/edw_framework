@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Pick_Locn_Hdr_PRE(dcnbr, env):
     
     tableName = "WM_PICK_LOCN_HDR_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_PICK_LOCN_HDR"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -72,10 +74,10 @@ def m_WM_Pick_Locn_Hdr_PRE(dcnbr, env):
                     PICK_LOCN_HDR.INVN_LOCK_CODE,
                     PICK_LOCN_HDR.CREATED_DTTM,
                     PICK_LOCN_HDR.LAST_UPDATED_DTTM
-                FROM PICK_LOCN_HDR
-                WHERE {Initial_Load} (trunc(CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(MOD_DATE_TIME) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14)"""
+                FROM {source_schema}.PICK_LOCN_HDR
+                WHERE  (trunc(CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(MOD_DATE_TIME) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14)"""
 
-    SQ_Shortcut_to_PICK_LOCN_HDR = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_PICK_LOCN_HDR = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_PICK_LOCN_HDR is executed and data is loaded using jdbc")
 
     
@@ -88,7 +90,7 @@ def m_WM_Pick_Locn_Hdr_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_PICK_LOCN_HDR_temp.selectExpr( \
     	"SQ_Shortcut_to_PICK_LOCN_HDR___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR_EXP", \
+    	f"{dcnbr} as DC_NBR_EXP", \
     	"SQ_Shortcut_to_PICK_LOCN_HDR___PICK_LOCN_HDR_ID as PICK_LOCN_HDR_ID", \
     	"SQ_Shortcut_to_PICK_LOCN_HDR___LOCN_ID as LOCN_ID", \
     	"SQ_Shortcut_to_PICK_LOCN_HDR___REPL_LOCN_BRCD as REPL_LOCN_BRCD", \
@@ -127,40 +129,40 @@ def m_WM_Pick_Locn_Hdr_PRE(dcnbr, env):
     # COLUMN COUNT: 32
     
     
-    Shortcut_to_WM_PICK_LOCN_HDR_PRE = EXPTRANS.selectExpr( \
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-    	"CAST(PICK_LOCN_HDR_ID AS BIGINT) as PICK_LOCN_HDR_ID", \
-    	"CAST(LOCN_ID AS STRING) as LOCN_ID", \
-    	"CAST(REPL_LOCN_BRCD AS STRING) as REPL_LOCN_BRCD", \
-    	"CAST(PUTWY_TYPE AS STRING) as PUTWY_TYPE", \
-    	"CAST(MAX_NBR_OF_SKU AS BIGINT) as MAX_NBR_OF_SKU", \
-    	"CAST(REPL_FLAG AS STRING) as REPL_FLAG", \
-    	"CAST(PICK_LOCN_ASSIGN_ZONE AS STRING) as PICK_LOCN_ASSIGN_ZONE", \
-    	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", \
-    	"CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", \
-    	"CAST(USER_ID AS STRING) as USER_ID", \
-    	"CAST(REPL_CHECK_DIGIT AS STRING) as REPL_CHECK_DIGIT", \
-    	"CAST(MAX_VOL AS BIGINT) as MAX_VOL", \
-    	"CAST(MAX_WT AS BIGINT) as MAX_WT", \
-    	"CAST(REPL_X_COORD AS BIGINT) as REPL_X_COORD", \
-    	"CAST(REPL_Y_COORD AS BIGINT) as REPL_Y_COORD", \
-    	"CAST(REPL_Z_COORD AS BIGINT) as REPL_Z_COORD", \
-    	"CAST(REPL_TRAVEL_AISLE AS STRING) as REPL_TRAVEL_AISLE", \
-    	"CAST(REPL_TRAVEL_ZONE AS STRING) as REPL_TRAVEL_ZONE", \
-    	"CAST(XCESS_WAVE_NEED_PROC_TYPE AS BIGINT) as XCESS_WAVE_NEED_PROC_TYPE", \
-    	"CAST(PICK_LOCN_ASSIGN_TYPE AS STRING) as PICK_LOCN_ASSIGN_TYPE", \
-    	"CAST(SUPPR_PR40_REPL AS BIGINT) as SUPPR_PR40_REPL", \
-    	"CAST(COMB_4050_REPL AS BIGINT) as COMB_4050_REPL", \
-    	"CAST(PICK_TO_LIGHT_FLAG AS STRING) as PICK_TO_LIGHT_FLAG", \
-    	"CAST(PICK_TO_LIGHT_REPL_FLAG AS STRING) as PICK_TO_LIGHT_REPL_FLAG", \
-    	"CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", \
-    	"CAST(LOCN_HDR_ID AS BIGINT) as LOCN_HDR_ID", \
-    	"CAST(LOCN_PUTAWAY_LOCK AS STRING) as LOCN_PUTAWAY_LOCK", \
-    	"CAST(INVN_LOCK_CODE AS STRING) as INVN_LOCK_CODE", \
-    	"CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-    	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_PICK_LOCN_HDR_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(PICK_LOCN_HDR_ID AS INT) as PICK_LOCN_HDR_ID",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(REPL_LOCN_BRCD AS STRING) as REPL_LOCN_BRCD",
+        "CAST(PUTWY_TYPE AS STRING) as PUTWY_TYPE",
+        "CAST(MAX_NBR_OF_SKU AS SMALLINT) as MAX_NBR_OF_SKU",
+        "CAST(REPL_FLAG AS STRING) as REPL_FLAG",
+        "CAST(PICK_LOCN_ASSIGN_ZONE AS STRING) as PICK_LOCN_ASSIGN_ZONE",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(REPL_CHECK_DIGIT AS STRING) as REPL_CHECK_DIGIT",
+        "CAST(MAX_VOL AS DECIMAL(13,4)) as MAX_VOL",
+        "CAST(MAX_WT AS DECIMAL(13,4)) as MAX_WT",
+        "CAST(REPL_X_COORD AS DECIMAL(13,5)) as REPL_X_COORD",
+        "CAST(REPL_Y_COORD AS DECIMAL(13,5)) as REPL_Y_COORD",
+        "CAST(REPL_Z_COORD AS DECIMAL(13,5)) as REPL_Z_COORD",
+        "CAST(REPL_TRAVEL_AISLE AS STRING) as REPL_TRAVEL_AISLE",
+        "CAST(REPL_TRAVEL_ZONE AS STRING) as REPL_TRAVEL_ZONE",
+        "CAST(XCESS_WAVE_NEED_PROC_TYPE AS TINYINT) as XCESS_WAVE_NEED_PROC_TYPE",
+        "CAST(PICK_LOCN_ASSIGN_TYPE AS STRING) as PICK_LOCN_ASSIGN_TYPE",
+        "CAST(SUPPR_PR40_REPL AS SMALLINT) as SUPPR_PR40_REPL",
+        "CAST(COMB_4050_REPL AS SMALLINT) as COMB_4050_REPL",
+        "CAST(PICK_TO_LIGHT_FLAG AS STRING) as PICK_TO_LIGHT_FLAG",
+        "CAST(PICK_TO_LIGHT_REPL_FLAG AS STRING) as PICK_TO_LIGHT_REPL_FLAG",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(LOCN_HDR_ID AS INT) as LOCN_HDR_ID",
+        "CAST(LOCN_PUTAWAY_LOCK AS STRING) as LOCN_PUTAWAY_LOCK",
+        "CAST(INVN_LOCK_CODE AS STRING) as INVN_LOCK_CODE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_PICK_LOCN_HDR_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_PICK_LOCN_HDR_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_PICK_LOCN_HDR_PRE is written to the target table - " + target_table_name)

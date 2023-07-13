@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Labor_Criteria_PRE(dcnbr, env):
     tableName = "WM_LABOR_CRITERIA_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LABOR_CRITERIA"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -68,8 +70,8 @@ def m_WM_Labor_Criteria_PRE(dcnbr, env):
     LABOR_CRITERIA.LAST_UPDATED_SOURCE,
     LABOR_CRITERIA.LAST_UPDATED_DTTM,
     LABOR_CRITERIA.COMPANY_ID
-    FROM LABOR_CRITERIA
-    WHERE  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) AND 
+    FROM {source_schema}.LABOR_CRITERIA
+    WHERE  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) AND 
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -104,28 +106,29 @@ def m_WM_Labor_Criteria_PRE(dcnbr, env):
     # COLUMN COUNT: 16
 
 
-    Shortcut_to_WM_LABOR_CRITERIA_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(CRIT_ID AS BIGINT) as CRIT_ID", \
-        "CAST(CRIT_CODE AS STRING) as CRIT_CODE", \
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", \
-        "CAST(RULE_FILTER AS STRING) as RULE_FILTER", \
-        "CAST(DATA_TYPE AS STRING) as DATA_TYPE", \
-        "CAST(DATA_SIZE AS BIGINT) as DATA_SIZE", \
-        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", \
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(COMPANY_ID AS BIGINT) as COMPANY_ID", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LABOR_CRITERIA_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(CRIT_ID AS INT) as CRIT_ID",
+        "CAST(CRIT_CODE AS STRING) as CRIT_CODE",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(RULE_FILTER AS STRING) as RULE_FILTER",
+        "CAST(DATA_TYPE AS STRING) as DATA_TYPE",
+        "CAST(DATA_SIZE AS INT) as DATA_SIZE",
+        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION",
+        "CAST(CREATED_SOURCE_TYPE AS TINYINT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS TINYINT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(COMPANY_ID AS INT) as COMPANY_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
     
     overwriteDeltaPartition(Shortcut_to_WM_LABOR_CRITERIA_PRE,"DC_NBR",dcnbr,target_table_name)
     
     logger.info(
         "Shortcut_to_WM_LABOR_CRITERIA_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

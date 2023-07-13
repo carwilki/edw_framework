@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,50 +30,48 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_TRAILER_VISIT"
+raw_perf_table = f"{raw}.WM_TRAILER_VISIT_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_TRAILER_VISIT, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_TRAILER_VISIT = spark.sql(f"""SELECT
-WM_TRAILER_VISIT.LOCATION_ID,
-WM_TRAILER_VISIT.WM_VISIT_ID,
-WM_TRAILER_VISIT.WM_CREATED_TSTMP,
-WM_TRAILER_VISIT.WM_LAST_UPDATED_TSTMP,
-WM_TRAILER_VISIT.LOAD_TSTMP
-FROM WM_TRAILER_VISIT
-WHERE WM_VISIT_ID in (SELECT VISIT_ID FROM WM_TRAILER_VISIT_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_VISIT_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_VISIT_ID in (SELECT VISIT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_TRAILER_VISIT_PRE, type SOURCE 
 # COLUMN COUNT: 12
 
 SQ_Shortcut_to_WM_TRAILER_VISIT_PRE = spark.sql(f"""SELECT
-WM_TRAILER_VISIT_PRE.DC_NBR,
-WM_TRAILER_VISIT_PRE.VISIT_ID,
-WM_TRAILER_VISIT_PRE.FACILITY_ID,
-WM_TRAILER_VISIT_PRE.TRAILER_ID,
-WM_TRAILER_VISIT_PRE.CHECKIN_DTTM,
-WM_TRAILER_VISIT_PRE.CHECKOUT_DTTM,
-WM_TRAILER_VISIT_PRE.CREATED_DTTM,
-WM_TRAILER_VISIT_PRE.CREATED_SOURCE_TYPE,
-WM_TRAILER_VISIT_PRE.CREATED_SOURCE,
-WM_TRAILER_VISIT_PRE.LAST_UPDATED_DTTM,
-WM_TRAILER_VISIT_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_TRAILER_VISIT_PRE.LAST_UPDATED_SOURCE
-FROM WM_TRAILER_VISIT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+VISIT_ID,
+FACILITY_ID,
+TRAILER_ID,
+CHECKIN_DTTM,
+CHECKOUT_DTTM,
+CREATED_DTTM,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+LAST_UPDATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_DATA_TYPE_CONVERSION, type EXPRESSION 
@@ -193,8 +191,8 @@ EXP_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___LAST_UPDATED_SOURCE_TYPE as LAST_UPDATED_SOURCE_TYPE", 
 	"FIL_UNCHANGED_RECORDS___LAST_UPDATED_SOURCE as LAST_UPDATED_SOURCE", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___TGT_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___TGT_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___WM_VISIT_ID IS NULL, 1, 2) as UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___TGT_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___TGT_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___WM_VISIT_ID IS NULL, 1, 2) as UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -220,16 +218,35 @@ UPD_INSERT_UPDATE = EXP_VALIDATOR_temp.selectExpr(
 	"EXP_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_VALIDATOR___UPDATE_VALIDATOR as UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_VALIDATOR.UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_VALIDATOR.UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_VALIDATOR.UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_VALIDATOR.UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_TRAILER_VISIT, type TARGET 
 # COLUMN COUNT: 14
 
+
+Shortcut_to_WM_TRAILER_VISIT = UPD_INSERT_UPDATE.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(VISIT_ID AS BIGINT) as WM_VISIT_ID", 
+	"CAST(FACILITY_ID AS BIGINT) as WM_FACILITY_ID", 
+	"CAST(TRAILER_ID AS BIGINT) as WM_TRAILER_ID", 
+	"CAST(CHECKIN_DTTM AS TIMESTAMP) as WM_TRAILER_CHECKIN_TSTMP", 
+	"CAST(CHECKOUT_DTTM AS TIMESTAMP) as WM_TRAILER_CHECKOUT_TSTMP", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_VISIT_ID = target.WM_VISIT_ID"""
-  refined_perf_table = "WM_TRAILER_VISIT"
-  executeMerge(UPD_INSERT_UPDATE, refined_perf_table, primary_key)
+  # refined_perf_table = "WM_TRAILER_VISIT"
+  executeMerge(Shortcut_to_WM_TRAILER_VISIT, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_TRAILER_VISIT", "WM_TRAILER_VISIT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

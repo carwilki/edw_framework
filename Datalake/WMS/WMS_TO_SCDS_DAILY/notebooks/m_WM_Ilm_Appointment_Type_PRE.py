@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Ilm_Appointment_Type_PRE(dcnbr, env):
     tableName = "WM_ILM_APPOINTMENT_TYPE_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ILM_APPOINTMENT_TYPE"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -44,10 +46,11 @@ def m_WM_Ilm_Appointment_Type_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
 
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ILM_APPOINTMENT_TYPE, type SOURCE 
@@ -58,8 +61,8 @@ def m_WM_Ilm_Appointment_Type_PRE(dcnbr, env):
     ILM_APPOINTMENT_TYPE.DESCRIPTION,
     ILM_APPOINTMENT_TYPE.CREATED_DTTM,
     ILM_APPOINTMENT_TYPE.LAST_UPDATED_DTTM
-    FROM ILM_APPOINTMENT_TYPE
-    WHERE (date_trunc('DD', CREATED_DTTM) >= date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (date_trunc('DD', LAST_UPDATED_DTTM) >=  date_trunc('DD', to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) AND
+    FROM {source_schema}.ILM_APPOINTMENT_TYPE
+    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -84,17 +87,18 @@ def m_WM_Ilm_Appointment_Type_PRE(dcnbr, env):
     # COLUMN COUNT: 6
 
 
-    Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_exp AS BIGINT) as DC_NBR", \
-        "CAST(APPT_TYPE AS BIGINT) as APPT_TYPE", \
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(LOADTSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_exp AS SMALLINT) as DC_NBR",
+        "CAST(APPT_TYPE AS SMALLINT) as APPT_TYPE",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOADTSTMP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

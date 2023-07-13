@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Ship_Via_PRE(dcnbr, env):
     
     tableName = "WM_SHIP_VIA_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_SHIP_VIA"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -65,11 +67,11 @@ def m_WM_Ship_Via_PRE(dcnbr, env):
                     SHIP_VIA.CUSTOM_SHIPVIA_ATTRIB,
                     SHIP_VIA.CREATED_DTTM,
                     SHIP_VIA.LAST_UPDATED_DTTM
-                FROM SHIP_VIA
-                WHERE {Initial_Load} (TRUNC(CREATED_DTTM) >= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC(LAST_UPDATED_DTTM) >=  TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+                FROM {source_schema}.SHIP_VIA
+                WHERE  (TRUNC(CREATED_DTTM) >= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC(LAST_UPDATED_DTTM) >=  TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
     
 
-    SQ_Shortcut_to_SHIP_VIA = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_SHIP_VIA = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_SHIP_VIA is executed and data is loaded using jdbc")
     
     
@@ -81,7 +83,7 @@ def m_WM_Ship_Via_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_SHIP_VIA_temp.selectExpr( 
     	"SQ_Shortcut_to_SHIP_VIA___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_SHIP_VIA___SHIP_VIA_ID as SHIP_VIA_ID", 
     	"SQ_Shortcut_to_SHIP_VIA___TC_COMPANY_ID as TC_COMPANY_ID", 
     	"SQ_Shortcut_to_SHIP_VIA___CARRIER_ID as CARRIER_ID", 
@@ -112,32 +114,32 @@ def m_WM_Ship_Via_PRE(dcnbr, env):
     # COLUMN COUNT: 24
     
     
-    Shortcut_to_WM_SHIP_VIA_PRE = EXPTRANS.selectExpr( 
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-    	"CAST(SHIP_VIA_ID AS BIGINT) as SHIP_VIA_ID", 
-    	"CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", 
-    	"CAST(CARRIER_ID AS BIGINT) as CARRIER_ID", 
-    	"CAST(SERVICE_LEVEL_ID AS BIGINT) as SERVICE_LEVEL_ID", 
-    	"CAST(MOT_ID AS BIGINT) as MOT_ID", 
-    	"CAST(LABEL_TYPE AS STRING) as LABEL_TYPE", 
-    	"CAST(SERVICE_LEVEL_ICON AS STRING) as SERVICE_LEVEL_ICON", 
-    	"CAST(EXECUTION_LEVEL_ID AS BIGINT) as EXECUTION_LEVEL_ID", 
-    	"CAST(BILL_SHIP_VIA_ID AS BIGINT) as BILL_SHIP_VIA_ID", 
-    	"CAST(IS_TRACKING_NBR_REQ AS BIGINT) as IS_TRACKING_NBR_REQ", 
-    	"CAST(MARKED_FOR_DELETION AS BIGINT) as MARKED_FOR_DELETION", 
-    	"CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-    	"CAST(ACCESSORIAL_SEARCH_STRING AS STRING) as ACCESSORIAL_SEARCH_STRING", 
-    	"CAST(INS_COVER_TYPE_ID AS BIGINT) as INS_COVER_TYPE_ID", 
-    	"CAST(MIN_DECLARED_VALUE AS BIGINT) as MIN_DECLARED_VALUE", 
-    	"CAST(MAX_DECLARED_VALUE AS BIGINT) as MAX_DECLARED_VALUE", 
-    	"CAST(SERVICE_LEVEL_INDICATOR AS STRING) as SERVICE_LEVEL_INDICATOR", 
-    	"CAST(DECLARED_VALUE_CURRENCY AS STRING) as DECLARED_VALUE_CURRENCY", 
-    	"CAST(SHIP_VIA AS STRING) as SHIP_VIA", 
-    	"CAST(CUSTOM_SHIPVIA_ATTRIB AS STRING) as CUSTOM_SHIPVIA_ATTRIB", 
-    	"CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-    	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_SHIP_VIA_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(SHIP_VIA_ID AS INT) as SHIP_VIA_ID",
+        "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+        "CAST(CARRIER_ID AS BIGINT) as CARRIER_ID",
+        "CAST(SERVICE_LEVEL_ID AS BIGINT) as SERVICE_LEVEL_ID",
+        "CAST(MOT_ID AS BIGINT) as MOT_ID",
+        "CAST(LABEL_TYPE AS STRING) as LABEL_TYPE",
+        "CAST(SERVICE_LEVEL_ICON AS STRING) as SERVICE_LEVEL_ICON",
+        "CAST(EXECUTION_LEVEL_ID AS INT) as EXECUTION_LEVEL_ID",
+        "CAST(BILL_SHIP_VIA_ID AS INT) as BILL_SHIP_VIA_ID",
+        "CAST(IS_TRACKING_NBR_REQ AS TINYINT) as IS_TRACKING_NBR_REQ",
+        "CAST(MARKED_FOR_DELETION AS SMALLINT) as MARKED_FOR_DELETION",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(ACCESSORIAL_SEARCH_STRING AS STRING) as ACCESSORIAL_SEARCH_STRING",
+        "CAST(INS_COVER_TYPE_ID AS TINYINT) as INS_COVER_TYPE_ID",
+        "CAST(MIN_DECLARED_VALUE AS DECIMAL(14,3)) as MIN_DECLARED_VALUE",
+        "CAST(MAX_DECLARED_VALUE AS DECIMAL(14,3)) as MAX_DECLARED_VALUE",
+        "CAST(SERVICE_LEVEL_INDICATOR AS STRING) as SERVICE_LEVEL_INDICATOR",
+        "CAST(DECLARED_VALUE_CURRENCY AS STRING) as DECLARED_VALUE_CURRENCY",
+        "CAST(SHIP_VIA AS STRING) as SHIP_VIA",
+        "CAST(CUSTOM_SHIPVIA_ATTRIB AS STRING) as CUSTOM_SHIPVIA_ATTRIB",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_SHIP_VIA_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_SHIP_VIA_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_SHIP_VIA_PRE is written to the target table - " + target_table_name)

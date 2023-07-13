@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_C_Leader_Audit_PRE(dcnbr, env):
     tableName = "WM_C_LEADER_AUDIT_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "C_LEADER_AUDIT"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -66,8 +68,8 @@ def m_WM_C_Leader_Audit_PRE(dcnbr, env):
                 C_LEADER_AUDIT.ACTUAL_QTY,
                 C_LEADER_AUDIT.CREATE_DATE_TIME,
                 C_LEADER_AUDIT.MOD_DATE_TIME
-            FROM C_LEADER_AUDIT
-            WHERE (TRUNC( CREATE_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( MOD_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.C_LEADER_AUDIT
+            WHERE (TRUNC( CREATE_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( MOD_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -97,21 +99,21 @@ def m_WM_C_Leader_Audit_PRE(dcnbr, env):
     # COLUMN COUNT: 12
 
 
-    Shortcut_to_WM_C_LEADER_AUDIT_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(C_LEADER_AUDIT_ID AS BIGINT) as C_LEADER_AUDIT_ID", 
-        "CAST(LEADER_USER_ID AS STRING) as LEADER_USER_ID", 
-        "CAST(PICKER_USER_ID AS STRING) as PICKER_USER_ID", 
-        "CAST(STATUS AS BIGINT) as STATUS", 
-        "CAST(ITEM_NAME AS STRING) as ITEM_NAME", 
-        "CAST(LPN AS STRING) as LPN", 
-        "CAST(EXPECTED_QTY AS BIGINT) as EXPECTED_QTY", 
-        "CAST(ACTUAL_QTY AS BIGINT) as ACTUAL_QTY", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_C_LEADER_AUDIT_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(C_LEADER_AUDIT_ID AS INT) as C_LEADER_AUDIT_ID",
+        "CAST(LEADER_USER_ID AS STRING) as LEADER_USER_ID",
+        "CAST(PICKER_USER_ID AS STRING) as PICKER_USER_ID",
+        "CAST(STATUS AS TINYINT) as STATUS",
+        "CAST(ITEM_NAME AS STRING) as ITEM_NAME",
+        "CAST(LPN AS STRING) as LPN",
+        "CAST(EXPECTED_QTY AS INT) as EXPECTED_QTY",
+        "CAST(ACTUAL_QTY AS INT) as ACTUAL_QTY",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
-    
+
     overwriteDeltaPartition(Shortcut_to_WM_C_LEADER_AUDIT_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_C_LEADER_AUDIT_PRE is written to the target table - "

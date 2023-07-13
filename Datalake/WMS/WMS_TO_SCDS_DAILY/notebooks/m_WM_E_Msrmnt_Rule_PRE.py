@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_E_Msrmnt_Rule_PRE(dcnbr, env):
     tableName = "WM_E_MSRMNT_RULE_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_MSRMNT_RULE"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -72,8 +74,8 @@ def m_WM_E_Msrmnt_Rule_PRE(dcnbr, env):
                 E_MSRMNT_RULE.MISC_NUM_1,
                 E_MSRMNT_RULE.MISC_NUM_2,
                 E_MSRMNT_RULE.VERSION_ID
-            FROM E_MSRMNT_RULE
-            WHERE (TRUNC( E_MSRMNT_RULE.CREATE_DATE_TIME) >=TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( E_MSRMNT_RULE.MOD_DATE_TIME) >=TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.E_MSRMNT_RULE
+            WHERE (TRUNC( E_MSRMNT_RULE.CREATE_DATE_TIME) >=TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( E_MSRMNT_RULE.MOD_DATE_TIME) >=TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -109,29 +111,29 @@ def m_WM_E_Msrmnt_Rule_PRE(dcnbr, env):
     # COLUMN COUNT: 18
 
 
-    Shortcut_to_WM_E_MSRMNT_RULE_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(MSRMNT_ID AS BIGINT) as MSRMNT_ID", 
-        "CAST(RULE_NBR AS BIGINT) as RULE_NBR", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(STATUS_FLAG AS STRING) as STATUS_FLAG", 
-        "CAST(THEN_STATEMENT AS STRING) as THEN_STATEMENT", 
-        "CAST(ELSE_STATEMENT AS STRING) as ELSE_STATEMENT", 
-        "CAST(NOTE AS STRING) as NOTE", 
-        "CAST(MISC AS STRING) as MISC", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(USER_ID AS STRING) as USER_ID", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_MSRMNT_RULE_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(MSRMNT_ID AS INT) as MSRMNT_ID",
+        "CAST(RULE_NBR AS INT) as RULE_NBR",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(STATUS_FLAG AS STRING) as STATUS_FLAG",
+        "CAST(THEN_STATEMENT AS STRING) as THEN_STATEMENT",
+        "CAST(ELSE_STATEMENT AS STRING) as ELSE_STATEMENT",
+        "CAST(NOTE AS STRING) as NOTE",
+        "CAST(MISC AS STRING) as MISC",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
 
     overwriteDeltaPartition(Shortcut_to_WM_E_MSRMNT_RULE_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_MSRMNT_RULE_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

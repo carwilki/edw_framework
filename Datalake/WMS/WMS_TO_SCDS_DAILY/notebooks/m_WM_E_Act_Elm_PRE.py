@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_E_Act_Elm_PRE(dcnbr, env):
     tableName = "WM_E_ACT_ELM_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_ACT_ELM"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -70,9 +72,9 @@ def m_WM_E_Act_Elm_PRE(dcnbr, env):
                 E_ACT_ELM.VERSION_ID,
                 E_ACT_ELM.AVG_ACT_ID,
                 E_ACT_ELM.AVG_BY
-            FROM E_ACT_ELM
-            WHERE (TRUNC( E_ACT_ELM.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR \
-                (TRUNC( E_ACT_ELM.MOD_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.E_ACT_ELM
+            WHERE (TRUNC( E_ACT_ELM.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR \
+                (TRUNC( E_ACT_ELM.MOD_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -107,28 +109,28 @@ def m_WM_E_Act_Elm_PRE(dcnbr, env):
     # COLUMN COUNT: 17
 
 
-    Shortcut_to_WM_E_ACT_ELM_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(ACT_ID AS BIGINT) as ACT_ID", 
-        "CAST(ELM_ID AS BIGINT) as ELM_ID", 
-        "CAST(TIME_ALLOW AS BIGINT) as TIME_ALLOW", 
-        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT", 
-        "CAST(SEQ_NBR AS BIGINT) as SEQ_NBR", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(USER_ID AS STRING) as USER_ID", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(AVG_ACT_ID AS BIGINT) as AVG_ACT_ID", 
-        "CAST(AVG_BY AS STRING) as AVG_BY", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_ACT_ELM_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ACT_ID AS INT) as ACT_ID",
+        "CAST(ELM_ID AS INT) as ELM_ID",
+        "CAST(TIME_ALLOW AS DECIMAL(9,4)) as TIME_ALLOW",
+        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT",
+        "CAST(SEQ_NBR AS INT) as SEQ_NBR",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(AVG_ACT_ID AS INT) as AVG_ACT_ID",
+        "CAST(AVG_BY AS STRING) as AVG_BY",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
-
+    
     overwriteDeltaPartition(Shortcut_to_WM_E_ACT_ELM_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_ACT_ELM_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

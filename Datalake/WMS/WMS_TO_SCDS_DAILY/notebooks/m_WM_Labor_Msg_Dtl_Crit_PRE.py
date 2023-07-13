@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Labor_Msg_Dtl_Crit_PRE(dcnbr, env):
     tableName = "WM_LABOR_MSG_DTL_CRIT_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LABOR_MSG_DTL_CRIT"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -73,8 +75,8 @@ def m_WM_Labor_Msg_Dtl_Crit_PRE(dcnbr, env):
     LABOR_MSG_DTL_CRIT.MISC_NUM_2,
     LABOR_MSG_DTL_CRIT.HIBERNATE_VERSION,
     LABOR_MSG_DTL_CRIT.CRIT_SEQ_NBR
-    FROM LABOR_MSG_DTL_CRIT
-    WHERE (trunc(LABOR_MSG_DTL_CRIT.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(LABOR_MSG_DTL_CRIT.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.LABOR_MSG_DTL_CRIT
+    WHERE (trunc(LABOR_MSG_DTL_CRIT.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LABOR_MSG_DTL_CRIT.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -114,32 +116,33 @@ def m_WM_Labor_Msg_Dtl_Crit_PRE(dcnbr, env):
     # COLUMN COUNT: 21
 
 
-    Shortcut_to_WM_LABOR_MSG_DTL_CRIT_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LABOR_MSG_DTL_CRIT_ID AS BIGINT) as LABOR_MSG_DTL_CRIT_ID", \
-        "CAST(LABOR_MSG_DTL_ID AS BIGINT) as LABOR_MSG_DTL_ID", \
-        "CAST(TRAN_NBR AS BIGINT) as TRAN_NBR", \
-        "CAST(MSG_STAT_CODE AS STRING) as MSG_STAT_CODE", \
-        "CAST(CRIT_TYPE AS STRING) as CRIT_TYPE", \
-        "CAST(CRIT_VAL AS STRING) as CRIT_VAL", \
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(WHSE AS STRING) as WHSE", \
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", \
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", \
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", \
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", \
-        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", \
-        "CAST(CRIT_SEQ_NBR AS BIGINT) as CRIT_SEQ_NBR", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LABOR_MSG_DTL_CRIT_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(LABOR_MSG_DTL_CRIT_ID AS DECIMAL(20,0)) as LABOR_MSG_DTL_CRIT_ID",
+        "CAST(LABOR_MSG_DTL_ID AS DECIMAL(20,0)) as LABOR_MSG_DTL_ID",
+        "CAST(TRAN_NBR AS INT) as TRAN_NBR",
+        "CAST(MSG_STAT_CODE AS STRING) as MSG_STAT_CODE",
+        "CAST(CRIT_TYPE AS STRING) as CRIT_TYPE",
+        "CAST(CRIT_VAL AS STRING) as CRIT_VAL",
+        "CAST(CREATED_SOURCE_TYPE AS SMALLINT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS SMALLINT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(WHSE AS STRING) as WHSE",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION",
+        "CAST(CRIT_SEQ_NBR AS INT) as CRIT_SEQ_NBR",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_LABOR_MSG_DTL_CRIT_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_LABOR_MSG_DTL_CRIT_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

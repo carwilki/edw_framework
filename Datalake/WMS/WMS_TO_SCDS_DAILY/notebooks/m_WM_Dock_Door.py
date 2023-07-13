@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,54 +30,57 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_DOCK_DOOR"
+raw_perf_table = f"{raw}.WM_DOCK_DOOR_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_DOCK_DOOR, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_DOCK_DOOR = spark.sql(f"""SELECT
-WM_DOCK_DOOR.LOCATION_ID,
-WM_DOCK_DOOR.WM_DOCK_DOOR_ID,
-WM_DOCK_DOOR.WM_CREATED_TSTMP,
-WM_DOCK_DOOR.WM_LAST_UPDATED_TSTMP,
-WM_DOCK_DOOR.LOAD_TSTMP
-FROM WM_DOCK_DOOR
-WHERE WM_DOCK_DOOR_ID IN (SELECT DOCK_DOOR_ID FROM WM_DOCK_DOOR_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_DOCK_DOOR_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_DOCK_DOOR_ID IN (SELECT DOCK_DOOR_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_DOCK_DOOR_PRE, type SOURCE 
 # COLUMN COUNT: 28
 
 SQ_Shortcut_to_WM_DOCK_DOOR_PRE = spark.sql(f"""SELECT
-WM_DOCK_DOOR_PRE.DC_NBR,
-WM_DOCK_DOOR_PRE.DOCK_DOOR_ID,
-WM_DOCK_DOOR_PRE.FACILITY_ID,
-WM_DOCK_DOOR_PRE.DOCK_ID,
-WM_DOCK_DOOR_PRE.TC_COMPANY_ID,
-WM_DOCK_DOOR_PRE.DOCK_DOOR_NAME,
-WM_DOCK_DOOR_PRE.DOCK_DOOR_STATUS,
-WM_DOCK_DOOR_PRE.DESCRIPTION,
-WM_DOCK_DOOR_PRE.MARK_FOR_DELETION,
-WM_DOCK_DOOR_PRE.CREATED_SOURCE_TYPE,
-WM_DOCK_DOOR_PRE.CREATED_SOURCE,
-WM_DOCK_DOOR_PRE.CREATED_DTTM,
-WM_DOCK_DOOR_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_DOCK_DOOR_PRE.LAST_UPDATED_SOURCE,
-WM_DOCK_DOOR_PRE.LAST_UPDATED_DTTM,
-WM_DOCK_DOOR_PRE.OLD_DOCK_DOOR_STATUS,
-WM_DOCK_DOOR_PRE.ACTIVITY_TYPE,
-WM_DOCK_DOOR_PRE.APPOINTMENT_TYPE,
-WM_DOCK_DOOR_PRE.BARCODE,
-WM_DOCK_DOOR_PRE.TIME_FROM_INDUCTION,
-WM_DOCK_DOOR_PRE.PALLETIZATION_SPUR,
-WM_DOCK_DOOR_PRE.SORT_ZONE,
-WM_DOCK_DOOR_PRE.ILM_APPOINTMENT_NUMBER,
-WM_DOCK_DOOR_PRE.FLOWTHRU_ALLOC_SORT_PRTY,
-WM_DOCK_DOOR_PRE.LOCN_HDR_ID,
-WM_DOCK_DOOR_PRE.DOCK_DOOR_LOCN_ID,
-WM_DOCK_DOOR_PRE.OUTBD_STAGING_LOCN_ID,
-WM_DOCK_DOOR_PRE.LOAD_TSTMP
-FROM WM_DOCK_DOOR_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+DOCK_DOOR_ID,
+FACILITY_ID,
+DOCK_ID,
+TC_COMPANY_ID,
+DOCK_DOOR_NAME,
+DOCK_DOOR_STATUS,
+DESCRIPTION,
+MARK_FOR_DELETION,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+CREATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LAST_UPDATED_DTTM,
+OLD_DOCK_DOOR_STATUS,
+ACTIVITY_TYPE,
+APPOINTMENT_TYPE,
+BARCODE,
+TIME_FROM_INDUCTION,
+PALLETIZATION_SPUR,
+SORT_ZONE,
+ILM_APPOINTMENT_NUMBER,
+FLOWTHRU_ALLOC_SORT_PRTY,
+LOCN_HDR_ID,
+DOCK_DOOR_LOCN_ID,
+OUTBD_STAGING_LOCN_ID,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -121,10 +125,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_DOCK_DOOR_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -248,7 +249,7 @@ FIL_NO_CHANGE_REC = JNR_WM_DOCK_DOOR_temp.selectExpr( \
 	"JNR_WM_DOCK_DOOR___in_WM_DOCK_DOOR_ID as in_WM_DOCK_DOOR_ID", \
 	"JNR_WM_DOCK_DOOR___in_LOAD_TSTMP as in_LOAD_TSTMP", \
 	"JNR_WM_DOCK_DOOR___in_WM_CREATED_TSTMP as in_WM_CREATED_TSTMP", \
-	"JNR_WM_DOCK_DOOR___in_WM_LAST_UPDATED_TSTMP as in_WM_LAST_UPDATED_TSTMP")\
+	"JNR_WM_DOCK_DOOR___in_WM_LAST_UPDATED_TSTMP as in_WM_LAST_UPDATED_TSTMP") \
     .filter("in_WM_DOCK_DOOR_ID is Null OR (  in_WM_DOCK_DOOR_ID is NOT Null AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(in_WM_CREATED_TSTMP, date'1900-01-01') \
              OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(in_WM_LAST_UPDATED_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -318,7 +319,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___LOCN_HDR_ID as LOCN_HDR_ID", \
 	"FIL_NO_CHANGE_REC___DOCK_DOOR_LOCN_ID as DOCK_DOOR_LOCN_ID", \
 	"FIL_NO_CHANGE_REC___OUTBD_STAGING_LOCN_ID as OUTBD_STAGING_LOCN_ID", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
 	"FIL_NO_CHANGE_REC___in_WM_DOCK_DOOR_ID as in_WM_DOCK_DOOR_ID" \
 )
@@ -361,16 +362,49 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 	"EXP_EVAL_VALUES___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVAL_VALUES___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_EVAL_VALUES___in_WM_DOCK_DOOR_ID as in_WM_DOCK_DOOR_ID") \
-	.withColumn('pyspark_data_action', when((in_WM_DOCK_DOOR_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_WM_DOCK_DOOR_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_DOCK_DOOR, type TARGET 
 # COLUMN COUNT: 29
 
+Shortcut_to_WM_DOCK_DOOR = UPD_VALIDATE.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(DOCK_DOOR_ID AS BIGINT) as WM_DOCK_DOOR_ID", 
+	"CAST(TC_COMPANY_ID AS BIGINT) as WM_TC_COMPANY_ID", 
+	"CAST(FACILITY_ID AS BIGINT) as WM_FACILITY_ID", 
+	"CAST(DOCK_ID AS STRING) as WM_DOCK_ID", 
+	"CAST(DOCK_DOOR_NAME AS STRING) as WM_DOCK_DOOR_NAME", 
+	"CAST(DESCRIPTION AS STRING) as WM_DOCK_DOOR_DESC", 
+	"CAST(DOCK_DOOR_STATUS AS BIGINT) as WM_DOCK_DOOR_STATUS", 
+	"CAST(OLD_DOCK_DOOR_STATUS AS BIGINT) as WM_OLD_DOCK_DOOR_STATUS", 
+	"CAST(BARCODE AS STRING) as WM_DOCK_DOOR_BARCODE", 
+	"CAST(DOCK_DOOR_LOCN_ID AS STRING) as WM_DOCK_DOOR_LOCN_ID", 
+	"CAST(LOCN_HDR_ID AS BIGINT) as WM_LOCN_HDR_ID", 
+	"CAST(OUTBD_STAGING_LOCN_ID AS STRING) as WM_OUTBD_STAGING_LOCN_ID", 
+	"CAST(FLOWTHRU_ALLOC_SORT_PRTY AS STRING) as WM_FLOWTHRU_ALLOC_SORT_PRTY", 
+	"CAST(SORT_ZONE AS STRING) as WM_SORT_ZONE", 
+	"CAST(ILM_APPOINTMENT_NUMBER AS STRING) as WM_ILM_APPOINTMENT_NBR", 
+	"CAST(ACTIVITY_TYPE AS STRING) as WM_ACTIVITY_TYPE", 
+	"CAST(APPOINTMENT_TYPE AS STRING) as WM_APPOINTMENT_TYPE", 
+	"CAST(TIME_FROM_INDUCTION AS BIGINT) as TIME_FROM_INDUCTION", 
+	"CAST(PALLETIZATION_SPUR AS STRING) as WM_PALLETIZATION_SPUR", 
+	"CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION_FLAG", 
+	"CAST(CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_DOCK_DOOR_ID = target.WM_DOCK_DOOR_ID"""
-  refined_perf_table = "WM_DOCK_DOOR"
-  executeMerge(UPD_VALIDATE, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_DOCK_DOOR"
+  executeMerge(Shortcut_to_WM_DOCK_DOOR, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_DOCK_DOOR", "WM_DOCK_DOOR", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

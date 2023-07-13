@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Sec_User_PRE(dcnbr, env):
     
     tableName = "WM_SEC_USER_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_SEC_USER"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -62,11 +64,11 @@ def m_WM_Sec_User_PRE(dcnbr, env):
             SEC_USER.USER_ID,
             SEC_USER.SEC_POLICY_SET_ID,
             SEC_USER.WM_VERSION_ID
-        FROM SEC_USER
-        WHERE {Initial_Load} (TRUNC(CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC(MOD_DATE_TIME) >=  TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+        FROM {source_schema}.SEC_USER
+        WHERE  (TRUNC(CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC(MOD_DATE_TIME) >=  TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
     
 
-    SQ_Shortcut_to_SEC_USER = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_SEC_USER = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_SEC_USER is executed and data is loaded using jdbc")
     
     
@@ -78,7 +80,7 @@ def m_WM_Sec_User_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_SEC_USER_temp.selectExpr( 
     	"SQ_Shortcut_to_SEC_USER___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_SEC_USER___SEC_USER_ID as SEC_USER_ID", 
     	"SQ_Shortcut_to_SEC_USER___LOGIN_USER_ID as LOGIN_USER_ID", 
     	"SQ_Shortcut_to_SEC_USER___USER_NAME as USER_NAME", 
@@ -106,29 +108,29 @@ def m_WM_Sec_User_PRE(dcnbr, env):
     # COLUMN COUNT: 21
     
     
-    Shortcut_to_WM_SEC_USER_PRE = EXPTRANS.selectExpr( 
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-    	"CAST(SEC_USER_ID AS BIGINT) as SEC_USER_ID", 
-    	"CAST(LOGIN_USER_ID AS STRING) as LOGIN_USER_ID", 
-    	"CAST(USER_NAME AS STRING) as USER_NAME", 
-    	"CAST(USER_DESC AS STRING) as USER_DESC", 
-    	"CAST(PSWD AS STRING) as PSWD", 
-    	"CAST(PSWD_EXP_DATE AS TIMESTAMP) as PSWD_EXP_DATE", 
-    	"CAST(PSWD_CHANGE_AT_LOGIN AS STRING) as PSWD_CHANGE_AT_LOGIN", 
-    	"CAST(CAN_CHNG_PSWD AS STRING) as CAN_CHNG_PSWD", 
-    	"CAST(DISABLED AS STRING) as DISABLED", 
-    	"CAST(LOCKED_OUT AS STRING) as LOCKED_OUT", 
-    	"CAST(LAST_LOGIN AS TIMESTAMP) as LAST_LOGIN", 
-    	"CAST(GRACE_LOGINS AS BIGINT) as GRACE_LOGINS", 
-    	"CAST(LOCKED_OUT_EXPIRATION AS TIMESTAMP) as LOCKED_OUT_EXPIRATION", 
-    	"CAST(FAILED_LOGIN_ATTEMPTS AS BIGINT) as FAILED_LOGIN_ATTEMPTS", 
-    	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-    	"CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-    	"CAST(USER_ID AS STRING) as USER_ID", 
-    	"CAST(SEC_POLICY_SET_ID AS BIGINT) as SEC_POLICY_SET_ID", 
-    	"CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", 
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_SEC_USER_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(SEC_USER_ID AS INT) as SEC_USER_ID",
+        "CAST(LOGIN_USER_ID AS STRING) as LOGIN_USER_ID",
+        "CAST(USER_NAME AS STRING) as USER_NAME",
+        "CAST(USER_DESC AS STRING) as USER_DESC",
+        "CAST(PSWD AS STRING) as PSWD",
+        "CAST(PSWD_EXP_DATE AS TIMESTAMP) as PSWD_EXP_DATE",
+        "CAST(PSWD_CHANGE_AT_LOGIN AS STRING) as PSWD_CHANGE_AT_LOGIN",
+        "CAST(CAN_CHNG_PSWD AS STRING) as CAN_CHNG_PSWD",
+        "CAST(DISABLED AS STRING) as DISABLED",
+        "CAST(LOCKED_OUT AS STRING) as LOCKED_OUT",
+        "CAST(LAST_LOGIN AS TIMESTAMP) as LAST_LOGIN",
+        "CAST(GRACE_LOGINS AS INT) as GRACE_LOGINS",
+        "CAST(LOCKED_OUT_EXPIRATION AS TIMESTAMP) as LOCKED_OUT_EXPIRATION",
+        "CAST(FAILED_LOGIN_ATTEMPTS AS INT) as FAILED_LOGIN_ATTEMPTS",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(SEC_POLICY_SET_ID AS INT) as SEC_POLICY_SET_ID",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_SEC_USER_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_SEC_USER_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_SEC_USER_PRE is written to the target table - " + target_table_name)

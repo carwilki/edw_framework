@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -31,38 +31,39 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_LPN_STATUS"
+raw_perf_table = f"{raw}.WM_LPN_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_STATUS, type SOURCE 
 # COLUMN COUNT: 4
 
 SQ_Shortcut_to_WM_LPN_STATUS = spark.sql(f"""SELECT
-WM_LPN_STATUS.LOCATION_ID,
-WM_LPN_STATUS.WM_LPN_STATUS,
-WM_LPN_STATUS.WM_LPN_STATUS_DESC,
-WM_LPN_STATUS.LOAD_TSTMP
-FROM WM_LPN_STATUS
+LOCATION_ID,
+WM_LPN_STATUS,
+WM_LPN_STATUS_DESC,
+LOAD_TSTMP
+FROM {refined_perf_table}
 WHERE WM_LPN_STATUS IN
-(SELECT LPN_STATUS FROM WM_LPN_STATUS_PRE )""").withColumn("sys_row_id", monotonically_increasing_id())
+(SELECT LPN_STATUS FROM {raw_perf_table} )""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LPN_STATUS_PRE, type SOURCE 
 # COLUMN COUNT: 3
 
 SQ_Shortcut_to_WM_LPN_STATUS_PRE = spark.sql(f"""SELECT
-WM_LPN_STATUS_PRE.DC_NBR,
-WM_LPN_STATUS_PRE.LPN_STATUS,
-WM_LPN_STATUS_PRE.DESCRIPTION
-FROM WM_LPN_STATUS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+LPN_STATUS,
+DESCRIPTION
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXPTRANS, type EXPRESSION 
@@ -115,8 +116,8 @@ FIL_CHANGED_REC = JNR_WM_LPN_STATUS_temp.selectExpr( \
 	"JNR_WM_LPN_STATUS___in_LOCATION_ID as in_LOCATION_ID", \
 	"JNR_WM_LPN_STATUS___WM_LPN_STATUS as WM_LPN_STATUS", \
 	"JNR_WM_LPN_STATUS___WM_LPN_STATUS_DESC as WM_LPN_STATUS_DESC", \
-	"JNR_WM_LPN_STATUS___in_LOAD_TSTMP as in_LOAD_TSTMP")\
-    .filter("WM_LPN_STATUS is Null OR ( WM_LPN_STATUS is not Null AND\
+	"JNR_WM_LPN_STATUS___in_LOAD_TSTMP as in_LOAD_TSTMP") \
+    .filter("WM_LPN_STATUS is Null OR ( WM_LPN_STATUS is not Null AND \
      ( COALESCE(ltrim(rtrim(WM_LPN_STATUS_DESC)), '') != COALESCE(ltrim(rtrim(DESCRIPTION)), '')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -136,8 +137,8 @@ EXP_UPD_VALIDATOR = FIL_CHANGED_REC_temp.selectExpr( \
 	"FIL_CHANGED_REC___WM_LPN_STATUS_DESC as WM_LPN_STATUS_DESC", \
 	"FIL_CHANGED_REC___in_LOAD_TSTMP as in_LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_CHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_CHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_CHANGED_REC___WM_LPN_STATUS IS NULL, 1, 2) as o_UPD_VALIDATOR" \
+	"IF(FIL_CHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_CHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_CHANGED_REC___WM_LPN_STATUS IS NULL, 1, 2) as o_UPD_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -154,16 +155,25 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_STATUS1, type TARGET 
 # COLUMN COUNT: 5
 
+Shortcut_to_WM_LPN_STATUS1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(LPN_STATUS AS BIGINT) as WM_LPN_STATUS", 
+	"CAST(DESCRIPTION AS STRING) as WM_LPN_STATUS_DESC", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_STATUS = target.WM_LPN_STATUS"""
-  refined_perf_table = "WM_LPN_STATUS"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_LPN_STATUS"
+  executeMerge(Shortcut_to_WM_LPN_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_STATUS", "WM_LPN_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

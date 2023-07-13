@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,41 +30,42 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_STANDARD_UOM"
+raw_perf_table = f"{raw}.WM_STANDARD_UOM_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STANDARD_UOM_PRE, type SOURCE 
 # COLUMN COUNT: 12
 
 SQ_Shortcut_to_WM_STANDARD_UOM_PRE = spark.sql(f"""SELECT
-WM_STANDARD_UOM_PRE.DC_NBR,
-WM_STANDARD_UOM_PRE.STANDARD_UOM,
-WM_STANDARD_UOM_PRE.STANDARD_UOM_TYPE,
-WM_STANDARD_UOM_PRE.ABBREVIATION,
-WM_STANDARD_UOM_PRE.DESCRIPTION,
-WM_STANDARD_UOM_PRE.UOM_SYSTEM,
-WM_STANDARD_UOM_PRE.IS_TYPE_SYS_DFLT,
-WM_STANDARD_UOM_PRE.UNITS_IN_TYPE_SYS_DFLT,
-WM_STANDARD_UOM_PRE.IS_DB_UOM,
-WM_STANDARD_UOM_PRE.IS_SYSTEM_DEFINED,
-WM_STANDARD_UOM_PRE.CREATED_DTTM,
-WM_STANDARD_UOM_PRE.LAST_UPDATED_DTTM
-FROM WM_STANDARD_UOM_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+STANDARD_UOM,
+STANDARD_UOM_TYPE,
+ABBREVIATION,
+DESCRIPTION,
+UOM_SYSTEM,
+IS_TYPE_SYS_DFLT,
+UNITS_IN_TYPE_SYS_DFLT,
+IS_DB_UOM,
+IS_SYSTEM_DEFINED,
+CREATED_DTTM,
+LAST_UPDATED_DTTM
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STANDARD_UOM, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_STANDARD_UOM = spark.sql(f"""SELECT
-WM_STANDARD_UOM.LOCATION_ID,
-WM_STANDARD_UOM.WM_STANDARD_UOM_ID,
-WM_STANDARD_UOM.WM_CREATED_TSTMP,
-WM_STANDARD_UOM.WM_LAST_UPDATED_TSTMP,
-WM_STANDARD_UOM.LOAD_TSTMP
-FROM WM_STANDARD_UOM
-WHERE WM_STANDARD_UOM_ID IN (SELECT STANDARD_UOM FROM WM_STANDARD_UOM_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_STANDARD_UOM_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_STANDARD_UOM_ID IN (SELECT STANDARD_UOM FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -93,10 +94,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_STANDARD_UOM_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -178,8 +176,8 @@ EXP_OUTPUT_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___CREATED_DTTM as CREATED_DTTM", 
 	"FIL_UNCHANGED_RECORDS___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_STANDARD_UOM_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_STANDARD_UOM_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -205,19 +203,37 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr(
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_STANDARD_UOM1, type TARGET 
 # COLUMN COUNT: 14
 
+
+Shortcut_to_WM_STANDARD_UOM1 = UPD_INS_UPD.selectExpr( \
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
+	"CAST(STANDARD_UOM AS BIGINT) as WM_STANDARD_UOM_ID", \
+	"CAST(STANDARD_UOM_TYPE AS BIGINT) as WM_STANDARD_UOM_TYPE_ID", \
+	"CAST(UOM_SYSTEM AS STRING) as WM_UOM_SYSTEM", \
+	"CAST(ABBREVIATION AS STRING) as WM_STANDARD_UOM_ABBREVIATION", \
+	"CAST(DESCRIPTION AS STRING) as WM_STANDARD_UOM_DESC", \
+	"CAST(IS_TYPE_SYS_DFLT AS BIGINT) as WM_TYPE_SYSTEM_DEFAULT_FLAG", \
+	"CAST(UNITS_IN_TYPE_SYS_DFLT AS BIGINT) as WM_UNITS_IN_TYPE_SYSTEM_DEFAULT", \
+	"CAST(IS_DB_UOM AS BIGINT) as WM_DB_UOM_FLAG", \
+	"CAST(IS_SYSTEM_DEFINED AS BIGINT) as WM_SYSTEM_DEFINED_FLAG", \
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_STANDARD_UOM_ID = target.WM_STANDARD_UOM_ID"""
-  refined_perf_table = "WM_STANDARD_UOM"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  # refined_perf_table = "WM_STANDARD_UOM"
+  executeMerge(Shortcut_to_WM_STANDARD_UOM1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

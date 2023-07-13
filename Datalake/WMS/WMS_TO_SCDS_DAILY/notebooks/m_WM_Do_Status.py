@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,29 +30,33 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_DO_STATUS"
+raw_perf_table = f"{raw}.WM_DO_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_DO_STATUS, type SOURCE 
 # COLUMN COUNT: 4
 
 SQ_Shortcut_to_WM_DO_STATUS = spark.sql(f"""SELECT
-WM_DO_STATUS.LOCATION_ID,
-WM_DO_STATUS.WM_ORDER_STATUS_ID,
-WM_DO_STATUS.WM_ORDER_STATUS_DESC,
-WM_DO_STATUS.LOAD_TSTMP
-FROM WM_DO_STATUS
-WHERE WM_ORDER_STATUS_ID IN ( SELECT ORDER_STATUS FROM WM_DO_STATUS_PRE )""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_ORDER_STATUS_ID,
+WM_ORDER_STATUS_DESC,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_ORDER_STATUS_ID IN ( SELECT ORDER_STATUS FROM {raw_perf_table} )""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_DO_STATUS_PRE, type SOURCE 
 # COLUMN COUNT: 4
 
 SQ_Shortcut_to_WM_DO_STATUS_PRE = spark.sql(f"""SELECT
-WM_DO_STATUS_PRE.DC_NBR,
-WM_DO_STATUS_PRE.ORDER_STATUS,
-WM_DO_STATUS_PRE.DESCRIPTION,
-WM_DO_STATUS_PRE.LOAD_TSTMP
-FROM WM_DO_STATUS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+ORDER_STATUS,
+DESCRIPTION,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -73,10 +78,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_DO_STATUS_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -126,7 +128,7 @@ FIL_REC_UNCHANGED = JNR_Do_Status_temp.selectExpr( \
 	"JNR_Do_Status___in_LOCATION_ID as in_LOCATION_ID", \
 	"JNR_Do_Status___WM_ORDER_STATUS_ID as WM_ORDER_STATUS_ID", \
 	"JNR_Do_Status___WM_ORDER_STATUS_DESC as WM_ORDER_STATUS_DESC", \
-	"JNR_Do_Status___in_LOAD_TSTMP as in_LOAD_TSTMP")\
+	"JNR_Do_Status___in_LOAD_TSTMP as in_LOAD_TSTMP") \
     .filter("WM_ORDER_STATUS_ID is Null OR (  WM_ORDER_STATUS_ID is NOT Null AND ( COALESCE(ltrim ( rtrim ( upper ( DESCRIPTION ) ) ), '') != COALESCE(ltrim ( rtrim ( upper ( WM_ORDER_STATUS_DESC ) ) ), '')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 
@@ -146,9 +148,9 @@ EXP_UPD_VALIDATOR = FIL_REC_UNCHANGED_temp.selectExpr( \
 	"FIL_REC_UNCHANGED___WM_ORDER_STATUS_ID as WM_ORDER_STATUS_ID", \
 	"FIL_REC_UNCHANGED___WM_ORDER_STATUS_DESC as WM_ORDER_STATUS_DESC", \
 	"FIL_REC_UNCHANGED___in_LOAD_TSTMP as in_LOAD_TSTMP", \
-	"IF (FIL_REC_UNCHANGED___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP (), FIL_REC_UNCHANGED___in_LOAD_TSTMP) as LOAD_TSTMP_exp", \
-	"CURRENT_TIMESTAMP () as UPDATE_TSTMP", \
-	"IF (FIL_REC_UNCHANGED___WM_ORDER_STATUS_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" \
+	"IF(FIL_REC_UNCHANGED___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP(), FIL_REC_UNCHANGED___in_LOAD_TSTMP) as LOAD_TSTMP_exp", \
+	"CURRENT_TIMESTAMP() as UPDATE_TSTMP", \
+	"IF(FIL_REC_UNCHANGED___WM_ORDER_STATUS_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -165,16 +167,25 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_exp as LOAD_TSTMP_exp", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_DO_STATUS1, type TARGET 
 # COLUMN COUNT: 5
 
+Shortcut_to_WM_DO_STATUS1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(ORDER_STATUS AS BIGINT) as WM_ORDER_STATUS_ID", 
+	"CAST(DESCRIPTION AS STRING) as WM_ORDER_STATUS_DESC", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ORDER_STATUS_ID = target.WM_ORDER_STATUS_ID"""
-  refined_perf_table = "WM_DO_STATUS"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_DO_STATUS"
+  executeMerge(Shortcut_to_WM_DO_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_DO_STATUS", "WM_DO_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

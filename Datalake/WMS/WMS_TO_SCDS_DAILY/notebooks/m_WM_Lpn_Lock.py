@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,11 +30,11 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+raw_perf_table = f"{raw}.WM_LPN_LOCK_PRE"
+refined_perf_table = f"{refine}.WM_LPN_LOCK"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-
-# COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 soft_delete_logic_WM_Lpn_Lock=args.soft_delete_logic_WM_Lpn_Lock
 
@@ -42,23 +43,23 @@ soft_delete_logic_WM_Lpn_Lock=args.soft_delete_logic_WM_Lpn_Lock
 # COLUMN COUNT: 16
 
 SQ_Shortcut_to_WM_LPN_LOCK = spark.sql(f"""SELECT
-WM_LPN_LOCK.LOCATION_ID,
-WM_LPN_LOCK.WM_LPN_LOCK_ID,
-WM_LPN_LOCK.WM_LPN_ID,
-WM_LPN_LOCK.WM_TC_LPN_ID,
-WM_LPN_LOCK.WM_INVENTORY_LOCK_CD,
-WM_LPN_LOCK.WM_REASON_CD,
-WM_LPN_LOCK.LOCK_CNT,
-WM_LPN_LOCK.WM_CREATED_SOURCE_TYPE,
-WM_LPN_LOCK.WM_CREATED_SOURCE,
-WM_LPN_LOCK.WM_CREATED_TSTMP,
-WM_LPN_LOCK.WM_LAST_UPDATED_SOURCE_TYPE,
-WM_LPN_LOCK.WM_LAST_UPDATED_SOURCE,
-WM_LPN_LOCK.WM_LAST_UPDATED_TSTMP,
-WM_LPN_LOCK.DELETE_FLAG,
-WM_LPN_LOCK.UPDATE_TSTMP,
-WM_LPN_LOCK.LOAD_TSTMP
-FROM WM_LPN_LOCK
+LOCATION_ID,
+WM_LPN_LOCK_ID,
+WM_LPN_ID,
+WM_TC_LPN_ID,
+WM_INVENTORY_LOCK_CD,
+WM_REASON_CD,
+LOCK_CNT,
+WM_CREATED_SOURCE_TYPE,
+WM_CREATED_SOURCE,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_SOURCE_TYPE,
+WM_LAST_UPDATED_SOURCE,
+WM_LAST_UPDATED_TSTMP,
+DELETE_FLAG,
+UPDATE_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
 WHERE {Del_Logic} 1=0 and 
 
 DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
@@ -68,21 +69,21 @@ DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 # COLUMN COUNT: 14
 
 SQ_Shortcut_to_WM_LPN_LOCK_PRE = spark.sql(f"""SELECT
-WM_LPN_LOCK_PRE.DC_NBR,
-WM_LPN_LOCK_PRE.LPN_LOCK_ID,
-WM_LPN_LOCK_PRE.LPN_ID,
-WM_LPN_LOCK_PRE.INVENTORY_LOCK_CODE,
-WM_LPN_LOCK_PRE.REASON_CODE,
-WM_LPN_LOCK_PRE.LOCK_COUNT,
-WM_LPN_LOCK_PRE.TC_LPN_ID,
-WM_LPN_LOCK_PRE.CREATED_SOURCE_TYPE,
-WM_LPN_LOCK_PRE.CREATED_SOURCE,
-WM_LPN_LOCK_PRE.CREATED_DTTM,
-WM_LPN_LOCK_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_LPN_LOCK_PRE.LAST_UPDATED_SOURCE,
-WM_LPN_LOCK_PRE.LAST_UPDATED_DTTM,
-WM_LPN_LOCK_PRE.LOAD_TSTMP
-FROM WM_LPN_LOCK_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+LPN_LOCK_ID,
+LPN_ID,
+INVENTORY_LOCK_CODE,
+REASON_CODE,
+LOCK_COUNT,
+TC_LPN_ID,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+CREATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LAST_UPDATED_DTTM,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -113,10 +114,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_LPN_LOCK_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -221,7 +219,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LPN_LOCK_temp.selectExpr( \
 	"JNR_WM_LPN_LOCK___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
 	"JNR_WM_LPN_LOCK___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"JNR_WM_LPN_LOCK___i_LOAD_TSTMP as i_LOAD_TSTMP", \
-	"JNR_WM_LPN_LOCK___WM_DELETE_FLAG as WM_DELETE_FLAG")\
+	"JNR_WM_LPN_LOCK___WM_DELETE_FLAG as WM_DELETE_FLAG") \
     .filter("LPN_LOCK_ID is Null OR i_WM_LPN_LOCK_ID is Null OR (  i_WM_LPN_LOCK_ID is NOT Null AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') \
              OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -231,11 +229,11 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LPN_LOCK_temp.selectExpr( \
 # COLUMN COUNT: 33
 
 # for each involved DataFrame, append the dataframe name to each column
-FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns])\
-.withColumn("v_CREATED_DTTM", expr("""IF (CREATED_DTTM IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), CREATED_DTTM)""")) \
-	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF (LAST_UPDATED_DTTM IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), LAST_UPDATED_DTTM)""")) \
-	.withColumn("v_i_WM_CREATED_TSTMP", expr("""IF (i_WM_CREATED_TSTMP IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), i_WM_CREATED_TSTMP)""")) \
-	.withColumn("v_i_WM_LAST_UPDATED_TSTMP", expr("""IF (i_WM_LAST_UPDATED_TSTMP IS NULL, TO_DATE ( '01/01/1900' , 'MM/DD/YYYY' ), i_WM_LAST_UPDATED_TSTMP)"""))
+FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
+.withColumn("v_CREATED_DTTM", expr("""IF(CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
+	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF(LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
+	.withColumn("v_i_WM_CREATED_TSTMP", expr("""IF(i_WM_CREATED_TSTMP IS NULL, date'1900-01-01', i_WM_CREATED_TSTMP)""")) \
+	.withColumn("v_i_WM_LAST_UPDATED_TSTMP", expr("""IF(i_WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', i_WM_LAST_UPDATED_TSTMP)"""))
              
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
@@ -268,10 +266,10 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", \
 	"FIL_UNCHANGED_RECORDS___WM_DELETE_FLAG as WM_DELETE_FLAG", \
-	"IF (FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NOT NULL, 1, 0) as DEL_FLAG", \
+	"IF(FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NOT NULL, 1, 0) as DEL_FLAG", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP_EXP", \
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NULL, 'INSERT', IF (FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_CREATED_DTTM OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL)) as o_UPDATE_VALIDATOR" \
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NULL, 'INSERT', IF(FIL_UNCHANGED_RECORDS___LPN_LOCK_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_LPN_LOCK_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_CREATED_DTTM OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL)) as o_UPDATE_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -299,16 +297,36 @@ UPD_INSERT_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP_EXP as UPDATE_TSTMP_EXP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')), lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_LOCK3, type TARGET 
 # COLUMN COUNT: 16
 
+Shortcut_to_WM_LPN_LOCK3 = UPD_INSERT_UPDATE.selectExpr( 
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID", 
+	"CAST(LPN_LOCK_ID1 AS BIGINT) as WM_LPN_LOCK_ID", 
+	"CAST(LPN_ID1 AS BIGINT) as WM_LPN_ID", 
+	"CAST(TC_LPN_ID1 AS STRING) as WM_TC_LPN_ID", 
+	"CAST(INVENTORY_LOCK_CODE1 AS STRING) as WM_INVENTORY_LOCK_CD", 
+	"CAST(REASON_CODE1 AS STRING) as WM_REASON_CD", 
+	"CAST(LOCK_COUNT1 AS BIGINT) as LOCK_CNT", 
+	"CAST(CREATED_SOURCE_TYPE1 AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE1 AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE1 AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE1 AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(DEL_FLAG AS BIGINT) as DELETE_FLAG", 
+	"CAST(UPDATE_TSTMP_EXP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LPN_LOCK_ID = target.WM_LPN_LOCK_ID"""
-  refined_perf_table = "WM_LPN_LOCK"
-  executeMerge(UPD_INSERT_UPDATE, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_LPN_LOCK"
+  executeMerge(Shortcut_to_WM_LPN_LOCK3, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LPN_LOCK", "WM_LPN_LOCK", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Picking_Short_Item_PRE(dcnbr, env):
     
     tableName = "WM_PICKING_SHORT_ITEM_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_PICKING_SHORT_ITEM"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -69,11 +71,11 @@ def m_WM_Picking_Short_Item_PRE(dcnbr, env):
                     PICKING_SHORT_ITEM.REQD_CNTRY_OF_ORGN,
                     PICKING_SHORT_ITEM.SHIPMENT_ID,
                     PICKING_SHORT_ITEM.TC_SHIPMENT_ID
-                FROM PICKING_SHORT_ITEM
-                WHERE {Initial_Load} (trunc(PICKING_SHORT_ITEM.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(PICKING_SHORT_ITEM.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+                FROM {source_schema}.PICKING_SHORT_ITEM
+                WHERE  (trunc(PICKING_SHORT_ITEM.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(PICKING_SHORT_ITEM.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
 
 
-    SQ_Shortcut_to_PICKING_SHORT_ITEM = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_PICKING_SHORT_ITEM = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_PICKING_SHORT_ITEM is executed and data is loaded using jdbc")
 
     
@@ -86,7 +88,7 @@ def m_WM_Picking_Short_Item_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_PICKING_SHORT_ITEM_temp.selectExpr( \
     	"SQ_Shortcut_to_PICKING_SHORT_ITEM___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR_EXP", \
+    	f"{dcnbr} as DC_NBR_EXP", \
     	"SQ_Shortcut_to_PICKING_SHORT_ITEM___PICKING_SHORT_ITEM_ID as PICKING_SHORT_ITEM_ID", \
     	"SQ_Shortcut_to_PICKING_SHORT_ITEM___ITEM_ID as ITEM_ID", \
     	"SQ_Shortcut_to_PICKING_SHORT_ITEM___LOCN_ID as LOCN_ID", \
@@ -122,37 +124,37 @@ def m_WM_Picking_Short_Item_PRE(dcnbr, env):
     # COLUMN COUNT: 29
     
     
-    Shortcut_to_WM_PICKING_SHORT_ITEM_PRE = EXPTRANS.selectExpr( \
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-    	"CAST(PICKING_SHORT_ITEM_ID AS BIGINT) as PICKING_SHORT_ITEM_ID", \
-    	"CAST(ITEM_ID AS BIGINT) as ITEM_ID", \
-    	"CAST(LOCN_ID AS STRING) as LOCN_ID", \
-    	"CAST(LINE_ITEM_ID AS BIGINT) as LINE_ITEM_ID", \
-    	"CAST(TC_ORDER_ID AS STRING) as TC_ORDER_ID", \
-    	"CAST(WAVE_NBR AS STRING) as WAVE_NBR", \
-    	"CAST(SHORT_QTY AS BIGINT) as SHORT_QTY", \
-    	"CAST(STAT_CODE AS BIGINT) as STAT_CODE", \
-    	"CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", \
-    	"CAST(CREATED_DTTM AS DATE) as CREATED_DTTM", \
-    	"CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-    	"CAST(LAST_UPDATED_DTTM AS DATE) as LAST_UPDATED_DTTM", \
-    	"CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-    	"CAST(SHORT_TYPE AS STRING) as SHORT_TYPE", \
-    	"CAST(TC_LPN_ID AS STRING) as TC_LPN_ID", \
-    	"CAST(LPN_DETAIL_ID AS BIGINT) as LPN_DETAIL_ID", \
-    	"CAST(REQD_INVN_TYPE AS STRING) as REQD_INVN_TYPE", \
-    	"CAST(REQD_PROD_STAT AS STRING) as REQD_PROD_STAT", \
-    	"CAST(REQD_BATCH_NBR AS STRING) as REQD_BATCH_NBR", \
-    	"CAST(REQD_SKU_ATTR_1 AS STRING) as REQD_SKU_ATTR_1", \
-    	"CAST(REQD_SKU_ATTR_2 AS STRING) as REQD_SKU_ATTR_2", \
-    	"CAST(REQD_SKU_ATTR_3 AS STRING) as REQD_SKU_ATTR_3", \
-    	"CAST(REQD_SKU_ATTR_4 AS STRING) as REQD_SKU_ATTR_4", \
-    	"CAST(REQD_SKU_ATTR_5 AS STRING) as REQD_SKU_ATTR_5", \
-    	"CAST(REQD_CNTRY_OF_ORGN AS STRING) as REQD_CNTRY_OF_ORGN", \
-    	"CAST(SHIPMENT_ID AS BIGINT) as SHIPMENT_ID", \
-    	"CAST(TC_SHIPMENT_ID AS STRING) as TC_SHIPMENT_ID", \
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_PICKING_SHORT_ITEM_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(PICKING_SHORT_ITEM_ID AS INT) as PICKING_SHORT_ITEM_ID",
+        "CAST(ITEM_ID AS INT) as ITEM_ID",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(LINE_ITEM_ID AS BIGINT) as LINE_ITEM_ID",
+        "CAST(TC_ORDER_ID AS STRING) as TC_ORDER_ID",
+        "CAST(WAVE_NBR AS STRING) as WAVE_NBR",
+        "CAST(SHORT_QTY AS DECIMAL(13,5)) as SHORT_QTY",
+        "CAST(STAT_CODE AS SMALLINT) as STAT_CODE",
+        "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+        "CAST(CREATED_DTTM AS DATE) as CREATED_DTTM",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS DATE) as LAST_UPDATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(SHORT_TYPE AS STRING) as SHORT_TYPE",
+        "CAST(TC_LPN_ID AS STRING) as TC_LPN_ID",
+        "CAST(LPN_DETAIL_ID AS BIGINT) as LPN_DETAIL_ID",
+        "CAST(REQD_INVN_TYPE AS STRING) as REQD_INVN_TYPE",
+        "CAST(REQD_PROD_STAT AS STRING) as REQD_PROD_STAT",
+        "CAST(REQD_BATCH_NBR AS STRING) as REQD_BATCH_NBR",
+        "CAST(REQD_SKU_ATTR_1 AS STRING) as REQD_SKU_ATTR_1",
+        "CAST(REQD_SKU_ATTR_2 AS STRING) as REQD_SKU_ATTR_2",
+        "CAST(REQD_SKU_ATTR_3 AS STRING) as REQD_SKU_ATTR_3",
+        "CAST(REQD_SKU_ATTR_4 AS STRING) as REQD_SKU_ATTR_4",
+        "CAST(REQD_SKU_ATTR_5 AS STRING) as REQD_SKU_ATTR_5",
+        "CAST(REQD_CNTRY_OF_ORGN AS STRING) as REQD_CNTRY_OF_ORGN",
+        "CAST(SHIPMENT_ID AS BIGINT) as SHIPMENT_ID",
+        "CAST(TC_SHIPMENT_ID AS STRING) as TC_SHIPMENT_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_PICKING_SHORT_ITEM_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_PICKING_SHORT_ITEM_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_PICKING_SHORT_ITEM_PRE is written to the target table - " + target_table_name)

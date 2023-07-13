@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_E_Aud_Log_PRE(dcnbr, env):
     tableName = "WM_E_AUD_LOG_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_AUD_LOG"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -98,8 +100,8 @@ def m_WM_E_Aud_Log_PRE(dcnbr, env):
                 E_AUD_LOG.VERSION_ID,
                 E_AUD_LOG.ACT_ID,
                 E_AUD_LOG.COMPONENT_BK
-            FROM E_AUD_LOG
-            WHERE (TRUNC( E_AUD_LOG.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.E_AUD_LOG
+            WHERE (TRUNC( E_AUD_LOG.CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -161,56 +163,56 @@ def m_WM_E_Aud_Log_PRE(dcnbr, env):
     # COLUMN COUNT: 44
 
 
-    Shortcut_to_WM_E_AUD_LOG_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(AUD_ID AS BIGINT) as AUD_ID", 
-        "CAST(WHSE AS STRING) as WHSE", 
-        "CAST(TRAN_NBR AS BIGINT) as TRAN_NBR", 
-        "CAST(SKU_ID AS STRING) as SKU_ID", 
-        "CAST(SKU_HNDL_ATTR AS STRING) as SKU_HNDL_ATTR", 
-        "CAST(CRITERIA AS STRING) as CRITERIA", 
-        "CAST(SLOT_ATTR AS STRING) as SLOT_ATTR", 
-        "CAST(FACTOR_TIME AS BIGINT) as FACTOR_TIME", 
-        "CAST(CURR_SLOT AS STRING) as CURR_SLOT", 
-        "CAST(NEXT_SLOT AS STRING) as NEXT_SLOT", 
-        "CAST(DISTANCE AS BIGINT) as DISTANCE", 
-        "CAST(HEIGHT AS BIGINT) as HEIGHT", 
-        "CAST(TRVL_DIR AS STRING) as TRVL_DIR", 
-        "CAST(ELEM_TIME AS BIGINT) as ELEM_TIME", 
-        "CAST(UOM AS STRING) as UOM", 
-        "CAST(CURR_LOCN_CLASS AS STRING) as CURR_LOCN_CLASS", 
-        "CAST(NEXT_LOCN_CLASS AS STRING) as NEXT_LOCN_CLASS", 
-        "CAST(TOT_TIME AS BIGINT) as TOT_TIME", 
-        "CAST(TOT_UNITS AS BIGINT) as TOT_UNITS", 
-        "CAST(UNITS_PER_GRAB AS BIGINT) as UNITS_PER_GRAB", 
-        "CAST(LPN AS STRING) as LPN", 
-        "CAST(ELEM_DESC AS STRING) as ELEM_DESC", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(TA_MULTIPLIER AS BIGINT) as TA_MULTIPLIER", 
-        "CAST(ELS_TRAN_ID AS BIGINT) as ELS_TRAN_ID", 
-        "CAST(CRIT_VAL AS STRING) as CRIT_VAL", 
-        "CAST(CRIT_TIME AS BIGINT) as CRIT_TIME", 
-        "CAST(ELM_ID AS BIGINT) as ELM_ID", 
-        "CAST(FACTOR AS STRING) as FACTOR", 
-        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT", 
-        "CAST(MODULE_TYPE AS STRING) as MODULE_TYPE", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(ADDTL_TIME_ALLOW AS BIGINT) as ADDTL_TIME_ALLOW", 
-        "CAST(SLOT_TYPE_TIME_ALLOW AS BIGINT) as SLOT_TYPE_TIME_ALLOW", 
-        "CAST(UNIT_PICK_TIME_ALLOW AS BIGINT) as UNIT_PICK_TIME_ALLOW", 
-        "CAST(PFD_TIME AS BIGINT) as PFD_TIME", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(ACT_ID AS BIGINT) as ACT_ID", 
-        "CAST(COMPONENT_BK AS STRING) as COMPONENT_BK", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_AUD_LOG_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(AUD_ID AS DECIMAL(20,0)) as AUD_ID",
+        "CAST(WHSE AS STRING) as WHSE",
+        "CAST(TRAN_NBR AS INT) as TRAN_NBR",
+        "CAST(SKU_ID AS STRING) as SKU_ID",
+        "CAST(SKU_HNDL_ATTR AS STRING) as SKU_HNDL_ATTR",
+        "CAST(CRITERIA AS STRING) as CRITERIA",
+        "CAST(SLOT_ATTR AS STRING) as SLOT_ATTR",
+        "CAST(FACTOR_TIME AS DECIMAL(20,7)) as FACTOR_TIME",
+        "CAST(CURR_SLOT AS STRING) as CURR_SLOT",
+        "CAST(NEXT_SLOT AS STRING) as NEXT_SLOT",
+        "CAST(DISTANCE AS DECIMAL(20,7)) as DISTANCE",
+        "CAST(HEIGHT AS DECIMAL(20,7)) as HEIGHT",
+        "CAST(TRVL_DIR AS STRING) as TRVL_DIR",
+        "CAST(ELEM_TIME AS DECIMAL(13,5)) as ELEM_TIME",
+        "CAST(UOM AS STRING) as UOM",
+        "CAST(CURR_LOCN_CLASS AS STRING) as CURR_LOCN_CLASS",
+        "CAST(NEXT_LOCN_CLASS AS STRING) as NEXT_LOCN_CLASS",
+        "CAST(TOT_TIME AS DECIMAL(15,7)) as TOT_TIME",
+        "CAST(TOT_UNITS AS DECIMAL(13,5)) as TOT_UNITS",
+        "CAST(UNITS_PER_GRAB AS DECIMAL(13,5)) as UNITS_PER_GRAB",
+        "CAST(LPN AS STRING) as LPN",
+        "CAST(ELEM_DESC AS STRING) as ELEM_DESC",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(TA_MULTIPLIER AS DECIMAL(13,7)) as TA_MULTIPLIER",
+        "CAST(ELS_TRAN_ID AS DECIMAL(20,0)) as ELS_TRAN_ID",
+        "CAST(CRIT_VAL AS STRING) as CRIT_VAL",
+        "CAST(CRIT_TIME AS DECIMAL(13,5)) as CRIT_TIME",
+        "CAST(ELM_ID AS INT) as ELM_ID",
+        "CAST(FACTOR AS STRING) as FACTOR",
+        "CAST(THRUPUT_MSRMNT AS STRING) as THRUPUT_MSRMNT",
+        "CAST(MODULE_TYPE AS STRING) as MODULE_TYPE",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(ADDTL_TIME_ALLOW AS DECIMAL(9,4)) as ADDTL_TIME_ALLOW",
+        "CAST(SLOT_TYPE_TIME_ALLOW AS DECIMAL(9,4)) as SLOT_TYPE_TIME_ALLOW",
+        "CAST(UNIT_PICK_TIME_ALLOW AS DECIMAL(9,4)) as UNIT_PICK_TIME_ALLOW",
+        "CAST(PFD_TIME AS DECIMAL(20,7)) as PFD_TIME",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(ACT_ID AS INT) as ACT_ID",
+        "CAST(COMPONENT_BK AS STRING) as COMPONENT_BK",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
-    
+
     overwriteDeltaPartition(Shortcut_to_WM_E_AUD_LOG_PRE,"DC_NBR",dcnbr,target_table_name)
     
     logger.info(
         "Shortcut_to_WM_E_AUD_LOG_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

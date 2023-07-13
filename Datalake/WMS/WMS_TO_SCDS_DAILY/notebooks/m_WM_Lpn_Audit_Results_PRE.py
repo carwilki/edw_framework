@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Lpn_Audit_Results_PRE(dcnbr, env):
     tableName = "WM_LPN_AUDIT_RESULTS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LPN_AUDIT_RESULTS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -94,8 +96,8 @@ def m_WM_Lpn_Audit_Results_PRE(dcnbr, env):
     LPN_AUDIT_RESULTS.VALIDATION_LEVEL,
     LPN_AUDIT_RESULTS.TRAN_NAME,
     LPN_AUDIT_RESULTS.FACILITY_ID
-    FROM LPN_AUDIT_RESULTS
-    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.LPN_AUDIT_RESULTS
+    WHERE (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -156,53 +158,54 @@ def m_WM_Lpn_Audit_Results_PRE(dcnbr, env):
     # COLUMN COUNT: 42
 
 
-    Shortcut_to_WM_LPN_AUDIT_RESULTS_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LPN_AUDIT_RESULTS_ID AS BIGINT) as LPN_AUDIT_RESULTS_ID", \
-        "CAST(AUDIT_TRANSACTION_ID AS BIGINT) as AUDIT_TRANSACTION_ID", \
-        "CAST(AUDIT_COUNT AS BIGINT) as AUDIT_COUNT", \
-        "CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", \
-        "CAST(FACILITY_ALIAS_ID AS STRING) as FACILITY_ALIAS_ID", \
-        "CAST(TC_SHIPMENT_ID AS STRING) as TC_SHIPMENT_ID", \
-        "CAST(STOP_SEQ AS BIGINT) as STOP_SEQ", \
-        "CAST(TC_ORDER_ID AS STRING) as TC_ORDER_ID", \
-        "CAST(TC_PARENT_LPN_ID AS STRING) as TC_PARENT_LPN_ID", \
-        "CAST(TC_LPN_ID AS STRING) as TC_LPN_ID", \
-        "CAST(INBOUND_OUTBOUND_INDICATOR AS STRING) as INBOUND_OUTBOUND_INDICATOR", \
-        "CAST(DEST_FACILITY_ALIAS_ID AS STRING) as DEST_FACILITY_ALIAS_ID", \
-        "CAST(STATIC_ROUTE_ID AS BIGINT) as STATIC_ROUTE_ID", \
-        "CAST(ITEM_ID AS BIGINT) as ITEM_ID", \
-        "CAST(GTIN AS STRING) as GTIN", \
-        "CAST(CNTRY_OF_ORGN AS STRING) as CNTRY_OF_ORGN", \
-        "CAST(INVENTORY_TYPE AS STRING) as INVENTORY_TYPE", \
-        "CAST(PRODUCT_STATUS AS STRING) as PRODUCT_STATUS", \
-        "CAST(BATCH_NBR AS STRING) as BATCH_NBR", \
-        "CAST(ITEM_ATTR_1 AS STRING) as ITEM_ATTR_1", \
-        "CAST(ITEM_ATTR_2 AS STRING) as ITEM_ATTR_2", \
-        "CAST(ITEM_ATTR_3 AS STRING) as ITEM_ATTR_3", \
-        "CAST(ITEM_ATTR_4 AS STRING) as ITEM_ATTR_4", \
-        "CAST(ITEM_ATTR_5 AS STRING) as ITEM_ATTR_5", \
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(AUDITOR_USERID AS STRING) as AUDITOR_USERID", \
-        "CAST(PICKER_USERID AS STRING) as PICKER_USERID", \
-        "CAST(PACKER_USERID AS STRING) as PACKER_USERID", \
-        "CAST(QUAL_AUD_STAT_CODE AS BIGINT) as QUAL_AUD_STAT_CODE", \
-        "CAST(QA_FLAG AS STRING) as QA_FLAG", \
-        "CAST(COUNT_QUANTITY AS BIGINT) as COUNT_QUANTITY", \
-        "CAST(EXPECTED_QUANTITY AS BIGINT) as EXPECTED_QUANTITY", \
-        "CAST(VALIDATION_LEVEL AS STRING) as VALIDATION_LEVEL", \
-        "CAST(TRAN_NAME AS STRING) as TRAN_NAME", \
-        "CAST(FACILITY_ID AS BIGINT) as FACILITY_ID", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LPN_AUDIT_RESULTS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(LPN_AUDIT_RESULTS_ID AS INT) as LPN_AUDIT_RESULTS_ID",
+        "CAST(AUDIT_TRANSACTION_ID AS INT) as AUDIT_TRANSACTION_ID",
+        "CAST(AUDIT_COUNT AS INT) as AUDIT_COUNT",
+        "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+        "CAST(FACILITY_ALIAS_ID AS STRING) as FACILITY_ALIAS_ID",
+        "CAST(TC_SHIPMENT_ID AS STRING) as TC_SHIPMENT_ID",
+        "CAST(STOP_SEQ AS INT) as STOP_SEQ",
+        "CAST(TC_ORDER_ID AS STRING) as TC_ORDER_ID",
+        "CAST(TC_PARENT_LPN_ID AS STRING) as TC_PARENT_LPN_ID",
+        "CAST(TC_LPN_ID AS STRING) as TC_LPN_ID",
+        "CAST(INBOUND_OUTBOUND_INDICATOR AS STRING) as INBOUND_OUTBOUND_INDICATOR",
+        "CAST(DEST_FACILITY_ALIAS_ID AS STRING) as DEST_FACILITY_ALIAS_ID",
+        "CAST(STATIC_ROUTE_ID AS INT) as STATIC_ROUTE_ID",
+        "CAST(ITEM_ID AS INT) as ITEM_ID",
+        "CAST(GTIN AS STRING) as GTIN",
+        "CAST(CNTRY_OF_ORGN AS STRING) as CNTRY_OF_ORGN",
+        "CAST(INVENTORY_TYPE AS STRING) as INVENTORY_TYPE",
+        "CAST(PRODUCT_STATUS AS STRING) as PRODUCT_STATUS",
+        "CAST(BATCH_NBR AS STRING) as BATCH_NBR",
+        "CAST(ITEM_ATTR_1 AS STRING) as ITEM_ATTR_1",
+        "CAST(ITEM_ATTR_2 AS STRING) as ITEM_ATTR_2",
+        "CAST(ITEM_ATTR_3 AS STRING) as ITEM_ATTR_3",
+        "CAST(ITEM_ATTR_4 AS STRING) as ITEM_ATTR_4",
+        "CAST(ITEM_ATTR_5 AS STRING) as ITEM_ATTR_5",
+        "CAST(CREATED_SOURCE_TYPE AS INT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS INT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(AUDITOR_USERID AS STRING) as AUDITOR_USERID",
+        "CAST(PICKER_USERID AS STRING) as PICKER_USERID",
+        "CAST(PACKER_USERID AS STRING) as PACKER_USERID",
+        "CAST(QUAL_AUD_STAT_CODE AS INT) as QUAL_AUD_STAT_CODE",
+        "CAST(QA_FLAG AS STRING) as QA_FLAG",
+        "CAST(COUNT_QUANTITY AS DECIMAL(13,5)) as COUNT_QUANTITY",
+        "CAST(EXPECTED_QUANTITY AS DECIMAL(13,5)) as EXPECTED_QUANTITY",
+        "CAST(VALIDATION_LEVEL AS STRING) as VALIDATION_LEVEL",
+        "CAST(TRAN_NAME AS STRING) as TRAN_NAME",
+        "CAST(FACILITY_ID AS BIGINT) as FACILITY_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_LPN_AUDIT_RESULTS_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_LPN_AUDIT_RESULTS_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Ilm_Yard_Activity_PRE(dcnbr, env):
     tableName = "WM_ILM_YARD_ACTIVITY_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ILM_YARD_ACTIVITY"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -44,11 +46,12 @@ def m_WM_Ilm_Yard_Activity_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ILM_YARD_ACTIVITY, type SOURCE 
     # COLUMN COUNT: 16
@@ -70,7 +73,7 @@ def m_WM_Ilm_Yard_Activity_PRE(dcnbr, env):
     ILM_YARD_ACTIVITY.FACILITY_ID,
     ILM_YARD_ACTIVITY.VISIT_DETAIL_ID,
     ILM_YARD_ACTIVITY.LOCN_ID
-    FROM ILM_YARD_ACTIVITY""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    FROM {source_schema}.ILM_YARD_ACTIVITY""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -106,25 +109,25 @@ def m_WM_Ilm_Yard_Activity_PRE(dcnbr, env):
     # COLUMN COUNT: 18
 
 
-    Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_exp AS BIGINT) as DC_NBR", \
-        "CAST(ACTIVITY_ID AS BIGINT) as ACTIVITY_ID", \
-        "CAST(COMPANY_ID AS BIGINT) as COMPANY_ID", \
-        "CAST(APPOINTMENT_ID AS BIGINT) as APPOINTMENT_ID", \
-        "CAST(EQUIPMENT_ID1 AS BIGINT) as EQUIPMENT_ID1", \
-        "CAST(ACTIVITY_TYPE AS BIGINT) as ACTIVITY_TYPE", \
-        "CAST(ACTIVITY_SOURCE AS STRING) as ACTIVITY_SOURCE", \
-        "CAST(ACTIVITY_DTTM AS TIMESTAMP) as ACTIVITY_DTTM", \
-        "CAST(DRIVER_ID AS BIGINT) as DRIVER_ID", \
-        "CAST(EQUIPMENT_ID2 AS BIGINT) as EQUIPMENT_ID2", \
-        "CAST(TASK_ID AS BIGINT) as TASK_ID", \
-        "CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
-        "CAST(NO_OF_PALLETS AS BIGINT) as NO_OF_PALLETS", \
-        "CAST(EQUIP_INS_STATUS AS BIGINT) as EQUIP_INS_STATUS", \
-        "CAST(FACILITY_ID AS BIGINT) as FACILITY_ID", \
-        "CAST(VISIT_DETAIL_ID AS BIGINT) as VISIT_DETAIL_ID", \
-        "CAST(LOCN_ID AS STRING) as LOCN_ID", \
-        "CAST(LOADTSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_exp AS SMALLINT) as DC_NBR",
+        "CAST(ACTIVITY_ID AS INT) as ACTIVITY_ID",
+        "CAST(COMPANY_ID AS INT) as COMPANY_ID",
+        "CAST(APPOINTMENT_ID AS INT) as APPOINTMENT_ID",
+        "CAST(EQUIPMENT_ID1 AS INT) as EQUIPMENT_ID1",
+        "CAST(ACTIVITY_TYPE AS SMALLINT) as ACTIVITY_TYPE",
+        "CAST(ACTIVITY_SOURCE AS STRING) as ACTIVITY_SOURCE",
+        "CAST(ACTIVITY_DTTM AS TIMESTAMP) as ACTIVITY_DTTM",
+        "CAST(DRIVER_ID AS INT) as DRIVER_ID",
+        "CAST(EQUIPMENT_ID2 AS INT) as EQUIPMENT_ID2",
+        "CAST(TASK_ID AS INT) as TASK_ID",
+        "CAST(LOCATION_ID AS INT) as LOCATION_ID",
+        "CAST(NO_OF_PALLETS AS INT) as NO_OF_PALLETS",
+        "CAST(EQUIP_INS_STATUS AS SMALLINT) as EQUIP_INS_STATUS",
+        "CAST(FACILITY_ID AS INT) as FACILITY_ID",
+        "CAST(VISIT_DETAIL_ID AS INT) as VISIT_DETAIL_ID",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(LOADTSTMP AS TIMESTAMP) as LOAD_TSTMP"
     )
 
     overwriteDeltaPartition(Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE,"DC_NBR",dcnbr,target_table_name)
@@ -132,4 +135,4 @@ def m_WM_Ilm_Yard_Activity_PRE(dcnbr, env):
     logger.info(
         "Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

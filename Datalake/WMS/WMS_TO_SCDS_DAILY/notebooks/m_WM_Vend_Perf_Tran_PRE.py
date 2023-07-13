@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Vend_Perf_Tran_PRE(dcnbr, env):
     
     tableName = "WM_VEND_PERF_TRAN_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_VEND_PERF_TRAN"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -69,11 +71,11 @@ def m_WM_Vend_Perf_Tran_PRE(dcnbr, env):
                     VEND_PERF_TRAN.ASN_HDR_ID,
                     VEND_PERF_TRAN.CASE_HDR_ID,
                     VEND_PERF_TRAN.ITEM_ID
-                FROM VEND_PERF_TRAN
-                WHERE {Initial_Load} (TRUNC(VEND_PERF_TRAN.CREATE_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC(VEND_PERF_TRAN.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)"""
+                FROM {source_schema}.VEND_PERF_TRAN
+                WHERE  (TRUNC(VEND_PERF_TRAN.CREATE_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC(VEND_PERF_TRAN.MOD_DATE_TIME)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)"""
     
 
-    SQ_Shortcut_to_VEND_PERF_TRAN = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_VEND_PERF_TRAN = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_VEND_PERF_TRAN is executed and data is loaded using jdbc")
     
     
@@ -85,7 +87,7 @@ def m_WM_Vend_Perf_Tran_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_VEND_PERF_TRAN_temp.selectExpr( 
     	"SQ_Shortcut_to_VEND_PERF_TRAN___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_VEND_PERF_TRAN___VEND_PERF_TRAN_ID as VEND_PERF_TRAN_ID", 
     	"SQ_Shortcut_to_VEND_PERF_TRAN___PERF_CODE as PERF_CODE", 
     	"SQ_Shortcut_to_VEND_PERF_TRAN___WHSE as WHSE", 
@@ -120,36 +122,35 @@ def m_WM_Vend_Perf_Tran_PRE(dcnbr, env):
     # COLUMN COUNT: 28
     
     
-    Shortcut_to_WM_VEND_PERF_TRAN_PRE = EXPTRANS.selectExpr( 
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-    	"CAST(VEND_PERF_TRAN_ID AS BIGINT) as VEND_PERF_TRAN_ID", 
-    	"CAST(PERF_CODE AS STRING) as PERF_CODE", 
-    	"CAST(WHSE AS STRING) as WHSE", 
-    	"CAST(SHPMT_NBR AS STRING) as SHPMT_NBR", 
-    	"CAST(PO_NBR AS STRING) as PO_NBR", 
-    	"CAST(CASE_NBR AS STRING) as CASE_NBR", 
-    	"CAST(UOM AS STRING) as UOM", 
-    	"CAST(QTY AS BIGINT) as QTY", 
-    	"CAST(SAMS AS BIGINT) as SAMS", 
-    	"CAST(STAT_CODE AS BIGINT) as STAT_CODE", 
-    	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-    	"CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-    	"CAST(USER_ID AS STRING) as USER_ID", 
-    	"CAST(CHRG_AMT AS BIGINT) as CHRG_AMT", 
-    	"CAST(BILL_FLAG AS STRING) as BILL_FLAG", 
-    	"CAST(LOAD_NBR AS STRING) as LOAD_NBR", 
-    	"CAST(ILM_APPT_NBR AS STRING) as ILM_APPT_NBR", 
-    	"CAST(VENDOR_MASTER_ID AS BIGINT) as VENDOR_MASTER_ID", 
-    	"CAST(CD_MASTER_ID AS BIGINT) as CD_MASTER_ID", 
-    	"CAST(CMNT AS STRING) as CMNT", 
-    	"CAST(CREATED_BY_USER_ID AS STRING) as CREATED_BY_USER_ID", 
-    	"CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", 
-    	"CAST(PO_HDR_ID AS BIGINT) as PO_HDR_ID", 
-    	"CAST(ASN_HDR_ID AS BIGINT) as ASN_HDR_ID", 
-    	"CAST(CASE_HDR_ID AS BIGINT) as CASE_HDR_ID", 
-    	"CAST(ITEM_ID AS BIGINT) as ITEM_ID", 
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
-    )
-    
-    gu.overwriteDeltaPartition(Shortcut_to_WM_VEND_PERF_TRAN_PRE, "DC_NBR", dcnbr, target_table_name)
+    Shortcut_to_WM_VEND_PERF_TRAN_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(VEND_PERF_TRAN_ID AS INT) as VEND_PERF_TRAN_ID",
+        "CAST(PERF_CODE AS STRING) as PERF_CODE",
+        "CAST(WHSE AS STRING) as WHSE",
+        "CAST(SHPMT_NBR AS STRING) as SHPMT_NBR",
+        "CAST(PO_NBR AS STRING) as PO_NBR",
+        "CAST(CASE_NBR AS STRING) as CASE_NBR",
+        "CAST(UOM AS STRING) as UOM",
+        "CAST(QTY AS DECIMAL(13,5)) as QTY",
+        "CAST(SAMS AS DECIMAL(9,4)) as SAMS",
+        "CAST(STAT_CODE AS TINYINT) as STAT_CODE",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(CHRG_AMT AS DECIMAL(9,2)) as CHRG_AMT",
+        "CAST(BILL_FLAG AS STRING) as BILL_FLAG",
+        "CAST(LOAD_NBR AS STRING) as LOAD_NBR",
+        "CAST(ILM_APPT_NBR AS STRING) as ILM_APPT_NBR",
+        "CAST(VENDOR_MASTER_ID AS INT) as VENDOR_MASTER_ID",
+        "CAST(CD_MASTER_ID AS INT) as CD_MASTER_ID",
+        "CAST(CMNT AS STRING) as CMNT",
+        "CAST(CREATED_BY_USER_ID AS STRING) as CREATED_BY_USER_ID",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(PO_HDR_ID AS INT) as PO_HDR_ID",
+        "CAST(ASN_HDR_ID AS INT) as ASN_HDR_ID",
+        "CAST(CASE_HDR_ID AS INT) as CASE_HDR_ID",
+        "CAST(ITEM_ID AS BIGINT) as ITEM_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
+    )    
+    overwriteDeltaPartition(Shortcut_to_WM_VEND_PERF_TRAN_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_VEND_PERF_TRAN_PRE is written to the target table - " + target_table_name)

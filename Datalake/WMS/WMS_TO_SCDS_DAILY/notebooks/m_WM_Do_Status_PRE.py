@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Do_Status_PRE(dcnbr, env):
     tableName = "WM_DO_STATUS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "DO_STATUS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -58,7 +60,7 @@ def m_WM_Do_Status_PRE(dcnbr, env):
         f"""SELECT
             DO_STATUS.ORDER_STATUS,
             DO_STATUS.DESCRIPTION
-        FROM DO_STATUS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+        FROM {source_schema}.DO_STATUS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -80,11 +82,11 @@ def m_WM_Do_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 4
 
 
-    Shortcut_to_WM_DO_STATUS_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_exp AS BIGINT) as DC_NBR", 
-        "CAST(ORDER_STATUS AS BIGINT) as ORDER_STATUS", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(LOADTSTAMP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_DO_STATUS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_exp AS SMALLINT) as DC_NBR",
+        "CAST(ORDER_STATUS AS SMALLINT) as ORDER_STATUS",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(LOADTSTAMP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
     overwriteDeltaPartition(Shortcut_to_WM_DO_STATUS_PRE,"DC_NBR",dcnbr,target_table_name)

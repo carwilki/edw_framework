@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,40 +30,41 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_SHIP_VIA"
+raw_perf_table = f"{raw}.WM_SHIP_VIA_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_SHIP_VIA_PRE, type SOURCE 
 # COLUMN COUNT: 24
 
 SQ_Shortcut_to_WM_SHIP_VIA_PRE = spark.sql(f"""SELECT
-WM_SHIP_VIA_PRE.DC_NBR,
-WM_SHIP_VIA_PRE.SHIP_VIA_ID,
-WM_SHIP_VIA_PRE.TC_COMPANY_ID,
-WM_SHIP_VIA_PRE.CARRIER_ID,
-WM_SHIP_VIA_PRE.SERVICE_LEVEL_ID,
-WM_SHIP_VIA_PRE.MOT_ID,
-WM_SHIP_VIA_PRE.LABEL_TYPE,
-WM_SHIP_VIA_PRE.SERVICE_LEVEL_ICON,
-WM_SHIP_VIA_PRE.EXECUTION_LEVEL_ID,
-WM_SHIP_VIA_PRE.BILL_SHIP_VIA_ID,
-WM_SHIP_VIA_PRE.IS_TRACKING_NBR_REQ,
-WM_SHIP_VIA_PRE.MARKED_FOR_DELETION,
-WM_SHIP_VIA_PRE.DESCRIPTION,
-WM_SHIP_VIA_PRE.ACCESSORIAL_SEARCH_STRING,
-WM_SHIP_VIA_PRE.INS_COVER_TYPE_ID,
-WM_SHIP_VIA_PRE.MIN_DECLARED_VALUE,
-WM_SHIP_VIA_PRE.MAX_DECLARED_VALUE,
-WM_SHIP_VIA_PRE.SERVICE_LEVEL_INDICATOR,
-WM_SHIP_VIA_PRE.DECLARED_VALUE_CURRENCY,
-WM_SHIP_VIA_PRE.SHIP_VIA,
-WM_SHIP_VIA_PRE.CUSTOM_SHIPVIA_ATTRIB,
-WM_SHIP_VIA_PRE.CREATED_DTTM,
-WM_SHIP_VIA_PRE.LAST_UPDATED_DTTM,
-WM_SHIP_VIA_PRE.LOAD_TSTMP
-FROM WM_SHIP_VIA_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+SHIP_VIA_ID,
+TC_COMPANY_ID,
+CARRIER_ID,
+SERVICE_LEVEL_ID,
+MOT_ID,
+LABEL_TYPE,
+SERVICE_LEVEL_ICON,
+EXECUTION_LEVEL_ID,
+BILL_SHIP_VIA_ID,
+IS_TRACKING_NBR_REQ,
+MARKED_FOR_DELETION,
+DESCRIPTION,
+ACCESSORIAL_SEARCH_STRING,
+INS_COVER_TYPE_ID,
+MIN_DECLARED_VALUE,
+MAX_DECLARED_VALUE,
+SERVICE_LEVEL_INDICATOR,
+DECLARED_VALUE_CURRENCY,
+SHIP_VIA,
+CUSTOM_SHIPVIA_ATTRIB,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -105,22 +106,19 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_SHIP_VIA_PRE_temp.selectExpr(
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_SHIP_VIA = spark.sql(f"""SELECT
-WM_SHIP_VIA.LOCATION_ID,
-WM_SHIP_VIA.WM_SHIP_VIA_ID,
-WM_SHIP_VIA.WM_CREATED_TSTMP,
-WM_SHIP_VIA.WM_LAST_UPDATED_TSTMP,
-WM_SHIP_VIA.LOAD_TSTMP
-FROM WM_SHIP_VIA
-WHERE WM_SHIP_VIA_ID IN (SELECT SHIP_VIA_ID FROM WM_SHIP_VIA_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_SHIP_VIA_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_SHIP_VIA_ID IN (SELECT SHIP_VIA_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -235,8 +233,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___CREATED_DTTM as CREATED_DTTM", 
 	"FIL_UNCHANGED_RECORDS___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_SHIP_VIA_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_SHIP_VIA_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -273,7 +271,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_SHIP_VIA, type TARGET 
@@ -305,6 +303,16 @@ Shortcut_to_WM_SHIP_VIA = UPD_INS_UPD.selectExpr(
 	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
 	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
 	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
-	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action" 
 )
-Shortcut_to_WM_SHIP_VIA.write.saveAsTable(f'{raw}.WM_SHIP_VIA')
+
+try:
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SHIP_VIA_ID = target.WM_SHIP_VIA_ID"""
+  # refined_perf_table = "WM_SHIP_VIA"
+  executeMerge(Shortcut_to_WM_SHIP_VIA, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("WM_SHIP_VIA", "WM_SHIP_VIA", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("WM_SHIP_VIA", "WM_SHIP_VIA","Failed",str(e), f"{raw}.log_run_details", )
+  raise e

@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     tableName = "WM_ILM_APPT_EQUIPMENTS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ILM_APPT_EQUIPMENTS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -45,11 +47,12 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ILM_APPT_EQUIPMENTS, type SOURCE 
     # COLUMN COUNT: 7
@@ -62,7 +65,7 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     ILM_APPT_EQUIPMENTS.EQUIPMENT_LICENSE_NUMBER,
     ILM_APPT_EQUIPMENTS.EQUIPMENT_LICENSE_STATE,
     ILM_APPT_EQUIPMENTS.EQUIPMENT_TYPE
-    FROM ILM_APPT_EQUIPMENTS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    FROM {source_schema}.ILM_APPT_EQUIPMENTS""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -89,16 +92,16 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     # COLUMN COUNT: 9
 
 
-    Shortcut_to_WM_ILM_APPT_EQUIPMENTS_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(APPOINTMENT_ID AS BIGINT) as APPOINTMENT_ID", \
-        "CAST(COMPANY_ID AS BIGINT) as COMPANY_ID", \
-        "CAST(EQUIPMENT_INSTANCE_ID AS BIGINT) as EQUIPMENT_INSTANCE_ID", \
-        "CAST(EQUIPMENT_NUMBER AS STRING) as EQUIPMENT_NUMBER", \
-        "CAST(EQUIPMENT_LICENSE_NUMBER AS STRING) as EQUIPMENT_LICENSE_NUMBER", \
-        "CAST(EQUIPMENT_LICENSE_STATE AS STRING) as EQUIPMENT_LICENSE_STATE", \
-        "CAST(EQUIPMENT_TYPE AS BIGINT) as EQUIPMENT_TYPE", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_ILM_APPT_EQUIPMENTS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(APPOINTMENT_ID AS INT) as APPOINTMENT_ID",
+        "CAST(COMPANY_ID AS INT) as COMPANY_ID",
+        "CAST(EQUIPMENT_INSTANCE_ID AS INT) as EQUIPMENT_INSTANCE_ID",
+        "CAST(EQUIPMENT_NUMBER AS STRING) as EQUIPMENT_NUMBER",
+        "CAST(EQUIPMENT_LICENSE_NUMBER AS STRING) as EQUIPMENT_LICENSE_NUMBER",
+        "CAST(EQUIPMENT_LICENSE_STATE AS STRING) as EQUIPMENT_LICENSE_STATE",
+        "CAST(EQUIPMENT_TYPE AS SMALLINT) as EQUIPMENT_TYPE",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
 
     overwriteDeltaPartition(Shortcut_to_WM_ILM_APPT_EQUIPMENTS_PRE,"DC_NBR",dcnbr,target_table_name)
@@ -106,4 +109,4 @@ def m_WM_Ilm_Appt_Equipments_PRE(dcnbr, env):
     logger.info(
         "Shortcut_to_WM_ILM_APPT_EQUIPMENTS_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

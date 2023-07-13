@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 # COMMAND ----------
 
@@ -32,32 +32,37 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
+refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_TYPE"
+raw_perf_table = f"{raw}.WM_ILM_APPOINTMENT_TYPE_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPOINTMENT_TYPE, type SOURCE 
 # COLUMN COUNT: 6
 
 SQ_Shortcut_to_WM_ILM_APPOINTMENT_TYPE = spark.sql(f"""SELECT
-WM_ILM_APPOINTMENT_TYPE.LOCATION_ID,
-WM_ILM_APPOINTMENT_TYPE.WM_APPT_TYPE_ID,
-WM_ILM_APPOINTMENT_TYPE.WM_APPT_TYPE_DESC,
-WM_ILM_APPOINTMENT_TYPE.WM_CREATED_TSTMP,
-WM_ILM_APPOINTMENT_TYPE.WM_LAST_UPDATED_TSTMP,
-WM_ILM_APPOINTMENT_TYPE.LOAD_TSTMP
-FROM WM_ILM_APPOINTMENT_TYPE
-WHERE WM_APPT_TYPE_ID IN ( SELECT APPT_TYPE FROM WM_ILM_APPOINTMENT_TYPE_PRE )""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_APPT_TYPE_ID,
+WM_APPT_TYPE_DESC,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_APPT_TYPE_ID IN ( SELECT APPT_TYPE FROM {raw_perf_table} )""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE, type SOURCE 
 # COLUMN COUNT: 6
 
 SQ_Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE = spark.sql(f"""SELECT
-WM_ILM_APPOINTMENT_TYPE_PRE.DC_NBR,
-WM_ILM_APPOINTMENT_TYPE_PRE.APPT_TYPE,
-WM_ILM_APPOINTMENT_TYPE_PRE.DESCRIPTION,
-WM_ILM_APPOINTMENT_TYPE_PRE.CREATED_DTTM,
-WM_ILM_APPOINTMENT_TYPE_PRE.LAST_UPDATED_DTTM,
-WM_ILM_APPOINTMENT_TYPE_PRE.LOAD_TSTMP
-FROM WM_ILM_APPOINTMENT_TYPE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+APPT_TYPE,
+DESCRIPTION,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONVERSION, type EXPRESSION 
@@ -80,10 +85,7 @@ EXP_INT_CONVERSION = SQ_Shortcut_to_WM_ILM_APPOINTMENT_TYPE_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -130,8 +132,8 @@ FIL_UNCHANGED_REC = JNR_WM_ILM_APPOINTMENT_TYPE_temp.selectExpr( \
 	"JNR_WM_ILM_APPOINTMENT_TYPE___WM_APPT_TYPE_DESC as WM_APPT_TYPE_DESC", \
 	"JNR_WM_ILM_APPOINTMENT_TYPE___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
 	"JNR_WM_ILM_APPOINTMENT_TYPE___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP", \
-	"JNR_WM_ILM_APPOINTMENT_TYPE___in_LOAD_TSTMP as in_LOAD_TSTMP")\
-    .filter("WM_APPT_TYPE_ID is Null OR ( WM_APPT_TYPE_ID is not Null AND\
+	"JNR_WM_ILM_APPOINTMENT_TYPE___in_LOAD_TSTMP as in_LOAD_TSTMP") \
+    .filter("WM_APPT_TYPE_ID is Null OR ( WM_APPT_TYPE_ID is not Null AND \
      ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') \
      OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
@@ -156,9 +158,9 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_REC_temp.selectExpr( \
 	"FIL_UNCHANGED_REC___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
 	"FIL_UNCHANGED_REC___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP", \
 	"FIL_UNCHANGED_REC___in_LOAD_TSTMP as in_LOAD_TSTMP", \
-	"CURRENT_TIMESTAMP () as UPDATE_TSTMP", \
-	"IF (FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP (), FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTP_exp", \
-	"IF (FIL_UNCHANGED_REC___WM_APPT_TYPE_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" \
+	"CURRENT_TIMESTAMP() as UPDATE_TSTMP", \
+	"IF(FIL_UNCHANGED_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP(), FIL_UNCHANGED_REC___in_LOAD_TSTMP) as LOAD_TSTP_exp", \
+	"IF(FIL_UNCHANGED_REC___WM_APPT_TYPE_ID IS NULL, 1, 2) as o_UPD_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -177,16 +179,27 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTP_exp as LOAD_TSTP_exp", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_APPOINTMENT_TYPE1, type TARGET 
 # COLUMN COUNT: 7
 
+Shortcut_to_WM_ILM_APPOINTMENT_TYPE1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(APPT_TYPE AS BIGINT) as WM_APPT_TYPE_ID", 
+	"CAST(DESCRIPTION AS STRING) as WM_APPT_TYPE_DESC", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTP_exp AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_APPT_TYPE_ID = target.WM_APPT_TYPE_ID"""
-  refined_perf_table = "WM_ILM_APPOINTMENT_TYPE"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_ILM_APPOINTMENT_TYPE"
+  executeMerge(Shortcut_to_WM_ILM_APPOINTMENT_TYPE1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_ILM_APPOINTMENT_TYPE", "WM_ILM_APPOINTMENT_TYPE", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

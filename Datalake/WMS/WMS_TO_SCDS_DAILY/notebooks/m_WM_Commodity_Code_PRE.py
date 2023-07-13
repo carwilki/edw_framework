@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Commodity_Code_PRE(dcnbr, env):
     tableName = "WM_COMMODITY_CODE_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "COMMODITY_CODE"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -69,8 +71,8 @@ def m_WM_Commodity_Code_PRE(dcnbr, env):
                 COMMODITY_CODE.LAST_UPDATED_SOURCE_TYPE,
                 COMMODITY_CODE.LAST_UPDATED_SOURCE,
                 COMMODITY_CODE.LAST_UPDATED_DTTM
-            FROM COMMODITY_CODE
-            WHERE (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.COMMODITY_CODE
+            WHERE (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -103,25 +105,25 @@ def m_WM_Commodity_Code_PRE(dcnbr, env):
     # COLUMN COUNT: 15
 
 
-    Shortcut_to_WM_COMMODITY_CODE_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR AS BIGINT) as DC_NBR", 
-        "CAST(COMMODITY_CODE_ID AS BIGINT) as COMMODITY_CODE_ID", 
-        "CAST(COMM_CODE_SECTION AS BIGINT) as COMM_CODE_SECTION", 
-        "CAST(COMM_CODE_CHAPTER AS BIGINT) as COMM_CODE_CHAPTER", 
-        "CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", 
-        "CAST(DESCRIPTION_SHORT AS STRING) as DESCRIPTION_SHORT", 
-        "CAST(DESCRIPTION_LONG AS STRING) as DESCRIPTION_LONG", 
-        "CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION", 
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", 
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", 
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", 
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", 
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-        "CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_COMMODITY_CODE_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR AS SMALLINT) as DC_NBR",
+        "CAST(COMMODITY_CODE_ID AS BIGINT) as COMMODITY_CODE_ID",
+        "CAST(COMM_CODE_SECTION AS SMALLINT) as COMM_CODE_SECTION",
+        "CAST(COMM_CODE_CHAPTER AS SMALLINT) as COMM_CODE_CHAPTER",
+        "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+        "CAST(DESCRIPTION_SHORT AS STRING) as DESCRIPTION_SHORT",
+        "CAST(DESCRIPTION_LONG AS STRING) as DESCRIPTION_LONG",
+        "CAST(MARK_FOR_DELETION AS TINYINT) as MARK_FOR_DELETION",
+        "CAST(CREATED_SOURCE_TYPE AS TINYINT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS TINYINT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
     )
     overwriteDeltaPartition(Shortcut_to_WM_COMMODITY_CODE_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_COMMODITY_CODE_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

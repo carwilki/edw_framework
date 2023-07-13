@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Labor_Msg_Dtl_PRE(dcnbr, env):
     tableName = "WM_LABOR_MSG_DTL_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LABOR_MSG_DTL"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -121,8 +123,8 @@ def m_WM_Labor_Msg_Dtl_PRE(dcnbr, env):
     LABOR_MSG_DTL.ITEM_NAME,
     LABOR_MSG_DTL.LOCN_GRP_ATTR,
     LABOR_MSG_DTL.RESOURCE_GROUP_ID
-    FROM LABOR_MSG_DTL
-    WHERE (trunc(LABOR_MSG_DTL.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(LABOR_MSG_DTL.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.LABOR_MSG_DTL
+    WHERE (trunc(LABOR_MSG_DTL.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LABOR_MSG_DTL.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -211,42 +213,42 @@ def m_WM_Labor_Msg_Dtl_PRE(dcnbr, env):
 
 
     Shortcut_to_WM_LABOR_MSG_DTL_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LABOR_MSG_DTL_ID AS BIGINT) as LABOR_MSG_DTL_ID", \
-        "CAST(LABOR_MSG_ID AS BIGINT) as LABOR_MSG_ID", \
-        "CAST(TRAN_NBR AS BIGINT) as TRAN_NBR", \
-        "CAST(TRAN_SEQ_NBR AS BIGINT) as TRAN_SEQ_NBR", \
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR", \
+        "CAST(LABOR_MSG_DTL_ID AS DECIMAL(20,0)) as LABOR_MSG_DTL_ID", \
+        "CAST(LABOR_MSG_ID AS DECIMAL(20,0)) as LABOR_MSG_ID", \
+        "CAST(TRAN_NBR AS INT) as TRAN_NBR", \
+        "CAST(TRAN_SEQ_NBR AS INT) as TRAN_SEQ_NBR", \
         "CAST(MSG_STAT_CODE AS STRING) as MSG_STAT_CODE", \
         "CAST(SEQ_NBR AS STRING) as SEQ_NBR", \
         "CAST(HNDL_ATTR AS STRING) as HNDL_ATTR", \
-        "CAST(QTY_PER_GRAB AS BIGINT) as QTY_PER_GRAB", \
+        "CAST(QTY_PER_GRAB AS DECIMAL(13,5)) as QTY_PER_GRAB", \
         "CAST(LOCN_CLASS AS STRING) as LOCN_CLASS", \
-        "CAST(QTY AS BIGINT) as QTY", \
+        "CAST(QTY AS DECIMAL(13,5)) as QTY", \
         "CAST(TC_ILPN_ID AS STRING) as TC_ILPN_ID", \
         "CAST(TC_OLPN_ID AS STRING) as TC_OLPN_ID", \
         "CAST(PALLET_ID AS STRING) as PALLET_ID", \
         "CAST(LOCN_SLOT_TYPE AS STRING) as LOCN_SLOT_TYPE", \
-        "CAST(LOCN_X_COORD AS BIGINT) as LOCN_X_COORD", \
-        "CAST(LOCN_Y_COORD AS BIGINT) as LOCN_Y_COORD", \
-        "CAST(LOCN_Z_COORD AS BIGINT) as LOCN_Z_COORD", \
+        "CAST(LOCN_X_COORD AS DECIMAL(13,5)) as LOCN_X_COORD", \
+        "CAST(LOCN_Y_COORD AS DECIMAL(13,5)) as LOCN_Y_COORD", \
+        "CAST(LOCN_Z_COORD AS DECIMAL(13,5)) as LOCN_Z_COORD", \
         "CAST(LOCN_TRAV_AISLE AS STRING) as LOCN_TRAV_AISLE", \
         "CAST(LOCN_TRAV_ZONE AS STRING) as LOCN_TRAV_ZONE", \
-        "CAST(BOX_QTY AS BIGINT) as BOX_QTY", \
-        "CAST(INNERPACK_QTY AS BIGINT) as INNERPACK_QTY", \
-        "CAST(PACK_QTY AS BIGINT) as PACK_QTY", \
-        "CAST(CASE_QTY AS BIGINT) as CASE_QTY", \
-        "CAST(TIER_QTY AS BIGINT) as TIER_QTY", \
-        "CAST(PALLET_QTY AS BIGINT) as PALLET_QTY", \
+        "CAST(BOX_QTY AS DECIMAL(13,5)) as BOX_QTY", \
+        "CAST(INNERPACK_QTY AS DECIMAL(13,5)) as INNERPACK_QTY", \
+        "CAST(PACK_QTY AS DECIMAL(13,5)) as PACK_QTY", \
+        "CAST(CASE_QTY AS DECIMAL(13,5)) as CASE_QTY", \
+        "CAST(TIER_QTY AS DECIMAL(13,5)) as TIER_QTY", \
+        "CAST(PALLET_QTY AS DECIMAL(13,5)) as PALLET_QTY", \
         "CAST(MISC AS STRING) as MISC", \
         "CAST(CO AS STRING) as CO", \
         "CAST(DIV AS STRING) as DIV", \
         "CAST(DSP_LOCN AS STRING) as DSP_LOCN", \
         "CAST(ITEM_BAR_CODE AS STRING) as ITEM_BAR_CODE", \
-        "CAST(WEIGHT AS BIGINT) as WEIGHT", \
-        "CAST(VOLUME AS BIGINT) as VOLUME", \
-        "CAST(CRIT_DIM1 AS BIGINT) as CRIT_DIM1", \
-        "CAST(CRIT_DIM2 AS BIGINT) as CRIT_DIM2", \
-        "CAST(CRIT_DIM3 AS BIGINT) as CRIT_DIM3", \
+        "CAST(WEIGHT AS DECIMAL(20,7)) as WEIGHT", \
+        "CAST(VOLUME AS DECIMAL(20,7)) as VOLUME", \
+        "CAST(CRIT_DIM1 AS DECIMAL(7,2)) as CRIT_DIM1", \
+        "CAST(CRIT_DIM2 AS DECIMAL(7,2)) as CRIT_DIM2", \
+        "CAST(CRIT_DIM3 AS DECIMAL(7,2)) as CRIT_DIM3", \
         "CAST(START_DATE_TIME AS TIMESTAMP) as START_DATE_TIME", \
         "CAST(HANDLING_UOM AS STRING) as HANDLING_UOM", \
         "CAST(SEASON AS STRING) as SEASON", \
@@ -259,8 +261,8 @@ def m_WM_Labor_Msg_Dtl_PRE(dcnbr, env):
         "CAST(QUAL AS STRING) as QUAL", \
         "CAST(SIZE_RNGE_CODE AS STRING) as SIZE_RNGE_CODE", \
         "CAST(SIZE_REL_POSN_IN_TABLE AS STRING) as SIZE_REL_POSN_IN_TABLE", \
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", \
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", \
+        "CAST(MISC_NUM_1 AS DECIMAL(13,5)) as MISC_NUM_1", \
+        "CAST(MISC_NUM_2 AS DECIMAL(13,5)) as MISC_NUM_2", \
         "CAST(MISC_2 AS STRING) as MISC_2", \
         "CAST(LOADED AS STRING) as LOADED", \
         "CAST(PUTAWAY_ZONE AS STRING) as PUTAWAY_ZONE", \
@@ -269,10 +271,10 @@ def m_WM_Labor_Msg_Dtl_PRE(dcnbr, env):
         "CAST(WORK_AREA AS STRING) as WORK_AREA", \
         "CAST(PULL_ZONE AS STRING) as PULL_ZONE", \
         "CAST(ASSIGNMENT_ZONE AS STRING) as ASSIGNMENT_ZONE", \
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
+        "CAST(CREATED_SOURCE_TYPE AS SMALLINT) as CREATED_SOURCE_TYPE", \
         "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
         "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS SMALLINT) as LAST_UPDATED_SOURCE_TYPE", \
         "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
         "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
         "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", \

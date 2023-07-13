@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Asn_Status_PRE(dcnbr, env):
     tableName = "WM_ASN_STATUS_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ASN_STATUS"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -60,8 +62,8 @@ def m_WM_Asn_Status_PRE(dcnbr, env):
             ASN_STATUS.DESCRIPTION,
             ASN_STATUS.CREATED_DTTM,
             ASN_STATUS.LAST_UPDATED_DTTM
-        FROM ASN_STATUS
-        WHERE  (TRUNC( CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+        FROM {source_schema}.ASN_STATUS
+        WHERE  (TRUNC( CREATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( LAST_UPDATED_DTTM)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -85,17 +87,17 @@ def m_WM_Asn_Status_PRE(dcnbr, env):
     # COLUMN COUNT: 6
 
 
-    Shortcut_to_WM_ASN_STATUS_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(ASN_STATUS AS BIGINT) as ASN_STATUS", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_ASN_STATUS_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ASN_STATUS AS SMALLINT) as ASN_STATUS",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
 
     overwriteDeltaPartition(Shortcut_to_WM_ASN_STATUS_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_ASN_STATUS_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

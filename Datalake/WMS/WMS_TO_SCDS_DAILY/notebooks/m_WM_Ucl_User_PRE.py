@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -99,8 +99,8 @@ SQ_Shortcut_to_UCL_USER = (spark.read.format('jdbc').option('url', connection_st
             UCL_USER.COPY_FROM_USER,
             UCL_USER.EXTERNAL_USER_ID,
             UCL_USER.SECURITY_POLICY_GROUP_ID
-        FROM UCL_USER
-        WHERE {Initial_Load} (TRUNC(UCL_USER.CREATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC(UCL_USER.LAST_UPDATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""") \
+        FROM {source_schema}.UCL_USER
+        WHERE  (TRUNC(UCL_USER.CREATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC(UCL_USER.LAST_UPDATED_DTTM)>= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""") \
      .option('user', username) \
      .option('password', password) \
      .option('numPartitions', 3) \
@@ -121,7 +121,7 @@ SQ_Shortcut_to_UCL_USER_temp = SQ_Shortcut_to_UCL_USER.toDF(*["SQ_Shortcut_to_UC
 
 EXPTRANS = SQ_Shortcut_to_UCL_USER_temp.selectExpr( 
 	"SQ_Shortcut_to_UCL_USER___sys_row_id as sys_row_id", 
-	f"{DC_NBR} as DC_NBR_EXP", 
+	f"{dcnbr} as DC_NBR_EXP", 
 	"SQ_Shortcut_to_UCL_USER___UCL_USER_ID as UCL_USER_ID", 
 	"SQ_Shortcut_to_UCL_USER___COMPANY_ID as COMPANY_ID", 
 	"SQ_Shortcut_to_UCL_USER___USER_NAME as USER_NAME", 

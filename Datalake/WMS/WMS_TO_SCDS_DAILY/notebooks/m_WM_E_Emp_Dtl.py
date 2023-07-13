@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,60 +30,64 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_E_EMP_DTL"
+raw_perf_table = f"{raw}.WM_E_EMP_DTL_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_EMP_DTL_PRE, type SOURCE 
 # COLUMN COUNT: 32
 
 SQ_Shortcut_to_WM_E_EMP_DTL_PRE = spark.sql(f"""SELECT
-WM_E_EMP_DTL_PRE.DC_NBR,
-WM_E_EMP_DTL_PRE.EMP_DTL_ID,
-WM_E_EMP_DTL_PRE.EMP_ID,
-WM_E_EMP_DTL_PRE.EFF_DATE_TIME,
-WM_E_EMP_DTL_PRE.EMP_STAT_ID,
-WM_E_EMP_DTL_PRE.PAY_RATE,
-WM_E_EMP_DTL_PRE.PAY_SCALE_ID,
-WM_E_EMP_DTL_PRE.SPVSR_EMP_ID,
-WM_E_EMP_DTL_PRE.DEPT_ID,
-WM_E_EMP_DTL_PRE.SHIFT_ID,
-WM_E_EMP_DTL_PRE.ROLE_ID,
-WM_E_EMP_DTL_PRE.USER_DEF_FIELD_1,
-WM_E_EMP_DTL_PRE.USER_DEF_FIELD_2,
-WM_E_EMP_DTL_PRE.CMNT,
-WM_E_EMP_DTL_PRE.CREATE_DATE_TIME,
-WM_E_EMP_DTL_PRE.MOD_DATE_TIME,
-WM_E_EMP_DTL_PRE.USER_ID,
-WM_E_EMP_DTL_PRE.WHSE,
-WM_E_EMP_DTL_PRE.JOB_FUNC_ID,
-WM_E_EMP_DTL_PRE.STARTUP_TIME,
-WM_E_EMP_DTL_PRE.CLEANUP_TIME,
-WM_E_EMP_DTL_PRE.MISC_TXT_1,
-WM_E_EMP_DTL_PRE.MISC_TXT_2,
-WM_E_EMP_DTL_PRE.MISC_NUM_1,
-WM_E_EMP_DTL_PRE.MISC_NUM_2,
-WM_E_EMP_DTL_PRE.DFLT_PERF_GOAL,
-WM_E_EMP_DTL_PRE.VERSION_ID,
-WM_E_EMP_DTL_PRE.IS_SUPER,
-WM_E_EMP_DTL_PRE.CREATED_DTTM,
-WM_E_EMP_DTL_PRE.LAST_UPDATED_DTTM,
-WM_E_EMP_DTL_PRE.EXCLUDE_AUTO_CICO,
-WM_E_EMP_DTL_PRE.LOAD_TSTMP
-FROM WM_E_EMP_DTL_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+EMP_DTL_ID,
+EMP_ID,
+EFF_DATE_TIME,
+EMP_STAT_ID,
+PAY_RATE,
+PAY_SCALE_ID,
+SPVSR_EMP_ID,
+DEPT_ID,
+SHIFT_ID,
+ROLE_ID,
+USER_DEF_FIELD_1,
+USER_DEF_FIELD_2,
+CMNT,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+USER_ID,
+WHSE,
+JOB_FUNC_ID,
+STARTUP_TIME,
+CLEANUP_TIME,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+DFLT_PERF_GOAL,
+VERSION_ID,
+IS_SUPER,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+EXCLUDE_AUTO_CICO,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_EMP_DTL, type SOURCE 
 # COLUMN COUNT: 7
 
 SQ_Shortcut_to_WM_E_EMP_DTL = spark.sql(f"""SELECT
-WM_E_EMP_DTL.LOCATION_ID,
-WM_E_EMP_DTL.WM_EMP_DTL_ID,
-WM_E_EMP_DTL.WM_CREATED_TSTMP,
-WM_E_EMP_DTL.WM_LAST_UPDATED_TSTMP,
-WM_E_EMP_DTL.WM_CREATE_TSTMP,
-WM_E_EMP_DTL.WM_MOD_TSTMP,
-WM_E_EMP_DTL.LOAD_TSTMP
-FROM WM_E_EMP_DTL
-WHERE WM_EMP_DTL_ID IN (SELECT EMP_DTL_ID FROM WM_E_EMP_DTL_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_EMP_DTL_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_EMP_DTL_ID IN (SELECT EMP_DTL_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -163,10 +168,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_EMP_DTL_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -266,11 +268,11 @@ FIL_NO_CHANGE_REC = JNR_WM_E_EMP_DTL_temp.selectExpr( \
 	"JNR_WM_E_EMP_DTL___WM_CREATE_TSTMP as WM_CREATE_TSTMP", \
 	"JNR_WM_E_EMP_DTL___WM_MOD_TSTMP as WM_MOD_TSTMP", \
 	"JNR_WM_E_EMP_DTL___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
-	"JNR_WM_E_EMP_DTL___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP")\
+	"JNR_WM_E_EMP_DTL___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP") \
     .filter("in_WM_EMP_DTL_ID is Null OR (  in_WM_EMP_DTL_ID is not Null() AND \
              ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(WM_CREATE_TSTMP, date'1900-01-01') \
-             OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(WM_MOD_TSTMP, date'1900-01-01')\
-             OR COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01')\
+             OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(WM_MOD_TSTMP, date'1900-01-01') \
+             OR COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') \
              OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 
@@ -311,12 +313,12 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___DFLT_PERF_GOAL as DFLT_PERF_GOAL", \
 	"FIL_NO_CHANGE_REC___VERSION_ID as VERSION_ID", \
 	"FIL_NO_CHANGE_REC___IS_SUPER as IS_SUPER", \
-	"DECODE ( LTRIM ( RTRIM ( UPPER ( FIL_NO_CHANGE_REC___IS_SUPER ) ) ) , 'Y','1' , '1','1','0' ) as IS_SUPER_O", \
+    "CASE WHEN TRIM(UPPER(FIL_NO_CHANGE_REC___IS_SUPER)) IN ('Y', '1') THEN '1' ELSE '0' END as IS_SUPER_O", \
 	"FIL_NO_CHANGE_REC___CREATED_DTTM as CREATED_DTTM", \
 	"FIL_NO_CHANGE_REC___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", \
 	"FIL_NO_CHANGE_REC___EXCLUDE_AUTO_CICO as EXCLUDE_AUTO_CICO", \
-	"DECODE ( LTRIM ( RTRIM ( UPPER ( FIL_NO_CHANGE_REC___EXCLUDE_AUTO_CICO ) ) ) , 'Y','1' , '1','1','0' ) as EXCLUDE_AUTO_CICO_O", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+    "CASE WHEN TRIM(UPPER(FIL_NO_CHANGE_REC___EXCLUDE_AUTO_CICO)) IN ('Y', '1') THEN '1' ELSE '0' END as EXCLUDE_AUTO_CICO_O", \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
 	"FIL_NO_CHANGE_REC___in_WM_EMP_DTL_ID as in_WM_EMP_DTL_ID" \
 )
@@ -369,10 +371,47 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 # Processing node Shortcut_to_WM_E_EMP_DTL, type TARGET 
 # COLUMN COUNT: 33
 
+Shortcut_to_WM_E_EMP_DTL = UPD_VALIDATE.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(EMP_DTL_ID AS BIGINT) as WM_EMP_DTL_ID", 
+	"CAST(WHSE AS STRING) as WM_WHSE", 
+	"CAST(EMP_ID AS BIGINT) as WM_EMP_ID", 
+	"CAST(EFF_DATE_TIME AS TIMESTAMP) as EFF_TSTMP", 
+	"CAST(EMP_STAT_ID AS BIGINT) as WM_EMP_STAT_ID", 
+	"CAST(SPVSR_EMP_ID AS BIGINT) as WM_SUPERVISOR_EMP_ID", 
+	"CAST(IS_SUPER AS BIGINT) as SUPERVISOR_FLAG", 
+	"CAST(ROLE_ID AS BIGINT) as WM_ROLE_ID", 
+	"CAST(JOB_FUNC_ID AS BIGINT) as WM_JOB_FUNC_ID", 
+	"CAST(DEPT_ID AS BIGINT) as WM_DEPT_ID", 
+	"CAST(PAY_RATE AS BIGINT) as PAY_RATE", 
+	"CAST(PAY_SCALE_ID AS BIGINT) as WM_PAY_SCALE_ID", 
+	"CAST(SHIFT_ID AS BIGINT) as WM_SHIFT_ID", 
+	"CAST(STARTUP_TIME AS BIGINT) as STARTUP_TIME", 
+	"CAST(CLEANUP_TIME AS BIGINT) as CLEANUP_TIME", 
+	"CAST(DFLT_PERF_GOAL AS BIGINT) as DFLT_PERF_GOAL", 
+	"CAST(EXCLUDE_AUTO_CICO AS BIGINT) as EXCLUDE_AUTO_CICO_FLAG", 
+	"CAST(USER_DEF_FIELD_1 AS STRING) as USER_DEF_FIELD_1", 
+	"CAST(USER_DEF_FIELD_2 AS STRING) as USER_DEF_FIELD_2", 
+	"CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
+	"CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
+	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
+	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
+	"CAST(CMNT AS STRING) as WM_COMMENT", 
+	"CAST(USER_ID AS STRING) as WM_USER_ID", 
+	"CAST(VERSION_ID AS BIGINT) as WM_VERSION_ID", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_EMP_DTL_ID = target.WM_EMP_DTL_ID"""
-  refined_perf_table = "WM_E_EMP_DTL"
-  executeMerge(UPD_VALIDATE, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_E_EMP_DTL"
+  executeMerge(Shortcut_to_WM_E_EMP_DTL, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_E_EMP_DTL", "WM_E_EMP_DTL", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

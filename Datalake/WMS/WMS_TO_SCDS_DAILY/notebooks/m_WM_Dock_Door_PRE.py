@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_Dock_Door_PRE(dcnbr, env):
     tableName = "WM_DOCK_DOOR_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "DOCK_DOOR"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -82,8 +84,8 @@ def m_WM_Dock_Door_PRE(dcnbr, env):
                 DOCK_DOOR.LOCN_HDR_ID,
                 DOCK_DOOR.DOCK_DOOR_LOCN_ID,
                 DOCK_DOOR.OUTBD_STAGING_LOCN_ID
-            FROM DOCK_DOOR
-            WHERE (TRUNC( DOCK_DOOR.CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1) OR (TRUNC( DOCK_DOOR.LAST_UPDATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.DOCK_DOOR
+            WHERE (TRUNC( DOCK_DOOR.CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1) OR (TRUNC( DOCK_DOOR.LAST_UPDATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -129,39 +131,39 @@ def m_WM_Dock_Door_PRE(dcnbr, env):
     # COLUMN COUNT: 28
 
 
-    Shortcut_to_WM_DOCK_DOOR_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(DOCK_DOOR_ID AS BIGINT) as DOCK_DOOR_ID", 
-        "CAST(FACILITY_ID AS BIGINT) as FACILITY_ID", 
-        "CAST(DOCK_ID AS STRING) as DOCK_ID", 
-        "CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", 
-        "CAST(DOCK_DOOR_NAME AS STRING) as DOCK_DOOR_NAME", 
-        "CAST(DOCK_DOOR_STATUS AS BIGINT) as DOCK_DOOR_STATUS", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION", 
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", 
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", 
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", 
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", 
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-        "CAST(OLD_DOCK_DOOR_STATUS AS BIGINT) as OLD_DOCK_DOOR_STATUS", 
-        "CAST(ACTIVITY_TYPE AS STRING) as ACTIVITY_TYPE", 
-        "CAST(APPOINTMENT_TYPE AS STRING) as APPOINTMENT_TYPE", 
-        "CAST(BARCODE AS STRING) as BARCODE", 
-        "CAST(TIME_FROM_INDUCTION AS BIGINT) as TIME_FROM_INDUCTION", 
-        "CAST(PALLETIZATION_SPUR AS STRING) as PALLETIZATION_SPUR", 
-        "CAST(SORT_ZONE AS STRING) as SORT_ZONE", 
-        "CAST(ILM_APPOINTMENT_NUMBER AS STRING) as ILM_APPOINTMENT_NUMBER", 
-        "CAST(FLOWTHRU_ALLOC_SORT_PRTY AS STRING) as FLOWTHRU_ALLOC_SORT_PRTY", 
-        "CAST(LOCN_HDR_ID AS BIGINT) as LOCN_HDR_ID", 
-        "CAST(DOCK_DOOR_LOCN_ID AS STRING) as DOCK_DOOR_LOCN_ID", 
-        "CAST(OUTBD_STAGING_LOCN_ID AS STRING) as OUTBD_STAGING_LOCN_ID", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_DOCK_DOOR_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(DOCK_DOOR_ID AS BIGINT) as DOCK_DOOR_ID",
+        "CAST(FACILITY_ID AS INT) as FACILITY_ID",
+        "CAST(DOCK_ID AS STRING) as DOCK_ID",
+        "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+        "CAST(DOCK_DOOR_NAME AS STRING) as DOCK_DOOR_NAME",
+        "CAST(DOCK_DOOR_STATUS AS SMALLINT) as DOCK_DOOR_STATUS",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(MARK_FOR_DELETION AS SMALLINT) as MARK_FOR_DELETION",
+        "CAST(CREATED_SOURCE_TYPE AS SMALLINT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS SMALLINT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(OLD_DOCK_DOOR_STATUS AS SMALLINT) as OLD_DOCK_DOOR_STATUS",
+        "CAST(ACTIVITY_TYPE AS STRING) as ACTIVITY_TYPE",
+        "CAST(APPOINTMENT_TYPE AS STRING) as APPOINTMENT_TYPE",
+        "CAST(BARCODE AS STRING) as BARCODE",
+        "CAST(TIME_FROM_INDUCTION AS DECIMAL(5,2)) as TIME_FROM_INDUCTION",
+        "CAST(PALLETIZATION_SPUR AS STRING) as PALLETIZATION_SPUR",
+        "CAST(SORT_ZONE AS STRING) as SORT_ZONE",
+        "CAST(ILM_APPOINTMENT_NUMBER AS STRING) as ILM_APPOINTMENT_NUMBER",
+        "CAST(FLOWTHRU_ALLOC_SORT_PRTY AS STRING) as FLOWTHRU_ALLOC_SORT_PRTY",
+        "CAST(LOCN_HDR_ID AS INT) as LOCN_HDR_ID",
+        "CAST(DOCK_DOOR_LOCN_ID AS STRING) as DOCK_DOOR_LOCN_ID",
+        "CAST(OUTBD_STAGING_LOCN_ID AS STRING) as OUTBD_STAGING_LOCN_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
 
     overwriteDeltaPartition(Shortcut_to_WM_DOCK_DOOR_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_DOCK_DOOR_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

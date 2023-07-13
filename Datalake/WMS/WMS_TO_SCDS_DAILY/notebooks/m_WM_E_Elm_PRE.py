@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_E_Elm_PRE(dcnbr, env):
     tableName = "WM_E_ELM_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_ELM"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -74,8 +76,8 @@ def m_WM_E_Elm_PRE(dcnbr, env):
                 E_ELM.UNQ_SEED_ID,
                 E_ELM.SIM_WHSE,
                 E_ELM.ORIG_NAME
-            FROM E_ELM
-            WHERE (TRUNC( CREATE_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR (TRUNC( MOD_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+            FROM {source_schema}.E_ELM
+            WHERE (TRUNC( CREATE_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (TRUNC( MOD_DATE_TIME)>= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -113,31 +115,32 @@ def m_WM_E_Elm_PRE(dcnbr, env):
     # COLUMN COUNT: 20
 
 
-    Shortcut_to_WM_E_ELM_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(ELM_ID AS BIGINT) as ELM_ID", 
-        "CAST(NAME AS STRING) as NAME", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(CORE_FLAG AS STRING) as CORE_FLAG", 
-        "CAST(MSRMNT_ID AS BIGINT) as MSRMNT_ID", 
-        "CAST(TIME_ALLOW AS BIGINT) as TIME_ALLOW", 
-        "CAST(ELM_GRP_ID AS BIGINT) as ELM_GRP_ID", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(USER_ID AS STRING) as USER_ID", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(UNQ_SEED_ID AS BIGINT) as UNQ_SEED_ID", 
-        "CAST(SIM_WHSE AS STRING) as SIM_WHSE", 
-        "CAST(ORIG_NAME AS STRING) as ORIG_NAME", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_ELM_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ELM_ID AS INT) as ELM_ID",
+        "CAST(NAME AS STRING) as NAME",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(CORE_FLAG AS STRING) as CORE_FLAG",
+        "CAST(MSRMNT_ID AS INT) as MSRMNT_ID",
+        "CAST(TIME_ALLOW AS DECIMAL(9,4)) as TIME_ALLOW",
+        "CAST(ELM_GRP_ID AS INT) as ELM_GRP_ID",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(UNQ_SEED_ID AS INT) as UNQ_SEED_ID",
+        "CAST(SIM_WHSE AS STRING) as SIM_WHSE",
+        "CAST(ORIG_NAME AS STRING) as ORIG_NAME",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
     overwriteDeltaPartition(Shortcut_to_WM_E_ELM_PRE,"DC_NBR",dcnbr,target_table_name)
     
     logger.info(
         "Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

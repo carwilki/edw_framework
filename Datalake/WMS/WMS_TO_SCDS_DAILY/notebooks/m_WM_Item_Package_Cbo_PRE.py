@@ -6,9 +6,9 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -28,10 +28,12 @@ def m_WM_Item_Package_Cbo_PRE(dcnbr, env):
     tableName = "WM_ITEM_PACKAGE_CBO_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "ITEM_PACKAGE_CBO"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -43,11 +45,12 @@ def m_WM_Item_Package_Cbo_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_PACKAGE_CBO, type SOURCE 
     # COLUMN COUNT: 23
@@ -76,8 +79,8 @@ def m_WM_Item_Package_Cbo_PRE(dcnbr, env):
     ITEM_PACKAGE_CBO.HIBERNATE_VERSION,
     ITEM_PACKAGE_CBO.IS_STD,
     ITEM_PACKAGE_CBO.BUSINESS_PARTNER_ID
-    FROM ITEM_PACKAGE_CBO
-    WHERE (trunc(AUDIT_CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(AUDIT_LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)  AND
+    FROM {source_schema}.ITEM_PACKAGE_CBO
+    WHERE (trunc(AUDIT_CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(AUDIT_LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)  AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -121,37 +124,38 @@ def m_WM_Item_Package_Cbo_PRE(dcnbr, env):
     # COLUMN COUNT: 25
 
 
-    Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(ITEM_PACKAGE_ID AS BIGINT) as ITEM_PACKAGE_ID", \
-        "CAST(ITEM_ID AS BIGINT) as ITEM_ID", \
-        "CAST(PACKAGE_UOM_ID AS BIGINT) as PACKAGE_UOM_ID", \
-        "CAST(QUANTITY AS BIGINT) as QUANTITY", \
-        "CAST(WEIGHT AS BIGINT) as WEIGHT", \
-        "CAST(WEIGHT_UOM_ID AS BIGINT) as WEIGHT_UOM_ID", \
-        "CAST(GTIN AS STRING) as GTIN", \
-        "CAST(AUDIT_CREATED_SOURCE AS STRING) as AUDIT_CREATED_SOURCE", \
-        "CAST(AUDIT_CREATED_SOURCE_TYPE AS BIGINT) as AUDIT_CREATED_SOURCE_TYPE", \
-        "CAST(AUDIT_CREATED_DTTM AS TIMESTAMP) as AUDIT_CREATED_DTTM", \
-        "CAST(AUDIT_LAST_UPDATED_SOURCE AS STRING) as AUDIT_LAST_UPDATED_SOURCE", \
-        "CAST(AUDIT_LAST_UPDATED_SOURCE_TYPE AS BIGINT) as AUDIT_LAST_UPDATED_SOURCE_TYPE", \
-        "CAST(AUDIT_LAST_UPDATED_DTTM AS TIMESTAMP) as AUDIT_LAST_UPDATED_DTTM", \
-        "CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION", \
-        "CAST(DIMENSION_UOM_ID AS BIGINT) as DIMENSION_UOM_ID", \
-        "CAST(VOLUME AS BIGINT) as VOLUME", \
-        "CAST(VOLUME_UOM_ID AS BIGINT) as VOLUME_UOM_ID", \
-        "CAST(LENGTH AS BIGINT) as LENGTH", \
-        "CAST(HEIGHT AS BIGINT) as HEIGHT", \
-        "CAST(WIDTH AS BIGINT) as WIDTH", \
-        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", \
-        "CAST(IS_STD AS STRING) as IS_STD", \
-        "CAST(BUSINESS_PARTNER_ID AS STRING) as BUSINESS_PARTNER_ID", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(ITEM_PACKAGE_ID AS INT) as ITEM_PACKAGE_ID",
+        "CAST(ITEM_ID AS INT) as ITEM_ID",
+        "CAST(PACKAGE_UOM_ID AS INT) as PACKAGE_UOM_ID",
+        "CAST(QUANTITY AS DECIMAL(16,4)) as QUANTITY",
+        "CAST(WEIGHT AS DECIMAL(16,4)) as WEIGHT",
+        "CAST(WEIGHT_UOM_ID AS INT) as WEIGHT_UOM_ID",
+        "CAST(GTIN AS STRING) as GTIN",
+        "CAST(AUDIT_CREATED_SOURCE AS STRING) as AUDIT_CREATED_SOURCE",
+        "CAST(AUDIT_CREATED_SOURCE_TYPE AS TINYINT) as AUDIT_CREATED_SOURCE_TYPE",
+        "CAST(AUDIT_CREATED_DTTM AS TIMESTAMP) as AUDIT_CREATED_DTTM",
+        "CAST(AUDIT_LAST_UPDATED_SOURCE AS STRING) as AUDIT_LAST_UPDATED_SOURCE",
+        "CAST(AUDIT_LAST_UPDATED_SOURCE_TYPE AS TINYINT) as AUDIT_LAST_UPDATED_SOURCE_TYPE",
+        "CAST(AUDIT_LAST_UPDATED_DTTM AS TIMESTAMP) as AUDIT_LAST_UPDATED_DTTM",
+        "CAST(MARK_FOR_DELETION AS TINYINT) as MARK_FOR_DELETION",
+        "CAST(DIMENSION_UOM_ID AS INT) as DIMENSION_UOM_ID",
+        "CAST(VOLUME AS DECIMAL(16,4)) as VOLUME",
+        "CAST(VOLUME_UOM_ID AS DECIMAL(16,4)) as VOLUME_UOM_ID",
+        "CAST(LENGTH AS DECIMAL(16,4)) as LENGTH",
+        "CAST(HEIGHT AS DECIMAL(16,4)) as HEIGHT",
+        "CAST(WIDTH AS DECIMAL(16,4)) as WIDTH",
+        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION",
+        "CAST(IS_STD AS STRING) as IS_STD",
+        "CAST(BUSINESS_PARTNER_ID AS STRING) as BUSINESS_PARTNER_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE,"DC_NBR",dcnbr,target_table_name)
     
     logger.info(
         "Shortcut_to_WM_ITEM_PACKAGE_CBO_PRE is written to the target table - "
         + target_table_name
-    )
+    )    

@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,64 +30,68 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_E_MSRMNT"
+raw_perf_table = f"{raw}.WM_E_MSRMNT_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_MSRMNT, type SOURCE 
 # COLUMN COUNT: 22
 
 SQ_Shortcut_to_WM_E_MSRMNT = spark.sql(f"""SELECT
-WM_E_MSRMNT.LOCATION_ID,
-WM_E_MSRMNT.WM_MSRMNT_ID,
-WM_E_MSRMNT.WM_MSRMNT_CD,
-WM_E_MSRMNT.WM_MSRMNT_NAME,
-WM_E_MSRMNT.WM_ORIG_MSRMNT_CD,
-WM_E_MSRMNT.WM_ORIG_MSRMNT_NAME,
-WM_E_MSRMNT.WM_MSRMNT_STATUS_CD,
-WM_E_MSRMNT.SYS_CREATED_FLAG,
-WM_E_MSRMNT.WM_UNIQUE_SEED_ID,
-WM_E_MSRMNT.SIMULATION_DC_NAME,
-WM_E_MSRMNT.MISC_TXT_1,
-WM_E_MSRMNT.MISC_TXT_2,
-WM_E_MSRMNT.MISC_NUM_1,
-WM_E_MSRMNT.MISC_NUM_2,
-WM_E_MSRMNT.WM_USER_ID,
-WM_E_MSRMNT.WM_VERSION_ID,
-WM_E_MSRMNT.WM_CREATED_TSTMP,
-WM_E_MSRMNT.WM_LAST_UPDATED_TSTMP,
-WM_E_MSRMNT.WM_CREATE_TSTMP,
-WM_E_MSRMNT.WM_MOD_TSTMP,
-WM_E_MSRMNT.UPDATE_TSTMP,
-WM_E_MSRMNT.LOAD_TSTMP
-FROM WM_E_MSRMNT
-WHERE WM_MSRMNT_ID IN (SELECT MSRMNT_ID FROM WM_E_MSRMNT_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_MSRMNT_ID,
+WM_MSRMNT_CD,
+WM_MSRMNT_NAME,
+WM_ORIG_MSRMNT_CD,
+WM_ORIG_MSRMNT_NAME,
+WM_MSRMNT_STATUS_CD,
+SYS_CREATED_FLAG,
+WM_UNIQUE_SEED_ID,
+SIMULATION_DC_NAME,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+WM_USER_ID,
+WM_VERSION_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+WM_CREATE_TSTMP,
+WM_MOD_TSTMP,
+UPDATE_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_MSRMNT_ID IN (SELECT MSRMNT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_MSRMNT_PRE, type SOURCE 
 # COLUMN COUNT: 21
 
 SQ_Shortcut_to_WM_E_MSRMNT_PRE = spark.sql(f"""SELECT
-WM_E_MSRMNT_PRE.DC_NBR,
-WM_E_MSRMNT_PRE.MSRMNT_ID,
-WM_E_MSRMNT_PRE.MSRMNT_CODE,
-WM_E_MSRMNT_PRE.NAME,
-WM_E_MSRMNT_PRE.STATUS_FLAG,
-WM_E_MSRMNT_PRE.SYS_CREATED,
-WM_E_MSRMNT_PRE.CREATE_DATE_TIME,
-WM_E_MSRMNT_PRE.MOD_DATE_TIME,
-WM_E_MSRMNT_PRE.USER_ID,
-WM_E_MSRMNT_PRE.MISC_TXT_1,
-WM_E_MSRMNT_PRE.MISC_TXT_2,
-WM_E_MSRMNT_PRE.MISC_NUM_1,
-WM_E_MSRMNT_PRE.MISC_NUM_2,
-WM_E_MSRMNT_PRE.VERSION_ID,
-WM_E_MSRMNT_PRE.UNQ_SEED_ID,
-WM_E_MSRMNT_PRE.SIM_WHSE,
-WM_E_MSRMNT_PRE.ORIG_MSRMNT_CODE,
-WM_E_MSRMNT_PRE.ORIG_NAME,
-WM_E_MSRMNT_PRE.CREATED_DTTM,
-WM_E_MSRMNT_PRE.LAST_UPDATED_DTTM,
-WM_E_MSRMNT_PRE.LOAD_TSTMP
-FROM WM_E_MSRMNT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+MSRMNT_ID,
+MSRMNT_CODE,
+NAME,
+STATUS_FLAG,
+SYS_CREATED,
+CREATE_DATE_TIME,
+MOD_DATE_TIME,
+USER_ID,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+VERSION_ID,
+UNQ_SEED_ID,
+SIM_WHSE,
+ORIG_MSRMNT_CODE,
+ORIG_NAME,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -124,10 +129,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_MSRMNT_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -236,11 +238,11 @@ FIL_NO_CHANGE_REC = JNR_WM_E_MSRMNT_temp.selectExpr( \
 	"JNR_WM_E_MSRMNT___in_CREATED_DTTM as in_CREATED_DTTM", \
 	"JNR_WM_E_MSRMNT___in_LAST_UPDATED_DTTM as in_LAST_UPDATED_DTTM", \
 	"JNR_WM_E_MSRMNT___in_UPDATE_TSTMP as in_UPDATE_TSTMP", \
-	"JNR_WM_E_MSRMNT___in_LOAD_TSTMP as in_LOAD_TSTMP")\
+	"JNR_WM_E_MSRMNT___in_LOAD_TSTMP as in_LOAD_TSTMP") \
     .filter("in_MSRMNT_ID IS NULL OR ( (  in_MSRMNT_ID IS NOT NULL ) AND \
             ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(in_CREATE_DATE_TIME, date'1900-01-01') \
-             OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(in_MOD_DATE_TIME, date'1900-01-01')\
-             OR COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(in_CREATED_DTTM, date'1900-01-01')\
+             OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(in_MOD_DATE_TIME, date'1900-01-01') \
+             OR COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(in_CREATED_DTTM, date'1900-01-01') \
              OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(in_LAST_UPDATED_DTTM, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -257,7 +259,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___MSRMNT_CODE as MSRMNT_CODE", \
 	"FIL_NO_CHANGE_REC___NAME as NAME", \
 	"FIL_NO_CHANGE_REC___STATUS_FLAG as STATUS_FLAG", \
-	"DECODE ( LTRIM ( RTRIM ( UPPER ( FIL_NO_CHANGE_REC___SYS_CREATED ) ) ) , 'Y','1' , '1','1','0' ) as SYS_CREATED_FLAG", \
+    "CASE WHEN TRIM(UPPER(FIL_NO_CHANGE_REC___SYS_CREATED)) IN ('Y', '1') THEN '1' ELSE '0' END as SYS_CREATED_FLAG", \
 	"FIL_NO_CHANGE_REC___CREATE_DATE_TIME as CREATE_DATE_TIME", \
 	"FIL_NO_CHANGE_REC___MOD_DATE_TIME as MOD_DATE_TIME", \
 	"FIL_NO_CHANGE_REC___USER_ID as USER_ID", \
@@ -294,7 +296,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___in_LAST_UPDATED_DTTM as in_LAST_UPDATED_DTTM", \
 	"FIL_NO_CHANGE_REC___in_UPDATE_TSTMP as in_UPDATE_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP" \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP" \
 )
 
 # COMMAND ----------
@@ -328,35 +330,45 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 	"EXP_EVAL_VALUES___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_EVAL_VALUES___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVAL_VALUES___in_MSRMNT_ID as in_MSRMNT_ID") \
-	.withColumn('pyspark_data_action', when((in_MSRMNT_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_MSRMNT_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_MSRMNT, type TARGET 
 # COLUMN COUNT: 22
 
-
-Shortcut_to_WM_E_MSRMNT = UPD_VALIDATE.selectExpr( \
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
-	"CAST(MSRMNT_ID AS BIGINT) as WM_MSRMNT_ID", \
-	"CAST(MSRMNT_CODE AS STRING) as WM_MSRMNT_CD", \
-	"CAST(NAME AS STRING) as WM_MSRMNT_NAME", \
-	"CAST(ORIG_MSRMNT_CODE AS STRING) as WM_ORIG_MSRMNT_CD", \
-	"CAST(ORIG_NAME AS STRING) as WM_ORIG_MSRMNT_NAME", \
-	"CAST(STATUS_FLAG AS STRING) as WM_MSRMNT_STATUS_CD", \
-	"CAST(SYS_CREATED_FLAG AS BIGINT) as SYS_CREATED_FLAG", \
-	"CAST(UNQ_SEED_ID AS BIGINT) as WM_UNIQUE_SEED_ID", \
-	"CAST(SIM_WHSE AS STRING) as SIMULATION_DC_NAME", \
-	"CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", \
-	"CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", \
-	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", \
-	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", \
-	"CAST(USER_ID AS STRING) as WM_USER_ID", \
-	"CAST(VERSION_ID AS BIGINT) as WM_VERSION_ID", \
-	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", \
-	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", \
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+Shortcut_to_WM_E_MSRMNT = UPD_VALIDATE.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(MSRMNT_ID AS BIGINT) as WM_MSRMNT_ID", 
+	"CAST(MSRMNT_CODE AS STRING) as WM_MSRMNT_CD", 
+	"CAST(NAME AS STRING) as WM_MSRMNT_NAME", 
+	"CAST(ORIG_MSRMNT_CODE AS STRING) as WM_ORIG_MSRMNT_CD", 
+	"CAST(ORIG_NAME AS STRING) as WM_ORIG_MSRMNT_NAME", 
+	"CAST(STATUS_FLAG AS STRING) as WM_MSRMNT_STATUS_CD", 
+	"CAST(SYS_CREATED_FLAG AS BIGINT) as SYS_CREATED_FLAG", 
+	"CAST(UNQ_SEED_ID AS BIGINT) as WM_UNIQUE_SEED_ID", 
+	"CAST(SIM_WHSE AS STRING) as SIMULATION_DC_NAME", 
+	"CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
+	"CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
+	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
+	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
+	"CAST(USER_ID AS STRING) as WM_USER_ID", 
+	"CAST(VERSION_ID AS BIGINT) as WM_VERSION_ID", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as WM_CREATE_TSTMP", 
+	"CAST(MOD_DATE_TIME AS TIMESTAMP) as WM_MOD_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
 )
-Shortcut_to_WM_E_MSRMNT.write.saveAsTable(f'{raw}.WM_E_MSRMNT')
+
+try:
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_MSRMNT_ID = target.WM_MSRMNT_ID"""
+#   refined_perf_table = "WM_E_MSRMNT"
+  executeMerge(Shortcut_to_WM_E_MSRMNT, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("WM_E_MSRMNT", "WM_E_MSRMNT", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("WM_E_MSRMNT", "WM_E_MSRMNT","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

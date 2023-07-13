@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from pyspark.dbutils import DBUtils
 from datetime import datetime
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,42 +30,46 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_ITEM_GROUP_WMS"
+raw_perf_table = f"{raw}.WM_ITEM_GROUP_WMS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ITEM_GROUP_WMS, type SOURCE 
 # COLUMN COUNT: 6
 
 SQ_Shortcut_to_WM_ITEM_GROUP_WMS = spark.sql(f"""SELECT
-WM_ITEM_GROUP_WMS.LOCATION_ID,
-WM_ITEM_GROUP_WMS.WM_ITEM_GROUP_ID,
-WM_ITEM_GROUP_WMS.WM_CREATED_TSTMP,
-WM_ITEM_GROUP_WMS.WM_LAST_UPDATED_SOURCE_TYPE,
-WM_ITEM_GROUP_WMS.WM_LAST_UPDATED_TSTMP,
-WM_ITEM_GROUP_WMS.LOAD_TSTMP
-FROM WM_ITEM_GROUP_WMS
+LOCATION_ID,
+WM_ITEM_GROUP_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_SOURCE_TYPE,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
 WHERE WM_ITEM_GROUP_ID IN
-(SELECT ITEM_GROUP_ID FROM WM_ITEM_GROUP_WMS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+(SELECT ITEM_GROUP_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE, type SOURCE 
 # COLUMN COUNT: 14
 
 SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE = spark.sql(f"""SELECT
-WM_ITEM_GROUP_WMS_PRE.DC_NBR,
-WM_ITEM_GROUP_WMS_PRE.ITEM_GROUP_ID,
-WM_ITEM_GROUP_WMS_PRE.ITEM_ID,
-WM_ITEM_GROUP_WMS_PRE.GROUP_TYPE,
-WM_ITEM_GROUP_WMS_PRE.GROUP_CODE,
-WM_ITEM_GROUP_WMS_PRE.GROUP_ATTRIBUTE,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_CREATED_SOURCE_TYPE,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_CREATED_DTTM,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_LAST_UPDATED_SOURCE_TYPE,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_LAST_UPDATED_DTTM,
-WM_ITEM_GROUP_WMS_PRE.MARK_FOR_DELETION,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_CREATED_SOURCE,
-WM_ITEM_GROUP_WMS_PRE.AUDIT_LAST_UPDATED_SOURCE,
-WM_ITEM_GROUP_WMS_PRE.LOAD_TSTMP
-FROM WM_ITEM_GROUP_WMS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+ITEM_GROUP_ID,
+ITEM_ID,
+GROUP_TYPE,
+GROUP_CODE,
+GROUP_ATTRIBUTE,
+AUDIT_CREATED_SOURCE_TYPE,
+AUDIT_CREATED_DTTM,
+AUDIT_LAST_UPDATED_SOURCE_TYPE,
+AUDIT_LAST_UPDATED_DTTM,
+MARK_FOR_DELETION,
+AUDIT_CREATED_SOURCE,
+AUDIT_LAST_UPDATED_SOURCE,
+LOAD_TSTMP
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -109,10 +114,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -175,8 +177,9 @@ FIL_NO_CHANGE_REC = JNR_WM_ITEM_GROUP_WMS_temp.selectExpr( \
 	"JNR_WM_ITEM_GROUP_WMS___in_LOAD_TSTMP as in_LOAD_TSTMP", \
 	"JNR_WM_ITEM_GROUP_WMS___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
 	"JNR_WM_ITEM_GROUP_WMS___WM_LAST_UPDATED_SOURCE_TYPE as WM_LAST_UPDATED_SOURCE_TYPE", \
-	"JNR_WM_ITEM_GROUP_WMS___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP")\
-	.filter(JNR_WM_ITEM_GROUP_WMS_temp.in_WM_ITEM_GROUP_ID.isNull() | ( JNR_WM_ITEM_GROUP_WMS_temp.in_WM_ITEM_GROUP_ID.isNotNull() & ( when((JNR_WM_ITEM_GROUP_WMS_temp.AUDIT_CREATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(JNR_WM_ITEM_GROUP_WMS_temp.AUDIT_CREATED_DTTM) != when((JNR_WM_ITEM_GROUP_WMS_temp.WM_CREATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(JNR_WM_ITEM_GROUP_WMS_temp.WM_CREATED_TSTMP) | when((JNR_WM_ITEM_GROUP_WMS_temp.AUDIT_LAST_UPDATED_DTTM.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(JNR_WM_ITEM_GROUP_WMS_temp.AUDIT_LAST_UPDATED_DTTM) != when((JNR_WM_ITEM_GROUP_WMS_temp.WM_LAST_UPDATED_TSTMP.isNull()),(to_date ( '01/01/1900' , 'MM/DD/YYYY' ))).otherwise(JNR_WM_ITEM_GROUP_WMS_temp.WM_LAST_UPDATED_TSTMP) ) )).withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_ITEM_GROUP_WMS___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP") \
+	.filter("in_WM_ITEM_GROUP_ID is Null OR ( in_WM_ITEM_GROUP_ID is not Null and ( COALEASE(AUDIT_CREATED_DTTM, date'1900-01-01') != COALEASE(WM_CREATED_TSTMP, date'1900-01-01') OR \
+            COALEASE(AUDIT_LAST_UPDATED_DTTM, date'1900-01-01') != COALEASE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_EVAL_VALUES, type EXPRESSION 
@@ -200,7 +203,7 @@ EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___MARK_FOR_DELETION as MARK_FOR_DELETION", \
 	"FIL_NO_CHANGE_REC___AUDIT_CREATED_SOURCE as AUDIT_CREATED_SOURCE", \
 	"FIL_NO_CHANGE_REC___AUDIT_LAST_UPDATED_SOURCE as AUDIT_LAST_UPDATED_SOURCE", \
-	"IF (FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
 	"FIL_NO_CHANGE_REC___in_WM_ITEM_GROUP_ID as in_WM_ITEM_GROUP_ID" \
 )
@@ -229,28 +232,38 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 	"EXP_EVAL_VALUES___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVAL_VALUES___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_EVAL_VALUES___in_WM_ITEM_GROUP_ID as in_WM_ITEM_GROUP_ID") \
-	.withColumn('pyspark_data_action', when((in_WM_ITEM_GROUP_ID.isNull()) ,(lit(0))) .otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((in_WM_ITEM_GROUP_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ITEM_GROUP_WMS, type TARGET 
 # COLUMN COUNT: 15
 
-
-Shortcut_to_WM_ITEM_GROUP_WMS = UPD_VALIDATE.selectExpr( \
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
-	"CAST(ITEM_GROUP_ID AS BIGINT) as WM_ITEM_GROUP_ID", \
-	"CAST(ITEM_ID AS BIGINT) as WM_ITEM_ID", \
-	"CAST(GROUP_TYPE AS STRING) as WM_GROUP_TYPE", \
-	"CAST(GROUP_CODE AS STRING) as WM_GROUP_CD", \
-	"CAST(GROUP_ATTRIBUTE AS STRING) as WM_GROUP_ATTRIBUTE", \
-	"CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION_FLAG", \
-	"CAST(AUDIT_CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", \
-	"CAST(AUDIT_CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", \
-	"CAST(AUDIT_CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(AUDIT_LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", \
-	"CAST(AUDIT_LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", \
-	"CAST(AUDIT_LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(LOAD_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as LOAD_TSTMP" \
+Shortcut_to_WM_ITEM_GROUP_WMS = UPD_VALIDATE.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(ITEM_GROUP_ID AS BIGINT) as WM_ITEM_GROUP_ID", 
+	"CAST(ITEM_ID AS BIGINT) as WM_ITEM_ID", 
+	"CAST(GROUP_TYPE AS STRING) as WM_GROUP_TYPE", 
+	"CAST(GROUP_CODE AS STRING) as WM_GROUP_CD", 
+	"CAST(GROUP_ATTRIBUTE AS STRING) as WM_GROUP_ATTRIBUTE", 
+	"CAST(MARK_FOR_DELETION AS BIGINT) as MARK_FOR_DELETION_FLAG", 
+	"CAST(AUDIT_CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(AUDIT_CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(AUDIT_CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(AUDIT_LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(AUDIT_LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(AUDIT_LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
 )
-Shortcut_to_WM_ITEM_GROUP_WMS.write.saveAsTable(f'{raw}.WM_ITEM_GROUP_WMS')
+
+try:
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_ITEM_GROUP_ID = target.WM_ITEM_GROUP_ID"""
+#   refined_perf_table = "WM_ITEM_GROUP_WMS"
+  executeMerge(Shortcut_to_WM_ITEM_GROUP_WMS, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("WM_ITEM_GROUP_WMS", "WM_ITEM_GROUP_WMS", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("WM_ITEM_GROUP_WMS", "WM_ITEM_GROUP_WMS","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

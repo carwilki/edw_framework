@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -30,10 +30,12 @@ def m_WM_E_Job_Function_PRE(dcnbr, env):
     tableName = "WM_E_JOB_FUNCTION_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "E_JOB_FUNCTION"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -105,8 +107,8 @@ def m_WM_E_Job_Function_PRE(dcnbr, env):
             E_JOB_FUNCTION.PLAN_EP,
             E_JOB_FUNCTION.WHSE_VISIBILITY_GROUP,
             E_JOB_FUNCTION.DEPT_CODE
-        FROM E_JOB_FUNCTION
-        WHERE (TRUNC( CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( MOD_DATE_TIME) >=  TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+        FROM {source_schema}.E_JOB_FUNCTION
+        WHERE (TRUNC( CREATE_DATE_TIME) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( MOD_DATE_TIME) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( CREATED_DTTM) >= TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (TRUNC( LAST_UPDATED_DTTM) >=  TRUNC( to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
     # Processing node EXPTRANS, type EXPRESSION 
@@ -175,62 +177,62 @@ def m_WM_E_Job_Function_PRE(dcnbr, env):
     # COLUMN COUNT: 51
 
 
-    Shortcut_to_WM_E_JOB_FUNCTION_PRE = EXPTRANS.selectExpr( 
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-        "CAST(JOB_FUNC_ID AS BIGINT) as JOB_FUNC_ID", 
-        "CAST(NAME AS STRING) as NAME", 
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", 
-        "CAST(STARTUP_TIME AS BIGINT) as STARTUP_TIME", 
-        "CAST(CLEANUP_TIME AS BIGINT) as CLEANUP_TIME", 
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-        "CAST(USER_ID AS STRING) as USER_ID", 
-        "CAST(WHSE AS STRING) as WHSE", 
-        "CAST(TRANSITION_START_TIME AS BIGINT) as TRANSITION_START_TIME", 
-        "CAST(TRANSITION_END_TIME AS BIGINT) as TRANSITION_END_TIME", 
-        "CAST(JF_TYPE AS STRING) as JF_TYPE", 
-        "CAST(LEVEL_1 AS STRING) as LEVEL_1", 
-        "CAST(LEVEL_2 AS STRING) as LEVEL_2", 
-        "CAST(LEVEL_3 AS STRING) as LEVEL_3", 
-        "CAST(LEVEL_4 AS STRING) as LEVEL_4", 
-        "CAST(LEVEL_5 AS STRING) as LEVEL_5", 
-        "CAST(OPS_CODE_ID AS BIGINT) as OPS_CODE_ID", 
-        "CAST(APPLY_TEAM_SETUP_TIME AS STRING) as APPLY_TEAM_SETUP_TIME", 
-        "CAST(TEAM_STARTUP_TIME AS BIGINT) as TEAM_STARTUP_TIME", 
-        "CAST(TEAM_CLEANUP_TIME AS BIGINT) as TEAM_CLEANUP_TIME", 
-        "CAST(TEAM_TRANSITION_START_TIME AS BIGINT) as TEAM_TRANSITION_START_TIME", 
-        "CAST(TEAM_TRANSITION_END_TIME AS BIGINT) as TEAM_TRANSITION_END_TIME", 
-        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
-        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
-        "CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
-        "CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
-        "CAST(DFLT_PROC_ZONE_ID AS BIGINT) as DFLT_PROC_ZONE_ID", 
-        "CAST(PROC_ZONE_TEMPL_ID AS BIGINT) as PROC_ZONE_TEMPL_ID", 
-        "CAST(MSRMNT_ID AS BIGINT) as MSRMNT_ID", 
-        "CAST(VERSION_ID AS BIGINT) as VERSION_ID", 
-        "CAST(OBS_THRESHOLD_EP AS BIGINT) as OBS_THRESHOLD_EP", 
-        "CAST(TRACK_HIST_TIME AS STRING) as TRACK_HIST_TIME", 
-        "CAST(TRAIN_PERIOD AS BIGINT) as TRAIN_PERIOD", 
-        "CAST(RETRAIN_PERIOD AS BIGINT) as RETRAIN_PERIOD", 
-        "CAST(OS_ONLY AS STRING) as OS_ONLY", 
-        "CAST(RETRAIN_REQ_DURATION AS BIGINT) as RETRAIN_REQ_DURATION", 
-        "CAST(PERF_GOAL_IND AS STRING) as PERF_GOAL_IND", 
-        "CAST(TRAINING_REQD AS STRING) as TRAINING_REQD", 
-        "CAST(USE_JF_TRAIN AS STRING) as USE_JF_TRAIN", 
-        "CAST(PERF_EVAL_PERIOD_ID AS STRING) as PERF_EVAL_PERIOD_ID", 
-        "CAST(DFLT_MAX_OCCUPANCY AS BIGINT) as DFLT_MAX_OCCUPANCY", 
-        "CAST(UNQ_SEED_ID AS BIGINT) as UNQ_SEED_ID", 
-        "CAST(DEFAULT_ACT_ID AS BIGINT) as DEFAULT_ACT_ID", 
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", 
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", 
-        "CAST(PLAN_EP AS BIGINT) as PLAN_EP", 
-        "CAST(WHSE_VISIBILITY_GROUP AS STRING) as WHSE_VISIBILITY_GROUP", 
-        "CAST(DEPT_CODE AS STRING) as DEPT_CODE", 
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_E_JOB_FUNCTION_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(JOB_FUNC_ID AS INT) as JOB_FUNC_ID",
+        "CAST(NAME AS STRING) as NAME",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(STARTUP_TIME AS DECIMAL(20,7)) as STARTUP_TIME",
+        "CAST(CLEANUP_TIME AS DECIMAL(20,7)) as CLEANUP_TIME",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(WHSE AS STRING) as WHSE",
+        "CAST(TRANSITION_START_TIME AS DECIMAL(20,7)) as TRANSITION_START_TIME",
+        "CAST(TRANSITION_END_TIME AS DECIMAL(20,7)) as TRANSITION_END_TIME",
+        "CAST(JF_TYPE AS STRING) as JF_TYPE",
+        "CAST(LEVEL_1 AS STRING) as LEVEL_1",
+        "CAST(LEVEL_2 AS STRING) as LEVEL_2",
+        "CAST(LEVEL_3 AS STRING) as LEVEL_3",
+        "CAST(LEVEL_4 AS STRING) as LEVEL_4",
+        "CAST(LEVEL_5 AS STRING) as LEVEL_5",
+        "CAST(OPS_CODE_ID AS INT) as OPS_CODE_ID",
+        "CAST(APPLY_TEAM_SETUP_TIME AS STRING) as APPLY_TEAM_SETUP_TIME",
+        "CAST(TEAM_STARTUP_TIME AS DECIMAL(20,7)) as TEAM_STARTUP_TIME",
+        "CAST(TEAM_CLEANUP_TIME AS DECIMAL(20,7)) as TEAM_CLEANUP_TIME",
+        "CAST(TEAM_TRANSITION_START_TIME AS DECIMAL(20,7)) as TEAM_TRANSITION_START_TIME",
+        "CAST(TEAM_TRANSITION_END_TIME AS DECIMAL(20,7)) as TEAM_TRANSITION_END_TIME",
+        "CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1",
+        "CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2",
+        "CAST(MISC_NUM_1 AS DECIMAL(20,7)) as MISC_NUM_1",
+        "CAST(MISC_NUM_2 AS DECIMAL(20,7)) as MISC_NUM_2",
+        "CAST(DFLT_PROC_ZONE_ID AS INT) as DFLT_PROC_ZONE_ID",
+        "CAST(PROC_ZONE_TEMPL_ID AS INT) as PROC_ZONE_TEMPL_ID",
+        "CAST(MSRMNT_ID AS INT) as MSRMNT_ID",
+        "CAST(VERSION_ID AS INT) as VERSION_ID",
+        "CAST(OBS_THRESHOLD_EP AS DECIMAL(20,7)) as OBS_THRESHOLD_EP",
+        "CAST(TRACK_HIST_TIME AS STRING) as TRACK_HIST_TIME",
+        "CAST(TRAIN_PERIOD AS INT) as TRAIN_PERIOD",
+        "CAST(RETRAIN_PERIOD AS DECIMAL(7,2)) as RETRAIN_PERIOD",
+        "CAST(OS_ONLY AS STRING) as OS_ONLY",
+        "CAST(RETRAIN_REQ_DURATION AS DECIMAL(7,2)) as RETRAIN_REQ_DURATION",
+        "CAST(PERF_GOAL_IND AS STRING) as PERF_GOAL_IND",
+        "CAST(TRAINING_REQD AS STRING) as TRAINING_REQD",
+        "CAST(USE_JF_TRAIN AS STRING) as USE_JF_TRAIN",
+        "CAST(PERF_EVAL_PERIOD_ID AS STRING) as PERF_EVAL_PERIOD_ID",
+        "CAST(DFLT_MAX_OCCUPANCY AS DECIMAL(20,7)) as DFLT_MAX_OCCUPANCY",
+        "CAST(UNQ_SEED_ID AS INT) as UNQ_SEED_ID",
+        "CAST(DEFAULT_ACT_ID AS INT) as DEFAULT_ACT_ID",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(PLAN_EP AS DECIMAL(13,7)) as PLAN_EP",
+        "CAST(WHSE_VISIBILITY_GROUP AS STRING) as WHSE_VISIBILITY_GROUP",
+        "CAST(DEPT_CODE AS STRING) as DEPT_CODE",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
-    
+
     overwriteDeltaPartition(Shortcut_to_WM_E_JOB_FUNCTION_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_JOB_FUNCTION_PRE is written to the target table - "
         + target_table_name
-    )
+    )        

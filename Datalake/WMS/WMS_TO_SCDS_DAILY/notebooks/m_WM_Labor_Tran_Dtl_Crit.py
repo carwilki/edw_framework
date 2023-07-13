@@ -7,15 +7,16 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -29,45 +30,49 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_LABOR_TRAN_DTL_CRIT"
+raw_perf_table = f"{raw}.WM_LABOR_TRAN_DTL_CRIT_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LABOR_TRAN_DTL_CRIT, type SOURCE 
 # COLUMN COUNT: 5
 
 SQ_Shortcut_to_WM_LABOR_TRAN_DTL_CRIT = spark.sql(f"""SELECT
-WM_LABOR_TRAN_DTL_CRIT.LOCATION_ID,
-WM_LABOR_TRAN_DTL_CRIT.WM_LABOR_TRAN_DTL_CRIT_ID,
-WM_LABOR_TRAN_DTL_CRIT.WM_CREATED_TSTMP,
-WM_LABOR_TRAN_DTL_CRIT.WM_LAST_UPDATED_TSTMP,
-WM_LABOR_TRAN_DTL_CRIT.LOAD_TSTMP
-FROM WM_LABOR_TRAN_DTL_CRIT
-WHERE WM_LABOR_TRAN_DTL_CRIT_ID IN (SELECT LABOR_TRAN_DTL_CRIT_ID FROM WM_LABOR_TRAN_DTL_CRIT_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_LABOR_TRAN_DTL_CRIT_ID,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_TSTMP,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE WM_LABOR_TRAN_DTL_CRIT_ID IN (SELECT LABOR_TRAN_DTL_CRIT_ID FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_LABOR_TRAN_DTL_CRIT_PRE, type SOURCE 
 # COLUMN COUNT: 19
 
 SQ_Shortcut_to_WM_LABOR_TRAN_DTL_CRIT_PRE = spark.sql(f"""SELECT
-WM_LABOR_TRAN_DTL_CRIT_PRE.DC_NBR,
-WM_LABOR_TRAN_DTL_CRIT_PRE.LABOR_TRAN_DTL_CRIT_ID,
-WM_LABOR_TRAN_DTL_CRIT_PRE.LABOR_TRAN_DTL_ID,
-WM_LABOR_TRAN_DTL_CRIT_PRE.TRAN_NBR,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CRIT_SEQ_NBR,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CRIT_TYPE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CRIT_VAL,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CREATED_SOURCE_TYPE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CREATED_SOURCE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.CREATED_DTTM,
-WM_LABOR_TRAN_DTL_CRIT_PRE.LAST_UPDATED_SOURCE_TYPE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.LAST_UPDATED_SOURCE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.LAST_UPDATED_DTTM,
-WM_LABOR_TRAN_DTL_CRIT_PRE.WHSE,
-WM_LABOR_TRAN_DTL_CRIT_PRE.MISC_TXT_1,
-WM_LABOR_TRAN_DTL_CRIT_PRE.MISC_TXT_2,
-WM_LABOR_TRAN_DTL_CRIT_PRE.MISC_NUM_1,
-WM_LABOR_TRAN_DTL_CRIT_PRE.MISC_NUM_2,
-WM_LABOR_TRAN_DTL_CRIT_PRE.HIBERNATE_VERSION
-FROM WM_LABOR_TRAN_DTL_CRIT_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+LABOR_TRAN_DTL_CRIT_ID,
+LABOR_TRAN_DTL_ID,
+TRAN_NBR,
+CRIT_SEQ_NBR,
+CRIT_TYPE,
+CRIT_VAL,
+CREATED_SOURCE_TYPE,
+CREATED_SOURCE,
+CREATED_DTTM,
+LAST_UPDATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LAST_UPDATED_DTTM,
+WHSE,
+MISC_TXT_1,
+MISC_TXT_2,
+MISC_NUM_1,
+MISC_NUM_2,
+HIBERNATE_VERSION
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -103,10 +108,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_LABOR_TRAN_DTL_CRIT_PRE_temp.selectExpr( \
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
@@ -178,7 +180,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LABOR_TRAN_DTL_CRIT_temp.selectExpr( \
 	"JNR_WM_LABOR_TRAN_DTL_CRIT___i_WM_LABOR_TRAN_DTL_CRIT_ID as i_WM_LABOR_TRAN_DTL_CRIT_ID", \
 	"JNR_WM_LABOR_TRAN_DTL_CRIT___i_WM_CREATED_TSTMP as i_WM_CREATED_TSTMP", \
 	"JNR_WM_LABOR_TRAN_DTL_CRIT___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
-	"JNR_WM_LABOR_TRAN_DTL_CRIT___i_LOAD_TSTMP as i_LOAD_TSTMP")\
+	"JNR_WM_LABOR_TRAN_DTL_CRIT___i_LOAD_TSTMP as i_LOAD_TSTMP") \
     .filter("i_WM_LABOR_TRAN_DTL_CRIT_ID is Null OR (  i_WM_LABOR_TRAN_DTL_CRIT_ID is NOT Null AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -210,8 +212,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___MISC_NUM_2 as MISC_NUM_2", \
 	"FIL_UNCHANGED_RECORDS___HIBERNATE_VERSION as HIBERNATE_VERSION", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
-	"IF (FIL_UNCHANGED_RECORDS___i_WM_LABOR_TRAN_DTL_CRIT_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" \
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF(FIL_UNCHANGED_RECORDS___i_WM_LABOR_TRAN_DTL_CRIT_ID IS NULL, 1, 2) as o_UPDATE_VALIDATOR" \
 )
 
 # COMMAND ----------
@@ -244,16 +246,41 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)) .when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LABOR_TRAN_DTL_CRIT1, type TARGET 
 # COLUMN COUNT: 21
 
+Shortcut_to_WM_LABOR_TRAN_DTL_CRIT1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
+	"CAST(LABOR_TRAN_DTL_CRIT_ID AS BIGINT) as WM_LABOR_TRAN_DTL_CRIT_ID", 
+	"CAST(WHSE AS STRING) as WM_WHSE", 
+	"CAST(LABOR_TRAN_DTL_ID AS BIGINT) as WM_LABOR_TRAN_DTL_ID", 
+	"CAST(TRAN_NBR AS BIGINT) as WM_TRAN_NBR", 
+	"CAST(CRIT_SEQ_NBR AS BIGINT) as CRIT_SEQ_NBR", 
+	"CAST(CRIT_TYPE AS STRING) as WM_CRIT_TYPE", 
+	"CAST(CRIT_VAL AS STRING) as WM_CRIT_VALUE", 
+	"CAST(MISC_TXT_1 AS STRING) as MISC_TXT_1", 
+	"CAST(MISC_TXT_2 AS STRING) as MISC_TXT_2", 
+	"CAST(MISC_NUM_1 AS BIGINT) as MISC_NUM_1", 
+	"CAST(MISC_NUM_2 AS BIGINT) as MISC_NUM_2", 
+	"CAST(HIBERNATE_VERSION AS BIGINT) as WM_HIBERNATE_VERSION", 
+	"CAST(CREATED_SOURCE_TYPE AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action" 
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_LABOR_TRAN_DTL_CRIT_ID = target.WM_LABOR_TRAN_DTL_CRIT_ID"""
-  refined_perf_table = "WM_LABOR_TRAN_DTL_CRIT"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+#   refined_perf_table = "WM_LABOR_TRAN_DTL_CRIT"
+  executeMerge(Shortcut_to_WM_LABOR_TRAN_DTL_CRIT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_LABOR_TRAN_DTL_CRIT", "WM_LABOR_TRAN_DTL_CRIT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:

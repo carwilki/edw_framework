@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 def m_WM_Outpt_Lpn_Detail_PRE(dcnbr, env):
@@ -30,11 +30,13 @@ def m_WM_Outpt_Lpn_Detail_PRE(dcnbr, env):
     
     tableName = "WM_OUTPT_LPN_DETAIL_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_OUTPT_LPN_DETAIL"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -92,10 +94,10 @@ def m_WM_Outpt_Lpn_Detail_PRE(dcnbr, env):
                     OUTPT_LPN_DETAIL.ITEM_NAME,
                     OUTPT_LPN_DETAIL.TC_ORDER_LINE_ID,
                     OUTPT_LPN_DETAIL.DISTRO_NUMBER
-                FROM OUTPT_LPN_DETAIL
-                WHERE {Initial_Load} (trunc(OUTPT_LPN_DETAIL.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1) OR (trunc(OUTPT_LPN_DETAIL.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-1)"""
+                FROM {source_schema}.OUTPT_LPN_DETAIL
+                WHERE  (trunc(OUTPT_LPN_DETAIL.CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(OUTPT_LPN_DETAIL.LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
 
-    SQ_Shortcut_to_OUTPT_LPN_DETAIL = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_OUTPT_LPN_DETAIL = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for SQ_Shortcut_to_OUTPT_LPN_DETAIL is executed and data is loaded using jdbc")
 
     
@@ -107,7 +109,7 @@ def m_WM_Outpt_Lpn_Detail_PRE(dcnbr, env):
     
     EXP_TRN = SQ_Shortcut_to_OUTPT_LPN_DETAIL_temp.selectExpr( \
     	"SQ_Shortcut_to_OUTPT_LPN_DETAIL___sys_row_id as sys_row_id", \
-    	f"{DC_NBR} as DC_NBR_EXP", \
+    	f"{dcnbr} as DC_NBR_EXP", \
     	"SQ_Shortcut_to_OUTPT_LPN_DETAIL___ASSORT_NBR as ASSORT_NBR", \
     	"SQ_Shortcut_to_OUTPT_LPN_DETAIL___BUSINESS_PARTNER as BUSINESS_PARTNER", \
     	"SQ_Shortcut_to_OUTPT_LPN_DETAIL___CONSUMPTION_PRIORITY_DTTM as CONSUMPTION_PRIORITY_DTTM", \
@@ -167,61 +169,60 @@ def m_WM_Outpt_Lpn_Detail_PRE(dcnbr, env):
     # COLUMN COUNT: 53
     
     
-    Shortcut_to_WM_OUTPT_LPN_DETAIL_PRE = EXP_TRN.selectExpr( \
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-    	"CAST(OUTPT_LPN_DETAIL_ID AS BIGINT) as OUTPT_LPN_DETAIL_ID", \
-    	"CAST(ASSORT_NBR AS STRING) as ASSORT_NBR", \
-    	"CAST(BUSINESS_PARTNER AS STRING) as BUSINESS_PARTNER", \
-    	"CAST(CONSUMPTION_PRIORITY_DTTM AS TIMESTAMP) as CONSUMPTION_PRIORITY_DTTM", \
-    	"CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-    	"CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-    	"CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
-    	"CAST(GTIN AS STRING) as GTIN", \
-    	"CAST(INVC_BATCH_NBR AS BIGINT) as INVC_BATCH_NBR", \
-    	"CAST(INVENTORY_TYPE AS STRING) as INVENTORY_TYPE", \
-    	"CAST(ITEM_ATTR_1 AS STRING) as ITEM_ATTR_1", \
-    	"CAST(ITEM_ATTR_2 AS STRING) as ITEM_ATTR_2", \
-    	"CAST(ITEM_ATTR_3 AS STRING) as ITEM_ATTR_3", \
-    	"CAST(ITEM_ATTR_4 AS STRING) as ITEM_ATTR_4", \
-    	"CAST(ITEM_ATTR_5 AS STRING) as ITEM_ATTR_5", \
-    	"CAST(ITEM_ID AS BIGINT) as ITEM_ID", \
-    	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-    	"CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-    	"CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
-    	"CAST(LPN_DETAIL_ID AS BIGINT) as LPN_DETAIL_ID", \
-    	"CAST(MANUFACTURED_DTTM AS TIMESTAMP) as MANUFACTURED_DTTM", \
-    	"CAST(BATCH_NBR AS STRING) as BATCH_NBR", \
-    	"CAST(MANUFACTURED_PLANT AS STRING) as MANUFACTURED_PLANT", \
-    	"CAST(CNTRY_OF_ORGN AS STRING) as CNTRY_OF_ORGN", \
-    	"CAST(PRODUCT_STATUS AS STRING) as PRODUCT_STATUS", \
-    	"CAST(PROC_DTTM AS TIMESTAMP) as PROC_DTTM", \
-    	"CAST(PROC_STAT_CODE AS BIGINT) as PROC_STAT_CODE", \
-    	"CAST(QTY_UOM AS STRING) as QTY_UOM", \
-    	"CAST(REC_PROC_INDIC AS STRING) as REC_PROC_INDIC", \
-    	"CAST(SIZE_VALUE AS BIGINT) as SIZE_VALUE", \
-    	"CAST(TC_COMPANY_ID AS BIGINT) as TC_COMPANY_ID", \
-    	"CAST(TC_LPN_ID AS STRING) as TC_LPN_ID", \
-    	"CAST(VERSION_NBR AS BIGINT) as VERSION_NBR", \
-    	"CAST(DISTRIBUTION_ORDER_DTL_ID AS BIGINT) as DISTRIBUTION_ORDER_DTL_ID", \
-    	"CAST(ITEM_COLOR AS STRING) as ITEM_COLOR", \
-    	"CAST(ITEM_COLOR_SFX AS STRING) as ITEM_COLOR_SFX", \
-    	"CAST(ITEM_SEASON AS STRING) as ITEM_SEASON", \
-    	"CAST(ITEM_SEASON_YEAR AS STRING) as ITEM_SEASON_YEAR", \
-    	"CAST(ITEM_SECOND_DIM AS STRING) as ITEM_SECOND_DIM", \
-    	"CAST(ITEM_SIZE_DESC AS STRING) as ITEM_SIZE_DESC", \
-    	"CAST(ITEM_QUALITY AS STRING) as ITEM_QUALITY", \
-    	"CAST(ITEM_STYLE AS STRING) as ITEM_STYLE", \
-    	"CAST(ITEM_STYLE_SFX AS STRING) as ITEM_STYLE_SFX", \
-    	"CAST(SIZE_RANGE_CODE AS STRING) as SIZE_RANGE_CODE", \
-    	"CAST(SIZE_REL_POSN_IN_TABLE AS STRING) as SIZE_REL_POSN_IN_TABLE", \
-    	"CAST(VENDOR_ITEM_NBR AS STRING) as VENDOR_ITEM_NBR", \
-    	"CAST(MINOR_ORDER_NBR AS STRING) as MINOR_ORDER_NBR", \
-    	"CAST(MINOR_PO_NBR AS STRING) as MINOR_PO_NBR", \
-    	"CAST(ITEM_NAME AS STRING) as ITEM_NAME", \
-    	"CAST(TC_ORDER_LINE_ID AS STRING) as TC_ORDER_LINE_ID", \
-    	"CAST(DISTRO_NUMBER AS STRING) as DISTRO_NUMBER", \
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
-    )
-    
-    gu.overwriteDeltaPartition(Shortcut_to_WM_OUTPT_LPN_DETAIL_PRE, "DC_NBR", dcnbr, target_table_name)
+    Shortcut_to_WM_OUTPT_LPN_DETAIL_PRE = EXP_TRN.selectExpr(
+    "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+    "CAST(OUTPT_LPN_DETAIL_ID AS BIGINT) as OUTPT_LPN_DETAIL_ID",
+    "CAST(ASSORT_NBR AS STRING) as ASSORT_NBR",
+    "CAST(BUSINESS_PARTNER AS STRING) as BUSINESS_PARTNER",
+    "CAST(CONSUMPTION_PRIORITY_DTTM AS TIMESTAMP) as CONSUMPTION_PRIORITY_DTTM",
+    "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+    "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+    "CAST(CREATED_SOURCE_TYPE AS SMALLINT) as CREATED_SOURCE_TYPE",
+    "CAST(GTIN AS STRING) as GTIN",
+    "CAST(INVC_BATCH_NBR AS INT) as INVC_BATCH_NBR",
+    "CAST(INVENTORY_TYPE AS STRING) as INVENTORY_TYPE",
+    "CAST(ITEM_ATTR_1 AS STRING) as ITEM_ATTR_1",
+    "CAST(ITEM_ATTR_2 AS STRING) as ITEM_ATTR_2",
+    "CAST(ITEM_ATTR_3 AS STRING) as ITEM_ATTR_3",
+    "CAST(ITEM_ATTR_4 AS STRING) as ITEM_ATTR_4",
+    "CAST(ITEM_ATTR_5 AS STRING) as ITEM_ATTR_5",
+    "CAST(ITEM_ID AS INT) as ITEM_ID",
+    "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+    "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+    "CAST(LAST_UPDATED_SOURCE_TYPE AS SMALLINT) as LAST_UPDATED_SOURCE_TYPE",
+    "CAST(LPN_DETAIL_ID AS BIGINT) as LPN_DETAIL_ID",
+    "CAST(MANUFACTURED_DTTM AS TIMESTAMP) as MANUFACTURED_DTTM",
+    "CAST(BATCH_NBR AS STRING) as BATCH_NBR",
+    "CAST(MANUFACTURED_PLANT AS STRING) as MANUFACTURED_PLANT",
+    "CAST(CNTRY_OF_ORGN AS STRING) as CNTRY_OF_ORGN",
+    "CAST(PRODUCT_STATUS AS STRING) as PRODUCT_STATUS",
+    "CAST(PROC_DTTM AS TIMESTAMP) as PROC_DTTM",
+    "CAST(PROC_STAT_CODE AS SMALLINT) as PROC_STAT_CODE",
+    "CAST(QTY_UOM AS STRING) as QTY_UOM",
+    "CAST(REC_PROC_INDIC AS STRING) as REC_PROC_INDIC",
+    "CAST(SIZE_VALUE AS DECIMAL(16,4)) as SIZE_VALUE",
+    "CAST(TC_COMPANY_ID AS INT) as TC_COMPANY_ID",
+    "CAST(TC_LPN_ID AS STRING) as TC_LPN_ID",
+    "CAST(VERSION_NBR AS BIGINT) as VERSION_NBR",
+    "CAST(DISTRIBUTION_ORDER_DTL_ID AS BIGINT) as DISTRIBUTION_ORDER_DTL_ID",
+    "CAST(ITEM_COLOR AS STRING) as ITEM_COLOR",
+    "CAST(ITEM_COLOR_SFX AS STRING) as ITEM_COLOR_SFX",
+    "CAST(ITEM_SEASON AS STRING) as ITEM_SEASON",
+    "CAST(ITEM_SEASON_YEAR AS STRING) as ITEM_SEASON_YEAR",
+    "CAST(ITEM_SECOND_DIM AS STRING) as ITEM_SECOND_DIM",
+    "CAST(ITEM_SIZE_DESC AS STRING) as ITEM_SIZE_DESC",
+    "CAST(ITEM_QUALITY AS STRING) as ITEM_QUALITY",
+    "CAST(ITEM_STYLE AS STRING) as ITEM_STYLE",
+    "CAST(ITEM_STYLE_SFX AS STRING) as ITEM_STYLE_SFX",
+    "CAST(SIZE_RANGE_CODE AS STRING) as SIZE_RANGE_CODE",
+    "CAST(SIZE_REL_POSN_IN_TABLE AS STRING) as SIZE_REL_POSN_IN_TABLE",
+    "CAST(VENDOR_ITEM_NBR AS STRING) as VENDOR_ITEM_NBR",
+    "CAST(MINOR_ORDER_NBR AS STRING) as MINOR_ORDER_NBR",
+    "CAST(MINOR_PO_NBR AS STRING) as MINOR_PO_NBR",
+    "CAST(ITEM_NAME AS STRING) as ITEM_NAME",
+    "CAST(TC_ORDER_LINE_ID AS STRING) as TC_ORDER_LINE_ID",
+    "CAST(DISTRO_NUMBER AS STRING) as DISTRO_NUMBER",
+    "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
+    )    
+    overwriteDeltaPartition(Shortcut_to_WM_OUTPT_LPN_DETAIL_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_OUTPT_LPN_DETAIL_PRE is written to the target table - " + target_table_name)

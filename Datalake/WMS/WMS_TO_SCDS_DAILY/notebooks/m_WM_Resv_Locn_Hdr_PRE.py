@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 
 
 
@@ -31,11 +31,13 @@ def m_WM_Resv_Locn_Hdr_PRE(dcnbr, env):
     
     tableName = "WM_RESV_LOCN_HDR_PRE"
     schemaName = raw
+    source_schema = "WMSMIS"
+
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_RESV_LOCN_HDR"
-    prev_run_dt=gu.genPrevRunDt(refine_table_name, refine,raw)
-    print("The prev run date is " + prev_run_dt)
+    refine_table_name = tableName[:-4]
+    Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
+    print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
     logger.info("username, password, connection_string is obtained from getConfig fun")
@@ -68,11 +70,11 @@ def m_WM_Resv_Locn_Hdr_PRE(dcnbr, env):
                     RESV_LOCN_HDR.WM_VERSION_ID,
                     RESV_LOCN_HDR.DEDCTN_ITEM_ID,
                     RESV_LOCN_HDR.LOCN_HDR_ID
-                FROM RESV_LOCN_HDR
-                WHERE {Initial_Load} (TRUNC(CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (TRUNC(MOD_DATE_TIME) >=  TRUNC(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14)"""
+                FROM {source_schema}.RESV_LOCN_HDR
+                WHERE  (TRUNC(CREATE_DATE_TIME) >= TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (TRUNC(MOD_DATE_TIME) >=  TRUNC(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14)"""
     
 
-    spark.read.format('jdbc').option('url', connection_string).option( = gu.jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
+    SQ_Shortcut_to_RESV_LOCN_HDR = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for spark.read.format('jdbc').option('url', connection_string).option( is executed and data is loaded using jdbc")
     
     
@@ -84,7 +86,7 @@ def m_WM_Resv_Locn_Hdr_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_RESV_LOCN_HDR_temp.selectExpr( 
     	"SQ_Shortcut_to_RESV_LOCN_HDR___sys_row_id as sys_row_id", 
-    	f"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_RESV_LOCN_HDR___LOCN_ID as LOCN_ID", 
     	"SQ_Shortcut_to_RESV_LOCN_HDR___LOCN_SIZE_TYPE as LOCN_SIZE_TYPE", 
     	"SQ_Shortcut_to_RESV_LOCN_HDR___LOCN_PUTAWAY_LOCK as LOCN_PUTAWAY_LOCK", 
@@ -118,35 +120,35 @@ def m_WM_Resv_Locn_Hdr_PRE(dcnbr, env):
     # COLUMN COUNT: 27
     
     
-    Shortcut_to_WM_RESV_LOCN_HDR_PRE = EXPTRANS.selectExpr( 
-    	"CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", 
-    	"CAST(RESV_LOCN_HDR_ID AS BIGINT) as RESV_LOCN_HDR_ID", 
-    	"CAST(LOCN_ID AS STRING) as LOCN_ID", 
-    	"CAST(LOCN_SIZE_TYPE AS STRING) as LOCN_SIZE_TYPE", 
-    	"CAST(LOCN_PUTAWAY_LOCK AS STRING) as LOCN_PUTAWAY_LOCK", 
-    	"CAST(INVN_LOCK_CODE AS STRING) as INVN_LOCK_CODE", 
-    	"CAST(CURR_WT AS BIGINT) as CURR_WT", 
-    	"CAST(DIRCT_WT AS BIGINT) as DIRCT_WT", 
-    	"CAST(MAX_WT AS BIGINT) as MAX_WT", 
-    	"CAST(CURR_VOL AS BIGINT) as CURR_VOL", 
-    	"CAST(DIRCT_VOL AS BIGINT) as DIRCT_VOL", 
-    	"CAST(MAX_VOL AS BIGINT) as MAX_VOL", 
-    	"CAST(CURR_UOM_QTY AS BIGINT) as CURR_UOM_QTY", 
-    	"CAST(DIRCT_UOM_QTY AS BIGINT) as DIRCT_UOM_QTY", 
-    	"CAST(MAX_UOM_QTY AS BIGINT) as MAX_UOM_QTY", 
-    	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", 
-    	"CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", 
-    	"CAST(USER_ID AS STRING) as USER_ID", 
-    	"CAST(DEDCTN_BATCH_NBR AS STRING) as DEDCTN_BATCH_NBR", 
-    	"CAST(DEDCTN_PACK_QTY AS BIGINT) as DEDCTN_PACK_QTY", 
-    	"CAST(PACK_ZONE AS STRING) as PACK_ZONE", 
-    	"CAST(SORT_LOCN_FLAG AS BIGINT) as SORT_LOCN_FLAG", 
-    	"CAST(INBD_STAGING_FLAG AS STRING) as INBD_STAGING_FLAG", 
-    	"CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", 
-    	"CAST(DEDCTN_ITEM_ID AS BIGINT) as DEDCTN_ITEM_ID", 
-    	"CAST(LOCN_HDR_ID AS BIGINT) as LOCN_HDR_ID", 
-    	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" 
+    Shortcut_to_WM_RESV_LOCN_HDR_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(RESV_LOCN_HDR_ID AS INT) as RESV_LOCN_HDR_ID",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(LOCN_SIZE_TYPE AS STRING) as LOCN_SIZE_TYPE",
+        "CAST(LOCN_PUTAWAY_LOCK AS STRING) as LOCN_PUTAWAY_LOCK",
+        "CAST(INVN_LOCK_CODE AS STRING) as INVN_LOCK_CODE",
+        "CAST(CURR_WT AS DECIMAL(13,4)) as CURR_WT",
+        "CAST(DIRCT_WT AS DECIMAL(13,4)) as DIRCT_WT",
+        "CAST(MAX_WT AS DECIMAL(13,4)) as MAX_WT",
+        "CAST(CURR_VOL AS DECIMAL(13,4)) as CURR_VOL",
+        "CAST(DIRCT_VOL AS DECIMAL(13,4)) as DIRCT_VOL",
+        "CAST(MAX_VOL AS DECIMAL(13,4)) as MAX_VOL",
+        "CAST(CURR_UOM_QTY AS DECIMAL(9,2)) as CURR_UOM_QTY",
+        "CAST(DIRCT_UOM_QTY AS DECIMAL(9,2)) as DIRCT_UOM_QTY",
+        "CAST(MAX_UOM_QTY AS DECIMAL(15,5)) as MAX_UOM_QTY",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(DEDCTN_BATCH_NBR AS STRING) as DEDCTN_BATCH_NBR",
+        "CAST(DEDCTN_PACK_QTY AS DECIMAL(9,2)) as DEDCTN_PACK_QTY",
+        "CAST(PACK_ZONE AS STRING) as PACK_ZONE",
+        "CAST(SORT_LOCN_FLAG AS SMALLINT) as SORT_LOCN_FLAG",
+        "CAST(INBD_STAGING_FLAG AS STRING) as INBD_STAGING_FLAG",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(DEDCTN_ITEM_ID AS BIGINT) as DEDCTN_ITEM_ID",
+        "CAST(LOCN_HDR_ID AS INT) as LOCN_HDR_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
-    gu.overwriteDeltaPartition(Shortcut_to_WM_RESV_LOCN_HDR_PRE, "DC_NBR", dcnbr, target_table_name)
+    overwriteDeltaPartition(Shortcut_to_WM_RESV_LOCN_HDR_PRE, "DC_NBR", dcnbr, target_table_name)
     logger.info("Shortcut_to_WM_RESV_LOCN_HDR_PRE is written to the target table - " + target_table_name)

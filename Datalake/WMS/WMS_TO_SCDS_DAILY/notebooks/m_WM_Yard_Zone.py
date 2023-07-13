@@ -7,10 +7,10 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
-from utils.logger import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
 # COMMAND ----------
 
 parser = argparse.ArgumentParser()
@@ -30,13 +30,17 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
+refined_perf_table = f"{refine}.WM_SHIPMENT_STATUS"
+raw_perf_table = f"{raw}.WM_SHIPMENT_STATUS_PRE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# Read in relation source variables
-# (username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
-# Variable_declaration_comment
-Prev_Run_Dt=args.Prev_Run_Dt
+pre_perf_table = f"{raw}.WM_YARD_ZONE_PRE"
+refined_perf_table = f"{refine}.WM_YARD_ZONE"
+site_profile_table = f"{legacy}.SITE_PROFILE"
+
+Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
 Del_Logic=args.Del_Logic
 
 # COMMAND ----------
@@ -44,43 +48,44 @@ Del_Logic=args.Del_Logic
 # COLUMN COUNT: 13
 
 SQ_Shortcut_to_WM_YARD_ZONE_PRE = spark.sql(f"""SELECT
-WM_YARD_ZONE_PRE.DC_NBR,
-WM_YARD_ZONE_PRE.YARD_ID,
-WM_YARD_ZONE_PRE.YARD_ZONE_ID,
-WM_YARD_ZONE_PRE.YARD_ZONE_NAME,
-WM_YARD_ZONE_PRE.MARK_FOR_DELETION,
-WM_YARD_ZONE_PRE.PUTAWAY_ELIGIBLE,
-WM_YARD_ZONE_PRE.LOCATION_ID,
-WM_YARD_ZONE_PRE.CREATED_DTTM,
-WM_YARD_ZONE_PRE.LAST_UPDATED_DTTM,
-WM_YARD_ZONE_PRE.CREATED_SOURCE,
-WM_YARD_ZONE_PRE.CREATED_SOURCE_TYPE,
-WM_YARD_ZONE_PRE.LAST_UPDATED_SOURCE,
-WM_YARD_ZONE_PRE.LAST_UPDATED_SOURCE_TYPE
-FROM WM_YARD_ZONE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+DC_NBR,
+YARD_ID,
+YARD_ZONE_ID,
+YARD_ZONE_NAME,
+MARK_FOR_DELETION,
+PUTAWAY_ELIGIBLE,
+LOCATION_ID,
+CREATED_DTTM,
+LAST_UPDATED_DTTM,
+CREATED_SOURCE,
+CREATED_SOURCE_TYPE,
+LAST_UPDATED_SOURCE,
+LAST_UPDATED_SOURCE_TYPE
+FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_YARD_ZONE, type SOURCE 
 # COLUMN COUNT: 15
 
 SQ_Shortcut_to_WM_YARD_ZONE = spark.sql(f"""SELECT
-WM_YARD_ZONE.LOCATION_ID,
-WM_YARD_ZONE.WM_YARD_ID,
-WM_YARD_ZONE.WM_YARD_ZONE_ID,
-WM_YARD_ZONE.WM_YARD_ZONE_NAME,
-WM_YARD_ZONE.WM_LOCATION_ID,
-WM_YARD_ZONE.PUTAWAY_ELIGIBLE_FLAG,
-WM_YARD_ZONE.MARK_FOR_DELETION_FLAG,
-WM_YARD_ZONE.WM_CREATED_SOURCE_TYPE,
-WM_YARD_ZONE.WM_CREATED_SOURCE,
-WM_YARD_ZONE.WM_CREATED_TSTMP,
-WM_YARD_ZONE.WM_LAST_UPDATED_SOURCE_TYPE,
-WM_YARD_ZONE.WM_LAST_UPDATED_SOURCE,
-WM_YARD_ZONE.WM_LAST_UPDATED_TSTMP,
-WM_YARD_ZONE.DELETE_FLAG,
-WM_YARD_ZONE.LOAD_TSTMP
-FROM WM_YARD_ZONE
-WHERE {Del_Logic} 1=0 and DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
+LOCATION_ID,
+WM_YARD_ID,
+WM_YARD_ZONE_ID,
+WM_YARD_ZONE_NAME,
+WM_LOCATION_ID,
+PUTAWAY_ELIGIBLE_FLAG,
+MARK_FOR_DELETION_FLAG,
+WM_CREATED_SOURCE_TYPE,
+WM_CREATED_SOURCE,
+WM_CREATED_TSTMP,
+WM_LAST_UPDATED_SOURCE_TYPE,
+WM_LAST_UPDATED_SOURCE,
+WM_LAST_UPDATED_TSTMP,
+DELETE_FLAG,
+LOAD_TSTMP
+FROM {refined_perf_table}
+WHERE {Del_Logic} 1=0 and 
+DELETE_FLAG =0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_INT_CONV, type EXPRESSION 
@@ -110,10 +115,7 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_YARD_ZONE_PRE_temp.selectExpr(
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
-SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT
-SITE_PROFILE.LOCATION_ID,
-SITE_PROFILE.STORE_NBR
-FROM SITE_PROFILE""").withColumn("sys_row_id", monotonically_increasing_id())
+SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -221,10 +223,10 @@ FIL_UNCHANGED_RECORDS = JNR_WM_YARD_ZONE_temp.selectExpr(
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
-    .withColumn("v_CREATED_DTTM", expr("""IF (CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
-	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF (LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
-	.withColumn("v_i_WM_CREATED_TSTMP", expr("""IF (i_WM_CREATED_TSTMP IS NULL, date'1900-01-01', i_WM_CREATED_TSTMP)""")) \
-	.withColumn("v_i_WM_LAST_UPDATED_TSTMP", expr("""IF (i_WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', i_WM_LAST_UPDATED_TSTMP)"""))
+    .withColumn("v_CREATED_DTTM", expr("""IF(CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
+	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF(LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
+	.withColumn("v_i_WM_CREATED_TSTMP", expr("""IF(i_WM_CREATED_TSTMP IS NULL, date'1900-01-01', i_WM_CREATED_TSTMP)""")) \
+	.withColumn("v_i_WM_LAST_UPDATED_TSTMP", expr("""IF(i_WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', i_WM_LAST_UPDATED_TSTMP)"""))
     
 EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( 
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", 
@@ -256,10 +258,10 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"FIL_UNCHANGED_RECORDS___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", 
 	"FIL_UNCHANGED_RECORDS___i_DELETE_FLAG as i_DELETE_FLAG", 
 	"FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP as i_LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___YARD_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL, 1, 0) as DELETE_FLAG", 
+	"IF(FIL_UNCHANGED_RECORDS___YARD_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL, 1, 0) as DELETE_FLAG", 
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
-	"IF (FIL_UNCHANGED_RECORDS___YARD_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NULL, 'INSERT', IF (FIL_UNCHANGED_RECORDS___YARD_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF (FIL_UNCHANGED_RECORDS___YARD_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_CREATED_DTTM OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL))) as o_UPDATE_VALIDATOR" 
+	"IF(FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___i_LOAD_TSTMP) as LOAD_TSTMP", 
+	"IF(FIL_UNCHANGED_RECORDS___YARD_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NULL, 'INSERT', IF(FIL_UNCHANGED_RECORDS___YARD_ID IS NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF(FIL_UNCHANGED_RECORDS___YARD_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_YARD_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_CREATED_DTTM OR FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP <> FIL_UNCHANGED_RECORDS___v_LAST_UPDATED_DTTM ), 'UPDATE', NULL))) as o_UPDATE_VALIDATOR" 
 )
 
 # COMMAND ----------
@@ -363,7 +365,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INSERT_UPDATE_temp.selectExpr(
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", 
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", 
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1"
-).withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')) , lit(0)).when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')) , lit(1)))
+).withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')),lit(0)).when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -384,16 +386,38 @@ UPD_DELETE = RTR_INS_UPD_DEL_DELETE_temp.selectExpr(
 # Processing node Shortcut_to_WM_YARD_ZONE1, type TARGET 
 # COLUMN COUNT: 16
 
+
+Shortcut_to_WM_YARD_ZONE1 = UPD_INS_UPD.selectExpr( 
+	"CAST(LOCATION_ID2 AS BIGINT) as LOCATION_ID", 
+	"CAST(YARD_ID1 AS BIGINT) as WM_YARD_ID", 
+	"CAST(YARD_ZONE_ID1 AS BIGINT) as WM_YARD_ZONE_ID", 
+	"CAST(YARD_ZONE_NAME1 AS STRING) as WM_YARD_ZONE_NAME", 
+	"CAST(LOCATION_ID11 AS BIGINT) as WM_LOCATION_ID", 
+	"CAST(PUTAWAY_ELIGIBLE1 AS BIGINT) as PUTAWAY_ELIGIBLE_FLAG", 
+	"CAST(MARK_FOR_DELETION1 AS BIGINT) as MARK_FOR_DELETION_FLAG", 
+	"CAST(CREATED_SOURCE_TYPE1 AS BIGINT) as WM_CREATED_SOURCE_TYPE", 
+	"CAST(CREATED_SOURCE1 AS STRING) as WM_CREATED_SOURCE", 
+	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP", 
+	"CAST(LAST_UPDATED_SOURCE_TYPE1 AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", 
+	"CAST(LAST_UPDATED_SOURCE1 AS STRING) as WM_LAST_UPDATED_SOURCE", 
+	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
+	"CAST(DELETE_FLAG1 AS BIGINT) as DELETE_FLAG", 
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP" , 
+    "pyspark_data_action"
+)
+
 try:
   primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID AND source.WM_YARD_ZONE_ID = target.WM_YARD_ZONE_ID"""
-  refined_perf_table = "WM_YARD_ZONE"
-  executeMerge(UPD_INS_UPD, refined_perf_table, primary_key)
+  # refined_perf_table = "WM_YARD_ZONE"
+  executeMerge(Shortcut_to_WM_YARD_ZONE1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_YARD_ZONE", "WM_YARD_ZONE", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("WM_YARD_ZONE", "WM_YARD_ZONE","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 	
+
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_YARD_ZONE11, type TARGET 

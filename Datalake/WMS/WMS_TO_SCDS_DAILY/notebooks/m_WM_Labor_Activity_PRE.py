@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Labor_Activity_PRE(dcnbr, env):
     tableName = "WM_LABOR_ACTIVITY_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LABOR_ACTIVITY"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -72,8 +74,8 @@ def m_WM_Labor_Activity_PRE(dcnbr, env):
     LABOR_ACTIVITY.CRIT_RULE_TYPE,
     LABOR_ACTIVITY.PERMISSION_ID,
     LABOR_ACTIVITY.COMPANY_ID
-    FROM LABOR_ACTIVITY
-    WHERE  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS')) - 14) AND 
+    FROM {source_schema}.LABOR_ACTIVITY
+    WHERE  (trunc(CREATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) OR (trunc(LAST_UPDATED_DTTM)>= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD')) - 14) AND 
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -112,27 +114,27 @@ def m_WM_Labor_Activity_PRE(dcnbr, env):
     # COLUMN COUNT: 20
 
 
-    Shortcut_to_WM_LABOR_ACTIVITY_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LABOR_ACTIVITY_ID AS BIGINT) as LABOR_ACTIVITY_ID", \
-        "CAST(NAME AS STRING) as NAME", \
-        "CAST(DESCRIPTION AS STRING) as DESCRIPTION", \
-        "CAST(AIL_ACT AS STRING) as AIL_ACT", \
-        "CAST(ACT_TYPE AS STRING) as ACT_TYPE", \
-        "CAST(CREATED_SOURCE_TYPE AS BIGINT) as CREATED_SOURCE_TYPE", \
-        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_SOURCE_TYPE AS BIGINT) as LAST_UPDATED_SOURCE_TYPE", \
-        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION", \
-        "CAST(PROMPT_LOCN AS STRING) as PROMPT_LOCN", \
-        "CAST(DISPL_EPP AS STRING) as DISPL_EPP", \
-        "CAST(INCLD_TRVL AS STRING) as INCLD_TRVL", \
-        "CAST(CRIT_RULE_TYPE AS STRING) as CRIT_RULE_TYPE", \
-        "CAST(PERMISSION_ID AS BIGINT) as PERMISSION_ID", \
-        "CAST(COMPANY_ID AS BIGINT) as COMPANY_ID", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LABOR_ACTIVITY_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(LABOR_ACTIVITY_ID AS INT) as LABOR_ACTIVITY_ID",
+        "CAST(NAME AS STRING) as NAME",
+        "CAST(DESCRIPTION AS STRING) as DESCRIPTION",
+        "CAST(AIL_ACT AS STRING) as AIL_ACT",
+        "CAST(ACT_TYPE AS STRING) as ACT_TYPE",
+        "CAST(CREATED_SOURCE_TYPE AS TINYINT) as CREATED_SOURCE_TYPE",
+        "CAST(CREATED_SOURCE AS STRING) as CREATED_SOURCE",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_SOURCE_TYPE AS TINYINT) as LAST_UPDATED_SOURCE_TYPE",
+        "CAST(LAST_UPDATED_SOURCE AS STRING) as LAST_UPDATED_SOURCE",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(HIBERNATE_VERSION AS BIGINT) as HIBERNATE_VERSION",
+        "CAST(PROMPT_LOCN AS STRING) as PROMPT_LOCN",
+        "CAST(DISPL_EPP AS STRING) as DISPL_EPP",
+        "CAST(INCLD_TRVL AS STRING) as INCLD_TRVL",
+        "CAST(CRIT_RULE_TYPE AS STRING) as CRIT_RULE_TYPE",
+        "CAST(PERMISSION_ID AS INT) as PERMISSION_ID",
+        "CAST(COMPANY_ID AS INT) as COMPANY_ID",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
     
     overwriteDeltaPartition(Shortcut_to_WM_LABOR_ACTIVITY_PRE,"DC_NBR",dcnbr,target_table_name)

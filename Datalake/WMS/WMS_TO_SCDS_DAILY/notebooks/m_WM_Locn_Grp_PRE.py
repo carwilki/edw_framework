@@ -7,9 +7,9 @@ from pyspark.sql.window import Window
 from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.dbutils import DBUtils
-from utils.genericUtilities import *
-from utils.configs import *
-from utils.mergeUtils import *
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
 from logging import getLogger, INFO
 
 
@@ -29,10 +29,12 @@ def m_WM_Locn_Grp_PRE(dcnbr, env):
     tableName = "WM_LOCN_GRP_PRE"
 
     schemaName = raw
+    source_schema = "WMSMIS"
+
 
     target_table_name = schemaName + "." + tableName
 
-    refine_table_name = "LOCN_GRP"
+    refine_table_name = tableName[:-4]
 
 
     # Set global variables
@@ -65,8 +67,8 @@ def m_WM_Locn_Grp_PRE(dcnbr, env):
     LOCN_GRP.WM_VERSION_ID,
     LOCN_GRP.CREATED_DTTM,
     LOCN_GRP.LAST_UPDATED_DTTM
-    FROM LOCN_GRP
-    WHERE (trunc(CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(MOD_DATE_TIME) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','MM/DD/YYYY HH24:MI:SS'))-14) AND
+    FROM {source_schema}.LOCN_GRP
+    WHERE (trunc(CREATE_DATE_TIME) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(MOD_DATE_TIME) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-14) AND
     1=1""",username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
     # COMMAND ----------
@@ -98,24 +100,25 @@ def m_WM_Locn_Grp_PRE(dcnbr, env):
     # COLUMN COUNT: 13
 
 
-    Shortcut_to_WM_LOCN_GRP_PRE = EXPTRANS.selectExpr( \
-        "CAST(DC_NBR_EXP AS BIGINT) as DC_NBR", \
-        "CAST(LOCN_GRP_ID AS BIGINT) as LOCN_GRP_ID", \
-        "CAST(GRP_TYPE AS BIGINT) as GRP_TYPE", \
-        "CAST(LOCN_ID AS STRING) as LOCN_ID", \
-        "CAST(GRP_ATTR AS STRING) as GRP_ATTR", \
-        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME", \
-        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME", \
-        "CAST(USER_ID AS STRING) as USER_ID", \
-        "CAST(LOCN_HDR_ID AS BIGINT) as LOCN_HDR_ID", \
-        "CAST(WM_VERSION_ID AS BIGINT) as WM_VERSION_ID", \
-        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM", \
-        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM", \
-        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP" \
+    Shortcut_to_WM_LOCN_GRP_PRE = EXPTRANS.selectExpr(
+        "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
+        "CAST(LOCN_GRP_ID AS INT) as LOCN_GRP_ID",
+        "CAST(GRP_TYPE AS SMALLINT) as GRP_TYPE",
+        "CAST(LOCN_ID AS STRING) as LOCN_ID",
+        "CAST(GRP_ATTR AS STRING) as GRP_ATTR",
+        "CAST(CREATE_DATE_TIME AS TIMESTAMP) as CREATE_DATE_TIME",
+        "CAST(MOD_DATE_TIME AS TIMESTAMP) as MOD_DATE_TIME",
+        "CAST(USER_ID AS STRING) as USER_ID",
+        "CAST(LOCN_HDR_ID AS INT) as LOCN_HDR_ID",
+        "CAST(WM_VERSION_ID AS INT) as WM_VERSION_ID",
+        "CAST(CREATED_DTTM AS TIMESTAMP) as CREATED_DTTM",
+        "CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as LAST_UPDATED_DTTM",
+        "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+
 
     overwriteDeltaPartition(Shortcut_to_WM_LOCN_GRP_PRE,"DC_NBR",dcnbr,target_table_name)
     logger.info(
         "Shortcut_to_WM_E_CONSOL_PERF_SMRY_PRE is written to the target table - "
         + target_table_name
-    )
+    )    
