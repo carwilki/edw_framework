@@ -112,6 +112,6 @@ class DeltaLakeWriter:
                 delta_row_count=None,
                 status="Failed",
                 error=str(e),
-                logTableName=f"{self.raw}.{schemaForDeltaTable}.historical_run_details_from_sf",
+                logTableName=f"{self.raw}.historical_run_details_from_sf",
             )
             raise e
