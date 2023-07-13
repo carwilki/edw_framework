@@ -1,7 +1,7 @@
 class DeltaLakeWriter:
     def __init__(self, env, sfOptions, table, primary_keys=None):
         from pyspark.sql import SparkSession
-        from Datalake.utils.genericUtilities import getSFEnvSuffix
+        from Datalake.utils.genericUtilities import getEnvPrefix
 
         self.spark: SparkSession = SparkSession.getActiveSession()
         print("initiating DeltaLake Writer class")
@@ -12,6 +12,8 @@ class DeltaLakeWriter:
         self.primary_keys = primary_keys
         self.env = env
         self.sfOptions = sfOptions
+
+        self.raw = getEnvPrefix(env) + "raw"
 
     def logRun(
         self, process, table, sf_row_count, delta_row_count, status, error, logTableName
@@ -100,7 +102,7 @@ class DeltaLakeWriter:
                 delta_row_count=delta_row_count,
                 status="Succeeded",
                 error=None,
-                logTableName=f"{schemaForDeltaTable}.historical_run_details_from_sf",
+                logTableName=f"{self.raw}.historical_run_details_from_sf",
             )
         except Exception as e:
             self.logRun(
@@ -110,6 +112,6 @@ class DeltaLakeWriter:
                 delta_row_count=None,
                 status="Failed",
                 error=str(e),
-                logTableName=f"{schemaForDeltaTable}.historical_run_details_from_sf",
+                logTableName=f"{self.raw}.{schemaForDeltaTable}.historical_run_details_from_sf",
             )
             raise e
