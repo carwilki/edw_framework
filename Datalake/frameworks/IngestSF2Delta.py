@@ -11,7 +11,7 @@ args = parser.parse_args()
 env = args.env
 table_list = args.table_list
 table_list = [table for table in args.table_list.split(",")]
-table_list = json.dumps(table_list)
+# table_list = json.dumps(table_list)
 
 sfOptions = getSfCredentials(env)
 
