@@ -74,7 +74,7 @@ class DeltaLakeWriter:
 
         logger = getLogger()
 
-        schemaForDeltaTable = getEnvPrefix(self.env) + "_refine"
+        schemaForDeltaTable = getEnvPrefix(self.env) + "refine"
 
         try:
             logger.info(f"Getting data for table {0}".format(self.table))
