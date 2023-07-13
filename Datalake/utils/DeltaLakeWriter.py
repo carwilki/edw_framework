@@ -1,7 +1,8 @@
 class DeltaLakeWriter:
-    def __init__(self, env, sf_database, sf_schema, table, primary_keys=None):
+    def __init__(self, env, sfOptions, table, primary_keys=None):
         from pyspark.sql import SparkSession
-        from Datalake.utils.genericUtilities import getSFEnvSuffix, sfReader
+        from Datalake.utils.genericUtilities import getSFEnvSuffix
+        
 
         spark = SparkSession.getActiveSession()
         spark: SparkSession = SparkSession.getActiveSession()
@@ -12,18 +13,8 @@ class DeltaLakeWriter:
         self.table = table
         self.primary_keys = primary_keys
         self.env = env
-        envSuffix = getSFEnvSuffix(self.env)
-        self.sfOptions = {
-            "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
-            "sfUser": dbutils.secrets.get("databricks_service_account", "username"),
-            "sfPassword": dbutils.secrets.get("databricks_service_account", "password"),
-            "sfDatabase": sf_database,
-            "sfSchema": sf_schema,
-            "sfWarehouse": "IT_WH",
-            "authenticator": "https://petsmart.okta.com",
-            "autopushdown": "on",
-            "sfRole": f"edw{envSuffix}_owner",
-        }
+        self.sfOptions = sfOptions
+       
         
     def logRun(self, process, table,sf_row_count,delta_row_count,status,error,logTableName):
         from logging import getLogger, INFO
@@ -69,7 +60,7 @@ class DeltaLakeWriter:
         spark.sql(sql_query)
         logger.info('Logging Completed')
 
-    def ingestFromSF(self, table):
+    def ingestFromSF(self):
         from logging import getLogger, INFO
         from Datalake.utils.genericUtilities import getEnvPrefix, sfReader
 
@@ -81,19 +72,19 @@ class DeltaLakeWriter:
             logger.info(f"Getting data for table {0}".format(self.table))
             df = sfReader(self.sfOptions, self.table)
             df.write.format("delta").saveAsTable(
-                f"{0}.{1}".format(schemaForDeltaTable, table)
+                f"{0}.{1}".format(schemaForDeltaTable, self.table, "overwrite")
             )
             sf_row_count = df.count()
             delta_row_count = spark.sql(
-            f"select count(*) from {0}.{1}".format(schemaForDeltaTable, table)
+            f"select count(*) from {0}.{1}".format(schemaForDeltaTable, self.table)
             )
             if sf_row_count == delta_row_count:
                 logger.info("All records have been ingested to delta lake")
             else:
                 logger.info("Records mismatch")
             logRun(
-                "Delta Writer -" + table,
-                table,
+                "Delta Writer -" + self.table,
+                self.table,
                 sf_row_count,
                 delta_row_count,
                 "Succeeded",
@@ -102,8 +93,8 @@ class DeltaLakeWriter:
             )
         except Exception as e:
             logRun(
-                "Delta Writer -" + table,
-                table,
+                "Delta Writer -" + self.table,
+                self.table,
                 sf_row_count=None
                 delta_row_count=None
                 "Failed",
