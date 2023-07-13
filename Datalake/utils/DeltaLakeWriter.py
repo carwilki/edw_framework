@@ -80,6 +80,7 @@ class DeltaLakeWriter:
             logger.info(f"Getting data for table {0}".format(self.table))
             print(self.sfOptions, self.table)
             df = sfReader(self.sfOptions, self.table)
+            df.show()
 
             df.write.format("delta").saveAsTable(
                 f"{0}.{1}".format(schemaForDeltaTable, self.table, "overwrite")
