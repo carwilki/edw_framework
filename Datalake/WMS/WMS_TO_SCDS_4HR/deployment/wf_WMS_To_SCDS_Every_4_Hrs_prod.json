@@ -413,8 +413,8 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                     "parameters": [
                         "prod",
-                        "WM_E_CONSOL_PERF_SMRY",
-                        "location_id,WM_PERF_SMRY_TRAN_ID",
+                        "WM_E_DEPT",
+                        "location_id, WM_DEPT_ID",
                         "LOAD_TSTMP, UPDATE_TSTMP"
                     ],
                     "source": "GIT"
@@ -451,8 +451,8 @@
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                     "parameters": [
                         "prod",
-                        "WM_E_CONSOL_PERF_SMRY",
-                        "location_id,WM_PERF_SMRY_TRAN_ID",
+                        "WM_UCL_USER",
+                        "location_id, USER_NAME",
                         "LOAD_TSTMP, UPDATE_TSTMP"
                     ],
                     "source": "GIT"
@@ -497,7 +497,7 @@
                     },
                     "gcp_attributes": {
                         "use_preemptible_executors": false,
-                        "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+                        "google_service_account": "petm-dbricksprd-rw-p-sa-datala@petm-prj-databricksprod-p-mzb3.iam.gserviceaccount.com",
                         "availability": "ON_DEMAND_GCP",
                         "zone_id": "auto"
                     },
