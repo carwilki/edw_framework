@@ -3,12 +3,11 @@ class DeltaLakeWriter:
         from pyspark.sql import SparkSession
         from Datalake.utils.genericUtilities import getSFEnvSuffix
 
-        spark = SparkSession.getActiveSession()
-        spark: SparkSession = SparkSession.getActiveSession()
+        self.spark: SparkSession = SparkSession.getActiveSession()
         print("initiating DeltaLake Writer class")
         from pyspark.dbutils import DBUtils
 
-        self.dbutils = DBUtils(spark)
+        self.dbutils = DBUtils(self.spark)
         self.table = table
         self.primary_keys = primary_keys
         self.env = env
@@ -66,7 +65,7 @@ class DeltaLakeWriter:
 
         logger.info("Logging the status")
         logger.info(sql_query)
-        spark.sql(sql_query)
+        self.spark.sql(sql_query)
         logger.info("Logging Completed")
 
     def ingestFromSF(self):
