@@ -1,4 +1,7 @@
-#Code converted on 2023-06-24 13:33:09
+-- Databricks notebook source
+-- MAGIC %python
+-- MAGIC import os, sys, importlib
+
 import os
 import argparse
 from pyspark.sql import *
@@ -11,7 +14,7 @@ from Datalake.utils.genericUtilities import *
 from Datalake.utils.configs import *
 from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
-# COMMAND ----------
+-- COMMAND ----------
 
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
@@ -34,7 +37,7 @@ refined_perf_table = f"{refine}.WM_STOP_STATUS"
 raw_perf_table = f"{raw}.WM_STOP_STATUS_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STOP_STATUS, type SOURCE 
 # COLUMN COUNT: 5
 
@@ -47,7 +50,7 @@ WM_STOP_STATUS.LOAD_TSTMP
 FROM {refined_perf_table}
 WHERE WM_STOP_STATUS IN (SELECT STOP_STATUS FROM WM_STOP_STATUS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STOP_STATUS_PRE, type SOURCE 
 # COLUMN COUNT: 4
 
@@ -58,13 +61,13 @@ WM_STOP_STATUS_PRE.DESCRIPTION,
 WM_STOP_STATUS_PRE.SHORT_DESC
 FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
 
 SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {site_profile_table}""").withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node EXP_TRANS, type EXPRESSION 
 # COLUMN COUNT: 4
 
@@ -79,13 +82,13 @@ EXP_TRANS = SQ_Shortcut_to_WM_STOP_STATUS_PRE_temp.selectExpr(
 	"SQ_Shortcut_to_WM_STOP_STATUS_PRE___SHORT_DESC as SHORT_DESC" 
 )
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node JNR_SITE_PROFILE, type JOINER 
 # COLUMN COUNT: 6
 
 JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_TRANS,[SQ_Shortcut_to_SITE_PROFILE.STORE_NBR == EXP_TRANS.o_DC_NBR],'inner')
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node JNR_WM_STOP_STATUS, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 9
 
@@ -104,7 +107,7 @@ JNR_WM_STOP_STATUS = SQ_Shortcut_to_WM_STOP_STATUS_temp.join(JNR_SITE_PROFILE_te
 	"SQ_Shortcut_to_WM_STOP_STATUS___WM_STOP_STATUS_SHORT_DESC as i_WM_STOP_STATUS_SHORT_DESC", 
 	"SQ_Shortcut_to_WM_STOP_STATUS___LOAD_TSTMP as i_LOAD_TSTMP")
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node FIL_UNCHANGED_RECORDS, type FILTER 
 # COLUMN COUNT: 8
 
@@ -121,7 +124,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_STOP_STATUS_temp.selectExpr(
 	"JNR_WM_STOP_STATUS___i_WM_STOP_STATUS_SHORT_DESC as i_WM_STOP_STATUS_SHORT_DESC", 
 	"JNR_WM_STOP_STATUS___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("i_WM_STOP_STATUS IS NULL OR (NOT i_WM_STOP_STATUS IS NULL AND (COALESCE(DESCRIPTION, '') != COALESCE(i_WM_STOP_STATUS_DESC, '')) OR (COALESCE(SHORT_DESC, '') != COALESCE(i_WM_STOP_STATUS_SHORT_DESC, '')))")).withColumn("sys_row_id", monotonically_increasing_id())
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node EXP_UPDATE_VALIDATOR, type EXPRESSION 
 # COLUMN COUNT: 11
 
@@ -143,7 +146,7 @@ EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr(
 	"IF(FIL_UNCHANGED_RECORDS___i_WM_STOP_STATUS IS NULL, 1, 2) as o_UPDATE_VALIDATOR" 
 )
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node UPD_INS_UPD, type UPDATE_STRATEGY 
 # COLUMN COUNT: 7
 
@@ -160,7 +163,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
 ).withColumn('pyspark_data_action', when(o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
 
-# COMMAND ----------
+-- COMMAND ----------
 # Processing node Shortcut_to_WM_STOP_STATUS1, type TARGET 
 # COLUMN COUNT: 6
 
