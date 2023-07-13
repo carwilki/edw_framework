@@ -48,7 +48,7 @@ def m_WM_Order_Status_PRE(dcnbr, env):
                     ORDER_STATUS.CREATED_DTTM,
                     ORDER_STATUS.LAST_UPDATED_DTTM
                 FROM {source_schema}.ORDER_STATUS
-                WHERE  (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1"""
+                WHERE  (trunc(CREATED_DTTM) >= trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1) OR (trunc(LAST_UPDATED_DTTM) >=  trunc(to_date('{Prev_Run_Dt}','YYYY-MM-DD'))-1)"""
      
     SQ_Shortcut_to_ORDER_STATUS = jdbcOracleConnection(query, username, password, connection_string).withColumn("sys_row_id", monotonically_increasing_id())
     logger.info("SQL query for Shortcut_to_WM_ORDER_STATUS_PRE is executed and data is loaded using jdbc")
