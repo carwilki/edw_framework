@@ -51,7 +51,7 @@ class DeltaLakeWriter:
             sql_query = f"""
             INSERT INTO {logTableName}
             (job_id, run_id, task_name,  process, table_name,sf_rowCount, delta_rowCount,  status, error, run_date) VALUES
-            ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table}', '{sf_row_count}', '{delta_row_count}', '{status}', '{error}', '{s}')
+            ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table}', '{sf_row_count}', '{delta_row_count}', '{status}', str('{error}'), '{s}')
          """
         else:
             logger.info(
@@ -60,7 +60,7 @@ class DeltaLakeWriter:
             sql_query = f"""
             INSERT INTO {logTableName}
             (job_id, run_id, task_name,  process, table_name,sf_rowCount, delta_rowCount, status, error, run_date) VALUES
-            ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table}', '{sf_row_count}', '{delta_row_count}', '{status}', '{error}', '{s}')
+            ('{job_id}', '{run_id}', '{task_name}', '{process}', '{table}', '{sf_row_count}', '{delta_row_count}', '{status}', str('{error}'), '{s}')
             """
 
         logger.info("Logging the status")
