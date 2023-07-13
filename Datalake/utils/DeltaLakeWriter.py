@@ -82,7 +82,7 @@ class DeltaLakeWriter:
             df = sfReader(self.sfOptions, self.table)
             # df.show()
             print(schemaForDeltaTable, self.table)
-            delta_table = f"""{0}.{1}""".format(schemaForDeltaTable, self.table)
+            delta_table = f"""{schemaForDeltaTable}.{self.table}"""
             print(delta_table)
             df.write.format("delta").saveAsTable(delta_table)
             sf_row_count = df.count()
