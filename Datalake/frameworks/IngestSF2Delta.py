@@ -16,4 +16,5 @@ table_list = json.dumps(table_list)
 sfOptions = getSfCredentials(env)
 
 for table in table_list:
+    print(table)
     DeltaLakeWriter(env, sfOptions, table).ingestFromSF()

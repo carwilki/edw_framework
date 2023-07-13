@@ -83,7 +83,7 @@ class DeltaLakeWriter:
                 f"{0}.{1}".format(schemaForDeltaTable, self.table, "overwrite")
             )
             sf_row_count = df.count()
-            delta_row_count = spark.sql(
+            delta_row_count = self.spark.sql(
                 f"select count(*) from {0}.{1}".format(schemaForDeltaTable, self.table)
             )
             if sf_row_count == delta_row_count:
