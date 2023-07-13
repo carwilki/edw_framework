@@ -86,7 +86,7 @@ class DeltaLakeWriter:
             print(schemaForDeltaTable, self.table)
             delta_table = f"""{schemaForDeltaTable}.{self.table}"""
             print(delta_table)
-            df.write.format("delta").saveAsTable(delta_table, "overwrite")
+            df.write.format("delta").saveAsTable(delta_table)
             sf_row_count = df.count()
             delta_row_count = self.spark.sql(
                 f"select count(*) from {0}.{1}".format(schemaForDeltaTable, self.table)
@@ -101,7 +101,7 @@ class DeltaLakeWriter:
                 sf_row_count=sf_row_count,
                 delta_row_count=delta_row_count,
                 status="Succeeded",
-                error=None,
+                error=NULL,
                 logTableName=f"{self.raw}.historical_run_details_from_sf",
             )
         except Exception as e:
