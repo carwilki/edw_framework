@@ -8,7 +8,7 @@ class DeltaLakeWriter:
         print("initiating DeltaLake Writer class")
         from pyspark.dbutils import DBUtils
 
-        dbutils = DBUtils(spark)
+        self.dbutils = DBUtils(spark)
         self.table = table
         self.primary_keys = primary_keys
         self.env = env
