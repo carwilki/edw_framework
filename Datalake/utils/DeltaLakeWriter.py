@@ -83,7 +83,7 @@ class DeltaLakeWriter:
             df.show()
 
             df.write.format("delta").saveAsTable(
-                f"{0}.{1}".format(schemaForDeltaTable, self.table, "overwrite")
+                f"{0}.{1}".format(schemaForDeltaTable, self.table), "overwrite"
             )
             sf_row_count = df.count()
             delta_row_count = self.spark.sql(
