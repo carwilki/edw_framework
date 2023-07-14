@@ -216,8 +216,11 @@ def getMaxDate(refine_table_name, schema):
 
     columnsList = columns.split(",")
     print(columnsList)
+    
+    row_cnt = spark.sql(f"select count(*) from {schema}.{refine_table_name}").first()[0]
 
-    if columns == "":
+    logger.info(f"Row_count for {refine_table_name} table is {row_cnt}")
+    if columns == "" or row_cnt == 0:
         logger.info("Setting maxDate as currentDate!")
         maxDate = dt.datetime.now()
 
