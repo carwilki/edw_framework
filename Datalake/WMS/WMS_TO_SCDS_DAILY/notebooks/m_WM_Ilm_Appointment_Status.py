@@ -19,9 +19,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -33,7 +33,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
-refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_STATUS_PRE"
+refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_STATUS"
 raw_perf_table = f"{raw}.WM_ILM_APPOINTMENT_STATUS_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
@@ -129,7 +129,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_ILM_APPOINTMENT_STATUS_temp.selectExpr( \
 	"JNR_WM_ILM_APPOINTMENT_STATUS___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
 	"JNR_WM_ILM_APPOINTMENT_STATUS___i_LOAD_TSTMP as i_LOAD_TSTMP") \
     .filter("i_WM_ILM_APPT_STATUS_CD is Null OR ( i_WM_ILM_APPT_STATUS_CD is not Null AND \
-    ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(in_WM_CREATED_TSTMP, date'1900-01-01') \
+    ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') \
     OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
