@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -416,8 +416,8 @@ FIL_UNCHANGED_RECORDS = JNR_E_AUD_LOG_temp.selectExpr( \
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
-.withColumn("v_CREATE_DATE_TIME", expr("""IF(CREATE_DATE_TIME IS NULL, date'1900-01-01', CREATE_DATE_TIME)""")) \
-	.withColumn("v_i_WM_CREATE_TSTMP", expr("""IF(i_WM_CREATE_TSTMP IS NULL, date'1900-01-01', i_WM_CREATE_TSTMP)"""))
+.withColumn("FIL_UNCHANGED_RECORDS___v_CREATE_DATE_TIME", expr("""IF(FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_i_WM_CREATE_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___i_WM_CREATE_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___i_WM_CREATE_TSTMP)"""))
              
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
@@ -568,7 +568,7 @@ UPD_INSERT_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_AUD_LOG1, type TARGET 

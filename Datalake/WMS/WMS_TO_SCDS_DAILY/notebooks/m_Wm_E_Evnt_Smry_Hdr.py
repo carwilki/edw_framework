@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -666,8 +666,8 @@ FIL_UNCHANGED_RECORDS = JNR_WM_E_EVNT_SMRY_HDR_temp.selectExpr( \
 	"JNR_WM_E_EVNT_SMRY_HDR___i_DELETE_FLAG as i_DELETE_FLAG", \
 	"JNR_WM_E_EVNT_SMRY_HDR___i_UPDATE_TSTMP as i_UPDATE_TSTMP", \
 	"JNR_WM_E_EVNT_SMRY_HDR___i_LOAD_TSTMP as i_LOAD_TSTMP") \
-	.filter("ELS_TRAN_ID is Null OR i_WM_ELS_TRAN_ID is Null() OR (  i_WM_ELS_TRAN_ID is NOT Null AND ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01') \
-          OR OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
+	.filter("ELS_TRAN_ID is Null OR i_WM_ELS_TRAN_ID is Null OR (  i_WM_ELS_TRAN_ID is NOT Null AND ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01') \
+           OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 
 # COMMAND ----------
@@ -676,10 +676,10 @@ FIL_UNCHANGED_RECORDS = JNR_WM_E_EVNT_SMRY_HDR_temp.selectExpr( \
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
-.withColumn("v_CREATE_DATE_TIME", expr("""IF(CREATE_DATE_TIME IS NULL, date'1900-01-01', CREATE_DATE_TIME)""")) \
-	.withColumn("v_MOD_DATE_TIME", expr("""IF(MOD_DATE_TIME IS NULL, date'1900-01-01', MOD_DATE_TIME)""")) \
-	.withColumn("v_i_WM_CREATE_TSTMP", expr("""IF(i_WM_CREATE_TSTMP IS NULL, date'1900-01-01', i_WM_CREATE_TSTMP)""")) \
-	.withColumn("v_i_WM_MOD_TSTMP", expr("""IF(i_WM_MOD_TSTMP IS NULL, date'1900-01-01', i_WM_MOD_TSTMP)"""))
+.withColumn("FIL_UNCHANGED_RECORDS___v_CREATE_DATE_TIME", expr("""IF(FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_MOD_DATE_TIME", expr("""IF(FIL_UNCHANGED_RECORDS___MOD_DATE_TIME IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___MOD_DATE_TIME)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_i_WM_CREATE_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___i_WM_CREATE_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___i_WM_CREATE_TSTMP)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_i_WM_MOD_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___i_WM_MOD_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___i_WM_MOD_TSTMP)"""))
              
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
@@ -852,6 +852,7 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"IF(FIL_UNCHANGED_RECORDS___ELS_TRAN_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_ELS_TRAN_ID IS NULL, 'INSERT', IF(FIL_UNCHANGED_RECORDS___ELS_TRAN_ID IS NOT NULL AND FIL_UNCHANGED_RECORDS___i_WM_ELS_TRAN_ID IS NOT NULL AND ( FIL_UNCHANGED_RECORDS___v_i_WM_CREATE_TSTMP <> FIL_UNCHANGED_RECORDS___v_CREATE_DATE_TIME OR FIL_UNCHANGED_RECORDS___v_i_WM_MOD_TSTMP <> FIL_UNCHANGED_RECORDS___v_MOD_DATE_TIME ), 'UPDATE', NULL)) as o_UPDATE_VALIDATOR" \
 )
 
+
 # COMMAND ----------
 # Processing node UPD_INS_UPD_DEL, type UPDATE_STRATEGY . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 84
@@ -944,7 +945,8 @@ UPD_INS_UPD_DEL = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
+
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_EVNT_SMRY_HDR11, type TARGET 
