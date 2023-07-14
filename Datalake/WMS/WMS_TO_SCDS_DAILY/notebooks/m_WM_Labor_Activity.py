@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -30,7 +30,8 @@ raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
-starttime = datetime.now() #start timestamp of the scriptraw_perf_table = f"{raw}.WM_LABOR_ACTIVITY_PRE"
+starttime = datetime.now() #start timestamp of the script
+raw_perf_table = f"{raw}.WM_LABOR_ACTIVITY_PRE"
 refined_perf_table = f"{refine}.WM_LABOR_ACTIVITY"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
@@ -348,7 +349,8 @@ RTR_DELETE_DELETE = EXP_UPD_VALIDATOR.select(EXP_UPD_VALIDATOR.sys_row_id.alias(
 	EXP_UPD_VALIDATOR.DELETE_FLAG.alias('DELETE_FLAG3'), \
 	EXP_UPD_VALIDATOR.UPDATE_TSTMP.alias('UPDATE_TSTMP3'), \
 	EXP_UPD_VALIDATOR.LOAD_TSTMP.alias('LOAD_TSTMP3'), \
-	EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR.alias('o_UPD_VALIDATOR3')).filter("o_UPD_VALIDATOR = 'DELETE'")
+	EXP_UPD_VALIDATOR.o_UPD_VALIDATOR.alias('o_UPD_VALIDATOR3')).filter("o_UPD_VALIDATOR = 'DELETE'")
+
 
 # Creating output dataframe for RTR_DELETE, output group INSERT_UPDATE
 RTR_DELETE_INSERT_UPDATE = EXP_UPD_VALIDATOR.select(EXP_UPD_VALIDATOR.sys_row_id.alias('sys_row_id'), \
@@ -393,8 +395,7 @@ RTR_DELETE_INSERT_UPDATE = EXP_UPD_VALIDATOR.select(EXP_UPD_VALIDATOR.sys_row_id
 	EXP_UPD_VALIDATOR.DELETE_FLAG.alias('DELETE_FLAG1'), \
 	EXP_UPD_VALIDATOR.UPDATE_TSTMP.alias('UPDATE_TSTMP1'), \
 	EXP_UPD_VALIDATOR.LOAD_TSTMP.alias('LOAD_TSTMP1'), \
-	EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR.alias('o_UPD_VALIDATOR1')).filter("o_UPD_VALIDATOR = 'INSERT' OR o_UPD_VALIDATOR = 'UPDATE'")
-
+	EXP_UPD_VALIDATOR.o_UPD_VALIDATOR.alias('o_UPD_VALIDATOR1')).filter("o_UPD_VALIDATOR = 'INSERT' OR o_UPD_VALIDATOR = 'UPDATE'")
 
 # COMMAND ----------
 # Processing node UPD_INS_UPD, type UPDATE_STRATEGY 

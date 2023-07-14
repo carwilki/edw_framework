@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -80,22 +80,8 @@ FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id()
 SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE_temp = SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE.toDF(*["SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___" + col for col in SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE.columns])
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE_temp.selectExpr( \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___DC_NBR as in_DC_NBR", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___ITEM_GROUP_ID as ITEM_GROUP_ID", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___ITEM_ID as ITEM_ID", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___GROUP_TYPE as GROUP_TYPE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___GROUP_CODE as GROUP_CODE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___GROUP_ATTRIBUTE as GROUP_ATTRIBUTE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_CREATED_SOURCE_TYPE as AUDIT_CREATED_SOURCE_TYPE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_CREATED_DTTM as AUDIT_CREATED_DTTM", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_LAST_UPDATED_SOURCE_TYPE as AUDIT_LAST_UPDATED_SOURCE_TYPE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_LAST_UPDATED_DTTM as AUDIT_LAST_UPDATED_DTTM", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___MARK_FOR_DELETION as MARK_FOR_DELETION", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_CREATED_SOURCE as AUDIT_CREATED_SOURCE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_LAST_UPDATED_SOURCE as AUDIT_LAST_UPDATED_SOURCE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___LOAD_TSTMP as LOAD_TSTMP").selectExpr( \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___sys_row_id as sys_row_id", \
-	"cast(SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___in_DC_NBR as int) as DC_NBR", \
+	"cast(SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___DC_NBR as int) as DC_NBR", \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___ITEM_GROUP_ID as ITEM_GROUP_ID", \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___ITEM_ID as ITEM_ID", \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___GROUP_TYPE as GROUP_TYPE", \
@@ -108,9 +94,9 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE_temp.selectExpr( \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___MARK_FOR_DELETION as MARK_FOR_DELETION", \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_CREATED_SOURCE as AUDIT_CREATED_SOURCE", \
 	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___AUDIT_LAST_UPDATED_SOURCE as AUDIT_LAST_UPDATED_SOURCE", \
-	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___LOAD_TSTMP as LOAD_TSTMP" \
-)
+	"SQ_Shortcut_to_WM_ITEM_GROUP_WMS_PRE___LOAD_TSTMP as LOAD_TSTMP")
 
+	
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
 # COLUMN COUNT: 2
@@ -179,8 +165,8 @@ FIL_NO_CHANGE_REC = JNR_WM_ITEM_GROUP_WMS_temp.selectExpr( \
 	"JNR_WM_ITEM_GROUP_WMS___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
 	"JNR_WM_ITEM_GROUP_WMS___WM_LAST_UPDATED_SOURCE_TYPE as WM_LAST_UPDATED_SOURCE_TYPE", \
 	"JNR_WM_ITEM_GROUP_WMS___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP") \
-	.filter("in_WM_ITEM_GROUP_ID is Null OR ( in_WM_ITEM_GROUP_ID is not Null and ( COALEASE(AUDIT_CREATED_DTTM, date'1900-01-01') != COALEASE(WM_CREATED_TSTMP, date'1900-01-01') OR \
-            COALEASE(AUDIT_LAST_UPDATED_DTTM, date'1900-01-01') != COALEASE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
+	.filter("in_WM_ITEM_GROUP_ID is Null OR ( in_WM_ITEM_GROUP_ID is not Null and ( COALESCE(AUDIT_CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') OR \
+            COALESCE(AUDIT_LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_EVAL_VALUES, type EXPRESSION 
