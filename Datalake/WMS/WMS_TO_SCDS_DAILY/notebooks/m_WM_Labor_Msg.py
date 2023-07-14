@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -655,7 +655,7 @@ FIL_NO_CHANGE_REC = JNR_WM_LABOR_MSG_temp.selectExpr( \
 	"JNR_WM_LABOR_MSG___WM_LAST_UPDATED_DTTM as WM_LAST_UPDATED_DTTM", \
 	"JNR_WM_LABOR_MSG___in_WM_UPDATE_TSTMP as in_WM_UPDATE_TSTMP", \
 	"JNR_WM_LABOR_MSG___in_WM_LOAD_TSTMP as in_WM_LOAD_TSTMP") \
-    .filter("WM_LABOR_MSG_ID is Null OR (  WM_LABOR_MSG_ID is NOT Null ) AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
+    .filter("WM_LABOR_MSG_ID is Null OR (  WM_LABOR_MSG_ID is NOT Null ) AND ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(in_WM_UPDATE_TSTMP, date'1900-01-01'))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_EVAL_VALUES, type EXPRESSION 
