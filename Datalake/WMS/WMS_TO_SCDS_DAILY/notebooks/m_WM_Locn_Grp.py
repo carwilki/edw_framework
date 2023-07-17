@@ -371,7 +371,7 @@ UPD_INSERT_UPDATE = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP", \
 	"RTR_DELETE_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1", \
 	"RTR_DELETE_INSERT_UPDATE___DELETE_FLAG_EXP1 as DELETE_FLAG_EXP") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1' ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1' ==(lit('UPDATE')), lit(1))))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LOCN_GRP2, type TARGET 
