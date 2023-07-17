@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -355,8 +355,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___PROC_DTTM as PROC_DTTM", \
 	"FIL_UNCHANGED_RECORDS___PROC_STAT_CODE as PROC_STAT_CODE", \
 	"FIL_UNCHANGED_RECORDS___QTY_UOM as QTY_UOM", \
-	"decode ( ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___REC_PROC_INDIC ) ) )'1','1''Y','1','0' ) as REC_PROC_INDIC_EXP", \
-	"FIL_UNCHANGED_RECORDS___SIZE_VALUE as SIZE_VALUE", \
+	"case when   ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___REC_PROC_INDIC ) ) ) in ('1','Y') then '1' else '0' end  as REC_PROC_INDIC_EXP", \
+   	"FIL_UNCHANGED_RECORDS___SIZE_VALUE as SIZE_VALUE", \
 	"FIL_UNCHANGED_RECORDS___TC_COMPANY_ID as TC_COMPANY_ID", \
 	"FIL_UNCHANGED_RECORDS___TC_LPN_ID as TC_LPN_ID", \
 	"FIL_UNCHANGED_RECORDS___VERSION_NBR as VERSION_NBR", \

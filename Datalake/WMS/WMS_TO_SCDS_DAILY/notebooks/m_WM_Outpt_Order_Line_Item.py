@@ -17,9 +17,9 @@ parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -570,7 +570,7 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___PRODUCT_STATUS as PRODUCT_STATUS", \
 	"FIL_UNCHANGED_RECORDS___PURCHASE_ORDER_LINE_NUMBER as PURCHASE_ORDER_LINE_NUMBER", \
 	"FIL_UNCHANGED_RECORDS___REASON_CODE as REASON_CODE", \
-	"CASE WHEN ( LTRIM ( RTRIM ( UPPER ( FIL_UNCHANGED_RECORDS___REC_PROC_FLAG ) ) ) in ('Y','1') THEN '1'ELSE '0' END as o_REC_PROC_FLAG", \
+	"CASE WHEN  LTRIM ( RTRIM ( UPPER ( FIL_UNCHANGED_RECORDS___REC_PROC_FLAG ) ) ) in ('Y','1') THEN '1'ELSE '0' END as o_REC_PROC_FLAG", \
 	"FIL_UNCHANGED_RECORDS___REC_XPANS_FIELD as REC_XPANS_FIELD", \
 	"FIL_UNCHANGED_RECORDS___RETAIL_PRICE as RETAIL_PRICE", \
 	"FIL_UNCHANGED_RECORDS___SHIPPED_QTY as SHIPPED_QTY", \
