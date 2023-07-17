@@ -21,6 +21,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -32,7 +33,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
-refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_STATUS_PRE"
+refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_STATUS"
 raw_perf_table = f"{raw}.WM_ILM_APPOINTMENT_STATUS_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
@@ -128,7 +129,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_ILM_APPOINTMENT_STATUS_temp.selectExpr( \
 	"JNR_WM_ILM_APPOINTMENT_STATUS___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", \
 	"JNR_WM_ILM_APPOINTMENT_STATUS___i_LOAD_TSTMP as i_LOAD_TSTMP") \
     .filter("i_WM_ILM_APPT_STATUS_CD is Null OR ( i_WM_ILM_APPT_STATUS_CD is not Null AND \
-    ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(in_WM_CREATED_TSTMP, date'1900-01-01') \
+    ( COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01') \
     OR COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01') ) )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
@@ -167,19 +168,19 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)), lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_APPOINTMENT_STATUS1, type TARGET 
 # COLUMN COUNT: 7
 
-Shortcut_to_WM_ILM_APPOINTMENT_STATUS1 = UPD_INS_UPD.selectExpr( 
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(APPT_STATUS_CODE AS BIGINT) as WM_ILM_APPT_STATUS_CD", 
-	"CAST(DESCRIPTION AS STRING) as WM_ILM_APPT_STATUS_DESC", 
-	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
-	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+Shortcut_to_WM_ILM_APPOINTMENT_STATUS1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID",
+	"CAST(APPT_STATUS_CODE AS DECIMAL(4,0)) as WM_ILM_APPT_STATUS_CD",
+	"CAST(DESCRIPTION AS STRING) as WM_ILM_APPT_STATUS_DESC",
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP",
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP",
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action" 
 )

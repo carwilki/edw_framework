@@ -21,6 +21,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -166,7 +167,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)), lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ASN_DETAIL_STATUS1, type TARGET 
@@ -174,7 +175,7 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 
 Shortcut_to_WM_ASN_DETAIL_STATUS1 = UPD_INS_UPD.selectExpr( 
 	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(ASN_DETAIL_STATUS AS BIGINT) as WM_ASN_DETAIL_STATUS", 
+	"CAST(ASN_DETAIL_STATUS AS SMALLINT) as WM_ASN_DETAIL_STATUS",
 	"CAST(DESCRIPTION AS STRING) as WM_ASN_DETAIL_STATUS_DESC", 
 	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 

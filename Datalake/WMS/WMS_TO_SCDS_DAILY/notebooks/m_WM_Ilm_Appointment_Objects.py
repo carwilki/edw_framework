@@ -19,8 +19,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+# args = parser.parse_args()
+# env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -36,8 +37,8 @@ refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_OBJECTS"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
-Del_Logic=args.Del_Logic
-soft_delete_logic_WM_Ilm_Appointment_Objects=args.soft_delete_logic_WM_Ilm_Appointment_Objects
+Del_Logic= ' -- ' #args.Del_Logic
+soft_delete_logic_WM_Ilm_Appointment_Objects= '  ' #args.soft_delete_logic_WM_Ilm_Appointment_Objects
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_ILM_APPOINTMENT_OBJECTS, type SOURCE 
@@ -176,10 +177,10 @@ FIL_UNCHANGED_RECORDS = JNR_WM_ILM_APPOINTMENT_OBJECTS_temp.selectExpr( \
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
-.withColumn("v_CREATED_DTTM", expr("""IF(CREATED_DTTM IS NULL, date'1900-01-01', CREATED_DTTM)""")) \
-	.withColumn("v_LAST_UPDATED_DTTM", expr("""IF(LAST_UPDATED_DTTM IS NULL, date'1900-01-01', LAST_UPDATED_DTTM)""")) \
-	.withColumn("v_i_WM_CREATED_TSTMP", expr("""IF(i_WM_CREATED_TSTMP IS NULL, date'1900-01-01', i_WM_CREATED_TSTMP)""")) \
-	.withColumn("v_i_WM_LAST_UPDATED_TSTMP", expr("""IF(i_WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', i_WM_LAST_UPDATED_TSTMP)"""))
+.withColumn("FIL_UNCHANGED_RECORDS___v_CREATED_DTTM", expr("""IF(FIL_UNCHANGED_RECORDS___CREATED_DTTM IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___CREATED_DTTM)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_LAST_UPDATED_DTTM", expr("""IF(FIL_UNCHANGED_RECORDS___LAST_UPDATED_DTTM IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___LAST_UPDATED_DTTM)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_i_WM_CREATED_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___i_WM_CREATED_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___i_WM_CREATED_TSTMP)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_i_WM_LAST_UPDATED_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___i_WM_LAST_UPDATED_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___i_WM_LAST_UPDATED_TSTMP)"""))
 
 EXP_OUTPUT_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
@@ -230,24 +231,24 @@ UPD_INS_UPD = EXP_OUTPUT_VALIDATOR_temp.selectExpr( \
 	"EXP_OUTPUT_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_OUTPUT_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_OUTPUT_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')), lit(0)).when(EXP_OUTPUT_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_APPOINTMENT_OBJECTS1, type TARGET 
 # COLUMN COUNT: 12
 
-Shortcut_to_WM_ILM_APPOINTMENT_OBJECTS1 = UPD_INS_UPD.selectExpr( 
-	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID", 
-	"CAST(ID1 AS BIGINT) as WM_ILM_APPOINTMENT_OBJECTS_ID", 
-	"CAST(COMPANY_ID1 AS BIGINT) as WM_COMPANY_ID", 
-	"CAST(APPOINTMENT_ID1 AS BIGINT) as WM_APPOINTMENT_ID", 
-	"CAST(STOP_SEQ1 AS BIGINT) as WM_STOP_SEQ", 
-	"CAST(APPT_OBJ_ID1 AS BIGINT) as WM_APPT_OBJ_ID", 
-	"CAST(APPT_OBJ_TYPE1 AS BIGINT) as WM_APPT_OBJ_TYPE", 
-	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP", 
-	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
-	"CAST(DELETE_FLAG1 AS BIGINT) as DELETE_FLAG", 
-	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", 
+Shortcut_to_WM_ILM_APPOINTMENT_OBJECTS1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID",
+	"CAST(ID1 AS DECIMAL(9,0)) as WM_ILM_APPOINTMENT_OBJECTS_ID",
+	"CAST(COMPANY_ID1 AS DECIMAL(9,0)) as WM_COMPANY_ID",
+	"CAST(APPOINTMENT_ID1 AS DECIMAL(9,0)) as WM_APPOINTMENT_ID",
+	"CAST(STOP_SEQ1 AS DECIMAL(4,0)) as WM_STOP_SEQ",
+	"CAST(APPT_OBJ_ID1 AS DECIMAL(9,0)) as WM_APPT_OBJ_ID",
+	"CAST(APPT_OBJ_TYPE1 AS DECIMAL(3,0)) as WM_APPT_OBJ_TYPE",
+	"CAST(CREATED_DTTM1 AS TIMESTAMP) as WM_CREATED_TSTMP",
+	"CAST(LAST_UPDATED_DTTM1 AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP",
+	"CAST(DELETE_FLAG1 AS DECIMAL(1,0)) as DELETE_FLAG",
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP",
 	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action" 
 )

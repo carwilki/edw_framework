@@ -18,8 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+# args = parser.parse_args()
+# env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -34,8 +35,8 @@ raw_perf_table = f"{raw}.WM_E_ELM_CRIT_PRE"
 refined_perf_table = f"{refine}.WM_E_ELM_CRIT"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
-Del_Logic=args.Del_Logic
+Prev_Run_Dt=genPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
+Del_Logic= ' -- '  #args.Del_Logic
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_ELM_CRIT_PRE, type SOURCE 
@@ -345,7 +346,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')), lit(0)).when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 
@@ -367,23 +368,24 @@ UPD_DELETE = RTR_INS_UPD_DEL_DELETE_temp.selectExpr( \
 # Processing node Shortcut_to_WM_E_ELM_CRIT1, type TARGET 
 # COLUMN COUNT: 16
 
-Shortcut_to_WM_E_ELM_CRIT11 = UPD_DELETE.selectExpr( 
-	"CAST(i_LOCATION_ID13 AS BIGINT) as LOCATION_ID", 
-	"CAST(i_WM_ELM_ID3 AS BIGINT) as WM_ELM_ID", 
-	"CAST(i_WM_CRIT_ID3 AS BIGINT) as WM_CRIT_ID", 
-	"CAST(i_WM_CRIT_VAL_ID3 AS BIGINT) as WM_CRIT_VAL_ID", 
-	"CAST(NULL AS BIGINT) as TIME_ALLOW", 
-	"CAST(NULL AS STRING) as MISC_TXT_1", 
-	"CAST(NULL AS STRING) as MISC_TXT_2", 
-	"CAST(NULL AS BIGINT) as MISC_NUM_1", 
-	"CAST(NULL AS BIGINT) as MISC_NUM_2", 
-	"CAST(NULL AS STRING) as WM_USER_ID", 
-	"CAST(NULL AS BIGINT) as WM_VERSION_ID", 
-	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", 
-	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", 
-	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", 
-	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", 
-	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP", 
+
+Shortcut_to_WM_E_ELM_CRIT1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID1 AS BIGINT) as LOCATION_ID",
+	"CAST(ELM_ID1 AS INT) as WM_ELM_ID",
+	"CAST(CRIT_ID1 AS INT) as WM_CRIT_ID",
+	"CAST(CRIT_VAL_ID1 AS INT) as WM_CRIT_VAL_ID",
+	"CAST(TIME_ALLOW1 AS DECIMAL(9,4)) as TIME_ALLOW",
+	"CAST(MISC_TXT_11 AS STRING) as MISC_TXT_1",
+	"CAST(MISC_TXT_21 AS STRING) as MISC_TXT_2",
+	"CAST(MISC_NUM_11 AS DECIMAL(20,7)) as MISC_NUM_1",
+	"CAST(MISC_NUM_21 AS DECIMAL(20,7)) as MISC_NUM_2",
+	"CAST(USER_ID1 AS STRING) as WM_USER_ID",
+	"CAST(VERSION_ID1 AS INT) as WM_VERSION_ID",
+	"CAST(CREATE_DATE_TIME1 AS TIMESTAMP) as WM_CREATE_TSTMP",
+	"CAST(MOD_DATE_TIME1 AS TIMESTAMP) as WM_MOD_TSTMP",
+	"CAST(DELETE_FLAG1 AS TINYINT) as DELETE_FLAG",
+	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP",
+	"CAST(LOAD_TSTMP1 AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action" 
 )
 

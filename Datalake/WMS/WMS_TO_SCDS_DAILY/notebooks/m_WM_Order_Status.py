@@ -16,6 +16,7 @@ from Datalake.utils.logger import *
 parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
+
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
@@ -168,7 +169,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_exp as LOAD_TSTMP_exp", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)) , lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
+	.withColumn('pyspark_data_action', when(o_UPD_VALIDATOR ==(lit(1)) , lit(0)).when(o_UPD_VALIDATOR ==(lit(2)) , lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ORDER_STATUS1, type TARGET 
