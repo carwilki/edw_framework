@@ -297,7 +297,7 @@ UPD_INSERT_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP_EXP as UPDATE_TSTMP_EXP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')), lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_LOCK3, type TARGET 

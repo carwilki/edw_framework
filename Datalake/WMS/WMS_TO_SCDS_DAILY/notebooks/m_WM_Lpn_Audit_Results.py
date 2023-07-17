@@ -548,7 +548,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_EXP as LOAD_TSTMP_EXP", \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR", \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP_EXP as UPDATE_TSTMP_EXP") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_AUDIT_RESULTS1, type TARGET 
