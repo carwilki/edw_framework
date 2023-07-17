@@ -17,8 +17,9 @@ parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+#args = parser.parse_args()
+#env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')

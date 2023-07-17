@@ -18,8 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+#args = parser.parse_args()
+#env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -176,15 +177,15 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 # COLUMN COUNT: 7
 
 
-Shortcut_to_WM_ORDER_STATUS1 = UPD_INS_UPD.selectExpr( \
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", \
-	"CAST(ORDER_STATUS AS BIGINT) as WM_ORDER_STATUS_ID", \
-	"CAST(DESCRIPTION AS STRING) as WM_ORDER_STATUS_DESC", \
-	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP", \
-    "pyspark_data_action"\
+Shortcut_to_WM_ORDER_STATUS1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID",
+	"CAST(ORDER_STATUS AS SMALLINT) as WM_ORDER_STATUS_ID",
+	"CAST(DESCRIPTION AS STRING) as WM_ORDER_STATUS_DESC",
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP",
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP",
+	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP", 
+    "pyspark_data_action"
 )
 
 try:
