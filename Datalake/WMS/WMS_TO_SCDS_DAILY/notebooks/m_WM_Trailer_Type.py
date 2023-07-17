@@ -18,8 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
+#args = parser.parse_args()
+#env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -168,21 +169,21 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr(
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_exp as LOAD_TSTMP_exp", 
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
+).withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)),lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_TRAILER_TYPE1, type TARGET 
 # COLUMN COUNT: 7
 
 
-Shortcut_to_WM_TRAILER_TYPE1 = UPD_INS_UPD.selectExpr( 
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(TRAILER_TYPE AS BIGINT) as WM_TRAILER_TYPE_ID", 
-	"CAST(DESCRIPTION AS STRING) as WM_TRAILER_TYPE_DESC", 
-	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP", 
-	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", 
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
-	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP" , 
+Shortcut_to_WM_TRAILER_TYPE1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID",
+	"CAST(TRAILER_TYPE AS TINYINT) as WM_TRAILER_TYPE_ID",
+	"CAST(DESCRIPTION AS STRING) as WM_TRAILER_TYPE_DESC",
+	"CAST(CREATED_DTTM AS TIMESTAMP) as WM_CREATED_TSTMP",
+	"CAST(LAST_UPDATED_DTTM AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP",
+	"CAST(LOAD_TSTMP_exp AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action"
 )
 
