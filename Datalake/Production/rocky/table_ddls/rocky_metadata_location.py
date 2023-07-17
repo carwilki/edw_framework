@@ -16,8 +16,3 @@
 # MAGIC  null, array("abelsare@petsmart.com"), 1, null, false,
 # MAGIC  null, null ,'ANY_ONE_IS_MET' ,null ,null , null , null
 # MAGIC  );
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select * from qa_work.rocky_ingestion_metadata where rocky_id in (804,805,806)
