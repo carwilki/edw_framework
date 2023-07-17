@@ -129,7 +129,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LPN_FACILITY_STATUS_temp.selectExpr( \
 	"JNR_WM_LPN_FACILITY_STATUS___INBOUND_OUTBOUND_IND as INBOUND_OUTBOUND_IND", \
 	"JNR_WM_LPN_FACILITY_STATUS___WM_LPN_FACILITY_STATUS_DESC as WM_LPN_FACILITY_STATUS_DESC", \
 	"JNR_WM_LPN_FACILITY_STATUS___in_LOAD_TSTMP as in_LOAD_TSTMP") \
-    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), '')) )").withColumn("sys_row_id", monotonically_increasing_id())
+    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), '') )").withColumn("sys_row_id", monotonically_increasing_id())
 
 
 # COMMAND ----------
