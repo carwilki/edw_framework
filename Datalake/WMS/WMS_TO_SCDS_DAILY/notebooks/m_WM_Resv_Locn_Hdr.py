@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -301,10 +301,10 @@ FIL_UNCHANGED_RECORDS = JNR_WM_RESV_LOCN_HDR_temp.selectExpr(
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns]) \
-    .withColumn("v_CREATE_DATE_TIME", expr("""IF(CREATE_DATE_TIME IS NULL, date'1900-01-01', CREATE_DATE_TIME)""")) \
-	.withColumn("v_MOD_DATE_TIME", expr("""IF(MOD_DATE_TIME IS NULL, date'1900-01-01', MOD_DATE_TIME)""")) \
-	.withColumn("v_WM_CREATE_TSTMP", expr("""IF(WM_CREATE_TSTMP IS NULL, date'1900-01-01', WM_CREATE_TSTMP)""")) \
-	.withColumn("v_WM_MOD_TSTMP", expr("""IF(WM_MOD_TSTMP IS NULL, date'1900-01-01', WM_MOD_TSTMP)"""))
+    .withColumn("FIL_UNCHANGED_RECORDS___v_CREATE_DATE_TIME", expr("""IF(FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_MOD_DATE_TIME", expr("""IF(FIL_UNCHANGED_RECORDS___MOD_DATE_TIME IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___MOD_DATE_TIME)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_WM_CREATE_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___WM_CREATE_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___WM_CREATE_TSTMP)""")) \
+	.withColumn("FIL_UNCHANGED_RECORDS___v_WM_MOD_TSTMP", expr("""IF(FIL_UNCHANGED_RECORDS___WM_MOD_TSTMP IS NULL, date'1900-01-01', FIL_UNCHANGED_RECORDS___WM_MOD_TSTMP)"""))
     
 EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( 
 	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", 
@@ -635,14 +635,14 @@ RTR_DELETE_INSERT_UPDATE = EXP_UPD_VALIDATOR.selectExpr(
 # COLUMN COUNT: 4
 
 # for each involved DataFrame, append the dataframe name to each column
-RTR_DELETE_DELETE_temp = RTR_DELETE_DELETE.toDF(*["RTR_DELETE_DELETE___" + col for col in RTR_DELETE_DELETE.columns])
+# RTR_DELETE_DELETE_temp = RTR_DELETE_DELETE.toDF(*["RTR_DELETE_DELETE___" + col for col in RTR_DELETE_DELETE.columns])
 
-UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( 
-	"RTR_DELETE_DELETE___in_LOCATION_ID3 as in_LOCATION_ID3", 
-	"RTR_DELETE_DELETE___WM_RESV_LOCN_HDR_ID3 as WM_RESV_LOCN_HDR_ID3", 
-	"RTR_DELETE_DELETE___UPDATE_TSTMP_EXP3 as UPDATE_TSTMP_EXP3", 
-	"RTR_DELETE_DELETE___DELETE_FLAG_EXP3 as DELETE_FLAG_EXP3"
-).withColumn('pyspark_data_action', lit(1))
+# UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( 
+# 	"RTR_DELETE_DELETE___in_LOCATION_ID3 as in_LOCATION_ID3", 
+# 	"RTR_DELETE_DELETE___WM_RESV_LOCN_HDR_ID3 as WM_RESV_LOCN_HDR_ID3", 
+# 	"RTR_DELETE_DELETE___UPDATE_TSTMP_EXP3 as UPDATE_TSTMP_EXP3", 
+# 	"RTR_DELETE_DELETE___DELETE_FLAG_EXP3 as DELETE_FLAG_EXP3"
+# ).withColumn('pyspark_data_action', lit(1))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_RESV_LOCN_HDR2, type TARGET 

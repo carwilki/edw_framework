@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -45,7 +45,7 @@ WM_STOP_STATUS.WM_STOP_STATUS_DESC,
 WM_STOP_STATUS.WM_STOP_STATUS_SHORT_DESC,
 WM_STOP_STATUS.LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE WM_STOP_STATUS IN (SELECT STOP_STATUS FROM WM_STOP_STATUS_PRE)""").withColumn("sys_row_id", monotonically_increasing_id())
+WHERE WM_STOP_STATUS IN (SELECT STOP_STATUS FROM {raw_perf_table})""").withColumn("sys_row_id", monotonically_increasing_id())
 
 #-- COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_STOP_STATUS_PRE, type SOURCE 
@@ -158,7 +158,7 @@ UPD_INS_UPD = EXP_UPDATE_VALIDATOR_temp.selectExpr(
 	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", 
 	"EXP_UPDATE_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR"
-).withColumn('pyspark_data_action', when(o_UPDATE_VALIDATOR ==(lit(1)) , lit(0)).when(o_UPDATE_VALIDATOR ==(lit(2)) , lit(1)))
+).withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)) , lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)) , lit(1)))
 
 #-- COMMAND ----------
 # Processing node Shortcut_to_WM_STOP_STATUS1, type TARGET 
@@ -176,11 +176,11 @@ Shortcut_to_WM_STOP_STATUS1 = UPD_INS_UPD.selectExpr( \
 )
 
 try:
-  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.STOP_STATUS = target.WM_STOP_STATUS"""
-  # refined_perf_table = "WM_STANDARD_UOM"
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_STOP_STATUS = target.WM_STOP_STATUS"""
+  # refined_perf_table = "WM_STOP_STATUS"
   executeMerge(Shortcut_to_WM_STOP_STATUS1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
-  logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM", "Completed", "N/A", f"{raw}.log_run_details")
+  logPrevRunDt("WM_STOP_STATUS", "WM_STOP_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-  logPrevRunDt("WM_STANDARD_UOM", "WM_STANDARD_UOM","Failed",str(e), f"{raw}.log_run_details", )
+  logPrevRunDt("WM_STOP_STATUS", "WM_STOP_STATUS","Failed",str(e), f"{raw}.log_run_details", )
   raise e

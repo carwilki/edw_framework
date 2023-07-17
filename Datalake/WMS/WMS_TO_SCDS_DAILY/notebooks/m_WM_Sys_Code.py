@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -206,7 +206,10 @@ FIL_UNCHANGED_RECORDS = JNR_WM_SYS_CODE_temp.selectExpr(
 	"JNR_WM_SYS_CODE___WM_USER_ID as WM_USER_ID", 
 	"JNR_WM_SYS_CODE___WM_VERSION_ID1 as WM_VERSION_ID11", 
 	"JNR_WM_SYS_CODE___i_WM_DELETE_FLAG as i_WM_DELETE_FLAG", 
-	"JNR_WM_SYS_CODE___i_LOCATION_ID as i_LOCATION_ID").filter(expr("REC_TYPE IS NULL OR i_WM_REC_TYPE IS NULL OR (NOT i_WM_REC_TYPE IS NULL AND (COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01')) OR (COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')) OR (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR (COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01'))))")).withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_SYS_CODE___i_LOCATION_ID as i_LOCATION_ID")\
+	.filter("REC_TYPE IS NULL OR i_WM_REC_TYPE IS NULL OR (NOT i_WM_REC_TYPE IS NULL AND (COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR \
+	(COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')) OR (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR \
+	(COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_UPD_VALIDATOR, type EXPRESSION 
