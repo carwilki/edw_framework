@@ -171,7 +171,7 @@ UPD_INS_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_EXP as LOAD_TSTMP_EXP", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPD_VALIDATOR') ==(lit(1)), lit(0)).when(EXP_UPD_VALIDATOR.o_UPD_VALIDATOR ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_FACILITY_STATUS1, type TARGET 

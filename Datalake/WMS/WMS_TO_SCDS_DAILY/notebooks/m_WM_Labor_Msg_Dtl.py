@@ -289,7 +289,7 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONV,[SQ_Shortcut_to
 SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp = SQ_Shortcut_to_WM_LABOR_MSG_DTL.toDF(*["SQ_Shortcut_to_WM_LABOR_MSG_DTL___" + col for col in SQ_Shortcut_to_WM_LABOR_MSG_DTL.columns])
 JNR_SITE_PROFILE_temp = JNR_SITE_PROFILE.toDF(*["JNR_SITE_PROFILE___" + col for col in JNR_SITE_PROFILE.columns])
 
-JNR_WM_LABORE_MSG_DTL = SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.join([SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.SQ_Shortcut_to_WM_LABOR_MSG_DTL___WM_LABOR_MSG_DTL_ID == JNR_SITE_PROFILE_temp.JNR_SITE_PROFILE___LABOR_MSG_DTL_ID, SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.SQ_Shortcut_to_WM_LABOR_MSG_DTL___LOCATION_ID == JNR_SITE_PROFILE_temp.JNR_SITE_PROFILE___LOCATION_ID],'right_outer').selectExpr( \
+JNR_WM_LABORE_MSG_DTL = SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.join(JNR_SITE_PROFILE_temp, [SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.SQ_Shortcut_to_WM_LABOR_MSG_DTL___WM_LABOR_MSG_DTL_ID == JNR_SITE_PROFILE_temp.JNR_SITE_PROFILE___LABOR_MSG_DTL_ID, SQ_Shortcut_to_WM_LABOR_MSG_DTL_temp.SQ_Shortcut_to_WM_LABOR_MSG_DTL___LOCATION_ID == JNR_SITE_PROFILE_temp.JNR_SITE_PROFILE___LOCATION_ID],'right_outer').selectExpr( \
 	"JNR_SITE_PROFILE___o_DC_NBR as o_DC_NBR", \
 	"JNR_SITE_PROFILE___LABOR_MSG_DTL_ID as LABOR_MSG_DTL_ID", \
 	"JNR_SITE_PROFILE___LABOR_MSG_ID as LABOR_MSG_ID", \
@@ -814,7 +814,7 @@ UPD_VALIDATE = EXP_EVAL_VALUES_temp.selectExpr( \
 	"EXP_EVAL_VALUES___Update_TSTMP_E as Update_TSTMP_E", \
 	"EXP_EVAL_VALUES___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVAL_VALUES___WM_LABOR_MSG_DTL_ID as WM_LABOR_MSG_DTL_ID") \
-	.withColumn('pyspark_data_action', when((WM_LABOR_MSG_DTL_ID.isNull()),(lit(0))).otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((col('WM_LABOR_MSG_DTL_ID').isNull()),(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LABOR_MSG_DTL1, type TARGET 
