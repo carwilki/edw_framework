@@ -2116,7 +2116,7 @@ UPD_INS_UPD = EXP_EVALUATE_LOAD_temp.selectExpr( \
 	"EXP_EVALUATE_LOAD___in_WM_LPN_ID as in_WM_LPN_ID", \
 	"EXP_EVALUATE_LOAD___LOAD_TSTMP as LOAD_TSTMP", \
 	"EXP_EVALUATE_LOAD___UPDATE_TSTMP as UPDATE_TSTMP") \
-	.withColumn('pyspark_data_action', when((in_WM_LPN_ID.isNull()) ,(lit(0))).otherwise(lit(1)))
+	.withColumn('pyspark_data_action', when((col('in_WM_LPN_ID').isNull()) ,(lit(0))).otherwise(lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN, type TARGET 
