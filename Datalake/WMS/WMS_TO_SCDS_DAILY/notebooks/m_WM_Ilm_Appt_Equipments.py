@@ -36,7 +36,7 @@ raw_perf_table = f"{raw}.WM_ILM_APPT_EQUIPMENTS_PRE"
 refined_perf_table = f"{refine}.WM_ILM_APPT_EQUIPMENTS"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
+Prev_Run_Dt=genPrevRunDt(refined_perf_table.split('.')[1], refine,raw)
 Del_logic= ' -- ' #args.Del_logic
 soft_delete_logic_WM_Ilm_Appt_Equipments= '  ' #args.soft_delete_logic_WM_Ilm_Appt_Equipments
 

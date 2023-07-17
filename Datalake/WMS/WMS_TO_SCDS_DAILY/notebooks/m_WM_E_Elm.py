@@ -31,8 +31,8 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-raw_perf_table = f"{raw}.WM_E_ELM"
-refined_perf_table = f"{refine}.WM_E_ELM_PRE"
+raw_perf_table = f"{raw}.WM_E_ELM_PRE"
+refined_perf_table = f"{refine}.WM_E_ELM"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 Prev_Run_Dt=genPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
