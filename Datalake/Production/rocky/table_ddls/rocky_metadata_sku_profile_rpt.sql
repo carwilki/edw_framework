@@ -5,7 +5,7 @@
 -- COMMAND ----------
 
 -- MAGIC %sql
--- MAGIC INSERT INTO qa_work.rocky_ingestion_metadata (
+-- MAGIC INSERT INTO work.rocky_ingestion_metadata (
 -- MAGIC table_group, table_group_desc, source_type, source_db, source_table, 
 -- MAGIC table_desc, is_pii, pii_type, has_hard_deletes, target_sink, 
 -- MAGIC target_db, target_schema, target_table_name, load_type, source_delta_column,
@@ -14,7 +14,7 @@
 -- MAGIC job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , snowflake_pre_sql , snowflake_post_sql 
 -- MAGIC )
 -- MAGIC VALUES (
--- MAGIC "NZ_Migration", null, "NZ_Mako4", "EDW_PRD", "SKU_PROFILE_RPT", 
+-- MAGIC "NZ_Migration", null, "NZ_Mako8", "EDW_PRD", "SKU_PROFILE_RPT",
 -- MAGIC null, false, null, True, "delta",
 -- MAGIC "legacy", "public", "sku_profile_rpt", "full", "LOAD_DT", 
 -- MAGIC "PRODUCT_ID", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
