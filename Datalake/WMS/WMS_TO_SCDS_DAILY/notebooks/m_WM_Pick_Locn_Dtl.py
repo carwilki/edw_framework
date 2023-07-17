@@ -713,7 +713,7 @@ UPD_UPDATE_INSERT = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___o_UPDATE_VALIDATOR as o_UPDATE_VALIDATOR1", \
 	"EXP_UPD_VALIDATOR___DELETE_FLAG_EXP as DELETE_FLAG_EXP1", \
 	"EXP_UPD_VALIDATOR___CREATED_DTTM as CREATED_DTTM") \
-	.withColumn('pyspark_data_action', when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('INSERT')),lit(0)).when(EXP_UPD_VALIDATOR.o_UPDATE_VALIDATOR ==(lit('UPDATE')),lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit('INSERT')),lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PICK_LOCN_DTL2, type TARGET 

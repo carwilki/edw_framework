@@ -35,7 +35,7 @@ raw_perf_table = f"{raw}.WM_OUTPT_ORDERS_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 # Read in relation source variables
-(username, password, connection_string) = getConfig(DC_NBR, env)
+#(username, password, connection_string) = getConfig(DC_NBR, env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_OUTPT_ORDERS, type SOURCE 

@@ -864,7 +864,7 @@ UPD_INSERT_UPDATE = RTR_DELETE_INSERT_UPDATE_temp.selectExpr( \
 	"RTR_DELETE_INSERT_UPDATE___UPDATE_TSTMP_EXP1 as UPDATE_TSTMP_EXP1", \
 	"RTR_DELETE_INSERT_UPDATE___LOAD_TSTMP_EXP1 as LOAD_TSTMP_EXP1", \
 	"RTR_DELETE_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')),lit(0)).when(RTR_DELETE_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')),lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')),lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PICK_LOCN_HDR3, type TARGET 
