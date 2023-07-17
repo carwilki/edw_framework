@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -130,7 +130,9 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LPN_FACILITY_STATUS_temp.selectExpr( \
 	"JNR_WM_LPN_FACILITY_STATUS___INBOUND_OUTBOUND_IND as INBOUND_OUTBOUND_IND", \
 	"JNR_WM_LPN_FACILITY_STATUS___WM_LPN_FACILITY_STATUS_DESC as WM_LPN_FACILITY_STATUS_DESC", \
 	"JNR_WM_LPN_FACILITY_STATUS___in_LOAD_TSTMP as in_LOAD_TSTMP") \
-    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), '')) )").withColumn("sys_row_id", monotonically_increasing_id())
+    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), ''))").withColumn("sys_row_id", monotonically_increasing_id())
+
+
 
 
 # COMMAND ----------
@@ -172,7 +174,7 @@ UPD_INS_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP_EXP as LOAD_TSTMP_EXP", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)), lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPD_VALIDATOR') ==(lit(1)), lit(0)).when(col('o_UPD_VALIDATOR') ==(lit(2)), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LPN_FACILITY_STATUS1, type TARGET 
