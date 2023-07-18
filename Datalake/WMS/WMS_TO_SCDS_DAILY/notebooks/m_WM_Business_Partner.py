@@ -1,4 +1,3 @@
-#Code converted on 2023-06-20 18:37:41
 import os
 import argparse
 from pyspark.sql import *
@@ -20,7 +19,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -418,4 +417,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_BUSINESS_PARTNER", "WM_BUSINESS_PARTNER","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	
