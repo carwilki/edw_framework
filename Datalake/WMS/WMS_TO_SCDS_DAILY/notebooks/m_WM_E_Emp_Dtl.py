@@ -1,4 +1,3 @@
-#Code converted on 2023-06-26 09:58:17
 import os
 import argparse
 from pyspark.sql import *
@@ -20,7 +19,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -98,6 +97,7 @@ WHERE WM_EMP_DTL_ID IN (SELECT EMP_DTL_ID FROM {raw_perf_table})""").withColumn(
 SQ_Shortcut_to_WM_E_EMP_DTL_PRE_temp = SQ_Shortcut_to_WM_E_EMP_DTL_PRE.toDF(*["SQ_Shortcut_to_WM_E_EMP_DTL_PRE___" + col for col in SQ_Shortcut_to_WM_E_EMP_DTL_PRE.columns])
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_EMP_DTL_PRE_temp.selectExpr( \
+	"cast(SQ_Shortcut_to_WM_E_EMP_DTL_PRE___DC_NBR as int ) as DC_NBR",\
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___DC_NBR as in_DC_NBR", \
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EMP_DTL_ID as EMP_DTL_ID", \
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EMP_ID as EMP_ID", \
@@ -129,41 +129,11 @@ EXP_INT_CONV = SQ_Shortcut_to_WM_E_EMP_DTL_PRE_temp.selectExpr( \
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___CREATED_DTTM as CREATED_DTTM", \
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", \
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EXCLUDE_AUTO_CICO as EXCLUDE_AUTO_CICO", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___LOAD_TSTMP as LOAD_TSTMP").selectExpr( \
+	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___LOAD_TSTMP as LOAD_TSTMP",\
 	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___sys_row_id as sys_row_id", \
-	"cast(SQ_Shortcut_to_WM_E_EMP_DTL_PRE___in_DC_NBR as int) as DC_NBR", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EMP_DTL_ID as EMP_DTL_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EMP_ID as EMP_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EFF_DATE_TIME as EFF_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EMP_STAT_ID as EMP_STAT_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___PAY_RATE as PAY_RATE", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___PAY_SCALE_ID as PAY_SCALE_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___SPVSR_EMP_ID as SPVSR_EMP_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___DEPT_ID as DEPT_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___SHIFT_ID as SHIFT_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___ROLE_ID as ROLE_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___USER_DEF_FIELD_1 as USER_DEF_FIELD_1", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___USER_DEF_FIELD_2 as USER_DEF_FIELD_2", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___CMNT as CMNT", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___MOD_DATE_TIME as MOD_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___USER_ID as USER_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___WHSE as WHSE", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___JOB_FUNC_ID as JOB_FUNC_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___STARTUP_TIME as STARTUP_TIME", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___CLEANUP_TIME as CLEANUP_TIME", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___MISC_TXT_1 as MISC_TXT_1", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___MISC_TXT_2 as MISC_TXT_2", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___MISC_NUM_1 as MISC_NUM_1", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___MISC_NUM_2 as MISC_NUM_2", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___DFLT_PERF_GOAL as DFLT_PERF_GOAL", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___VERSION_ID as VERSION_ID", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___IS_SUPER as IS_SUPER", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___CREATED_DTTM as CREATED_DTTM", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___EXCLUDE_AUTO_CICO as EXCLUDE_AUTO_CICO", \
-	"SQ_Shortcut_to_WM_E_EMP_DTL_PRE___LOAD_TSTMP as LOAD_TSTMP" \
-)
+	)
+
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -270,7 +240,7 @@ FIL_NO_CHANGE_REC = JNR_WM_E_EMP_DTL_temp.selectExpr( \
 	"JNR_WM_E_EMP_DTL___WM_MOD_TSTMP as WM_MOD_TSTMP", \
 	"JNR_WM_E_EMP_DTL___WM_CREATED_TSTMP as WM_CREATED_TSTMP", \
 	"JNR_WM_E_EMP_DTL___WM_LAST_UPDATED_TSTMP as WM_LAST_UPDATED_TSTMP") \
-    .filter("in_WM_EMP_DTL_ID is Null OR (  in_WM_EMP_DTL_ID is not Null() AND \
+    .filter("in_WM_EMP_DTL_ID is Null OR (  in_WM_EMP_DTL_ID is not Null AND \
              ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(WM_CREATE_TSTMP, date'1900-01-01') \
              OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(WM_MOD_TSTMP, date'1900-01-01') \
              OR COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(WM_CREATED_TSTMP, date'1900-01-01') \
@@ -419,4 +389,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_E_EMP_DTL", "WM_E_EMP_DTL","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	
