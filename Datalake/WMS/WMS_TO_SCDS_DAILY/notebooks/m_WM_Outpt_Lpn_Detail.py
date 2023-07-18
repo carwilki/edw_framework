@@ -1,3 +1,4 @@
+
 #Code converted on 2023-06-26 17:05:34
 import os
 import argparse
@@ -521,4 +522,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_OUTPT_LPN_DETAIL", "WM_OUTPT_LPN_DETAIL","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	

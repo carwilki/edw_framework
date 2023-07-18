@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+#env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -99,23 +99,6 @@ FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id()
 SQ_Shortcut_to_WM_E_ACT_ELM_PRE_temp = SQ_Shortcut_to_WM_E_ACT_ELM_PRE.toDF(*["SQ_Shortcut_to_WM_E_ACT_ELM_PRE___" + col for col in SQ_Shortcut_to_WM_E_ACT_ELM_PRE.columns])
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_ACT_ELM_PRE_temp.selectExpr( \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___DC_NBR as in_DC_NBR", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___ACT_ID as ACT_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___ELM_ID as ELM_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___TIME_ALLOW as TIME_ALLOW", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___THRUPUT_MSRMNT as THRUPUT_MSRMNT", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___SEQ_NBR as SEQ_NBR", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___MOD_DATE_TIME as MOD_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___USER_ID as USER_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___MISC_TXT_1 as MISC_TXT_1", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___MISC_TXT_2 as MISC_TXT_2", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___MISC_NUM_1 as MISC_NUM_1", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___MISC_NUM_2 as MISC_NUM_2", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___VERSION_ID as VERSION_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___AVG_ACT_ID as AVG_ACT_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___AVG_BY as AVG_BY", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___LOAD_TSTMP as LOAD_TSTMP").selectExpr( \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___sys_row_id as sys_row_id", \
 	"cast(SQ_Shortcut_to_WM_E_ACT_ELM_PRE___in_DC_NBR as int) as DC_NBR", \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_PRE___ACT_ID as ACT_ID", \

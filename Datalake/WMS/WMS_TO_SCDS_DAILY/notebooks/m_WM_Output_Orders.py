@@ -35,6 +35,7 @@ refined_perf_table = f"{refine}.WM_OUTPT_ORDERS"
 raw_perf_table = f"{raw}.WM_OUTPT_ORDERS_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
+
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_OUTPT_ORDERS, type SOURCE 
 # COLUMN COUNT: 5

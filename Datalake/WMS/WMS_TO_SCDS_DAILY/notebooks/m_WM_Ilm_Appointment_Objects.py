@@ -19,9 +19,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+#env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -36,7 +36,7 @@ raw_perf_table = f"{raw}.WM_ILM_APPOINTMENT_OBJECTS_PRE"
 refined_perf_table = f"{refine}.WM_ILM_APPOINTMENT_OBJECTS"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-Prev_Run_Dt=genPrevRunDt(refined_perf_table, refine,raw)
+Prev_Run_Dt=genPrevRunDt(refined_perf_table.split('.')[1], refine,raw)
 Del_Logic= ' -- ' #args.Del_Logic
 soft_delete_logic_WM_Ilm_Appointment_Objects= '  ' #args.soft_delete_logic_WM_Ilm_Appointment_Objects
 

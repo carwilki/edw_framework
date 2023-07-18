@@ -39,6 +39,8 @@ def m_WM_Outpt_Lpn_PRE(dcnbr, env):
     print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
+    
     query = f"""SELECT
                     OUTPT_LPN.ACTUAL_CHARGE,
                     OUTPT_LPN.ACTUAL_CHARGE_CURRENCY,

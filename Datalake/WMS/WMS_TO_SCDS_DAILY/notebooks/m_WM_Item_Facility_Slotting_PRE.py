@@ -46,11 +46,12 @@ def m_WM_Item_Facility_Slotting_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_FACILITY_SLOTTING, type SOURCE 
     # COLUMN COUNT: 91
@@ -294,7 +295,7 @@ def m_WM_Item_Facility_Slotting_PRE(dcnbr, env):
         "CAST(MAX_SLOTS AS BIGINT) as MAX_SLOTS",
         "CAST(MAX_PALLET_STACKING AS BIGINT) as MAX_PALLET_STACKING",
         "CAST(PROP_BORROWING_OBJECT AS BIGINT) as PROP_BORROWING_OBJECT",
-        "CAST(PROP_BORROWING_SPECIFIC AS BIGINT) as PROP_BORROWING_SPECIFIC",
+        "CAST(PROP_BORROWING_SPECIFIC AS DECIMAL(19,0)) as PROP_BORROWING_SPECIFIC",
         "CAST(HEIGHT_CAN_BORROW AS TINYINT) as HEIGHT_CAN_BORROW",
         "CAST(LENGTH_CAN_BORROW AS TINYINT) as LENGTH_CAN_BORROW",
         "CAST(WIDTH_CAN_BORROW AS TINYINT) as WIDTH_CAN_BORROW",

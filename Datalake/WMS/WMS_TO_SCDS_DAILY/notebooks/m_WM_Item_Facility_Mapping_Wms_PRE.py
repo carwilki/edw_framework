@@ -46,11 +46,12 @@ def m_WM_Item_Facility_Mapping_Wms_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_FACILITY_MAPPING_WMS, type SOURCE 
     # COLUMN COUNT: 81
@@ -242,7 +243,7 @@ def m_WM_Item_Facility_Mapping_Wms_PRE(dcnbr, env):
 
     Shortcut_to_WM_ITEM_FACILITY_MAPPING_WMS_PRE = EXPTRANS.selectExpr(
         "CAST(DC_NBR_EXP AS SMALLINT) as DC_NBR",
-        "CAST(ITEM_FACILITY_MAPPING_ID AS BIGINT) as ITEM_FACILITY_MAPPING_ID",
+        "CAST(ITEM_FACILITY_MAPPING_ID AS DECIMAL(19,0)) as ITEM_FACILITY_MAPPING_ID",
         "CAST(LPN_PER_TIER AS INT) as LPN_PER_TIER",
         "CAST(TIER_PER_PLT AS INT) as TIER_PER_PLT",
         "CAST(CASE_SIZE_TYPE AS STRING) as CASE_SIZE_TYPE",

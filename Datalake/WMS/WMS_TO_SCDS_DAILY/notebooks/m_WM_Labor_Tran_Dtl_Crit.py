@@ -287,4 +287,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_LABOR_TRAN_DTL_CRIT", "WM_LABOR_TRAN_DTL_CRIT","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	

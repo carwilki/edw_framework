@@ -502,4 +502,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_LPN_SIZE_TYPE", "WM_LPN_SIZE_TYPE","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	

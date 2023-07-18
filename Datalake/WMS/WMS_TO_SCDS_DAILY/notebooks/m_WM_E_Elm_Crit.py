@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+#env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -192,7 +192,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_E_ELM_CRIT_temp.selectExpr( \
 	"JNR_WM_E_ELM_CRIT___i_WM_MOD_TSTMP as i_WM_MOD_TSTMP", \
 	"JNR_WM_E_ELM_CRIT___i_DELETE_FLAG as i_DELETE_FLAG", \
 	"JNR_WM_E_ELM_CRIT___i_LOAD_TSTMP as i_LOAD_TSTMP") \
-    .filter("ELM_ID is Null OR i_WM_ELM_ID is Null OR (  i_WM_ELM_ID is not Null() AND \
+    .filter("ELM_ID is Null OR i_WM_ELM_ID is Null OR (  i_WM_ELM_ID is not Null AND \
              ( COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01') \
              OR COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')))").withColumn("sys_row_id", monotonically_increasing_id())
 

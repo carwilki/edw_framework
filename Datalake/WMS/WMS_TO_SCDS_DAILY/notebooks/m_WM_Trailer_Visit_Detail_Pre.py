@@ -35,7 +35,7 @@ def m_WM_Trailer_Visit_Detail_PRE(dcnbr, env):
 
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = tableName[:-4]
+    refine_table_name = "WM_TRAILER_VISIT_DTL"
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
     print("The prev run date is " + Prev_Run_Dt)
     

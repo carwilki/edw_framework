@@ -69,7 +69,7 @@ def m_WM_Putaway_Lock_PRE(dcnbr, env):
     
     EXPTRANS = SQ_Shortcut_to_PUTAWAY_LOCK_temp.selectExpr( \
     	"SQ_Shortcut_to_PUTAWAY_LOCK___sys_row_id as sys_row_id", 
-    	"{DC_NBR} as DC_NBR_EXP", 
+    	f"{dcnbr} as DC_NBR_EXP", 
     	"SQ_Shortcut_to_PUTAWAY_LOCK___LOCN_ID as LOCN_ID", 
     	"SQ_Shortcut_to_PUTAWAY_LOCK___LOCK_COUNTER as LOCK_COUNTER", 
     	"SQ_Shortcut_to_PUTAWAY_LOCK___CREATED_DTTM as CREATED_DTTM", 

@@ -27,13 +27,13 @@ def m_WM_Lpn_Type_PRE(dcnbr, env):
     refine = getEnvPrefix(env) + "refine"
     raw = getEnvPrefix(env) + "raw"
     
-    tableName = "WM_LPN_TYPE_PRE', mode = 'append"
+    tableName = "WM_LPN_TYPE_PRE"
     schemaName = raw
     source_schema = "WMSMIS"
 
     
     target_table_name = schemaName + "." + tableName
-    refine_table_name = "WM_LPN_TYPE', mode = 'append"
+    refine_table_name = "WM_LPN_TYPE"
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
     print("The prev run date is " + Prev_Run_Dt)
     

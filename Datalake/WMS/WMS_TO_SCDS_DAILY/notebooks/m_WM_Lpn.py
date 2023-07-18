@@ -31,8 +31,8 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-refined_perf_table = f"{refine}.WM_LPN_PRE"
-raw_perf_table = f"{raw}.WM_LPN_PRE_PRE"
+refined_perf_table = f"{refine}.WM_LPN"
+raw_perf_table = f"{raw}.WM_LPN_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 

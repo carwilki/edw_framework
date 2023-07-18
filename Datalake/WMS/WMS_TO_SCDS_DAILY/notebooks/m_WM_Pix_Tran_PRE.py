@@ -40,6 +40,8 @@ def m_WM_Pix_Tran_PRE(dcnbr, env):
     print("The prev run date is " + Prev_Run_Dt)
     
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
+    
     query = f"""SELECT
                     PIX_TRAN.TRAN_TYPE,
                     PIX_TRAN.TRAN_CODE,

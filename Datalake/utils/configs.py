@@ -1,4 +1,5 @@
 import pyspark.sql.functions as F
+import Datalake.utils.secrets as secrets
 from logging import getLogger, INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
@@ -16,7 +17,7 @@ def dc10(env):
         hostname = "172.17.89.175"
         portnumber = "1810"
         db = "Wmdc10q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -26,7 +27,7 @@ def dc10(env):
         hostname = "172.20.89.160"
         portnumber = "1810"
         db = "WMDC10P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -38,7 +39,7 @@ def dc12(env):
         hostname = "172.17.89.186"
         portnumber = "1812"
         db = "Wmdc12q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -48,7 +49,7 @@ def dc12(env):
         hostname = "172.20.89.161"
         portnumber = "1812"
         db = "WMDC12P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -60,7 +61,7 @@ def dc14(env):
         hostname = "172.17.89.170"
         portnumber = "1814"
         db = "wmdc14q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -70,7 +71,7 @@ def dc14(env):
         hostname = "172.20.89.159"
         portnumber = "1814"
         db = "WMDC14P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -82,7 +83,7 @@ def dc22(env):
         hostname = "172.17.89.175"
         portnumber = "1822"
         db = "Wmdc22q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -92,7 +93,7 @@ def dc22(env):
         hostname = "172.20.89.160"
         portnumber = "1822"
         db = "WMDC22P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -104,7 +105,7 @@ def dc36(env):
         hostname = "172.17.89.170"
         portnumber = "1836"
         db = "wmdc36q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -114,7 +115,7 @@ def dc36(env):
         hostname = "172.20.89.159"
         portnumber = "1836"
         db = "WMDC36P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -126,7 +127,7 @@ def dc38(env):
         hostname = "172.17.89.186"
         portnumber = "1838"
         db = "Wmdc38q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -136,7 +137,7 @@ def dc38(env):
         hostname = "172.20.89.161"
         portnumber = "1838"
         db = "WMDC38P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -148,7 +149,7 @@ def dc41(env):
         hostname = "172.17.89.175"
         portnumber = "1841"
         db = "Wmdc41q1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -158,7 +159,7 @@ def dc41(env):
         hostname = "172.20.89.160"
         portnumber = "1841"
         db = "WMDC41P1"
-        password = dbutils.secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"{db}_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
@@ -217,7 +218,10 @@ def getMaxDate(refine_table_name, schema):
     columnsList = columns.split(",")
     print(columnsList)
 
-    if columns == "":
+    row_cnt = spark.sql(f"select count(*) from {schema}.{refine_table_name}").first()[0]
+
+    logger.info(f"Row_count for {refine_table_name} table is {row_cnt}")
+    if columns == "" or row_cnt == 0:
         logger.info("Setting maxDate as currentDate!")
         maxDate = dt.datetime.now()
 

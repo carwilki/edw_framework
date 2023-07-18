@@ -46,11 +46,12 @@ def m_WM_Item_Wms_PRE(dcnbr, env):
 
     # COMMAND ----------
     # Variable_declaration_comment
-    dcnbr = dcnbr.strip()[2:]
+    
     Prev_Run_Dt=genPrevRunDt(refine_table_name, refine,raw)
 
     # Read in relation source variables
     (username, password, connection_string) = getConfig(dcnbr, env)
+    dcnbr = dcnbr.strip()[2:]
 
     # COMMAND ----------
     # Processing node SQ_Shortcut_to_ITEM_WMS, type SOURCE 
@@ -320,7 +321,7 @@ def m_WM_Item_Wms_PRE(dcnbr, env):
         "SQ_Shortcut_to_ITEM_WMS___VOCO_ABS_PICK_TOL_AMT as VOCO_ABS_PICK_TOL_AMT", \
         "SQ_Shortcut_to_ITEM_WMS___CARTON_CNT_DATE_TIME as CARTON_CNT_DATE_TIME", \
         "SQ_Shortcut_to_ITEM_WMS___TRANS_INVN_CNT_DATE_TIME as TRANS_INVN_CNT_DATE_TIME", \
-        "SQ_Shortcut_to_ITEM_WMS___WORK_ORD_CNT_DATE_TIME as WORK_ORD_CNT_DATE_TIME", \
+        "SQ_Shortcut_to_ITEM_WMS___WORK_ORD_CNT_DATE_TIME as WORK_ORD_CNT_DATE_TIME",\
         "SQ_Shortcut_to_ITEM_WMS___VENDOR_MASTER_ID as VENDOR_MASTER_ID", \
         "SQ_Shortcut_to_ITEM_WMS___NBR_OF_DYN_ACTV_PICK_PER_SKU as NBR_OF_DYN_ACTV_PICK_PER_SKU", \
         "SQ_Shortcut_to_ITEM_WMS___NBR_OF_DYN_CASE_PICK_PER_SKU as NBR_OF_DYN_CASE_PICK_PER_SKU", \
@@ -467,7 +468,7 @@ def m_WM_Item_Wms_PRE(dcnbr, env):
         "CAST(CARTON_CNT_DATE_TIME AS TIMESTAMP) as CARTON_CNT_DATE_TIME",
         "CAST(TRANS_INVN_CNT_DATE_TIME AS TIMESTAMP) as TRANS_INVN_CNT_DATE_TIME",
         "CAST(WORK_ORD_CNT_DATE_TIME AS TIMESTAMP) as WORK_ORD_CNT_DATE_TIME",
-        "CAST(lit(None) AS INT) as SHELF_DAYS",
+        "Null as SHELF_DAYS",
         "CAST(VENDOR_MASTER_ID AS INT) as VENDOR_MASTER_ID",
         "CAST(NBR_OF_DYN_ACTV_PICK_PER_SKU AS SMALLINT) as NBR_OF_DYN_ACTV_PICK_PER_SKU",
         "CAST(NBR_OF_DYN_CASE_PICK_PER_SKU AS SMALLINT) as NBR_OF_DYN_CASE_PICK_PER_SKU",

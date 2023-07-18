@@ -70,7 +70,7 @@ def m_WM_Lpn_Facility_Status_PRE(dcnbr, env):
 
     EXPTRANS = SQ_Shortcut_to_LPN_FACILITY_STATUS_temp.selectExpr( \
         "SQ_Shortcut_to_LPN_FACILITY_STATUS___sys_row_id as sys_row_id", \
-        "{DC_NBR} as DC_NBR_EXP", \
+        f"{dcnbr} as DC_NBR_EXP", \
         "SQ_Shortcut_to_LPN_FACILITY_STATUS___LPN_FACILITY_STATUS as LPN_FACILITY_STATUS", \
         "SQ_Shortcut_to_LPN_FACILITY_STATUS___INBOUND_OUTBOUND_INDICATOR as INBOUND_OUTBOUND_INDICATOR", \
         "SQ_Shortcut_to_LPN_FACILITY_STATUS___DESCRIPTION as DESCRIPTION", \

@@ -681,4 +681,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_PICK_LOCN_HDR_SLOTTING", "WM_PICK_LOCN_HDR_SLOTTING","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	
