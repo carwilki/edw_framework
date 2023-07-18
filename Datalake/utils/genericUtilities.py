@@ -1,9 +1,10 @@
-from logging import getLogger, INFO
+import Datalake.utils.secrets as secrets
+from logging import INFO, getLogger
+
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from Datalake.utils.logger import logPrevRunDt
-
 
 logger = getLogger()
 logger.setLevel(INFO)
@@ -14,8 +15,8 @@ dbutils: DBUtils = DBUtils(spark)
 
 def getSfCredentials(env):
     print("getting SF credentials")
-    username = dbutils.secrets.get("databricks_service_account", "username")
-    password = dbutils.secrets.get("databricks_service_account", "password")
+    username = secrets.get("databricks_service_account", "username")
+    password = secrets.get("databricks_service_account", "password")
 
     envSuffix = getSFEnvSuffix(env)
     url = "petsmart.us-central1.gcp.snowflakecomputing.com"
@@ -75,8 +76,8 @@ def deltaReader(tblReference, isPath):
 #         spark:SparkSession=SparkSession.getActiveSession()
 #         dbutils:DBUtils=DBUtils(spark)
 
-#         username = dbutils.secrets.get("databricks_service_account", "username")
-#         password = dbutils.secrets.get("databricks_service_account", "password")
+#         username = secrets.get("databricks_service_account", "username")
+#         password = secrets.get("databricks_service_account", "password")
 #         logger.info("username and password obtained from secrets")
 
 #         options=getSfCredentials(env,username,password)
@@ -121,8 +122,9 @@ def getSFEnvSuffix(env: str):
 
 def genPrevRunDt(refine_table_name, refine, raw):
     print("get Prev_run date")
-    from Datalake.utils.configs import getMaxDate
     from datetime import datetime
+
+    from Datalake.utils.configs import getMaxDate
 
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date)
