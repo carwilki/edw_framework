@@ -3212,11 +3212,11 @@ Shortcut_to_WM_SHIPMENT1 = UPD_INS_UPD.selectExpr(
 )
 #  TODO chck key manually added
 try:
-  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.SHIPMENT_ID = target.WM_SHIPMENT_ID"""
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SHIPMENT_ID = target.WM_SHIPMENT_ID"""
   executeMerge(Shortcut_to_WM_SHIPMENT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
-  logPrevRunDt("WM_SHIPMENT", "WM_SHIPMENT_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
+  logPrevRunDt("WM_SHIPMENT", "WM_SHIPMENT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-  logPrevRunDt("WM_SHIPMENT_STATUS", "WM_SHIPMENT_STATUS","Failed",str(e), f"{raw}.log_run_details", )
+  logPrevRunDt("WM_SHIPMENT", "WM_SHIPMENT","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 
