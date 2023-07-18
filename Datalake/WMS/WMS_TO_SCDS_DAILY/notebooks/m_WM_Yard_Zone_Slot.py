@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -248,7 +248,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_YARD_ZONE_SLOT_temp.selectExpr(
 	"JNR_WM_YARD_ZONE_SLOT___i_WM_LAST_UPDATED_SOURCE as i_WM_LAST_UPDATED_SOURCE", 
 	"JNR_WM_YARD_ZONE_SLOT___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", 
 	"JNR_WM_YARD_ZONE_SLOT___i_DELETE_FLAG as i_DELETE_FLAG", 
-	"JNR_WM_YARD_ZONE_SLOT___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("YARD_ZONE_SLOT_ID IS NULL OR i_WM_YARD_ZONE_SLOT_ID IS NULL OR (NOT i_WM_YARD_ZONE_SLOT_ID IS NULL AND (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR (COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01'))))")).withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_YARD_ZONE_SLOT___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("YARD_ZONE_SLOT_ID IS NULL OR i_WM_YARD_ZONE_SLOT_ID IS NULL OR (NOT i_WM_YARD_ZONE_SLOT_ID IS NULL AND (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR (COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01')))")).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_OUTPUT_VALIDATOR, type EXPRESSION 
@@ -540,7 +540,7 @@ Shortcut_to_WM_YARD_ZONE_SLOT1 = UPD_INS_UPD.selectExpr(
 
 # TODO check the key done manual
 try:
-  primary_key = """source.LOCATION_ID1 = target.LOCATION_ID AND source.YARD_ID1 = target.WM_YARD_ID"""
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID"""
   # refined_perf_table = "WM_WAVE_PARM"
   executeMerge(Shortcut_to_WM_YARD_ZONE_SLOT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
