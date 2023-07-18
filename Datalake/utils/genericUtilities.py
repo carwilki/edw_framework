@@ -169,6 +169,19 @@ def jdbcOracleConnection(query, username, password, connection_string):
     return df
 
 
+def jdbcSqlServerConnection(query, username, password, connection_string):
+    df = spark.read.jdbc(
+        url=connection_string,
+        table=query,
+        properties={
+            "Driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+            "user": username,
+            "password": password,
+        },
+    )
+    return df
+
+
 def overwriteDeltaPartition(df, partition, partitionvalue, target_table_name):
     df.write.partitionBy(partition).mode("overwrite").option(
         "replaceWhere", f"{partition}={partitionvalue}"
