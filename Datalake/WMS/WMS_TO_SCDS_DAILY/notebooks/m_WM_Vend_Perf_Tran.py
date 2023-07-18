@@ -18,8 +18,8 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
+args = parser.parse_args()
+env = args.env
 env = 'dev'
 
 if env is None or env == '':
@@ -139,9 +139,10 @@ JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE.join(EXP_INT_CONVERSION,[SQ_Short
 
 # for each involved DataFrame, append the dataframe name to each column
 JNR_SITE_PROFILE_temp = JNR_SITE_PROFILE.toDF(*["JNR_SITE_PROFILE___" + col for col in JNR_SITE_PROFILE.columns])
+# JNR_SITE_PROFILE_temp.printSchema()
 
 EXP_PASS_THROUGH = JNR_SITE_PROFILE_temp.selectExpr( \
-	"JNR_SITE_PROFILE___sys_row_id as sys_row_id", \
+	# "JNR_SITE_PROFILE___sys_row_id as sys_row_id", \
 	"JNR_SITE_PROFILE___LOCATION_ID as LOCATION_ID", \
 	"JNR_SITE_PROFILE___VEND_PERF_TRAN_ID as VEND_PERF_TRAN_ID", \
 	"JNR_SITE_PROFILE___PERF_CODE as PERF_CODE", \
@@ -251,7 +252,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_VEND_PERF_TRAN_temp.selectExpr( \
 	"JNR_WM_VEND_PERF_TRAN___i_WM_VEND_PERF_TRAN_ID as i_WM_VEND_PERF_TRAN_ID", \
 	"JNR_WM_VEND_PERF_TRAN___i_WM_CREATE_TSTMP as i_WM_CREATE_TSTMP", \
 	"JNR_WM_VEND_PERF_TRAN___i_WM_MOD_TSTMP as i_WM_MOD_TSTMP", \
-	"JNR_WM_VEND_PERF_TRAN___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("i_WM_VEND_PERF_TRAN_ID IS NULL OR (NOT i_WM_VEND_PERF_TRAN_ID IS NULL AND (COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01')) OR (COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01'))))")).withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_VEND_PERF_TRAN___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("i_WM_VEND_PERF_TRAN_ID IS NULL OR (NOT i_WM_VEND_PERF_TRAN_ID IS NULL AND (COALESCE(CREATE_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_CREATE_TSTMP, date'1900-01-01')) OR (COALESCE(MOD_DATE_TIME, date'1900-01-01') != COALESCE(i_WM_MOD_TSTMP, date'1900-01-01')))")).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_UPD_VALIDATOR, type EXPRESSION 
