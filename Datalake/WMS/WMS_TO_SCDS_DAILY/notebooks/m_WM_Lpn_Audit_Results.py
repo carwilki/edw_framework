@@ -612,4 +612,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_LPN_AUDIT_RESULTS", "WM_LPN_AUDIT_RESULTS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	
