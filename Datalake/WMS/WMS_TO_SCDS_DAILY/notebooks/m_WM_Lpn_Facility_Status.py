@@ -20,6 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -129,7 +130,9 @@ FIL_UNCHANGED_RECORDS = JNR_WM_LPN_FACILITY_STATUS_temp.selectExpr( \
 	"JNR_WM_LPN_FACILITY_STATUS___INBOUND_OUTBOUND_IND as INBOUND_OUTBOUND_IND", \
 	"JNR_WM_LPN_FACILITY_STATUS___WM_LPN_FACILITY_STATUS_DESC as WM_LPN_FACILITY_STATUS_DESC", \
 	"JNR_WM_LPN_FACILITY_STATUS___in_LOAD_TSTMP as in_LOAD_TSTMP") \
-    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), '') )").withColumn("sys_row_id", monotonically_increasing_id())
+    .filter("WM_LPN_FACILITY_STATUS is Null OR (  WM_LPN_FACILITY_STATUS is NOT Null AND COALESCE(ltrim ( rtrim ( DESCRIPTION )), '') != COALESCE(ltrim ( rtrim ( WM_LPN_FACILITY_STATUS )), ''))").withColumn("sys_row_id", monotonically_increasing_id())
+
+
 
 
 # COMMAND ----------
@@ -177,12 +180,12 @@ UPD_INS_UPDATE = EXP_UPD_VALIDATOR_temp.selectExpr( \
 # Processing node Shortcut_to_WM_LPN_FACILITY_STATUS1, type TARGET 
 # COLUMN COUNT: 6
 
-Shortcut_to_WM_LPN_FACILITY_STATUS1 = UPD_INS_UPDATE.selectExpr( 
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(LPN_FACILITY_STATUS AS BIGINT) as WM_LPN_FACILITY_STATUS", 
-	"CAST(INBOUND_OUTBOUND_INDICATOR AS STRING) as INBOUND_OUTBOUND_IND", 
-	"CAST(DESCRIPTION AS STRING) as WM_LPN_FACILITY_STATUS_DESC", 
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+Shortcut_to_WM_LPN_FACILITY_STATUS1 = UPD_INS_UPDATE.selectExpr(
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID",
+	"CAST(LPN_FACILITY_STATUS AS SMALLINT) as WM_LPN_FACILITY_STATUS",
+	"CAST(INBOUND_OUTBOUND_INDICATOR AS STRING) as INBOUND_OUTBOUND_IND",
+	"CAST(DESCRIPTION AS STRING) as WM_LPN_FACILITY_STATUS_DESC",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP",
 	"CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action" 
 )

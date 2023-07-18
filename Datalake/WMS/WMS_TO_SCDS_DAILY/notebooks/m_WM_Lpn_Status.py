@@ -21,6 +21,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -161,11 +162,11 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 # Processing node Shortcut_to_WM_LPN_STATUS1, type TARGET 
 # COLUMN COUNT: 5
 
-Shortcut_to_WM_LPN_STATUS1 = UPD_INS_UPD.selectExpr( 
-	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID", 
-	"CAST(LPN_STATUS AS BIGINT) as WM_LPN_STATUS", 
-	"CAST(DESCRIPTION AS STRING) as WM_LPN_STATUS_DESC", 
-	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", 
+Shortcut_to_WM_LPN_STATUS1 = UPD_INS_UPD.selectExpr(
+	"CAST(LOCATION_ID AS BIGINT) as LOCATION_ID",
+	"CAST(LPN_STATUS AS SMALLINT) as WM_LPN_STATUS",
+	"CAST(DESCRIPTION AS STRING) as WM_LPN_STATUS_DESC",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP",
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", 
     "pyspark_data_action" 
 )
@@ -179,4 +180,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_LPN_STATUS", "WM_LPN_STATUS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	

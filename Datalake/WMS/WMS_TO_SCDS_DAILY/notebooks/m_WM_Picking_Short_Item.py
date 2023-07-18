@@ -19,6 +19,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -336,7 +337,8 @@ UPD_INSERT_UPDATE = EXP_VALIDATOR_temp.selectExpr( \
 	"EXP_VALIDATOR___CREATED_SOURCE as CREATED_SOURCE", \
 	"EXP_VALIDATOR___LAST_UPDATED_DTTM as LAST_UPDATED_DTTM", \
 	"EXP_VALIDATOR___LAST_UPDATED_SOURCE as LAST_UPDATED_SOURCE") \
-	.withColumn('pyspark_data_action', when(EXP_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(1)),lit(0)).when(EXP_VALIDATOR.o_UPDATE_VALIDATOR ==(lit(2)),lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR') ==(lit(1)),lit(0)).when(col('o_UPDATE_VALIDATOR') ==(lit(2)),lit(1)))
+ 
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_PICKING_SHORT_ITEM1, type TARGET 
