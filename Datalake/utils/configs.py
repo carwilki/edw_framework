@@ -223,7 +223,7 @@ def getMaxDate(refine_table_name, schema):
     logger.info(f"Row_count for {refine_table_name} table is {row_cnt}")
     if columns == "" or row_cnt == 0:
         logger.info("Setting maxDate as currentDate!")
-        maxDate = dt.datetime.now()
+        maxDate = dt.datetime.today() - dt.timedelta(days=1)
 
     else:
         if len(columnsList) > 4 or len(columnsList) == 0:
