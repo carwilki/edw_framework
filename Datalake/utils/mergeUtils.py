@@ -89,7 +89,7 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
     
     conditionColList=json.loads(conditionCols)
     
-    if len(conditionColList)==1 and conditionColList[0]=="":
+    if len(conditionColList)==1 and conditionColList[0]=="None":
         refineDF=spark.sql(f"""show columns in `{schemaForDeltaTable}`.`{deltaTable}`""")
         refineColList=[row.col_name.upper() for row in refineDF.collect()]
         if "LOAD_TSTMP" in refineColList:
