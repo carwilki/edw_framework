@@ -95,7 +95,7 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
         if "LOAD_TSTMP" in refineColList:
             dateValue = dt.datetime.today() - dt.timedelta(days=2)
             mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where LOAD_TSTMP > {dateValue}""")
+        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where to_date(LOAD_TSTMP ,'yyyy-MM-dd') > current_date() -2 """)
         else:
             mergeDatasetSql = (
         f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` """)
