@@ -18,9 +18,8 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -390,8 +389,8 @@ Shortcut_to_WM_SIZE_UOM1 = UPD_INS_UPD.selectExpr(
 	"CAST(SIZE_MAPPING AS STRING) as WM_SIZE_MAPPING",
 	"CAST(STANDARD_UOM AS SMALLINT) as WM_STANDARD_UOM_ID",
 	"CAST(STANDARD_UNITS AS DECIMAL(16,8)) as WM_STANDARD_UNITS",
-	"CAST(CONSOLIDATION_CODE AS CHAR) as WM_CONSOLIDATION_CD",
-	"CAST(SPLITTER_CONS_CODE AS CHAR) as WM_SPLITTER_CONS_CD",
+	"CAST(CONSOLIDATION_CODE AS STRING) as WM_CONSOLIDATION_CD",
+	"CAST(SPLITTER_CONS_CODE AS STRING) as WM_SPLITTER_CONS_CD",
 	"CAST(DO_NOT_INHERIT_TO_ORDER AS TINYINT) as DO_NOT_INHERIT_TO_ORDER_FLAG",
 	"CAST(APPLY_TO_VENDOR AS TINYINT) as APPLY_TO_VENDOR_FLAG",
 	"CAST(DISCRETE AS TINYINT) as DISCRETE_FLAG",

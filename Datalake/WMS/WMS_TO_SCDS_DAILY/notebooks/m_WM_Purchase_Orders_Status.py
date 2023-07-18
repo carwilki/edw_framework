@@ -90,7 +90,7 @@ EXPTRANS = SQ_Shortcut_to_WM_PURCHASE_ORDERS_STATUS_PRE_temp.selectExpr(
 SQ_Shortcut_to_SITE_PROFILE_temp = SQ_Shortcut_to_SITE_PROFILE.toDF(*["SQ_Shortcut_to_SITE_PROFILE___" + col for col in SQ_Shortcut_to_SITE_PROFILE.columns])
 EXPTRANS_temp = EXPTRANS.toDF(*["EXPTRANS___" + col for col in EXPTRANS.columns])
 
-JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE_temp.join([SQ_Shortcut_to_SITE_PROFILE_temp.SQ_Shortcut_to_SITE_PROFILE___STORE_NBR == EXPTRANS_temp.EXPTRANS___o_DC_NBR],'inner').selectExpr( 
+JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE_temp.join(EXPTRANS_temp,[SQ_Shortcut_to_SITE_PROFILE_temp.SQ_Shortcut_to_SITE_PROFILE___STORE_NBR == EXPTRANS_temp.EXPTRANS___o_DC_NBR],'inner').selectExpr( 
 	"EXPTRANS___o_DC_NBR as o_DC_NBR", 
 	"EXPTRANS___PURCHASE_ORDERS_STATUS as PURCHASE_ORDERS_STATUS", 
 	"EXPTRANS___DESCRIPTION as DESCRIPTION", 
