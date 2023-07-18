@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -3212,7 +3212,7 @@ Shortcut_to_WM_SHIPMENT1 = UPD_INS_UPD.selectExpr(
 )
 #  TODO chck key manually added
 try:
-  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.SHIPMENT_ID = target.WM_HIPMENT_ID"""
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_SHIPMENT_ID = target.WM_SHIPMENT_ID"""
   executeMerge(Shortcut_to_WM_SHIPMENT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("WM_SHIPMENT_STATUS", "WM_SHIPMENT_STATUS", "Completed", "N/A", f"{raw}.log_run_details")
