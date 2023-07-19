@@ -87,23 +87,26 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
     
-    conditionColList=json.loads(conditionCols)
+    # conditionColList=json.loads(conditionCols)
     
-    if len(conditionColList)==1 and conditionColList[0]=="None":
-        refineDF=spark.sql(f"""show columns in `{schemaForDeltaTable}`.`{deltaTable}`""")
-        refineColList=[row.col_name.upper() for row in refineDF.collect()]
-        if "LOAD_TSTMP" in refineColList:
-            dateValue = dt.datetime.today() - dt.timedelta(days=2)
-            mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where to_date(LOAD_TSTMP ,'yyyy-MM-dd') > current_date() -2 """)
-        else:
-            mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` """)
+    # if len(conditionColList)==1 and conditionColList[0]=="None":
+    #     refineDF=spark.sql(f"""show columns in `{schemaForDeltaTable}`.`{deltaTable}`""")
+    #     refineColList=[row.col_name.upper() for row in refineDF.collect()]
+    #     if "LOAD_TSTMP" in refineColList:
+    #         dateValue = dt.datetime.today() - dt.timedelta(days=2)
+    #         mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where to_date(LOAD_TSTMP ,'yyyy-MM-dd') > current_date() -2 """)
+    #     else:
+    #         mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` """)
 
-    else:            
-        mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
+    # else:            
+    #     mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
     
+    mergeDatasetSql = (
+        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
+
     print(mergeDatasetSql)
 
     df_table = spark.sql(mergeDatasetSql)
