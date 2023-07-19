@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -236,7 +236,7 @@ SQ_Shortcut_to_SITE_PROFILE = spark.sql(f"""SELECT LOCATION_ID, STORE_NBR FROM {
 EXP_INT_CONVERSION_temp = EXP_INT_CONVERSION.toDF(*["EXP_INT_CONVERSION___" + col for col in EXP_INT_CONVERSION.columns])
 SQ_Shortcut_to_SITE_PROFILE_temp = SQ_Shortcut_to_SITE_PROFILE.toDF(*["SQ_Shortcut_to_SITE_PROFILE___" + col for col in SQ_Shortcut_to_SITE_PROFILE.columns])
 
-JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE_temp.join([SQ_Shortcut_to_SITE_PROFILE_temp.SQ_Shortcut_to_SITE_PROFILE___STORE_NBR == EXP_INT_CONVERSION_temp.EXP_INT_CONVERSION___o_DC_NBR],'inner').selectExpr( \
+JNR_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE_temp.join(EXP_INT_CONVERSION_temp,[SQ_Shortcut_to_SITE_PROFILE_temp.SQ_Shortcut_to_SITE_PROFILE___STORE_NBR == EXP_INT_CONVERSION_temp.EXP_INT_CONVERSION___o_DC_NBR],'inner').selectExpr( \
 	"EXP_INT_CONVERSION___o_DC_NBR as o_DC_NBR", \
 	"EXP_INT_CONVERSION___PIX_TRAN_ID as PIX_TRAN_ID", \
 	"EXP_INT_CONVERSION___TRAN_TYPE as TRAN_TYPE", \
@@ -555,8 +555,8 @@ EXP_UPD_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
 	"FIL_UNCHANGED_RECORDS___UOM as UOM", \
 	"FIL_UNCHANGED_RECORDS___REF_WHSE as REF_WHSE", \
 	"FIL_UNCHANGED_RECORDS___RSN_CODE as RSN_CODE", \
-	"when ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___RCPT_VARI ) ) ) in ('1','Y') then '1' else '0' end as RCPT_VARI_EXP", \
-	"when ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___RCPT_CMPL ) ) ) in ('1','Y') then '1' else '0' end as RCPT_CMPL_EXP", \
+	"case when ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___RCPT_VARI ) ) ) in ('1','Y') then '1' else '0' end as RCPT_VARI_EXP", \
+	"case when ltrim ( rtrim ( upper ( FIL_UNCHANGED_RECORDS___RCPT_CMPL ) ) ) in ('1','Y') then '1' else '0' end as RCPT_CMPL_EXP", \
 	"FIL_UNCHANGED_RECORDS___CASES_SHPD as CASES_SHPD", \
 	"FIL_UNCHANGED_RECORDS___UNITS_SHPD as UNITS_SHPD", \
 	"FIL_UNCHANGED_RECORDS___CASES_RCVD as CASES_RCVD", \

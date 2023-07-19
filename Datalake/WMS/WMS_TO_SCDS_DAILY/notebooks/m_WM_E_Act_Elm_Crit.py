@@ -20,7 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -68,23 +68,8 @@ FROM {raw_perf_table}""").withColumn("sys_row_id", monotonically_increasing_id()
 SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE_temp = SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE.toDF(*["SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___" + col for col in SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE.columns])
 
 EXP_INT_CONV = SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE_temp.selectExpr( \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___DC_NBR as in_DC_NBR", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___ACT_ID as ACT_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___ELM_ID as ELM_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___CRIT_ID as CRIT_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___CRIT_VAL_ID as CRIT_VAL_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___TIME_ALLOW as TIME_ALLOW", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___MOD_DATE_TIME as MOD_DATE_TIME", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___USER_ID as USER_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___MISC_TXT_1 as MISC_TXT_1", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___MISC_TXT_2 as MISC_TXT_2", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___MISC_NUM_1 as MISC_NUM_1", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___MISC_NUM_2 as MISC_NUM_2", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___VERSION_ID as VERSION_ID", \
-	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___LOAD_TSTMP as LOAD_TSTMP").selectExpr( \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___sys_row_id as sys_row_id", \
-	"cast(SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___in_DC_NBR as int) as DC_NBR", \
+	"cast(SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___DC_NBR as int) as DC_NBR", \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___ACT_ID as ACT_ID", \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___ELM_ID as ELM_ID", \
 	"SQ_Shortcut_to_WM_E_ACT_ELM_CRIT_PRE___CRIT_ID as CRIT_ID", \
@@ -123,8 +108,8 @@ WM_MOD_TSTMP,
 DELETE_FLAG,
 LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE {Del_Logic} 1=0 
-and DELETE_FLAG=0""").withColumn("sys_row_id", monotonically_increasing_id())
+  WHERE {Del_Logic} 1=0 and 
+  DELETE_FLAG=0""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE 
@@ -230,12 +215,13 @@ FIL_NO_CHANGE_REC = JNR_WM_E_ACT_ELM_CRIT_temp.selectExpr( \
 
 # for each involved DataFrame, append the dataframe name to each column
 FIL_NO_CHANGE_REC_temp = FIL_NO_CHANGE_REC.toDF(*["FIL_NO_CHANGE_REC___" + col for col in FIL_NO_CHANGE_REC.columns]) \
-.withColumn("v_CREATE_DATE_TIME", expr("""IF(CREATE_DATE_TIME IS NULL, date'1900-01-01', CREATE_DATE_TIME)""")) \
-	.withColumn("v_MOD_DATE_TIME", expr("""IF(MOD_DATE_TIME IS NULL, date'1900-01-01', MOD_DATE_TIME)""")) \
-	.withColumn("v_in_WM_CREATE_TSTMP", expr("""IF(in_WM_CREATE_TSTMP IS NULL, date'1900-01-01', in_WM_CREATE_TSTMP)""")) \
-	.withColumn("v_in_WM_MOD_TSTMP", expr("""IF(in_WM_MOD_TSTMP IS NULL, date'1900-01-01', in_WM_MOD_TSTMP)"""))
+.withColumn("FIL_NO_CHANGE_REC___v_CREATE_DATE_TIME", expr("""IF(FIL_NO_CHANGE_REC___CREATE_DATE_TIME IS NULL, date'1900-01-01', FIL_NO_CHANGE_REC___CREATE_DATE_TIME)""")) \
+	.withColumn("FIL_NO_CHANGE_REC___v_MOD_DATE_TIME", expr("""IF(FIL_NO_CHANGE_REC___MOD_DATE_TIME IS NULL, date'1900-01-01', FIL_NO_CHANGE_REC___MOD_DATE_TIME)""")) \
+	.withColumn("FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP", expr("""IF(FIL_NO_CHANGE_REC___in_WM_CREATE_TSTMP IS NULL, date'1900-01-01', FIL_NO_CHANGE_REC___in_WM_CREATE_TSTMP)""")) \
+	.withColumn("FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP", expr("""IF(FIL_NO_CHANGE_REC___in_WM_MOD_TSTMP IS NULL, date'1900-01-01', FIL_NO_CHANGE_REC___in_WM_MOD_TSTMP)"""))
 
 EXP_EVALUATE = FIL_NO_CHANGE_REC_temp.selectExpr( \
+	"FIL_NO_CHANGE_REC___sys_row_id as sys_row_id", \
 	"FIL_NO_CHANGE_REC___LOCATION_ID as LOCATION_ID", \
 	"FIL_NO_CHANGE_REC___ACT_ID as ACT_ID", \
 	"FIL_NO_CHANGE_REC___ELM_ID as ELM_ID", \
@@ -265,42 +251,10 @@ EXP_EVALUATE = FIL_NO_CHANGE_REC_temp.selectExpr( \
 	"FIL_NO_CHANGE_REC___in_MISC_NUM_1 as in_MISC_NUM_1", \
 	"FIL_NO_CHANGE_REC___in_MISC_NUM_2 as in_MISC_NUM_2", \
 	"FIL_NO_CHANGE_REC___in_WM_VERSION_ID as in_WM_VERSION_ID", \
-	"FIL_NO_CHANGE_REC___in_DELETE_FLAG as in_DELETE_FLAG", \
-	"FIL_NO_CHANGE_REC___in_LOAD_TSTMP as in_LOAD_TSTMP").selectExpr( \
-	"FIL_NO_CHANGE_REC___sys_row_id as sys_row_id", \
-	"FIL_NO_CHANGE_REC___LOCATION_ID as LOCATION_ID", \
-	"FIL_NO_CHANGE_REC___ACT_ID as ACT_ID", \
-	"FIL_NO_CHANGE_REC___ELM_ID as ELM_ID", \
-	"FIL_NO_CHANGE_REC___CRIT_ID as CRIT_ID", \
-	"FIL_NO_CHANGE_REC___CRIT_VAL_ID as CRIT_VAL_ID", \
-	"FIL_NO_CHANGE_REC___TIME_ALLOW as TIME_ALLOW", \
-	"FIL_NO_CHANGE_REC___CREATE_DATE_TIME as CREATE_DATE_TIME", \
-	"FIL_NO_CHANGE_REC___MOD_DATE_TIME as MOD_DATE_TIME", \
-	"FIL_NO_CHANGE_REC___USER_ID as USER_ID", \
-	"FIL_NO_CHANGE_REC___MISC_TXT_1 as MISC_TXT_1", \
-	"FIL_NO_CHANGE_REC___MISC_TXT_2 as MISC_TXT_2", \
-	"FIL_NO_CHANGE_REC___MISC_NUM_1 as MISC_NUM_1", \
-	"FIL_NO_CHANGE_REC___MISC_NUM_2 as MISC_NUM_2", \
-	"FIL_NO_CHANGE_REC___VERSION_ID as VERSION_ID", \
-	"FIL_NO_CHANGE_REC___LOAD_TSTMP2 as LOAD_TSTMP2", \
-	"FIL_NO_CHANGE_REC___in_LOCATION_ID as in_LOCATION_ID", \
-	"FIL_NO_CHANGE_REC___in_WM_ACT_ID as in_WM_ACT_ID", \
-	"FIL_NO_CHANGE_REC___in_WM_ELM_ID as in_WM_ELM_ID", \
-	"FIL_NO_CHANGE_REC___in_WM_CRIT_VAL_ID as in_WM_CRIT_VAL_ID", \
-	"FIL_NO_CHANGE_REC___in_TIME_ALLOW as in_TIME_ALLOW", \
-	"FIL_NO_CHANGE_REC___in_WM_CREATE_TSTMP as in_WM_CREATE_TSTMP", \
-	"FIL_NO_CHANGE_REC___in_WM_MOD_TSTMP as in_WM_MOD_TSTMP", \
-	"FIL_NO_CHANGE_REC___in_WM_USER_ID as in_WM_USER_ID", \
-	"FIL_NO_CHANGE_REC___in_WM_CRIT_ID as in_WM_CRIT_ID", \
-	"FIL_NO_CHANGE_REC___in_MISC_TXT_1 as in_MISC_TXT_1", \
-	"FIL_NO_CHANGE_REC___in_MISC_TXT_2 as in_MISC_TXT_2", \
-	"FIL_NO_CHANGE_REC___in_MISC_NUM_1 as in_MISC_NUM_1", \
-	"FIL_NO_CHANGE_REC___in_MISC_NUM_2 as in_MISC_NUM_2", \
-	"FIL_NO_CHANGE_REC___in_WM_VERSION_ID as in_WM_VERSION_ID", \
 	"IF(FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL, 1, 0) as DELETE_FLAG", \
 	"IF(FIL_NO_CHANGE_REC___in_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_NO_CHANGE_REC___in_LOAD_TSTMP) as LOAD_TSTMP", \
 	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
-	"IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NULL, 'INSERT', IF(FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP >= DATE_ADD(- 14, {Prev_Run_Dt}) ), 'DELETE', IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP <> FIL_NO_CHANGE_REC___v_CREATE_DATE_TIME OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP <> FIL_NO_CHANGE_REC___v_MOD_DATE_TIME ), 'UPDATE', NULL))) as LOAD_FLAG" \
+	f"IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NULL, 'INSERT', IF(FIL_NO_CHANGE_REC___ACT_ID IS NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP >= DATE_ADD('{Prev_Run_Dt}',-14) OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP >= DATE_ADD('{Prev_Run_Dt}',-14) ), 'DELETE', IF(FIL_NO_CHANGE_REC___ACT_ID IS NOT NULL AND FIL_NO_CHANGE_REC___in_WM_ACT_ID IS NOT NULL AND ( FIL_NO_CHANGE_REC___v_in_WM_CREATE_TSTMP <> FIL_NO_CHANGE_REC___v_CREATE_DATE_TIME OR FIL_NO_CHANGE_REC___v_in_WM_MOD_TSTMP <> FIL_NO_CHANGE_REC___v_MOD_DATE_TIME ), 'UPDATE', NULL))) as LOAD_FLAG" \
 )
 
 # COMMAND ----------
@@ -414,26 +368,26 @@ UPD_DEL = RTR_INS_UP_DEL_DEL_temp.selectExpr( \
 # COLUMN COUNT: 17
 
 
-Shortcut_to_WM_E_ACT_ELM_CRIT2 = UPD_DEL.selectExpr( \
-	"CAST(LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
-	"CAST(ACT_ID3 AS BIGINT) as WM_ACT_ID", \
-	"CAST(ELM_ID3 AS BIGINT) as WM_ELM_ID", \
-	"CAST(CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
-	"CAST(CRIT_VAL_ID3 AS BIGINT) as WM_CRIT_VAL_ID", \
-	"CAST(NULL AS BIGINT) as TIME_ALLOW", \
-	"CAST(NULL AS STRING) as MISC_TXT_1", \
-	"CAST(NULL AS STRING) as MISC_TXT_2", \
-	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
-	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
-	"CAST(NULL AS STRING) as WM_USER_ID", \
-	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
-	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
-	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
-	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
-)
-Shortcut_to_WM_E_ACT_ELM_CRIT2.write.saveAsTable(f'{raw}.WM_E_ACT_ELM_CRIT')
+# Shortcut_to_WM_E_ACT_ELM_CRIT2 = UPD_DEL.selectExpr( \
+# 	"CAST(LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
+# 	"CAST(ACT_ID3 AS BIGINT) as WM_ACT_ID", \
+# 	"CAST(ELM_ID3 AS BIGINT) as WM_ELM_ID", \
+# 	"CAST(CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
+# 	"CAST(CRIT_VAL_ID3 AS BIGINT) as WM_CRIT_VAL_ID", \
+# 	"CAST(NULL AS BIGINT) as TIME_ALLOW", \
+# 	"CAST(NULL AS STRING) as MISC_TXT_1", \
+# 	"CAST(NULL AS STRING) as MISC_TXT_2", \
+# 	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
+# 	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
+# 	"CAST(NULL AS STRING) as WM_USER_ID", \
+# 	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
+# 	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
+# 	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
+# 	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
+# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
+# 	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
+# )
+# Shortcut_to_WM_E_ACT_ELM_CRIT2.write.saveAsTable(f'{raw}.WM_E_ACT_ELM_CRIT')
 
 # COMMAND ----------
 # Processing node UPD_INS_UPD, type UPDATE_STRATEGY 
@@ -461,7 +415,7 @@ UPD_INS_UPD = RTR_INS_UP_DEL_INS_UPD_temp.selectExpr( \
 	"RTR_INS_UP_DEL_INS_UPD___LOAD_TSTMP1 as LOAD_TSTMP1", \
 	"RTR_INS_UP_DEL_INS_UPD___UPDATE_TSTMP1 as UPDATE_TSTMP1", \
 	"RTR_INS_UP_DEL_INS_UPD___LOAD_FLAG1 as LOAD_FLAG1") \
-	.withColumn('pyspark_data_action', when(RTR_INS_UP_DEL_INS_UPD.LOAD_FLAG1 ==(lit('INSERT')), lit(0)).when(RTR_INS_UP_DEL_INS_UPD.LOAD_FLAG1 ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('LOAD_FLAG1') ==(lit('INSERT')), lit(0)).when(col('LOAD_FLAG1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_ACT_ELM_CRIT1, type TARGET 
@@ -497,4 +451,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_E_ACT_ELM_CRIT", "WM_E_ACT_ELM_CRIT","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

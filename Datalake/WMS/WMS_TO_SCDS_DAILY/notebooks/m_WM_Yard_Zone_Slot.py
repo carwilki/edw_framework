@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -540,7 +540,7 @@ Shortcut_to_WM_YARD_ZONE_SLOT1 = UPD_INS_UPD.selectExpr(
 
 # TODO check the key done manual
 try:
-  primary_key = """source.LOCATION_ID1 = target.LOCATION_ID AND source.YARD_ID1 = target.WM_YARD_ID"""
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID"""
   # refined_perf_table = "WM_WAVE_PARM"
   executeMerge(Shortcut_to_WM_YARD_ZONE_SLOT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
@@ -548,3 +548,4 @@ try:
 except Exception as e:
   logPrevRunDt("WM_WAVE_PARM", "WM_WAVE_PARM","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+

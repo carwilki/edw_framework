@@ -20,7 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -35,9 +35,10 @@ raw_perf_table = f"{raw}.WM_E_CRIT_VAL_PRE"
 refined_perf_table = f"{refine}.WM_E_CRIT_VAL"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-#refined_perf_table = "WM_E_CRIT_VAL"
+refined_perf_table = "WM_E_CRIT_VAL"
 Prev_Run_Dt=genPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
 Del_Logic= ' -- '  #args.Del_Logic
+# Prev_Run_Dt =    '2023-07-18' #g    enPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_WM_E_CRIT_VAL_PRE, type SOURCE 
@@ -405,4 +406,3 @@ except Exception as e:
 # 	"CAST(UPDATE_TSTMP1 AS TIMESTAMP) as UPDATE_TSTMP", \
 # 	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
 # )
-# Shortcut_to_WM_E_CRIT_VAL11.write.saveAsTable(f'{raw}.WM_E_CRIT_VAL')

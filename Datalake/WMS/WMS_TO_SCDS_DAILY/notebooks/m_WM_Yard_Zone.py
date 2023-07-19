@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-#args = parser.parse_args()
-#env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -31,8 +31,8 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
-refined_perf_table = f"{refine}.WM_SHIPMENT_STATUS"
-raw_perf_table = f"{raw}.WM_SHIPMENT_STATUS_PRE"
+refined_perf_table = f"{refine}.WM_YARD_ZONE"
+raw_perf_table = f"{raw}.WM_YARD_ZONE_PRE"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 
@@ -216,7 +216,7 @@ FIL_UNCHANGED_RECORDS = JNR_WM_YARD_ZONE_temp.selectExpr(
 	"JNR_WM_YARD_ZONE___i_WM_LAST_UPDATED_SOURCE as i_WM_LAST_UPDATED_SOURCE", 
 	"JNR_WM_YARD_ZONE___i_WM_LAST_UPDATED_TSTMP as i_WM_LAST_UPDATED_TSTMP", 
 	"JNR_WM_YARD_ZONE___i_DELETE_FLAG as i_DELETE_FLAG", 
-	"JNR_WM_YARD_ZONE___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("YARD_ZONE_ID IS NULL OR i_WM_YARD_ZONE_ID IS NULL OR (NOT i_WM_YARD_ZONE_ID IS NULL AND (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR (COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01'))))")).withColumn("sys_row_id", monotonically_increasing_id())
+	"JNR_WM_YARD_ZONE___i_LOAD_TSTMP as i_LOAD_TSTMP").filter(expr("YARD_ZONE_ID IS NULL OR i_WM_YARD_ZONE_ID IS NULL OR (NOT i_WM_YARD_ZONE_ID IS NULL AND (COALESCE(CREATED_DTTM, date'1900-01-01') != COALESCE(i_WM_CREATED_TSTMP, date'1900-01-01')) OR (COALESCE(LAST_UPDATED_DTTM, date'1900-01-01') != COALESCE(i_WM_LAST_UPDATED_TSTMP, date'1900-01-01')))")).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node EXP_UPDATE_VALIDATOR, type EXPRESSION 
@@ -366,7 +366,7 @@ UPD_INS_UPD = RTR_INS_UPD_DEL_INSERT_UPDATE_temp.selectExpr(
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___UPDATE_TSTMP1 as UPDATE_TSTMP1", 
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___LOAD_TSTMP1 as LOAD_TSTMP1", 
 	"RTR_INS_UPD_DEL_INSERT_UPDATE___o_UPDATE_VALIDATOR1 as o_UPDATE_VALIDATOR1"
-).withColumn('pyspark_data_action', when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('INSERT')),lit(0)).when(RTR_INS_UPD_DEL_INSERT_UPDATE.o_UPDATE_VALIDATOR1 ==(lit('UPDATE')),lit(1)))
+).withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')),lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')),lit(1)))
 
 # COMMAND ----------
 # Processing node UPD_DELETE, type UPDATE_STRATEGY 

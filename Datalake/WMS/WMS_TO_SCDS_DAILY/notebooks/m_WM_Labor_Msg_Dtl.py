@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-env = 'dev'
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -904,4 +904,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_LABOR_MSG_DTL", "WM_LABOR_MSG_DTL","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	
