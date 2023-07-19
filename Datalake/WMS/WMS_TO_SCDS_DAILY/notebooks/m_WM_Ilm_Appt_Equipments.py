@@ -21,7 +21,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -37,7 +37,7 @@ refined_perf_table = f"{refine}.WM_ILM_APPT_EQUIPMENTS"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 Prev_Run_Dt=genPrevRunDt(refined_perf_table.split('.')[1], refine,raw)
-Del_logic= ' -- ' #args.Del_logic
+Del_Logic =  ' -- ' #args.Del_logic
 soft_delete_logic_WM_Ilm_Appt_Equipments= '  ' #args.soft_delete_logic_WM_Ilm_Appt_Equipments
 
 # COMMAND ----------
@@ -266,7 +266,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPD_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPD_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_APPT_EQUIPMENTS, type TARGET 

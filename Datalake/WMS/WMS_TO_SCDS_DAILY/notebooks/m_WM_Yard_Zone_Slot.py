@@ -20,7 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-# env = 'dev'
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -540,12 +540,12 @@ Shortcut_to_WM_YARD_ZONE_SLOT1 = UPD_INS_UPD.selectExpr(
 
 # TODO check the key done manual
 try:
-  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID"""
-  # refined_perf_table = "WM_WAVE_PARM"
+  primary_key = """source.LOCATION_ID = target.LOCATION_ID AND source.WM_YARD_ID = target.WM_YARD_ID AND source.WM_YARD_ZONE_ID = target.WM_YARD_ZONE_ID AND source.WM_YARD_ZONE_SLOT_ID = target.WM_YARD_ZONE_SLOT_ID"""
+  # refined_perf_table = "WM_YARD_ZONE_SLOT"
   executeMerge(Shortcut_to_WM_YARD_ZONE_SLOT1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
-  logPrevRunDt("WM_WAVE_PARM", "WM_WAVE_PARM", "Completed", "N/A", f"{raw}.log_run_details")
+  logPrevRunDt("WM_YARD_ZONE_SLOT", "WM_YARD_ZONE_SLOT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-  logPrevRunDt("WM_WAVE_PARM", "WM_WAVE_PARM","Failed",str(e), f"{raw}.log_run_details", )
+  logPrevRunDt("WM_YARD_ZONE_SLOT", "WM_YARD_ZONE_SLOT","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 
