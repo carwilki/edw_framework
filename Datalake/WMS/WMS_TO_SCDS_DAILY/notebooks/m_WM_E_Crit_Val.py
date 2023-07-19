@@ -35,7 +35,6 @@ raw_perf_table = f"{raw}.WM_E_CRIT_VAL_PRE"
 refined_perf_table = f"{refine}.WM_E_CRIT_VAL"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
-refined_perf_table = "WM_E_CRIT_VAL"
 Prev_Run_Dt=genPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
 Del_Logic= ' -- '  #args.Del_Logic
 # Prev_Run_Dt =    '2023-07-18' #g    enPrevRunDt(refined_perf_table.split(".")[1], refine,raw)
