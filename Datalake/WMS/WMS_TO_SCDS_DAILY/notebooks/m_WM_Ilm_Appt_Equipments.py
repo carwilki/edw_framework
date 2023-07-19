@@ -56,7 +56,7 @@ WM_EQUIPMENT_TYPE,
 DELETE_FLAG,
 LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE {Del_Logic} 1=0 and 
+WHERE {Del_logic} 1=0 and 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id()).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -266,7 +266,7 @@ UPD_INS_UPD = EXP_UPD_VALIDATOR_temp.selectExpr( \
 	"EXP_UPD_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP1", \
 	"EXP_UPD_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP1", \
 	"EXP_UPD_VALIDATOR___o_UPD_VALIDATOR as o_UPD_VALIDATOR1") \
-	.withColumn('pyspark_data_action', when(col('o_UPDATE_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPDATE_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
+	.withColumn('pyspark_data_action', when(col('o_UPD_VALIDATOR1') ==(lit('INSERT')), lit(0)).when(col('o_UPD_VALIDATOR1') ==(lit('UPDATE')), lit(1)))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_ILM_APPT_EQUIPMENTS, type TARGET 
