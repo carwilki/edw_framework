@@ -421,4 +421,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_SIZE_UOM", "WM_SIZE_UOM","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

@@ -516,4 +516,5 @@ try:
 except Exception as e:
   logPrevRunDt("WM_USER_PROFILE", "WM_USER_PROFILE","Failed",str(e), f"{raw}.log_run_details", )
   raise e
+
 	

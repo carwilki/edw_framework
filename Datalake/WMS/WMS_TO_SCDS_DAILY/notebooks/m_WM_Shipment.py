@@ -3220,3 +3220,4 @@ except Exception as e:
   logPrevRunDt("WM_SHIPMENT_STATUS", "WM_SHIPMENT_STATUS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 
+

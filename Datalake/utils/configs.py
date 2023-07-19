@@ -165,6 +165,36 @@ def dc41(env):
         return (username, password, connection_string)
 
 
+def mtx_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = (
+            "jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+    return (username, password, connection_string)
+
+
+"""     elif env.lower() == "prod":
+        # username, password, hostname
+        username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        connection_string = f"jdbc:sqlserver://"+ hostname + ":" + portnumber +";databaseName=" + db+";encrypt=true;trustServerCertificate=true;" """
+
+
 def getConfig(DC_NBR, env):
     logger.info("getConfig function is getting executed")
     select = {
@@ -223,7 +253,7 @@ def getMaxDate(refine_table_name, schema):
     logger.info(f"Row_count for {refine_table_name} table is {row_cnt}")
     if columns == "" or row_cnt == 0:
         logger.info("Setting maxDate as currentDate!")
-        maxDate = dt.datetime.now()
+        maxDate = dt.datetime.today() - dt.timedelta(days=1)
 
     else:
         if len(columnsList) > 4 or len(columnsList) == 0:
