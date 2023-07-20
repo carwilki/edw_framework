@@ -21,7 +21,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -37,7 +37,7 @@ refined_perf_table = f"{refine}.WM_ILM_APPT_EQUIPMENTS"
 site_profile_table = f"{legacy}.SITE_PROFILE"
 
 Prev_Run_Dt=genPrevRunDt(refined_perf_table.split('.')[1], refine,raw)
-Del_logic= ' -- ' #args.Del_logic
+Del_Logic =  ' -- ' #args.Del_logic
 soft_delete_logic_WM_Ilm_Appt_Equipments= '  ' #args.soft_delete_logic_WM_Ilm_Appt_Equipments
 
 # COMMAND ----------
@@ -56,7 +56,7 @@ WM_EQUIPMENT_TYPE,
 DELETE_FLAG,
 LOAD_TSTMP
 FROM {refined_perf_table}
-WHERE {Del_logic} 1=0 and 
+WHERE {Del_Logic} 1=0 and 
 DELETE_FLAG = 0""").withColumn("sys_row_id", monotonically_increasing_id()).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -296,4 +296,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_ILM_APPT_EQUIPMENTS", "WM_ILM_APPT_EQUIPMENTS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	

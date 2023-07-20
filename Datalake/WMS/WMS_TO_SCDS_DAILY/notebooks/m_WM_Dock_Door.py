@@ -20,7 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-#env = 'dev'
+# env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -263,8 +263,8 @@ FIL_NO_CHANGE_REC = JNR_WM_DOCK_DOOR_temp.selectExpr( \
 FIL_NO_CHANGE_REC_temp = FIL_NO_CHANGE_REC.toDF(*["FIL_NO_CHANGE_REC___" + col for col in FIL_NO_CHANGE_REC.columns])
 
 EXP_EVAL_VALUES = FIL_NO_CHANGE_REC_temp.selectExpr( \
-	"FIL_NO_CHANGE_REC___New_LOCATION_ID as LOCATION_ID", \
 	"FIL_NO_CHANGE_REC___sys_row_id as sys_row_id", \
+	"FIL_NO_CHANGE_REC___New_LOCATION_ID as LOCATION_ID", \
 	"FIL_NO_CHANGE_REC___DOCK_DOOR_ID as DOCK_DOOR_ID", \
 	"FIL_NO_CHANGE_REC___FACILITY_ID as FACILITY_ID", \
 	"FIL_NO_CHANGE_REC___DOCK_ID as DOCK_ID", \
