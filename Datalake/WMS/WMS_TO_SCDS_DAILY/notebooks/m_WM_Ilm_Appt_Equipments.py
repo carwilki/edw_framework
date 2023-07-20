@@ -296,4 +296,3 @@ try:
 except Exception as e:
   logPrevRunDt("WM_ILM_APPT_EQUIPMENTS", "WM_ILM_APPT_EQUIPMENTS","Failed",str(e), f"{raw}.log_run_details", )
   raise e
-	
