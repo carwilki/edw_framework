@@ -18,6 +18,6 @@
 -- MAGIC null, false, null, True, "delta",
 -- MAGIC "legacy", "public", "sku_profile_rpt", "full", "LOAD_DT", 
 -- MAGIC "PRODUCT_ID", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
--- MAGIC null, array("pkulkarni@petsmart.com"), 1, null, False,
+-- MAGIC null, array("pkulkarni@petsmart.com", "DL_BIG_DATA_OPERATIONS@PetSmart.com"), 1, null, False,
 -- MAGIC null, null ,"ALL_MUST_BE_MET" ,null ,null , null, null
 -- MAGIC );

@@ -18,6 +18,6 @@
 -- MAGIC null, false, null, false, "delta",
 -- MAGIC "legacy", "public", "timezone_conversion", "full", null, 
 -- MAGIC null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
--- MAGIC null, array("pkulkarni@petsmart.com"), 1, null, false,
+-- MAGIC null, array("pkulkarni@petsmart.com", "DL_BIG_DATA_OPERATIONS@PetSmart.com"), 1, null, false,
 -- MAGIC null, null ,"ALL_MUST_BE_MET" ,null ,null , null, null
 -- MAGIC );
