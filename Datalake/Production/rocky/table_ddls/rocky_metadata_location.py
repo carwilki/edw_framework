@@ -13,6 +13,6 @@
 # MAGIC  null, false, null, false, "delta",
 # MAGIC  "legacy", "public", "location", "full", null, 
 # MAGIC  'LOCATION_ID', null, "one-time", null, array('DUMMY_TIDAL_JOB'),
-# MAGIC  null, array("abelsare@petsmart.com"), 1, null, false,
+# MAGIC  null, array("abelsare@petsmart.com","DL_BIG_DATA_OPERATIONS@PetSmart.com"), 1, null, false,
 # MAGIC  null, null ,'ANY_ONE_IS_MET' ,null ,null , null , null
 # MAGIC  );
