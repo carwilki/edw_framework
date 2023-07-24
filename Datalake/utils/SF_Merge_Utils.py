@@ -2,11 +2,14 @@ class SnowflakeWriter:
     def __init__(
         self, env, database, schema, table, primary_keys=None, update_excl_columns=[]
     ):
-        import Datalake.utils.secrets as secrets
+        from pyspark.sql import SparkSession
         from Datalake.utils.genericUtilities import getSFEnvSuffix
 
+        spark: SparkSession = SparkSession.getActiveSession()
         print("initiating SF Writer class")
+        from pyspark.dbutils import DBUtils
 
+        dbutils = DBUtils(spark)
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
         self.table = table
         self.primary_keys = primary_keys
@@ -15,8 +18,8 @@ class SnowflakeWriter:
         envSuffix = getSFEnvSuffix(self.env)
         self.sfOptions = {
             "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
-            "sfUser": secrets.get("databricks_service_account", "username"),
-            "sfPassword": secrets.get("databricks_service_account", "password"),
+            "sfUser": dbutils.secrets.get("databricks_service_account", "username"),
+            "sfPassword": dbutils.secrets.get("databricks_service_account", "password"),
             "sfDatabase": database,
             "sfSchema": schema,
             "sfWarehouse": "IT_WH",
@@ -66,7 +69,7 @@ class SnowflakeWriter:
     def create_upsert_query(self, cols):
         if self.primary_keys is None and not self.primary_keys:
             raise Exception(
-                "primary_keys cannot be null for write_mode = merge, create SnowflakeWriter with primary_keys"
+                f"primary_keys cannot be null for write_mode = merge, create SnowflakeWriter with primary_keys"
             )
         return f"""merge into {self.table} as base using TEMP_{self.table} as pre on 
       {self.get_clause(self.primary_keys, "merge_key")}
