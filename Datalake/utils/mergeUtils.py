@@ -73,6 +73,8 @@ def executeMerge(sourceDataFrame, targetTable, primaryKeyString):
 
 
 def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
+    import datetime as dt
+    
     print("Merge_To_SF function")
     from Datalake.utils.genericUtilities import getSfCredentials
     from logging import getLogger
@@ -84,10 +86,60 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
+    
+    # conditionColList=json.loads(conditionCols)
+    
+    # if len(conditionColList)==1 and conditionColList[0]=="None":
+    #     refineDF=spark.sql(f"""show columns in `{schemaForDeltaTable}`.`{deltaTable}`""")
+    #     refineColList=[row.col_name.upper() for row in refineDF.collect()]
+    #     if "LOAD_TSTMP" in refineColList:
+    #         dateValue = dt.datetime.today() - dt.timedelta(days=2)
+    #         mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where to_date(LOAD_TSTMP ,'yyyy-MM-dd') > current_date() -2 """)
+    #     else:
+    #         mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` """)
 
+    # else:            
+    #     mergeDatasetSql = (
+    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
+    
     mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
-    )
+        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
+
+    print(mergeDatasetSql)
+
+    df_table = spark.sql(mergeDatasetSql)
+
+    row_count = df_table.count()
+    SFTable = f"{deltaTable}"
+
+    if row_count == 0:
+        logger.info("No new records to insert or update into Snowflake")
+    else:
+        SnowflakeWriter(
+            env,
+            sfOptions["sfDatabase"],
+            sfOptions["sfSchema"],
+            SFTable,
+            json.loads(primaryKeys),
+        ).push_data(df_table, write_mode="merge")
+
+
+def IngestFromSFHistoricalData(env, deltaTable):
+    print("Ingest_historical_data_from_Snowflake")
+    from Datalake.utils.genericUtilities import getSfCredentials
+    from logging import getLogger
+    import json
+    from Datalake.utils.genericUtilities import getEnvPrefix
+    from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
+
+    logger = getLogger()
+    sfOptions = getSfCredentials(env)
+
+    schemaForDeltaTable = getEnvPrefix(env) + "refine"
+
+    ingestDatasetSql = f"""insert overwrite table `{schemaForDeltaTable}`.`{deltaTable}` select * from `{sfOptions.sfDatabase}`.`{deltaTable}`"""
     print(mergeDatasetSql)
 
     df_table = spark.sql(mergeDatasetSql)
