@@ -29,5 +29,4 @@ False, "rjalan", current_timestamp(), current_timestamp()
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC update pii_metadata.pii_metadata_store set database_name= "cust_sensitive", table_name= "refine_tp_customer", updated_ts= current_timestamp(), update_user = "rjalan" where table_name = 'tp_customer'
+UPDATE pii_metadata.pii_metadata_store SET database_name= "cust_sensitive", table_name= "refine_tp_customer", updated_ts= current_timestamp(), update_user = "rjalan" WHERE table_name = 'tp_customer'
