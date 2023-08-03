@@ -15,3 +15,19 @@ null, true, "customer", false, "delta",
 null, array("rjalan@petsmart.com", "DL_BIG_DATA_OPERATIONS@PetSmart.com"), 1, null, false,
 null, null ,"ALL_MUST_BE_MET" ,null ,null , null, null
 );
+
+-- COMMAND ----------
+
+INSERT INTO work.pii_dynamic_view_control (
+secured_database, secured_table_name, view_database, view_name,
+view_created_flg, load_user_name, load_dt_tm, update_dt_tm
+)
+VALUES (
+"cust_sensitive", "refine_tp_customer", "refine", "tp_customer",
+False, "rjalan", current_timestamp(), current_timestamp()
+);
+
+-- COMMAND ----------
+
+-- MAGIC %sql
+-- MAGIC update pii_metadata.pii_metadata_store set database_name= "cust_sensitive", table_name= "refine_tp_customer", updated_ts= current_timestamp(), update_user = "rjalan" where table_name = 'tp_customer'
