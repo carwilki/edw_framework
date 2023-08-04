@@ -15,12 +15,12 @@ null,--table_group_desc
 "SRC_SERVICES_RESERVATION",--source_table 
 null,--table_desc 
 true,--is_pii 
-"cust_sensitive",--pii_type 
+"customer",--pii_type 
 false,--has_hard_deletes 
 "delta",--target_sink
-"cust_sensitive",--target_db 
+"legacy",--target_db 
 null,--target_schema 
-"legacy_SRC_SERVICES_RESERVATION",--target_table_name 
+"SRC_SERVICES_RESERVATION",--target_table_name 
 "full",--load_type
 null, --source_delta_column
 null, --primary_key 
