@@ -1,0 +1,160 @@
+{
+    "run_as": {
+        "user_name": "sselvarajan@petsmart.com"
+    },
+    "name": "PETSHOTEL_ACCURAL",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 100,
+    "tasks": [
+        {
+            "task_key": "m_petshotel_exchange_rate_pre",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/TouchPoint/PETSHOTEL_ACCRUAL/notebooks/m_petshotel_exchange_rate_pre.py",
+                "parameters": [
+                    "prod"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "petshotel_accrual_cluster",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_petshotel_accrual_SQL",
+            "depends_on": [
+                {
+                    "task_key": "m_petshotel_exchange_rate_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/TouchPoint/PETSHOTEL_ACCRUAL/notebooks/m_petshotel_accrual_SQL.py",
+                "parameters": [
+                    "prod"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "petshotel_accrual_cluster",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_petshotel_accural",
+            "depends_on": [
+                {
+                    "task_key": "m_petshotel_accrual_SQL"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_overWrite_append.py",
+                "parameters": [
+                    "prod",
+                    "PETSHOTEL_ACCRUAL",
+                    "overwrite"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "petshotel_accrual_cluster",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+    "job_clusters": [
+        {
+            "job_cluster_key": "petshotel_accrual_cluster",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-dbricksprd-rw-p-sa-datala@petm-prj-databricksprod-p-mzb3.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "Netezza-Migration"
+                },
+                "enable_elastic_disk": false,
+                "num_workers": 12
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "Netezza-Migration"
+    },
+    "format": "MULTI_TASK"
+}
