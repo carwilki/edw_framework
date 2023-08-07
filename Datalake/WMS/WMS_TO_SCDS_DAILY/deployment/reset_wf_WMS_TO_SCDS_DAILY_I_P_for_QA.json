@@ -1,6 +1,6 @@
 {
     "new_settings": {
-        "name": "QA_WMS_TO_SCDS_DAILY_A_I",
+        "name": "QA_WMS_TO_SCDS_DAILY_I_P",
         "email_notifications": {
             "no_alert_for_skipped_runs": false
         },
@@ -15,7 +15,7 @@
                     "parameters": [
                         "dc10",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -29,6 +29,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -50,7 +55,7 @@
                     "parameters": [
                         "dc10",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -64,6 +69,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -85,7 +95,7 @@
                     "parameters": [
                         "dc12",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -99,6 +109,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -120,7 +135,7 @@
                     "parameters": [
                         "dc12",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -134,6 +149,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -155,7 +175,7 @@
                     "parameters": [
                         "dc14",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -169,6 +189,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -190,7 +215,7 @@
                     "parameters": [
                         "dc14",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -204,6 +229,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -225,7 +255,7 @@
                     "parameters": [
                         "dc22",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -239,6 +269,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -260,7 +295,7 @@
                     "parameters": [
                         "dc22",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -274,6 +309,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -295,7 +335,7 @@
                     "parameters": [
                         "dc36",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -309,6 +349,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -327,7 +372,7 @@
                     "parameters": [
                         "dc36",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -341,6 +386,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -362,7 +412,7 @@
                     "parameters": [
                         "dc38",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -376,6 +426,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -397,7 +452,7 @@
                     "parameters": [
                         "dc38",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -411,6 +466,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -432,7 +492,7 @@
                     "parameters": [
                         "dc41",
                         "qa",
-                        "set_A_I_1"
+                        "set_I_P_1"
                     ],
                     "source": "GIT"
                 },
@@ -446,6 +506,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -467,7 +532,7 @@
                     "parameters": [
                         "dc41",
                         "qa",
-                        "set_A_I_2"
+                        "set_I_P_2"
                     ],
                     "source": "GIT"
                 },
@@ -481,6 +546,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -558,6 +628,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -637,6 +712,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -714,6 +794,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -793,6 +878,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -870,6 +960,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -949,6 +1044,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1026,6 +1126,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1105,6 +1210,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1182,6 +1292,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1261,6 +1376,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1338,6 +1458,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1417,6 +1542,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1494,6 +1624,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1573,6 +1708,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1650,6 +1790,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1729,6 +1874,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1806,6 +1956,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -1885,6 +2040,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -1962,6 +2122,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2041,6 +2206,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2118,6 +2288,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2197,6 +2372,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2274,6 +2454,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2353,6 +2538,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2430,6 +2620,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2509,6 +2704,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2586,6 +2786,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2665,6 +2870,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2742,6 +2952,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2821,6 +3036,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -2898,6 +3118,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -2977,6 +3202,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -3054,6 +3284,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
@@ -3133,6 +3368,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -3211,6 +3451,11 @@
                         "pypi": {
                             "package": "deepdiff"
                         }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
+                        }
                     }
                 ],
                 "max_retries": 3,
@@ -3288,6 +3533,11 @@
                     {
                         "pypi": {
                             "package": "deepdiff"
+                        }
+                    },
+                    {
+                        "pypi": {
+                            "package": "retry"
                         }
                     }
                 ],
