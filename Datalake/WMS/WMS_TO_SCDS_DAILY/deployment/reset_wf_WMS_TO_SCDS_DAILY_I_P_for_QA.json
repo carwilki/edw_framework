@@ -10,11 +10,12 @@
         "tasks": [
             {
                 "task_key": "DC_10_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc10",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -50,11 +51,12 @@
             },
             {
                 "task_key": "DC_10_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc10",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -90,11 +92,12 @@
             },
             {
                 "task_key": "DC_12_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc12",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -130,11 +133,12 @@
             },
             {
                 "task_key": "DC_12_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc12",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -158,7 +162,7 @@
                     }
                 ],
                 "max_retries": 3,
-                "min_retry_interval_millis": 30000,
+                "min_retry_interval_millis": 30,
                 "retry_on_timeout": false,
                 "timeout_seconds": 0,
                 "email_notifications": {},
@@ -170,11 +174,12 @@
             },
             {
                 "task_key": "DC_14_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc14",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -210,11 +215,12 @@
             },
             {
                 "task_key": "DC_14_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc14",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -250,11 +256,12 @@
             },
             {
                 "task_key": "DC_22_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc22",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -290,11 +297,12 @@
             },
             {
                 "task_key": "DC_22_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc22",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -330,11 +338,12 @@
             },
             {
                 "task_key": "DC_36_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc36",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -357,6 +366,9 @@
                         }
                     }
                 ],
+                "max_retries": 3,
+                "min_retry_interval_millis": 30000,
+                "retry_on_timeout": false,
                 "timeout_seconds": 0,
                 "email_notifications": {},
                 "notification_settings": {
@@ -367,11 +379,12 @@
             },
             {
                 "task_key": "DC_36_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc36",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -407,11 +420,12 @@
             },
             {
                 "task_key": "DC_38_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc38",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -447,11 +461,12 @@
             },
             {
                 "task_key": "DC_38_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc38",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -487,11 +502,12 @@
             },
             {
                 "task_key": "DC_41_PRE_set1",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc41",
-                        "qa",
+                        "prod",
                         "set_I_P_1"
                     ],
                     "source": "GIT"
@@ -527,11 +543,12 @@
             },
             {
                 "task_key": "DC_41_PRE_set2",
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
                     "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                     "parameters": [
                         "dc41",
-                        "qa",
+                        "prod",
                         "set_I_P_2"
                     ],
                     "source": "GIT"
@@ -566,7 +583,7 @@
                 }
             },
             {
-                "task_key": "s_WM_Asn",
+                "task_key": "s_WM_ILM_TASK_STATUS",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -611,10 +628,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Task_Status.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -649,7 +667,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Asn_Detail",
+                "task_key": "s_WM_Ilm_Yard_Activity",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -694,10 +712,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Yard_Activity.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -732,7 +751,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Asn_Detail_Status",
+                "task_key": "s_WM_Item_Cbo",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -777,10 +796,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail_Status.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Cbo.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -815,7 +835,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Asn_Status",
+                "task_key": "s_WM_Item_Facility_Mapping_Wms",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -860,10 +880,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Status.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Facility_Mapping_Wms.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -898,7 +919,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Business_Partner",
+                "task_key": "s_WM_Item_Facility_Slotting",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -943,10 +964,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Business_Partner.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Facility_Slotting.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -981,7 +1003,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_C_Leader_Audit",
+                "task_key": "s_WM_Item_Group_Wms",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1026,10 +1048,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_Leader_Audit.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Group_Wms.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1064,7 +1087,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_C_Tms_Plan",
+                "task_key": "s_WM_Item_Package_Cbo",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1109,10 +1132,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_TMS_Plan.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Package_Cbo.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1147,7 +1171,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Carrier_Code",
+                "task_key": "s_WM_Item_Wms",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1192,10 +1216,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Carrier_Code.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Item_Wms.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1230,7 +1255,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Commodity_Code",
+                "task_key": "s_WM_Labor_Activity",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1275,10 +1300,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Commodity_Code.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Activity.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1313,7 +1339,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Do_Status",
+                "task_key": "s_WM_Labor_Criteria",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1358,10 +1384,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Do_Status.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Criteria.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1396,7 +1423,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Dock_Door",
+                "task_key": "s_WM_Labor_Msg",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1441,10 +1468,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Dock_Door.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Msg.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1479,7 +1507,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Act",
+                "task_key": "s_WM_Labor_Msg_Crit",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1524,10 +1552,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Msg_Crit.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1562,7 +1591,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Act_Elm",
+                "task_key": "s_WM_Labor_Msg_Dtl",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1607,10 +1636,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Msg_Dtl.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1645,7 +1675,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Act_Elm_Crit",
+                "task_key": "s_WM_Labor_Msg_Dtl_Crit",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1690,10 +1720,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm_Crit.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Msg_Dtl_Crit.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1728,7 +1759,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Aud_Log",
+                "task_key": "s_WM_Labor_Tran_Dtl_Crit",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1773,10 +1804,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Aud_Log.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Labor_Tran_Dtl_Crit.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1811,7 +1843,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Crit_Val",
+                "task_key": "s_WM_Locn_Grp",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1856,10 +1888,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Crit_Val.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Locn_Grp.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1894,7 +1927,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Elm",
+                "task_key": "s_WM_Locn_Hdr",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -1939,10 +1972,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Locn_Hdr.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -1977,7 +2011,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Elm_Crit",
+                "task_key": "s_WM_Lpn",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2022,10 +2056,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm_Crit.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2060,7 +2095,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Emp_Dtl",
+                "task_key": "s_WM_Lpn_Audit_Results",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2105,10 +2140,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Dtl.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Audit_Results.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2143,7 +2179,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Emp_Stat_Code",
+                "task_key": "s_WM_Lpn_Detail",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2188,10 +2224,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Stat_Code.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Detail.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2226,7 +2263,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Evnt_Smry_Hdr",
+                "task_key": "s_WM_Lpn_Facility_Status",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2271,10 +2308,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Evnt_Smry_Hdr.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Facility_Status.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2309,7 +2347,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Job_Function",
+                "task_key": "s_WM_Lpn_Lock",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2354,10 +2392,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Job_Function.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Lock.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2392,7 +2431,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Labor_Type_Code",
+                "task_key": "s_WM_Lpn_Size_Type",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2437,10 +2476,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Labor_Type_Code.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Size_Type.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2475,7 +2515,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Msrmnt",
+                "task_key": "s_WM_Lpn_Status",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2520,10 +2560,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Status.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2558,7 +2599,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Msrmnt_Rule",
+                "task_key": "s_WM_Lpn_Type",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2603,10 +2644,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Lpn_Type.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2641,7 +2683,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Msrmnt_Rule_Calc",
+                "task_key": "s_WM_Order_Line_Item",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2686,10 +2728,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Calc.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Order_Line_Item.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2724,7 +2767,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Msrmnt_Rule_Condition",
+                "task_key": "s_WM_Order_Status",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2769,10 +2812,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Condition.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Order_Status.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2807,7 +2851,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_E_Shift",
+                "task_key": "s_WM_Orders",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2852,10 +2896,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Shift.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Orders.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2890,7 +2935,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Equipment",
+                "task_key": "s_WM_Outpt_Lpn_Detail",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -2935,10 +2980,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Outpt_Lpn_Detail.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -2973,7 +3019,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Equipment_Instance",
+                "task_key": "s_WM_Outpt_Order_Line_Item",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3018,10 +3064,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment_Instance.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Outpt_Order_Line_Item.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3056,7 +3103,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Facility",
+                "task_key": "s_WM_Output_Orders",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3101,10 +3148,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Facility.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Output_Orders.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3139,7 +3187,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Ilm_Appointment_Objects",
+                "task_key": "s_WM_Pick_Locn_Dtl",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3184,10 +3232,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Objects.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pick_Locn_Dtl.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3222,7 +3271,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Ilm_Appointment_Status",
+                "task_key": "s_WM_Pick_Locn_Dtl_Slotting",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3267,10 +3316,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Status.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pick_Locn_Dtl_Slotting.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3305,7 +3355,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Ilm_Appointment_Type",
+                "task_key": "s_WM_Pick_Locn_Hdr",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3350,10 +3400,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Type.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pick_Locn_Hdr.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3388,7 +3439,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Ilm_Appointments",
+                "task_key": "s_WM_Pick_Locn_Hdr_Slotting",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3433,10 +3484,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_Ilm_Appointments.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pick_Locn_Hdr_Slotting.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3471,7 +3523,7 @@
                 "description": ""
             },
             {
-                "task_key": "s_WM_Ilm_Appt_Equipments",
+                "task_key": "s_WM_Outpt_Lpn",
                 "depends_on": [
                     {
                         "task_key": "DC_22_PRE_set1"
@@ -3516,10 +3568,11 @@
                         "task_key": "DC_38_PRE_set1"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appt_Equipments.py",
+                    "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Outpt_Lpn.py",
                     "parameters": [
-                        "qa"
+                        "main"
                     ],
                     "source": "GIT"
                 },
@@ -3554,18 +3607,19 @@
                 "description": ""
             },
             {
-                "task_key": "SF_Asn",
+                "task_key": "SF_Order_Line_Item",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_Asn"
+                        "task_key": "s_WM_Order_Line_Item"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_ASN",
-                        "LOCATION_ID,WM_ASN_ID",
+                        "prod",
+                        "WM_ORDER_LINE_ITEM",
+                        "LOCATION_ID,WM_ORDER_ID,WM_LINE_ITEM_ID",
                         "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -3580,174 +3634,46 @@
                 }
             },
             {
-                "task_key": "SF_Asn_Detail",
+                "task_key": "SF_Order_Status",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_Asn_Detail"
+                        "task_key": "s_WM_Order_Status"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_ASN_DETAIL",
-                        "LOCATION_ID,WM_ASN_DETAIL_ID",
-                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_Asn_Status",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_Asn_Status"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_ASN_STATUS",
-                        "LOCATION_ID,WM_ASN_STATUS",
-                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_Business_Partner",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_Business_Partner"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_BUSINESS_PARTNER",
-                        "LOCATION_ID,WM_BUSINESS_PARTNER_ID,WM_TC_COMPANY_ID",
-                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_C_Leader_Audit",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_C_Leader_Audit"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_C_LEADER_AUDIT",
-                        "LOCATION_ID,WM_C_LEADER_AUDIT_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_C_TMS_Plan",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_C_Tms_Plan"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_C_TMS_PLAN",
-                        "LOCATION_ID,WM_C_TMS_PLAN_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_Commodity_Code",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_Commodity_Code"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_COMMODITY_CODE",
-                        "LOCATION_ID,WM_COMMODITY_CD_ID",
-                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_WM_Do_Status",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_Do_Status"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_DO_STATUS",
+                        "prod",
+                        "WM_ORDER_STATUS",
                         "LOCATION_ID,WM_ORDER_STATUS_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Orders",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Orders"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_ORDERS",
+                        "LOCATION_ID,WM_ORDER_ID",
                         "LOAD_TSTMP"
                     ],
                     "source": "GIT"
@@ -3762,18 +3688,19 @@
                 }
             },
             {
-                "task_key": "SF_Dock_Door",
+                "task_key": "SF_Output_Lpn",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_Dock_Door"
+                        "task_key": "s_WM_Outpt_Lpn"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_DOCK_DOOR",
-                        "LOCATION_ID,WM_DOCK_DOOR_ID",
+                        "prod",
+                        "WM_OUTPT_LPN",
+                        "LOCATION_ID,WM_OUTPT_LPN_ID",
                         "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -3788,200 +3715,19 @@
                 }
             },
             {
-                "task_key": "SF_E_Act",
+                "task_key": "SF_Output_Lpn_Detail",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Act"
+                        "task_key": "s_WM_Outpt_Lpn_Detail"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_ACT",
-                        "LOCATION_ID,WM_ACT_ID",
-                        "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Act_Elm",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Act_Elm"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_ACT_ELM",
-                        "LOCATION_ID,WM_ACT_ID,WM_ELM_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Act_Elm_Crit",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Act_Elm_Crit"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_ACT_ELM_CRIT",
-                        "LOCATION_ID,WM_ACT_ID,WM_ELM_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Aud_Log",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Aud_Log"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_AUD_LOG",
-                        "LOCATION_ID,WM_AUD_ID",
-                        "WM_CREATE_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Crit_Val",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Crit_Val"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_CRIT_VAL",
-                        "LOCATION_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Elm",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Elm"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_ELM",
-                        "LOCATION_ID,WM_ELM_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Emp_Dtl",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Emp_Dtl"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_EMP_DTL",
-                        "LOCATION_ID,WM_EMP_DTL_ID",
-                        "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_WM_E_Emp_Stat_Code",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Emp_Stat_Code"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_EMP_STAT_CODE",
-                        "LOCATION_ID,WM_EMP_STAT_ID",
+                        "prod",
+                        "WM_OUTPT_LPN_DETAIL",
+                        "LOCATION_ID,WM_OUTPT_LPN_DETAIL_ID",
                         "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -3996,44 +3742,19 @@
                 }
             },
             {
-                "task_key": "SF_E_Evnt_Smry_Hdr",
+                "task_key": "SF_Pick_locn_Dtl",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Evnt_Smry_Hdr"
+                        "task_key": "s_WM_Pick_Locn_Dtl"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_EVNT_SMRY_HDR",
-                        "LOCATION_ID,WM_ELS_TRAN_ID",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                    ],
-                    "source": "GIT"
-                },
-                "existing_cluster_id": "0612-210702-eqrpgtlc",
-                "timeout_seconds": 0,
-                "email_notifications": {},
-                "notification_settings": {
-                    "no_alert_for_skipped_runs": false,
-                    "no_alert_for_canceled_runs": false,
-                    "alert_on_last_attempt": false
-                }
-            },
-            {
-                "task_key": "SF_E_Job_Function",
-                "depends_on": [
-                    {
-                        "task_key": "s_WM_E_Job_Function"
-                    }
-                ],
-                "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                    "parameters": [
-                        "qa",
-                        "WM_E_JOB_FUNCTION",
-                        "LOCATION_ID,WM_JOB_FUNCTION_ID",
+                        "prod",
+                        "WM_PICK_LOCN_DTL",
+                        "LOCATION_ID,WM_PICK_LOCN_DTL_ID",
                         "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -4048,18 +3769,19 @@
                 }
             },
             {
-                "task_key": "SF_E_Labor_Type_Code",
+                "task_key": "SF_Pick_locn_Hdr",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Labor_Type_Code"
+                        "task_key": "s_WM_Pick_Locn_Hdr"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_LABOR_TYPE_CODE",
-                        "LOCATION_ID,WM_LABOR_TYPE_ID",
+                        "prod",
+                        "WM_PICK_LOCN_HDR",
+                        "LOCATION_ID,WM_PICK_LOCN_HDR_ID",
                         "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -4074,18 +3796,19 @@
                 }
             },
             {
-                "task_key": "SF_E_Msrmnt",
+                "task_key": "SF_Pick_Locn_Hdr_Slotting",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Msrmnt"
+                        "task_key": "s_WM_Pick_Locn_Hdr_Slotting"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_MSRMNT",
-                        "LOCATION_ID,WM_MSRMNT_ID",
+                        "prod",
+                        "WM_PICK_LOCN_HDR_SLOTTING",
+                        "LOCATION_ID,WM_PICK_LOCN_HDR_ID",
                         "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -4100,19 +3823,20 @@
                 }
             },
             {
-                "task_key": "SF_E_Msrmnt_Rule",
+                "task_key": "SF_Item_Cbo",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Msrmnt_Rule"
+                        "task_key": "s_WM_Item_Cbo"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_MSRMNT_RULE",
-                        "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                        "prod",
+                        "WM_ITEM_CBO",
+                        "LOCATION_ID,WM_ITEM_ID",
+                        "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP,WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4126,19 +3850,20 @@
                 }
             },
             {
-                "task_key": "SF_E_Msrmnt_Rule_Calc",
+                "task_key": "SF_Item_Facility_Mapping_Wms",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Msrmnt_Rule_Calc"
+                        "task_key": "s_WM_Item_Facility_Mapping_Wms"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_MSRMNT_RULE_CALC",
-                        "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,CALC_SEQ_NBR",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                        "prod",
+                        "WM_ITEM_FACILITY_MAPPING_WMS",
+                        "LOCATION_ID,WM_ITEM_FACILITY_MAPPING_ID",
+                        "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4152,19 +3877,20 @@
                 }
             },
             {
-                "task_key": "SF_E_Msrmnt_Rule_Condition",
+                "task_key": "SF_Item_Package_Cbo",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Msrmnt_Rule_Condition"
+                        "task_key": "s_WM_Item_Package_Cbo"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_MSRMNT_RULE_CONDITION",
-                        "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,RULE_SEQ_NBR",
-                        "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                        "prod",
+                        "WM_ITEM_PACKAGE_CBO",
+                        "LOCATION_ID,WM_ITEM_PACKAGE_ID",
+                        "LOAD_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4178,18 +3904,181 @@
                 }
             },
             {
-                "task_key": "SF_E_Shift",
+                "task_key": "SF_Item_WMS",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_E_Shift"
+                        "task_key": "s_WM_Item_Wms"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_E_SHIFT",
-                        "LOCATION_ID,WM_SHIFT_ID",
+                        "prod",
+                        "WM_ITEM_WMS",
+                        "LOCATION_ID,WM_ITEM_ID",
+                        "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Labor_Activity",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Labor_Activity"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LABOR_ACTIVITY",
+                        "LOCATION_ID,WM_LABOR_ACTIVITY_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Labor_Criteria",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Labor_Criteria"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LABOR_CRITERIA",
+                        "LOCATION_ID,WM_CRIT_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Labor_Msg",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Labor_Msg"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LABOR_MSG",
+                        "LOCATION_ID,WM_LABOR_MSG_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_DTTM"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Labor_Msg_Dtl",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Labor_Msg_Dtl"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LABOR_MSG_DTL",
+                        "LOCATION_ID,WM_LABOR_MSG_DTL_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Labor_Msg_Dtl_Crit",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Labor_Msg_Dtl_Crit"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LABOR_MSG_DTL_CRIT",
+                        "LOCATION_ID,WM_LABOR_MSG_DTL_CRIT_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Locn_Hdr",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Locn_Hdr"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LOCN_HDR",
+                        "LOCATION_ID,WM_LOCN_HDR_ID",
                         "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
                     ],
                     "source": "GIT"
@@ -4204,19 +4093,209 @@
                 }
             },
             {
-                "task_key": "SF_Facility",
+                "task_key": "SF_Lpn",
                 "depends_on": [
                     {
-                        "task_key": "s_WM_Facility"
+                        "task_key": "s_WM_Lpn"
                     }
                 ],
+                "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                    "python_file": "Datalake/utils/SF_ingest.py",
                     "parameters": [
-                        "qa",
-                        "WM_FACILITY_ID",
-                        "LOCATION_ID,WM_FACILITY_ID",
+                        "prod",
+                        "WM_LPN",
+                        "LOCATION_ID,WM_LPN_ID",
+                        "WM_CREATED_TSTMP,WM_EXT_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_lpn_Audit_Results",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Audit_Results"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_AUDIT_RESULTS",
+                        "LOCATION_ID,WM_LPN_AUDIT_RESULTS_ID",
                         "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Detail",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Detail"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_DETAIL",
+                        "LOCATION_ID,WM_LPN_ID,WM_LPN_DETAIL_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Facility_Status",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Facility_Status"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_FACILITY_STATUS",
+                        "LOCATION_ID,WM_LPN_FACILITY_STATUS,INBOUND_OUTBOUND_IND",
+                        "LOAD_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Lock",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Lock"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_LOCK",
+                        "LOCATION_ID,WM_LPN_LOCK_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Size_Type",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Size_Type"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_SIZE_TYPE",
+                        "LOCATION_ID,WM_LPN_SIZE_TYPE_ID",
+                        "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Status",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Status"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_STATUS",
+                        "LOCATION_ID,WM_LPN_STATUS",
+                        "LOAD_TSTMP"
+                    ],
+                    "source": "GIT"
+                },
+                "existing_cluster_id": "0612-210702-eqrpgtlc",
+                "timeout_seconds": 0,
+                "email_notifications": {},
+                "notification_settings": {
+                    "no_alert_for_skipped_runs": false,
+                    "no_alert_for_canceled_runs": false,
+                    "alert_on_last_attempt": false
+                }
+            },
+            {
+                "task_key": "SF_Lpn_Type",
+                "depends_on": [
+                    {
+                        "task_key": "s_WM_Lpn_Type"
+                    }
+                ],
+                "run_if": "ALL_SUCCESS",
+                "spark_python_task": {
+                    "python_file": "Datalake/utils/SF_ingest.py",
+                    "parameters": [
+                        "prod",
+                        "WM_LPN_TYPE",
+                        "LOCATION_ID,WM_LPN_TYPE",
+                        "LOAD_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4265,11 +4344,10 @@
         "git_source": {
             "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
             "git_provider": "gitHubEnterprise",
-            "git_branch": "dev"
+            "git_branch": "main"
         },
         "tags": {
-            "Department": "Netezza-Migration",
-            "QA": ""
+            "Department": "Netezza-Migration"
         },
         "format": "MULTI_TASK",
         "run_as": {

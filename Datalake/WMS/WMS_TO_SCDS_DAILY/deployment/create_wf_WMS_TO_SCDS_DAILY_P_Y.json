@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "cwilkins01@petsmart.com"
     },
-    "name": "QA_WMS_TO_SCDS_DAILY_I_P",
+    "name": "QA WMS_TO_SCDS_DAILY_P_Y",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
@@ -18,11 +18,11 @@
                 "parameters": [
                     "dc10",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -59,11 +59,11 @@
                 "parameters": [
                     "dc10",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -100,11 +100,11 @@
                 "parameters": [
                     "dc12",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -141,11 +141,11 @@
                 "parameters": [
                     "dc12",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -182,11 +182,11 @@
                 "parameters": [
                     "dc14",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -223,11 +223,11 @@
                 "parameters": [
                     "dc14",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -264,11 +264,11 @@
                 "parameters": [
                     "dc22",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -305,11 +305,11 @@
                 "parameters": [
                     "dc22",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -346,11 +346,11 @@
                 "parameters": [
                     "dc36",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -368,6 +368,9 @@
                     }
                 }
             ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 30000,
+            "retry_on_timeout": false,
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -384,11 +387,11 @@
                 "parameters": [
                     "dc36",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -425,11 +428,11 @@
                 "parameters": [
                     "dc38",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -466,11 +469,11 @@
                 "parameters": [
                     "dc38",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -507,11 +510,11 @@
                 "parameters": [
                     "dc41",
                     "qa",
-                    "set_I_P_1"
+                    "set_P_Y_1"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -548,11 +551,11 @@
                 "parameters": [
                     "dc41",
                     "qa",
-                    "set_I_P_2"
+                    "set_P_Y_2"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -582,7 +585,7 @@
             }
         },
         {
-            "task_key": "s_WM_Asn",
+            "task_key": "s_WM_Picking_Short_Item",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -629,13 +632,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Picking_Short_Item.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -666,7 +669,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Asn_Detail",
+            "task_key": "s_WM_Pix_Tran",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -713,13 +716,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pix_Tran.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -750,7 +753,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Asn_Detail_Status",
+            "task_key": "s_WM_Product_Class",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -797,13 +800,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail_Status.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Product_Class.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -834,7 +837,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Asn_Status",
+            "task_key": "s_WM_Purchase_Orders",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -881,13 +884,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Status.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -918,7 +921,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Business_Partner",
+            "task_key": "s_WM_Purchase_Orders_Line_Item",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -965,13 +968,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Business_Partner.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Line_Item.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1002,7 +1005,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_C_Leader_Audit",
+            "task_key": "s_WM_Purchase_Orders_Line_Status",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1049,13 +1052,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_Leader_Audit.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Line_Status.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1086,7 +1089,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_C_Tms_Plan",
+            "task_key": "s_WM_Purchase_Orders_Status",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1133,13 +1136,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_TMS_Plan.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Status.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1170,7 +1173,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Carrier_Code",
+            "task_key": "s_WM_Putaway_Lock",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1217,13 +1220,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Carrier_Code.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Putaway_Lock.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1254,7 +1257,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Commodity_Code",
+            "task_key": "s_WM_Rack_Type",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1301,13 +1304,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Commodity_Code.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Rack_Type.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1338,7 +1341,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Do_Status",
+            "task_key": "s_WM_Rack_Type_Level",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1385,13 +1388,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Do_Status.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Rack_Type_Level.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1422,7 +1425,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Dock_Door",
+            "task_key": "s_WM_Resv_Locn_Hdr",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1469,13 +1472,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Dock_Door.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Resv_Locn_Hdr.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1506,7 +1509,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Act",
+            "task_key": "s_WM_Sec_User",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1553,13 +1556,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Sec_User.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1590,7 +1593,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Act_Elm",
+            "task_key": "s_WM_Ship_Via",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1637,13 +1640,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ship_Via.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1674,7 +1677,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Act_Elm_Crit",
+            "task_key": "s_WM_Shipment",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1721,13 +1724,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm_Crit.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Shipment.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1758,7 +1761,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Aud_Log",
+            "task_key": "s_WM_Shipment_Status",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1805,13 +1808,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Aud_Log.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Shipment_Status.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1842,7 +1845,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Crit_Val",
+            "task_key": "s_WM_Size_Uom",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1889,13 +1892,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Crit_Val.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Size_Uom.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1926,7 +1929,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Elm",
+            "task_key": "s_WM_Slot_Item",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -1973,13 +1976,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Slot_Item.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2010,7 +2013,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Elm_Crit",
+            "task_key": "s_WM_Slot_Item_Score",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2057,13 +2060,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm_Crit.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Slot_Item_Score.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2094,7 +2097,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Emp_Dtl",
+            "task_key": "s_WM_Standard_UOM",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2141,13 +2144,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Dtl.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Standard_UOM.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2178,7 +2181,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Emp_Stat_Code",
+            "task_key": "s_WM_Stop",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2225,13 +2228,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Stat_Code.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Stop.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2262,7 +2265,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Evnt_Smry_Hdr",
+            "task_key": "s_WM_Stop_Status",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2309,13 +2312,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Evnt_Smry_Hdr.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Stop_Status.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2346,7 +2349,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Job_Function",
+            "task_key": "s_WM_Sys_Code",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2393,13 +2396,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Job_Function.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Sys_Code.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2430,7 +2433,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Labor_Type_Code",
+            "task_key": "s_WM_Task_Dtl",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2477,13 +2480,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Labor_Type_Code.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Task_Dtl.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2514,7 +2517,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Msrmnt",
+            "task_key": "s_WM_Task_Hdr",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2561,13 +2564,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Task_Hdr.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2598,7 +2601,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Msrmnt_Rule",
+            "task_key": "s_WM_Trailer_Contents",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2645,13 +2648,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Contents.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2682,7 +2685,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Msrmnt_Rule_Calc",
+            "task_key": "s_WM_Trailer_Ref",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2729,13 +2732,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Calc.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Ref.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2766,7 +2769,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Msrmnt_Rule_Condition",
+            "task_key": "s_WM_Trailer_Type",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2813,13 +2816,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Condition.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Type.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2850,7 +2853,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_E_Shift",
+            "task_key": "s_WM_Trailer_Visit",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2897,13 +2900,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Shift.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Visit.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2934,7 +2937,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Equipment",
+            "task_key": "s_WM_Trailer_Visit_Dtl",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -2981,13 +2984,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Visit_Dtl.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3018,7 +3021,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Equipment_Instance",
+            "task_key": "s_WM_UN_Number",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3065,13 +3068,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment_Instance.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_UN_Number.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3102,7 +3105,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Facility",
+            "task_key": "s_WM_User_Profile",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3149,13 +3152,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Facility.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_User_Profile.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3186,7 +3189,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Ilm_Appointment_Objects",
+            "task_key": "s_WM_Vend_Perf_Tran",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3233,13 +3236,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Objects.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Vend_Perf_Tran.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3270,7 +3273,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Ilm_Appointment_Status",
+            "task_key": "s_WM_Wave_Parm",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3317,13 +3320,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Status.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Wave_Parm.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3354,7 +3357,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Ilm_Appointment_Type",
+            "task_key": "s_WM_Yard",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3401,13 +3404,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Type.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3438,7 +3441,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Ilm_Appointments",
+            "task_key": "s_WM_Yard_Zone",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3485,13 +3488,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_Ilm_Appointments.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard_Zone.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3522,7 +3525,7 @@
             "description": ""
         },
         {
-            "task_key": "s_WM_Ilm_Appt_Equipments",
+            "task_key": "s_WM_Yard_Zone_Slot",
             "depends_on": [
                 {
                     "task_key": "DC_22_PRE_set1"
@@ -3569,13 +3572,13 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appt_Equipments.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard_Zone_Slot.py",
                 "parameters": [
-                    "qa"
+                    "dev"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3606,24 +3609,24 @@
             "description": ""
         },
         {
-            "task_key": "SF_Asn",
+            "task_key": "SF_Picking_Short_Item",
             "depends_on": [
                 {
-                    "task_key": "s_WM_Asn"
+                    "task_key": "s_WM_Picking_Short_Item"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_ASN",
-                    "LOCATION_ID,WM_ASN_ID",
+                    "WM_PICKING_SHORT_ITEM",
+                    "LOCATION_ID,WM_PICKING_SHORT_ITEM_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3633,24 +3636,24 @@
             }
         },
         {
-            "task_key": "SF_Asn_Detail",
+            "task_key": "SF_Purchase_Orders",
             "depends_on": [
                 {
-                    "task_key": "s_WM_Asn_Detail"
+                    "task_key": "s_WM_Purchase_Orders"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_ASN_DETAIL",
-                    "LOCATION_ID,WM_ASN_DETAIL_ID",
+                    "WM_PURCHASE_ORDERS",
+                    "LOCATION_ID,WM_PURCHASE_ORDERS_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3660,24 +3663,24 @@
             }
         },
         {
-            "task_key": "SF_Asn_Status",
+            "task_key": "SF_Product_Class",
             "depends_on": [
                 {
-                    "task_key": "s_WM_Asn_Status"
+                    "task_key": "s_WM_Product_Class"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_ASN_STATUS",
-                    "LOCATION_ID,WM_ASN_STATUS",
+                    "WM_PRODUCT_CLASS",
+                    "LOCATION_ID,WM_PRODUCT_CLASS_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3687,24 +3690,24 @@
             }
         },
         {
-            "task_key": "SF_Business_Partner",
+            "task_key": "SF_Purchase_Orders_Line_Item",
             "depends_on": [
                 {
-                    "task_key": "s_WM_Business_Partner"
+                    "task_key": "s_WM_Purchase_Orders_Line_Item"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_BUSINESS_PARTNER",
-                    "LOCATION_ID,WM_BUSINESS_PARTNER_ID,WM_TC_COMPANY_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "WM_PURCHASE_ORDERS_LINE_ITEM",
+                    "LOCATION_ID,PURCHASE_ORDERS_ID,WM_PURCHASE_ORDERS_LINE_ITEM_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP,WM_EXT_CREATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3714,105 +3717,24 @@
             }
         },
         {
-            "task_key": "SF_C_Leader_Audit",
+            "task_key": "SF_Purchase_Orders_Status",
             "depends_on": [
                 {
-                    "task_key": "s_WM_C_Leader_Audit"
+                    "task_key": "s_WM_Purchase_Orders_Status"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_C_LEADER_AUDIT",
-                    "LOCATION_ID,WM_C_LEADER_AUDIT_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_C_TMS_Plan",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_C_Tms_Plan"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_C_TMS_PLAN",
-                    "LOCATION_ID,WM_C_TMS_PLAN_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_Commodity_Code",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_Commodity_Code"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_COMMODITY_CODE",
-                    "LOCATION_ID,WM_COMMODITY_CD_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_WM_Do_Status",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_Do_Status"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_DO_STATUS",
-                    "LOCATION_ID,WM_ORDER_STATUS_ID",
+                    "WM_PURCHASE_ORDERS_STATUS",
+                    "WM_PURCHASE_ORDERS_STATUS",
                     "LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3822,24 +3744,24 @@
             }
         },
         {
-            "task_key": "SF_Dock_Door",
+            "task_key": "SF_Putaway_Lock",
             "depends_on": [
                 {
-                    "task_key": "s_WM_Dock_Door"
+                    "task_key": "s_WM_Putaway_Lock"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_DOCK_DOOR",
-                    "LOCATION_ID,WM_DOCK_DOOR_ID",
+                    "WM_PUTAWAY_LOCK",
+                    "LOCATION_ID,WM_LOCN_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3849,51 +3771,24 @@
             }
         },
         {
-            "task_key": "SF_E_Act",
+            "task_key": "SF_Rack_Type",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Act"
+                    "task_key": "s_WM_Rack_Type"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_ACT",
-                    "LOCATION_ID,WM_ACT_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Act_Elm",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Act_Elm"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_ACT_ELM",
-                    "LOCATION_ID,WM_ACT_ID,WM_ELM_ID",
+                    "WM_RACK_TYPE",
+                    "LOCATION_ID,WM_RACK_TYPE_ID",
                     "WM_CREATE_TSTMP,WM_MOD_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3903,24 +3798,24 @@
             }
         },
         {
-            "task_key": "SF_E_Act_Elm_Crit",
+            "task_key": "SF_Rack_Type_Level",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Act_Elm_Crit"
+                    "task_key": "s_WM_Rack_Type_Level"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_ACT_ELM_CRIT",
-                    "LOCATION_ID,WM_ACT_ID,WM_ELM_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
+                    "WM_RACK_TYPE_LEVEL",
+                    "LOCATION_ID,WM_RACK_LEVEL_ID",
                     "WM_CREATE_TSTMP,WM_MOD_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3930,51 +3825,24 @@
             }
         },
         {
-            "task_key": "SF_E_Aud_Log",
+            "task_key": "SF_Resv_Locn_Hdr",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Aud_Log"
+                    "task_key": "s_WM_Resv_Locn_Hdr"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_AUD_LOG",
-                    "LOCATION_ID,WM_AUD_ID",
-                    "WM_CREATE_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Crit_Val",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Crit_Val"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_CRIT_VAL",
-                    "LOCATION_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
+                    "WM_RESV_LOCN_HDR",
+                    "LOCATION_ID,WM_RESV_LOCN_HDR_ID",
                     "WM_CREATE_TSTMP,WM_MOD_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3984,78 +3852,24 @@
             }
         },
         {
-            "task_key": "SF_E_Elm",
+            "task_key": "SF_Ship_Via",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Elm"
+                    "task_key": "s_WM_Ship_Via"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_ELM",
-                    "LOCATION_ID,WM_ELM_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Emp_Dtl",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Emp_Dtl"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_EMP_DTL",
-                    "LOCATION_ID,WM_EMP_DTL_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_WM_E_Emp_Stat_Code",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Emp_Stat_Code"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_EMP_STAT_CODE",
-                    "LOCATION_ID,WM_EMP_STAT_ID",
+                    "WM_SHIP_VIA",
+                    "LOCATION_ID,WM_SHIP_VIA_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4065,105 +3879,24 @@
             }
         },
         {
-            "task_key": "SF_E_Evnt_Smry_Hdr",
+            "task_key": "SF_Shipment",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Evnt_Smry_Hdr"
+                    "task_key": "s_WM_Shipment"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_EVNT_SMRY_HDR",
-                    "LOCATION_ID,WM_ELS_TRAN_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Job_Function",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Job_Function"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_JOB_FUNCTION",
-                    "LOCATION_ID,WM_JOB_FUNCTION_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Labor_Type_Code",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Labor_Type_Code"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_LABOR_TYPE_CODE",
-                    "LOCATION_ID,WM_LABOR_TYPE_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Msrmnt",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Msrmnt"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_MSRMNT",
-                    "LOCATION_ID,WM_MSRMNT_ID",
+                    "WM_SHIPMENT",
+                    "LOCATION_ID,WM_SHIPMENT_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4173,24 +3906,24 @@
             }
         },
         {
-            "task_key": "SF_E_Msrmnt_Rule",
+            "task_key": "SF_Shipment_Status",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Msrmnt_Rule"
+                    "task_key": "s_WM_Shipment_Status"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_MSRMNT_RULE",
-                    "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "WM_SHIPMENT_STATUS",
+                    "LOCATION_ID,WM_SHIPMENT_STATUS",
+                    "LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4200,105 +3933,294 @@
             }
         },
         {
-            "task_key": "SF_E_Msrmnt_Rule_Calc",
+            "task_key": "SF_Size_Uom",
             "depends_on": [
                 {
-                    "task_key": "s_WM_E_Msrmnt_Rule_Calc"
+                    "task_key": "s_WM_Size_Uom"
                 }
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
-                    "WM_E_MSRMNT_RULE_CALC",
-                    "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,CALC_SEQ_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Msrmnt_Rule_Condition",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Msrmnt_Rule_Condition"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_MSRMNT_RULE_CONDITION",
-                    "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,RULE_SEQ_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_E_Shift",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_E_Shift"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_E_SHIFT",
-                    "LOCATION_ID,WM_SHIFT_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
-                ],
-                "source": "GIT"
-            },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "SF_Facility",
-            "depends_on": [
-                {
-                    "task_key": "s_WM_Facility"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
-                "parameters": [
-                    "qa",
-                    "WM_FACILITY_ID",
-                    "LOCATION_ID,WM_FACILITY_ID",
+                    "WM_SIZE_UOM",
+                    "LOCATION_ID,WM_SIZE_UOM_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Standard_Uom",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Standard_UOM"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_STANDARD_UOM",
+                    "LOCATION_ID,WM_STANDARD_UOM_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Stop",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Stop"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_STOP",
+                    "LOCATION_ID,WM_SHIPMENT_ID,WM_STOP_SEQ",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Stop_Status",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Stop_Status"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_STOP_STATUS",
+                    "LOCATION_ID,WM_STOP_STATUS",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Task_Dtl",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Task_Dtl"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_TASK_DTL",
+                    "LOCATION_ID,WM_TASK_DTL_ID",
+                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Task_Hdr",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Task_Hdr"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_TASK_HDR",
+                    "LOCATION_ID,WM_TASK_HDR_ID",
+                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Un_Number",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_UN_Number"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_UN_NUMBER",
+                    "LOCATION_ID,WM_UN_NBR_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_User_Profile",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_User_Profile"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_USER_PROFILE",
+                    "LOCATION_ID,WM_USER_PROFILE_ID",
+                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Yard",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Yard"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_YARD",
+                    "LOCATION_ID,WM_YARD_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Yard_Zone",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Yard_Zone"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_YARD_ZONE",
+                    "LOCATION_ID,WM_YARD_ID,WM_YARD_ZONE_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Yard_Zone_Slot",
+            "depends_on": [
+                {
+                    "task_key": "s_WM_Yard_Zone_Slot"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_ingest.py",
+                "parameters": [
+                    "qa",
+                    "WM_YARD_ZONE_SLOT",
+                    "LOCATION_ID,WM_YARD_ID",
+                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4346,8 +4268,7 @@
         "git_branch": "dev"
     },
     "tags": {
-        "Department": "Netezza-Migration",
-        "QA": ""
+        "Department": "Netezza-Migration"
     },
     "format": "MULTI_TASK"
 }

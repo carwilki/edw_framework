@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "cwilkins01@petsmart.com"
     },
-    "name": "QA_WMS_TO_SCDS_DAILY_A_I",
+    "name": "QA WMS_TO_SCDS_DAILY_A_I",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
@@ -22,7 +22,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -63,7 +63,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -104,7 +104,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -145,7 +145,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -186,7 +186,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -227,7 +227,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -268,7 +268,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -309,7 +309,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -350,7 +350,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -388,7 +388,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -429,7 +429,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -470,7 +470,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -511,7 +511,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -552,7 +552,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -635,7 +635,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -719,7 +719,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -803,7 +803,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -887,7 +887,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -971,7 +971,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1055,7 +1055,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1139,7 +1139,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1223,7 +1223,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1307,7 +1307,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1391,7 +1391,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1475,7 +1475,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1559,7 +1559,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1643,7 +1643,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1727,7 +1727,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1811,7 +1811,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1895,7 +1895,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -1979,7 +1979,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2063,7 +2063,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2147,7 +2147,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2231,7 +2231,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2315,7 +2315,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2399,7 +2399,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2483,7 +2483,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2567,7 +2567,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2651,7 +2651,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2735,7 +2735,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2819,7 +2819,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2903,7 +2903,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -2987,7 +2987,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3071,7 +3071,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3155,7 +3155,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3239,7 +3239,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3323,7 +3323,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3407,7 +3407,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3491,7 +3491,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3575,7 +3575,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "libraries": [
                 {
                     "maven": {
@@ -3614,7 +3614,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_ASN",
@@ -3623,7 +3623,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3641,7 +3641,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_ASN_DETAIL",
@@ -3650,7 +3650,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3668,7 +3668,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_ASN_STATUS",
@@ -3677,7 +3677,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3695,7 +3695,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_BUSINESS_PARTNER",
@@ -3704,7 +3704,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3722,7 +3722,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_C_LEADER_AUDIT",
@@ -3731,7 +3731,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3749,7 +3749,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_C_TMS_PLAN",
@@ -3758,7 +3758,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3776,7 +3776,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_COMMODITY_CODE",
@@ -3785,7 +3785,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3803,16 +3803,16 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_DO_STATUS",
                     "LOCATION_ID,WM_ORDER_STATUS_ID",
-                    "LOAD_TSTMP"
+                    ""
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3830,7 +3830,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_DOCK_DOOR",
@@ -3839,7 +3839,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3857,7 +3857,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT",
@@ -3866,7 +3866,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3884,7 +3884,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT_ELM",
@@ -3893,7 +3893,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3911,7 +3911,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT_ELM_CRIT",
@@ -3920,7 +3920,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3938,7 +3938,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_AUD_LOG",
@@ -3947,7 +3947,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3965,7 +3965,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_CRIT_VAL",
@@ -3974,7 +3974,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3992,7 +3992,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_ELM",
@@ -4001,7 +4001,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4019,7 +4019,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_EMP_DTL",
@@ -4028,7 +4028,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4046,7 +4046,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_EMP_STAT_CODE",
@@ -4055,7 +4055,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4073,7 +4073,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_EVNT_SMRY_HDR",
@@ -4082,7 +4082,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4100,7 +4100,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_JOB_FUNCTION",
@@ -4109,7 +4109,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4127,7 +4127,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_LABOR_TYPE_CODE",
@@ -4136,7 +4136,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4154,7 +4154,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT",
@@ -4163,7 +4163,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4181,7 +4181,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE",
@@ -4190,7 +4190,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4208,7 +4208,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE_CALC",
@@ -4217,7 +4217,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4235,7 +4235,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE_CONDITION",
@@ -4244,7 +4244,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4262,7 +4262,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_E_SHIFT",
@@ -4271,7 +4271,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4289,7 +4289,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_WMS_Daily.py",
+                "python_file": "Datalake/utils/SF_ingest.py",
                 "parameters": [
                     "qa",
                     "WM_FACILITY_ID",
@@ -4298,7 +4298,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wms_to_scds_daily_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4346,8 +4346,7 @@
         "git_branch": "dev"
     },
     "tags": {
-        "Department": "Netezza-Migration",
-        "QA": ""
+        "Department": "Netezza-Migration"
     },
     "format": "MULTI_TASK"
 }
