@@ -40,23 +40,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -81,23 +64,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -156,23 +122,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -197,23 +146,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -272,23 +204,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -313,23 +228,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -388,23 +286,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -429,23 +310,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -504,23 +368,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -545,23 +392,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -620,23 +450,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -661,23 +474,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -736,23 +532,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 30000,
             "retry_on_timeout": false,
@@ -777,23 +556,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -877,23 +639,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -995,23 +740,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -1079,23 +807,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -1197,23 +908,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -1281,23 +975,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -1399,23 +1076,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -1483,23 +1143,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -1601,23 +1244,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -1685,23 +1311,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -1803,23 +1412,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -1887,23 +1479,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -2005,23 +1580,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -2089,23 +1647,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -2207,23 +1748,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -2291,23 +1815,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -2409,23 +1916,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -2493,23 +1983,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -2611,23 +2084,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -2695,23 +2151,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -2813,23 +2252,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -2897,23 +2319,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -3015,23 +2420,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -3099,23 +2487,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -3217,23 +2588,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -3301,23 +2655,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -3419,23 +2756,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -3503,23 +2823,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -3621,23 +2924,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -3705,23 +2991,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -3823,23 +3092,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -3907,23 +3159,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -4025,23 +3260,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -4109,23 +3327,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
@@ -4227,23 +3428,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -4328,23 +3512,6 @@
                     }
                 }
             ],
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "max_retries": 3,
             "min_retry_interval_millis": 2000,
             "retry_on_timeout": false,
@@ -4412,23 +3579,6 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
-            "libraries": [
-                {
-                    "maven": {
-                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                }
-            ],
             "libraries": [
                 {
                     "maven": {
