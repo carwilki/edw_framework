@@ -4760,6 +4760,8 @@
                 "cluster_name": "",
                 "spark_version": "13.0.x-scala2.12",
                 "spark_conf": {
+                    "spark.driver.extraJavaOptions": "-Duser.timezone=America/Phoenix",
+                    "spark.executor.extraJavaOptions": "-Duser.timezone=America/Phoenix",
                     "spark.driver.maxResultSize": "64g",
                     "spark.databricks.delta.preview.enabled": "true",
                     "spark.sql.hive.metastore.jars": "maven",
