@@ -3614,7 +3614,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_ASN",
@@ -3624,6 +3624,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3641,7 +3658,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_ASN_DETAIL",
@@ -3651,6 +3668,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3668,7 +3702,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_ASN_STATUS",
@@ -3678,6 +3712,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3695,7 +3746,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_BUSINESS_PARTNER",
@@ -3705,6 +3756,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3722,7 +3790,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_C_LEADER_AUDIT",
@@ -3732,6 +3800,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3749,7 +3834,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_C_TMS_PLAN",
@@ -3759,6 +3844,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3776,7 +3878,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_COMMODITY_CODE",
@@ -3786,6 +3888,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3803,7 +3922,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_DO_STATUS",
@@ -3813,6 +3932,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3830,7 +3966,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_DOCK_DOOR",
@@ -3840,6 +3976,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3857,7 +4010,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT",
@@ -3867,6 +4020,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3884,7 +4054,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT_ELM",
@@ -3894,6 +4064,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3911,7 +4098,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_ACT_ELM_CRIT",
@@ -3921,6 +4108,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3938,7 +4142,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_AUD_LOG",
@@ -3948,6 +4152,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3965,7 +4186,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_CRIT_VAL",
@@ -3975,6 +4196,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -3992,7 +4230,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_ELM",
@@ -4002,6 +4240,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4019,7 +4274,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_EMP_DTL",
@@ -4029,6 +4284,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4046,7 +4318,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_EMP_STAT_CODE",
@@ -4056,6 +4328,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4073,7 +4362,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_EVNT_SMRY_HDR",
@@ -4083,6 +4372,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4100,7 +4406,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_JOB_FUNCTION",
@@ -4110,6 +4416,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4127,7 +4450,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_LABOR_TYPE_CODE",
@@ -4137,6 +4460,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4154,7 +4494,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT",
@@ -4164,6 +4504,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4181,7 +4538,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE",
@@ -4191,6 +4548,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4208,7 +4582,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE_CALC",
@@ -4218,6 +4592,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4235,7 +4626,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_MSRMNT_RULE_CONDITION",
@@ -4245,6 +4636,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4262,7 +4670,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_E_SHIFT",
@@ -4272,6 +4680,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -4289,7 +4714,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_FACILITY_ID",
@@ -4299,6 +4724,23 @@
                 "source": "GIT"
             },
             "job_cluster_key": "wms_to_scds_daily_cluster",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
