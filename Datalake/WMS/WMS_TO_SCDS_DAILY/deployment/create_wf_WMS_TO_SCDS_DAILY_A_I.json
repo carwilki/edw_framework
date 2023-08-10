@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "cwilkins01@petsmart.com"
     },
-    "name": "QA WMS_TO_SCDS_DAILY_A_I",
+    "name": "WMS_TO_SCDS_DAILY_A_I",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
