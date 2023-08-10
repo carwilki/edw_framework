@@ -4717,7 +4717,7 @@
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
-                    "WM_FACILITY_ID",
+                    "WM_FACILITY",
                     "LOCATION_ID,WM_FACILITY_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
                 ],
@@ -4757,13 +4757,13 @@
                 "cluster_name": "",
                 "spark_version": "13.0.x-scala2.12",
                 "spark_conf": {
-                    "spark.driver.extraJavaOptions": "-Duser.timezone=America/Phoenix",
                     "spark.executor.extraJavaOptions": "-Duser.timezone=America/Phoenix",
                     "spark.driver.maxResultSize": "64g",
                     "spark.databricks.delta.preview.enabled": "true",
                     "spark.sql.hive.metastore.jars": "maven",
                     "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
                     "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.driver.extraJavaOptions": "-Duser.timezone=America/Phoenix",
                     "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
                     "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
                     "spark.sql.hive.metastore.version": "3.1.0"
@@ -4780,7 +4780,7 @@
                     "Department": "Netezza-Migration"
                 },
                 "enable_elastic_disk": false,
-                "num_workers": 24
+                "num_workers": 8
             }
         }
     ],

@@ -3617,7 +3617,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_ingest.py",
+                "python_file": "Datalake/WMS/WMS_TO_SCDS_4HR/notebooks/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PICKING_SHORT_ITEM",
@@ -3661,7 +3661,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PURCHASE_ORDERS",
@@ -3705,7 +3705,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PRODUCT_CLASS",
@@ -3749,11 +3749,11 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PURCHASE_ORDERS_LINE_ITEM",
-                    "LOCATION_ID,PURCHASE_ORDERS_ID,WM_PURCHASE_ORDERS_LINE_ITEM_ID",
+                    "LOCATION_ID,WM_PURCHASE_ORDERS_ID,WM_PURCHASE_ORDERS_LINE_ITEM_ID",
                     "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP,WM_EXT_CREATED_TSTMP"
                 ],
                 "source": "GIT"
@@ -3793,7 +3793,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PURCHASE_ORDERS_STATUS",
@@ -3837,7 +3837,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_PUTAWAY_LOCK",
@@ -3881,7 +3881,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_RACK_TYPE",
@@ -3925,7 +3925,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_RACK_TYPE_LEVEL",
@@ -3969,7 +3969,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_RESV_LOCN_HDR",
@@ -4013,7 +4013,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_SHIP_VIA",
@@ -4057,7 +4057,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_SHIPMENT",
@@ -4101,7 +4101,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_SHIPMENT_STATUS",
@@ -4145,7 +4145,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_SIZE_UOM",
@@ -4189,7 +4189,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_STANDARD_UOM",
@@ -4233,7 +4233,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_STOP",
@@ -4277,7 +4277,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_STOP_STATUS",
@@ -4321,7 +4321,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_TASK_DTL",
@@ -4365,7 +4365,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_TASK_HDR",
@@ -4409,7 +4409,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_UN_NUMBER",
@@ -4453,7 +4453,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_USER_PROFILE",
@@ -4497,7 +4497,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_YARD",
@@ -4541,7 +4541,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_YARD_ZONE",
@@ -4585,7 +4585,7 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_ingest.py",
+                "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
                     "qa",
                     "WM_YARD_ZONE_SLOT",
@@ -4651,7 +4651,7 @@
                     "Department": "Netezza-Migration"
                 },
                 "enable_elastic_disk": false,
-                "num_workers": 24
+                "num_workers": 8
             }
         }
     ],

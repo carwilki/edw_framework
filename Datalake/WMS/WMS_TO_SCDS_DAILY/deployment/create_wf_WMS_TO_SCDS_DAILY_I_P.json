@@ -4783,7 +4783,7 @@
                     "Department": "Netezza-Migration"
                 },
                 "enable_elastic_disk": false,
-                "num_workers": 24
+                "num_workers": 8
             }
         }
     ],
