@@ -56,7 +56,7 @@ CUSTOMER_EID,
 CUSTOMER_SRC_ID,
 CUSTOMER_SRC_VALUE,
 ACTIVE_FLG
-FROM {enterprise}.CUSTOMER_XREF""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {legacy}.CUSTOMER_XREF""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -91,7 +91,7 @@ FIRST_NAME,
 LAST_NAME,
 LOYALTY_EMAIL,
 EMAIL_OPT_OUT_FLAG
-FROM {enterprise}.CUSTOMER_LOYALTY""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {legacy}.CUSTOMER_LOYALTY""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
