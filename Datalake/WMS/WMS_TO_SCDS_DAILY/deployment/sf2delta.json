@@ -1,0 +1,82 @@
+{
+    "run_as": {
+        "user_name": "sselvarajan@petsmart.com"
+    },
+    "name": "sf2delta",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "sf2delta",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/IngestSF2Delta.py",
+                "parameters": [
+                    "dev",
+                    "refine.WM_ASN,refine.WM_ASN_DETAIL,refine.WM_ASN_STATUS,refine.WM_BUSINESS_PARTNER,refine.WM_C_LEADER_AUDIT,refine.WM_C_TMS_PLAN,refine.WM_COMMODITY_CODE,refine.WM_DO_STATUS,refine.WM_DOCK_DOOR,refine.WM_E_ACT,refine.WM_E_ACT_ELM,refine.WM_E_ACT_ELM_CRIT,refine.WM_E_AUD_LOG,refine.WM_E_CRIT_VAL,refine.WM_E_ELM,refine.WM_E_EMP_DTL,refine.WM_E_EMP_STAT_CODE,refine.WM_E_EVNT_SMRY_HDR,refine.WM_E_JOB_FUNCTION,refine.WM_E_LABOR_TYPE_CODE,refine.WM_E_MSRMNT,refine.WM_E_MSRMNT_RULE,refine.WM_E_MSRMNT_RULE_CALC,refine.WM_E_MSRMNT_RULE_CONDITION,refine.WM_E_SHIFT,refine.WM_FACILITY,refine.WM_ITEM_CBO,refine.WM_ITEM_FACILITY_MAPPING_WMS,refine.WM_ITEM_PACKAGE_CBO,refine.WM_ITEM_WMS,refine.WM_LABOR_ACTIVITY,refine.WM_LABOR_CRITERIA,refine.WM_LABOR_MSG,refine.WM_LABOR_MSG_DTL,refine.WM_LABOR_MSG_DTL_CRIT,refine.WM_LOCN_HDR,refine.WM_LPN,refine.WM_LPN_AUDIT_RESULTS,refine.WM_LPN_DETAIL,refine.WM_LPN_FACILITY_STATUS,refine.WM_LPN_LOCK,refine.WM_LPN_SIZE_TYPE,refine.WM_LPN_STATUS,refine.WM_LPN_TYPE,refine.WM_ORDER_LINE_ITEM,refine.WM_ORDER_STATUS,refine.WM_ORDERS,refine.WM_OUTPT_LPN,refine.WM_OUTPT_LPN_DETAIL,refine.WM_PICK_LOCN_DTL,refine.WM_PICK_LOCN_HDR,refine.WM_PICK_LOCN_HDR_SLOTTING,refine.WM_PICKING_SHORT_ITEM,refine.WM_PRODUCT_CLASS,refine.WM_PURCHASE_ORDERS,refine.WM_PURCHASE_ORDERS_LINE_ITEM,refine.WM_PURCHASE_ORDERS_STATUS,refine.WM_PUTAWAY_LOCK,refine.WM_RACK_TYPE,refine.WM_RACK_TYPE_LEVEL,refine.WM_RESV_LOCN_HDR,refine.WM_SHIP_VIA,refine.WM_SHIPMENT,refine.WM_SHIPMENT_STATUS,refine.WM_SIZE_UOM,refine.WM_STANDARD_UOM,refine.WM_STOP,refine.WM_STOP_STATUS,refine.WM_TASK_DTL,refine.WM_TASK_HDR,refine.WM_UN_NUMBER,refine.WM_USER_PROFILE,refine.WM_YARD,refine.WM_YARD_ZONE,refine.WM_YARD_ZONE_SLOT"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "sf2delta_cluster",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+   "job_clusters": [
+        {
+            "job_cluster_key": "sf2delta_cluster",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-dbricksprd-rw-p-sa-datala@petm-prj-databricksprod-p-mzb3.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "Netezza-Migration"
+                },
+                "enable_elastic_disk": false,
+                "num_workers": 12
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "wms_scds_daily_deploy_stg"
+    },
+    "tags": {
+        "Department": "Netezza-Migration"
+    },
+    "format": "MULTI_TASK"
+}
