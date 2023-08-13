@@ -56,5 +56,3 @@ with open(
         except Exception as e:
             print("failed for", table, e)
 
-
-# COMMAND ----------
