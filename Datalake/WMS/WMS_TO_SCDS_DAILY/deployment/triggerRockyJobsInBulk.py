@@ -18,7 +18,7 @@ if env == "prod":
 else:
     work_db = "qa_work"
     platform_db = "qa_stranger_things"
-    # token = 'dapi2577d49a1c78bd890daa9daaad0cd342'
+    # token = '2577d49a1c78bd890daa9daaad0cd342'
     instance_id = "3986616729757273.3.gcp.databricks.com"
 
 
