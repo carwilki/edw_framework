@@ -1,7 +1,7 @@
 
 
 --*****  Creating table:  "WM_ASN_DETAIL_PRE" , ***** Creating table: "WM_ASN_DETAIL_PRE"
-
+use raw;
 
 CREATE TABLE  WM_ASN_DETAIL_PRE
 ( DC_NBR                              SMALLINT               not null
@@ -210,7 +210,7 @@ CREATE TABLE  WM_ASN_DETAIL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_asn_detail_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ASN_DETAIL_ID)
 
@@ -238,7 +238,7 @@ CREATE TABLE  WM_ASN_DETAIL_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_asn_detail_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -544,7 +544,7 @@ CREATE TABLE  WM_ASN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_asn_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ASN_ID)
 
@@ -576,7 +576,7 @@ CREATE TABLE  WM_ASN_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_asn_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -658,7 +658,7 @@ CREATE TABLE  WM_BUSINESS_PARTNER_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_business_partner_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (TC_COMPANY_ID, BUSINESS_PARTNER_ID)
 
@@ -884,7 +884,7 @@ CREATE TABLE  WM_CARRIER_CODE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_carrier_code_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -934,7 +934,7 @@ CREATE TABLE  WM_COMMODITY_CODE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_commodity_code_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -978,7 +978,7 @@ CREATE TABLE  WM_C_LEADER_AUDIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_c_leader_audit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (C_LEADER_AUDIT_ID)
 
@@ -1086,7 +1086,7 @@ CREATE TABLE  WM_C_TMS_PLAN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_c_tms_plan_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1162,7 +1162,7 @@ CREATE TABLE  WM_DOCK_DOOR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_dock_door_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (DOCK_DOOR_ID)
 
@@ -1190,7 +1190,7 @@ CREATE TABLE  WM_DO_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_do_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1410,7 +1410,7 @@ CREATE TABLE  WM_EQUIPMENT_INSTANCE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_equipment_instance_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1524,7 +1524,7 @@ CREATE TABLE  WM_EQUIPMENT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_equipment_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1574,7 +1574,7 @@ CREATE TABLE  WM_E_ACT_ELM_CRIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_act_elm_crit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ACT_ID, ELM_ID, CRIT_ID, CRIT_VAL_ID)
 
@@ -1628,7 +1628,7 @@ CREATE TABLE  WM_E_ACT_ELM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_act_elm_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ACT_ID, ELM_ID)
 
@@ -1702,7 +1702,7 @@ CREATE TABLE  WM_E_ACT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_act_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ACT_ID)
 
@@ -1810,7 +1810,7 @@ CREATE TABLE  WM_E_AUD_LOG_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_aud_log_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (AUD_ID)
 
@@ -1856,7 +1856,7 @@ CREATE TABLE  WM_E_CRIT_VAL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_crit_val_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (CRIT_VAL_ID)
 
@@ -1904,7 +1904,7 @@ CREATE TABLE  WM_E_ELM_CRIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_elm_crit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1964,7 +1964,7 @@ CREATE TABLE  WM_E_ELM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_elm_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2048,7 +2048,7 @@ CREATE TABLE  WM_E_EMP_DTL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_emp_dtl_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2100,7 +2100,7 @@ CREATE TABLE  WM_E_EMP_STAT_CODE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_emp_stat_code_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2282,7 +2282,7 @@ CREATE TABLE  WM_E_EVNT_SMRY_HDR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_evnt_smry_hdr_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ELS_TRAN_ID)
 
@@ -2404,7 +2404,7 @@ CREATE TABLE  WM_E_JOB_FUNCTION_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_job_function_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2454,7 +2454,7 @@ CREATE TABLE  WM_E_LABOR_TYPE_CODE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_labor_type_code_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2516,7 +2516,7 @@ CREATE TABLE  WM_E_MSRMNT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_msrmnt_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2580,7 +2580,7 @@ CREATE TABLE  WM_E_MSRMNT_RULE_CONDITION_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_msrmnt_rule_condition_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2636,7 +2636,7 @@ CREATE TABLE  WM_E_MSRMNT_RULE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_msrmnt_rule_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2706,7 +2706,7 @@ CREATE TABLE  WM_E_SHIFT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_e_shift_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3182,7 +3182,7 @@ CREATE TABLE  WM_FACILITY_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_facility_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3336,7 +3336,7 @@ CREATE TABLE  WM_ILM_APPOINTMENTS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_appointments_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (APPOINTMENT_ID)
 
@@ -3376,7 +3376,7 @@ CREATE TABLE  WM_ILM_APPOINTMENT_OBJECTS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_appointment_objects_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3408,7 +3408,7 @@ CREATE TABLE  WM_ILM_APPOINTMENT_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_appointment_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3440,7 +3440,7 @@ CREATE TABLE  WM_ILM_APPOINTMENT_TYPE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_appointment_type_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3478,7 +3478,7 @@ CREATE TABLE  WM_ILM_APPT_EQUIPMENTS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_appt_equipments_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3510,7 +3510,7 @@ CREATE TABLE  WM_ILM_TASK_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_task_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3566,7 +3566,7 @@ CREATE TABLE  WM_ILM_YARD_ACTIVITY_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ilm_yard_activity_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3798,7 +3798,7 @@ CREATE TABLE  WM_ITEM_CBO_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_cbo_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3982,7 +3982,7 @@ CREATE TABLE  WM_ITEM_FACILITY_MAPPING_WMS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_facility_mapping_wms_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4186,7 +4186,7 @@ CREATE TABLE  WM_ITEM_FACILITY_SLOTTING_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_facility_slotting_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ITEM_FACILITY_MAPPING_ID)
 
@@ -4234,7 +4234,7 @@ CREATE TABLE  WM_ITEM_GROUP_WMS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_group_wms_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4302,7 +4302,7 @@ CREATE TABLE  WM_ITEM_PACKAGE_CBO_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_package_cbo_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4598,7 +4598,7 @@ CREATE TABLE  WM_ITEM_WMS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_item_wms_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4656,7 +4656,7 @@ CREATE TABLE  WM_LABOR_ACTIVITY_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_activity_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4708,7 +4708,7 @@ CREATE TABLE  WM_LABOR_CRITERIA_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_criteria_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4770,7 +4770,7 @@ CREATE TABLE  WM_LABOR_MSG_CRIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_msg_crit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LABOR_MSG_CRIT_ID)
 
@@ -4832,7 +4832,7 @@ CREATE TABLE  WM_LABOR_MSG_DTL_CRIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_msg_dtl_crit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LABOR_MSG_DTL_CRIT_ID)
 
@@ -4990,7 +4990,7 @@ CREATE TABLE  WM_LABOR_MSG_DTL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_msg_dtl_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LABOR_MSG_DTL_ID)
 
@@ -5170,7 +5170,7 @@ CREATE TABLE  WM_LABOR_MSG_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_msg_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LABOR_MSG_ID)
 
@@ -5230,7 +5230,7 @@ CREATE TABLE  WM_LABOR_TRAN_DTL_CRIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_labor_tran_dtl_crit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LABOR_TRAN_DTL_CRIT_ID)
 
@@ -5276,7 +5276,7 @@ CREATE TABLE  WM_LOCN_GRP_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_locn_grp_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -5390,7 +5390,7 @@ CREATE TABLE  WM_LOCN_HDR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_locn_hdr_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -5492,7 +5492,7 @@ CREATE TABLE  WM_LPN_AUDIT_RESULTS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_audit_results_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LPN_AUDIT_RESULTS_ID)
 
@@ -5690,7 +5690,7 @@ CREATE TABLE  WM_LPN_DETAIL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_detail_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LPN_ID, LPN_DETAIL_ID)
 
@@ -5720,7 +5720,7 @@ CREATE TABLE  WM_LPN_FACILITY_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_facility_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -5768,7 +5768,7 @@ CREATE TABLE  WM_LPN_LOCK_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_lock_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LPN_LOCK_ID)
 
@@ -6206,7 +6206,7 @@ CREATE TABLE  WM_LPN_PRE
 
 , PROCESS_IMMEDIATE_NEEDS             STRING 
 
-, LENGTH                            DECIMAL(16,4) 
+, "LENGTH"                            DECIMAL(16,4) 
 
 , WIDTH                               DECIMAL(16,4) 
 
@@ -6352,7 +6352,7 @@ CREATE TABLE  WM_LPN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (LPN_ID)
 
@@ -6438,7 +6438,7 @@ CREATE TABLE  WM_LPN_SIZE_TYPE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_size_type_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6466,7 +6466,7 @@ CREATE TABLE  WM_LPN_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6496,7 +6496,7 @@ CREATE TABLE  WM_LPN_TYPE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_lpn_type_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -7258,7 +7258,7 @@ CREATE TABLE  WM_ORDERS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_orders_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ORDER_ID)
 
@@ -7698,7 +7698,7 @@ CREATE TABLE  WM_ORDER_LINE_ITEM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_order_line_item_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (ORDER_ID, LINE_ITEM_ID)
 
@@ -7730,7 +7730,7 @@ CREATE TABLE  WM_ORDER_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_order_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -7856,7 +7856,7 @@ CREATE TABLE  WM_OUTPT_LPN_DETAIL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_outpt_lpn_detail_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (OUTPT_LPN_DETAIL_ID)
 
@@ -8072,7 +8072,7 @@ CREATE TABLE  WM_OUTPT_LPN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_outpt_lpn_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (OUTPT_LPN_ID)
 
@@ -8434,7 +8434,7 @@ CREATE TABLE  WM_OUTPT_ORDERS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_outpt_orders_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (OUTPT_ORDERS_ID)
 
@@ -8654,7 +8654,7 @@ CREATE TABLE  WM_OUTPT_ORDER_LINE_ITEM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_outpt_order_line_item_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (OUTPT_ORDER_LINE_ITEM_ID)
 
@@ -8731,7 +8731,7 @@ CREATE TABLE  WM_PICKING_SHORT_ITEM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_picking_short_item_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PICKING_SHORT_ITEM_ID)
 
@@ -8847,7 +8847,7 @@ CREATE TABLE  WM_PICK_LOCN_DTL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_pick_locn_dtl_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PICK_LOCN_DTL_ID)
 
@@ -8915,7 +8915,7 @@ CREATE TABLE  WM_PICK_LOCN_DTL_SLOTTING_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_pick_locn_dtl_slotting_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PICK_LOCN_DTL_ID)
 
@@ -8999,7 +8999,7 @@ CREATE TABLE  WM_PICK_LOCN_HDR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_pick_locn_hdr_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -9115,7 +9115,7 @@ CREATE TABLE  WM_PICK_LOCN_HDR_SLOTTING_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_pick_locn_hdr_slotting_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PICK_LOCN_HDR_ID)
 
@@ -9293,7 +9293,7 @@ CREATE TABLE  WM_PIX_TRAN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_pix_tran_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PIX_TRAN_ID)
 
@@ -9339,7 +9339,7 @@ CREATE TABLE  WM_PRODUCT_CLASS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_product_class_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -9907,7 +9907,7 @@ CREATE TABLE  WM_PURCHASE_ORDERS_LINE_ITEM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_purchase_orders_line_item_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PURCHASE_ORDERS_ID, PURCHASE_ORDERS_LINE_ITEM_ID)
 
@@ -9937,7 +9937,7 @@ CREATE TABLE  WM_PURCHASE_ORDERS_LINE_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_purchase_orders_line_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10501,7 +10501,7 @@ CREATE TABLE  WM_PURCHASE_ORDERS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_purchase_orders_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (PURCHASE_ORDERS_ID)
 
@@ -10541,7 +10541,7 @@ CREATE TABLE  WM_PUTAWAY_LOCK_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_putaway_lock_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10691,7 +10691,7 @@ CREATE TABLE  WM_RACK_TYPE_LEVEL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_rack_type_level_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10873,7 +10873,7 @@ CREATE TABLE  WM_RACK_TYPE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_rack_type_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10947,7 +10947,7 @@ CREATE TABLE  WM_RESV_LOCN_HDR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_resv_locn_hdr_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11007,7 +11007,7 @@ CREATE TABLE  WM_SEC_USER_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_sec_user_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11791,7 +11791,7 @@ CREATE TABLE  WM_SHIPMENT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_shipment_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (SHIPMENT_ID)
 
@@ -11821,7 +11821,7 @@ CREATE TABLE  WM_SHIPMENT_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_shipment_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11889,7 +11889,7 @@ CREATE TABLE  WM_SHIP_VIA_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_ship_via_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11959,7 +11959,7 @@ CREATE TABLE  WM_SIZE_UOM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_size_uom_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12157,7 +12157,7 @@ CREATE TABLE  WM_SLOT_ITEM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_slot_item_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (SLOT_ITEM_ID)
 
@@ -12203,7 +12203,7 @@ CREATE TABLE  WM_STANDARD_UOM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_standard_uom_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12471,7 +12471,7 @@ CREATE TABLE  WM_STOP_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_stop_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (SHIPMENT_ID)
 
@@ -12501,7 +12501,7 @@ CREATE TABLE  WM_STOP_STATUS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_stop_status_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12553,7 +12553,7 @@ CREATE TABLE  WM_SYS_CODE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_sys_code_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12747,7 +12747,7 @@ CREATE TABLE  WM_TASK_DTL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_task_dtl_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (TASK_DTL_ID)
 
@@ -12899,7 +12899,7 @@ CREATE TABLE  WM_TASK_HDR_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_task_hdr_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (TASK_HDR_ID)
 
@@ -12947,7 +12947,7 @@ CREATE TABLE  WM_TRAILER_CONTENTS_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_trailer_contents_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (TRAILER_CONTENTS_ID)
 
@@ -13003,7 +13003,7 @@ CREATE TABLE  WM_TRAILER_REF_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_trailer_ref_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13033,7 +13033,7 @@ CREATE TABLE  WM_TRAILER_TYPE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_trailer_type_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13093,7 +13093,7 @@ CREATE TABLE  WM_TRAILER_VISIT_DETAIL_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_trailer_visit_detail_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (VISIT_DETAIL_ID)
 
@@ -13139,7 +13139,7 @@ CREATE TABLE  WM_TRAILER_VISIT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_trailer_visit_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (VISIT_ID)
 
@@ -13307,7 +13307,7 @@ CREATE TABLE  WM_UN_NUMBER_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_un_number_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13429,7 +13429,7 @@ CREATE TABLE  WM_USER_PROFILE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_user_profile_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (USER_PROFILE_ID)
 
@@ -13505,7 +13505,7 @@ CREATE TABLE  WM_VEND_PERF_TRAN_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_vend_perf_tran_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (VEND_PERF_TRAN_ID)
 
@@ -13915,7 +13915,7 @@ CREATE TABLE  WM_WAVE_PARM_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_wave_parm_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WAVE_PARM_ID)
 
@@ -14001,7 +14001,7 @@ CREATE TABLE  WM_YARD_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_yard_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (YARD_ID)
 
@@ -14049,7 +14049,7 @@ CREATE TABLE  WM_YARD_ZONE_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_yard_zone_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -14113,7 +14113,7 @@ CREATE TABLE  WM_YARD_ZONE_SLOT_PRE
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/wms/wm_yard_zone_slot_pre' 
 PARTITIONED BY (DC_NBR) 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 

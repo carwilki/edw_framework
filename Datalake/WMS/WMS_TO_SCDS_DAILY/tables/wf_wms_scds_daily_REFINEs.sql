@@ -2,10 +2,9 @@
 
 --*****  Creating table:  "WM_ASN" , ***** Creating table: "WM_ASN"
 
-
+use refine;
 CREATE TABLE  WM_ASN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ASN_ID                              BIGINT              not null
 
@@ -291,12 +290,12 @@ CREATE TABLE  WM_ASN
 
 , UPDATE_TSTMP                           TIMESTAMP                  not null
 
-, LOAD_TSTMP                             TIMESTAMP                  not null  default " "('now(0)')
+, LOAD_TSTMP                             TIMESTAMP                  not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_asn' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ASN_ID)
 
@@ -312,8 +311,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ASN_DETAIL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ASN_DETAIL_ID                       BIGINT              not null
 
@@ -515,12 +513,12 @@ CREATE TABLE  WM_ASN_DETAIL
 
 , UPDATE_TSTMP                           TIMESTAMP                  not null
 
-, LOAD_TSTMP                             TIMESTAMP                  not null  default " "('now(0)')
+, LOAD_TSTMP                             TIMESTAMP                  not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_asn_detail' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ASN_DETAIL_ID)
 
@@ -536,8 +534,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ASN_DETAIL_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ASN_DETAIL_STATUS                   SMALLINT               not null
 
@@ -545,12 +542,12 @@ CREATE TABLE  WM_ASN_DETAIL_STATUS
 
 , UPDATE_TSTMP                           TIMESTAMP                  not null
 
-, LOAD_TSTMP                             TIMESTAMP                  not null  default " "('now(0)')
+, LOAD_TSTMP                             TIMESTAMP                  not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_asn_detail_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -566,8 +563,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ASN_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ASN_STATUS                          SMALLINT               not null
 
@@ -579,12 +575,12 @@ CREATE TABLE  WM_ASN_STATUS
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_asn_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -600,8 +596,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_BUSINESS_PARTNER
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TC_COMPANY_ID                        INT                not null
 
@@ -668,7 +663,7 @@ CREATE TABLE  WM_BUSINESS_PARTNER
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_business_partner' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_TC_COMPANY_ID, WM_BUSINESS_PARTNER_ID)
 
@@ -684,8 +679,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_CARRIER_CODE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_CARRIER_ID                           BIGINT               not null
 
@@ -891,12 +885,12 @@ CREATE TABLE  WM_CARRIER_CODE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_carrier_code' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -912,8 +906,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_COMMODITY_CODE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_COMMODITY_CD_ID                      BIGINT               not null
 
@@ -943,12 +936,12 @@ CREATE TABLE  WM_COMMODITY_CODE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_commodity_code' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -964,8 +957,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_C_LEADER_AUDIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_C_LEADER_AUDIT_ID                    INT                not null
 
@@ -989,12 +981,12 @@ CREATE TABLE  WM_C_LEADER_AUDIT
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_c_leader_audit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_C_LEADER_AUDIT_ID)
 
@@ -1010,8 +1002,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_C_TMS_PLAN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_C_TMS_PLAN_ID                        INT                not null
 
@@ -1099,12 +1090,12 @@ CREATE TABLE  WM_C_TMS_PLAN
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_c_tms_plan' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1120,8 +1111,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_DOCK_DOOR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_DOCK_DOOR_ID                         BIGINT               not null
 
@@ -1182,7 +1172,7 @@ CREATE TABLE  WM_DOCK_DOOR
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_dock_door' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_DOCK_DOOR_ID)
 
@@ -1198,8 +1188,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_DO_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ORDER_STATUS_ID                      SMALLINT                not null
 
@@ -1207,12 +1196,12 @@ CREATE TABLE  WM_DO_STATUS
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_do_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1228,8 +1217,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_EQUIPMENT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_EQUIPMENT_ID                         BIGINT               not null
 
@@ -1323,12 +1311,12 @@ CREATE TABLE  WM_EQUIPMENT
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_equipment' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1344,8 +1332,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_EQUIPMENT_INSTANCE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_EQUIPMENT_INSTANCE_ID                BIGINT               not null
 
@@ -1545,12 +1532,12 @@ CREATE TABLE  WM_EQUIPMENT_INSTANCE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_equipment_instance' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1566,8 +1553,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_ACT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ACT_ID                               INT                not null
 
@@ -1628,7 +1614,7 @@ CREATE TABLE  WM_E_ACT
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_act' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ACT_ID)
 
@@ -1644,8 +1630,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_ACT_ELM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ACT_ID                               INT                not null
 
@@ -1686,7 +1671,7 @@ CREATE TABLE  WM_E_ACT_ELM
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_act_elm' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ACT_ID, WM_ELM_ID)
 
@@ -1702,8 +1687,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_ACT_ELM_CRIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ACT_ID                               INT                not null
 
@@ -1740,7 +1724,7 @@ CREATE TABLE  WM_E_ACT_ELM_CRIT
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_act_elm_crit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1756,8 +1740,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_AUD_LOG
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_AUD_ID                               DECIMAL(20,0)               not null
 
@@ -1847,12 +1830,12 @@ CREATE TABLE  WM_E_AUD_LOG
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_aud_log' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_AUD_ID)
 
@@ -1868,8 +1851,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_CRIT_VAL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_CRIT_VAL_ID                          INT                not null
 
@@ -1897,12 +1879,12 @@ CREATE TABLE  WM_E_CRIT_VAL
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_crit_val' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_CRIT_VAL_ID)
 
@@ -1918,8 +1900,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_ELM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ELM_ID                               INT                not null
 
@@ -1961,12 +1942,12 @@ CREATE TABLE  WM_E_ELM
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_elm' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -1982,8 +1963,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_ELM_CRIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ELM_ID                               INT                not null
 
@@ -2013,12 +1993,12 @@ CREATE TABLE  WM_E_ELM_CRIT
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_elm_crit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2034,8 +2014,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_EMP_DTL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_EMP_DTL_ID                           INT                not null
 
@@ -2104,7 +2083,7 @@ CREATE TABLE  WM_E_EMP_DTL
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_emp_dtl' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2118,8 +2097,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_EMP_STAT_CODE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_EMP_STAT_ID                          INT                not null
 
@@ -2153,12 +2131,12 @@ CREATE TABLE  WM_E_EMP_STAT_CODE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_emp_stat_code' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2174,8 +2152,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_EVNT_SMRY_HDR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ELS_TRAN_ID                          DECIMAL(20,0)               not null
 
@@ -2339,12 +2316,12 @@ CREATE TABLE  WM_E_EVNT_SMRY_HDR
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_evnt_smry_hdr' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ELS_TRAN_ID)
 
@@ -2360,8 +2337,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_JOB_FUNCTION
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_JOB_FUNCTION_ID                      INT                not null
 
@@ -2463,12 +2439,12 @@ CREATE TABLE  WM_E_JOB_FUNCTION
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_job_function' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2482,8 +2458,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_LABOR_TYPE_CODE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_TYPE_ID                        INT                not null
 
@@ -2517,12 +2492,12 @@ CREATE TABLE  WM_E_LABOR_TYPE_CODE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_labor_type_code' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2538,8 +2513,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_MSRMNT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_MSRMNT_ID                            INT                not null
 
@@ -2581,12 +2555,12 @@ CREATE TABLE  WM_E_MSRMNT
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_msrmnt' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2602,8 +2576,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_MSRMNT_RULE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_MSRMNT_ID                            INT                not null
 
@@ -2639,12 +2612,12 @@ CREATE TABLE  WM_E_MSRMNT_RULE
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_msrmnt_rule' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2660,8 +2633,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_MSRMNT_RULE_CALC
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_MSRMNT_ID                            INT                not null
 
@@ -2693,12 +2665,12 @@ CREATE TABLE  WM_E_MSRMNT_RULE_CALC
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_msrmnt_rule_calc' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2714,8 +2686,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_MSRMNT_RULE_CONDITION
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_MSRMNT_ID                            INT                not null
 
@@ -2761,12 +2732,12 @@ CREATE TABLE  WM_E_MSRMNT_RULE_CONDITION
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_msrmnt_rule_condition' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2782,8 +2753,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_E_SHIFT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SHIFT_ID                             INT                not null
 
@@ -2835,12 +2805,12 @@ CREATE TABLE  WM_E_SHIFT
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_e_shift' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -2856,8 +2826,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_FACILITY
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_FACILITY_ID                          INT                not null
 
@@ -3313,12 +3282,12 @@ CREATE TABLE  WM_FACILITY
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_facility' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3332,8 +3301,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_APPOINTMENTS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_APPOINTMENT_ID                       INT                not null
 
@@ -3469,12 +3437,12 @@ CREATE TABLE  WM_ILM_APPOINTMENTS
 
 , UPDATE_TSTMP                            TIMESTAMP                   not null
 
-, LOAD_TSTMP                              TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                              TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_appointments' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_APPOINTMENT_ID)
 
@@ -3490,8 +3458,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_APPOINTMENT_OBJECTS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ILM_APPOINTMENT_OBJECTS_ID           INT                not null
 
@@ -3513,12 +3480,12 @@ CREATE TABLE  WM_ILM_APPOINTMENT_OBJECTS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_appointment_objects' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3534,8 +3501,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_APPOINTMENT_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ILM_APPT_STATUS_CD                      SMALLINT                not null
 
@@ -3547,12 +3513,12 @@ CREATE TABLE  WM_ILM_APPOINTMENT_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_appointment_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3568,8 +3534,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_APPOINTMENT_TYPE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_APPT_TYPE_ID                            SMALLINT                not null
 
@@ -3581,12 +3546,12 @@ CREATE TABLE  WM_ILM_APPOINTMENT_TYPE
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_appointment_type' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3602,8 +3567,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_APPT_EQUIPMENTS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_APPOINTMENT_ID                          INT                not null
 
@@ -3623,12 +3587,12 @@ CREATE TABLE  WM_ILM_APPT_EQUIPMENTS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_appt_equipments' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3644,8 +3608,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_TASK_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ILM_TASK_STATUS                         INT                not null
 
@@ -3657,12 +3620,12 @@ CREATE TABLE  WM_ILM_TASK_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_task_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3678,8 +3641,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ILM_YARD_ACTIVITY
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ACTIVITY_ID                             INT                not null
 
@@ -3715,12 +3677,12 @@ CREATE TABLE  WM_ILM_YARD_ACTIVITY
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ilm_yard_activity' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3736,8 +3698,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_CBO
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_ID                                 INT                not null
 
@@ -3949,12 +3910,12 @@ CREATE TABLE  WM_ITEM_CBO
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_cbo' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -3968,8 +3929,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_FACILITY_MAPPING_WMS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_FACILITY_MAPPING_ID                DECIMAL(19,0)               not null
 
@@ -4135,12 +4095,12 @@ CREATE TABLE  WM_ITEM_FACILITY_MAPPING_WMS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_facility_mapping_wms' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4154,8 +4114,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_FACILITY_SLOTTING
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_FACILITY_MAPPING_ID                INT                not null
 
@@ -4343,12 +4302,12 @@ CREATE TABLE  WM_ITEM_FACILITY_SLOTTING
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_facility_slotting' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ITEM_FACILITY_MAPPING_ID)
 
@@ -4364,8 +4323,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_GROUP_WMS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_GROUP_ID                           INT                not null
 
@@ -4398,7 +4356,7 @@ CREATE TABLE  WM_ITEM_GROUP_WMS
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_group_wms' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4412,8 +4370,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_PACKAGE_CBO
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_PACKAGE_ID                         INT                not null
 
@@ -4468,7 +4425,7 @@ CREATE TABLE  WM_ITEM_PACKAGE_CBO
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_package_cbo' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4482,8 +4439,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ITEM_WMS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ITEM_ID                                 INT                not null
 
@@ -4761,12 +4717,12 @@ CREATE TABLE  WM_ITEM_WMS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_item_wms' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4780,8 +4736,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_ACTIVITY
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_ACTIVITY_ID                       INT                not null
 
@@ -4823,12 +4778,12 @@ CREATE TABLE  WM_LABOR_ACTIVITY
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_activity' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4844,8 +4799,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_CRITERIA
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_CRIT_ID                                 INT                not null
 
@@ -4879,12 +4833,12 @@ CREATE TABLE  WM_LABOR_CRITERIA
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_criteria' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -4900,8 +4854,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_MSG
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_MSG_ID                            DECIMAL(20,0)               not null
 
@@ -5061,12 +5014,12 @@ CREATE TABLE  WM_LABOR_MSG
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_msg' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LABOR_MSG_ID)
 
@@ -5082,8 +5035,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_MSG_CRIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_MSG_CRIT_ID                       DECIMAL(20,0)               not null
 
@@ -5125,12 +5077,12 @@ CREATE TABLE  WM_LABOR_MSG_CRIT
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_msg_crit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LABOR_MSG_CRIT_ID)
 
@@ -5146,8 +5098,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_MSG_DTL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_MSG_DTL_ID                        DECIMAL(20,0)               not null
 
@@ -5285,12 +5236,12 @@ CREATE TABLE  WM_LABOR_MSG_DTL
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_msg_dtl' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LABOR_MSG_DTL_ID)
 
@@ -5306,8 +5257,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_MSG_DTL_CRIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_MSG_DTL_CRIT_ID                   DECIMAL(20,0)               not null
 
@@ -5349,12 +5299,12 @@ CREATE TABLE  WM_LABOR_MSG_DTL_CRIT
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_msg_dtl_crit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LABOR_MSG_DTL_CRIT_ID)
 
@@ -5370,8 +5320,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LABOR_TRAN_DTL_CRIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LABOR_TRAN_DTL_CRIT_ID                  DECIMAL(20,0)               not null
 
@@ -5411,12 +5360,12 @@ CREATE TABLE  WM_LABOR_TRAN_DTL_CRIT
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_labor_tran_dtl_crit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LABOR_TRAN_DTL_CRIT_ID)
 
@@ -5432,8 +5381,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LOCN_GRP
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LOCN_GRP_ID                             INT                not null
 
@@ -5461,12 +5409,12 @@ CREATE TABLE  WM_LOCN_GRP
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_locn_grp' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -5480,8 +5428,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LOCN_HDR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LOCN_HDR_ID                             INT                not null
 
@@ -5577,12 +5524,12 @@ CREATE TABLE  WM_LOCN_HDR
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_locn_hdr' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -5596,8 +5543,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_ID                                  BIGINT               not null
 
@@ -6161,12 +6107,12 @@ CREATE TABLE  WM_LPN
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LPN_ID)
 
@@ -6182,8 +6128,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_AUDIT_RESULTS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_AUDIT_RESULTS_ID                    INT                not null
 
@@ -6267,12 +6212,12 @@ CREATE TABLE  WM_LPN_AUDIT_RESULTS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_audit_results' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LPN_AUDIT_RESULTS_ID)
 
@@ -6288,8 +6233,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_DETAIL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_ID                                  BIGINT               not null
 
@@ -6467,12 +6411,12 @@ CREATE TABLE  WM_LPN_DETAIL
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_detail' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LPN_ID, WM_LPN_DETAIL_ID)
 
@@ -6488,8 +6432,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_FACILITY_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_FACILITY_STATUS                     SMALLINT                not null
 
@@ -6499,12 +6442,12 @@ CREATE TABLE  WM_LPN_FACILITY_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_facility_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6520,8 +6463,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_LOCK
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_LOCK_ID                             BIGINT               not null
 
@@ -6556,7 +6498,7 @@ CREATE TABLE  WM_LPN_LOCK
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_lock' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_LPN_LOCK_ID)
 
@@ -6572,8 +6514,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_SIZE_TYPE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_SIZE_TYPE_ID                        INT                not null
 
@@ -6639,12 +6580,12 @@ CREATE TABLE  WM_LPN_SIZE_TYPE
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_size_type' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6660,8 +6601,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_STATUS                              SMALLINT                not null
 
@@ -6669,12 +6609,12 @@ CREATE TABLE  WM_LPN_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6690,8 +6630,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_LPN_TYPE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LPN_TYPE                                SMALLINT                not null
 
@@ -6701,12 +6640,12 @@ CREATE TABLE  WM_LPN_TYPE
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_lpn_type' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -6722,8 +6661,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ORDERS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ORDER_ID                                BIGINT               not null
 
@@ -7465,12 +7403,12 @@ CREATE TABLE  WM_ORDERS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_orders' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ORDER_ID)
 
@@ -7486,8 +7424,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ORDER_LINE_ITEM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ORDER_ID                                BIGINT               not null
 
@@ -7907,12 +7844,12 @@ CREATE TABLE  WM_ORDER_LINE_ITEM
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_order_line_item' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_ORDER_ID, WM_LINE_ITEM_ID)
 
@@ -7928,8 +7865,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_ORDER_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_ORDER_STATUS_ID                         SMALLINT                not null
 
@@ -7941,12 +7877,12 @@ CREATE TABLE  WM_ORDER_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_order_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -7962,8 +7898,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_OUTPT_LPN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_OUTPT_LPN_ID                            BIGINT               not null
 
@@ -8159,12 +8094,12 @@ CREATE TABLE  WM_OUTPT_LPN
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_outpt_lpn' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_OUTPT_LPN_ID)
 
@@ -8180,8 +8115,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_OUTPT_LPN_DETAIL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_OUTPT_LPN_DETAIL_ID                     BIGINT               not null
 
@@ -8287,12 +8221,12 @@ CREATE TABLE  WM_OUTPT_LPN_DETAIL
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_outpt_lpn_detail' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_OUTPT_LPN_DETAIL_ID)
 
@@ -8308,8 +8242,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_OUTPT_ORDERS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_OUTPT_ORDERS_ID                         BIGINT               not null
 
@@ -8651,12 +8584,12 @@ CREATE TABLE  WM_OUTPT_ORDERS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_outpt_orders' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_OUTPT_ORDERS_ID)
 
@@ -8672,8 +8605,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_OUTPT_ORDER_LINE_ITEM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_OUTPT_ORDER_LINE_ITEM_ID                BIGINT               not null
 
@@ -8873,12 +8805,12 @@ CREATE TABLE  WM_OUTPT_ORDER_LINE_ITEM
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_outpt_order_line_item' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_OUTPT_ORDER_LINE_ITEM_ID)
 
@@ -8894,8 +8826,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PICKING_SHORT_ITEM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PICKING_SHORT_ITEM_ID                   INT                not null
 
@@ -8943,7 +8874,7 @@ CREATE TABLE  WM_PICKING_SHORT_ITEM
 
 , WM_TC_SHIPMENT_ID                          STRING 
 
-WM_CREATED_TSTMP                          date,
+, WM_CREATED_TSTMP                          date
 , WM_CREATED_SOURCE                          STRING 
 
 , WM_LAST_UPDATED_TSTMP DATE
@@ -8952,12 +8883,12 @@ WM_CREATED_TSTMP                          date,
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_picking_short_item' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PICKING_SHORT_ITEM_ID)
 
@@ -8973,8 +8904,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PICK_LOCN_DTL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PICK_LOCN_DTL_ID                        BIGINT               not null
 
@@ -9072,12 +9002,12 @@ CREATE TABLE  WM_PICK_LOCN_DTL
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_pick_locn_dtl' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PICK_LOCN_DTL_ID)
 
@@ -9093,8 +9023,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PICK_LOCN_DTL_SLOTTING
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PICK_LOCN_DTL_ID                        INT                not null
 
@@ -9142,12 +9071,12 @@ CREATE TABLE  WM_PICK_LOCN_DTL_SLOTTING
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_pick_locn_dtl_slotting' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PICK_LOCN_DTL_ID)
 
@@ -9163,8 +9092,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PICK_LOCN_HDR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PICK_LOCN_HDR_ID                        INT                not null
 
@@ -9235,7 +9163,7 @@ CREATE TABLE  WM_PICK_LOCN_HDR
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_pick_locn_hdr' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -9249,8 +9177,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PICK_LOCN_HDR_SLOTTING
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PICK_LOCN_HDR_ID                        DECIMAL(19,0)               not null
 
@@ -9348,12 +9275,12 @@ CREATE TABLE  WM_PICK_LOCN_HDR_SLOTTING
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_pick_locn_hdr_slotting' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PICK_LOCN_HDR_ID)
 
@@ -9369,8 +9296,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PIX_TRAN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PIX_TRAN_ID                             INT                not null
 
@@ -9528,12 +9454,12 @@ CREATE TABLE  WM_PIX_TRAN
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_pix_tran' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -9547,8 +9473,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PRODUCT_CLASS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PRODUCT_CLASS_ID                        INT                not null
 
@@ -9574,12 +9499,12 @@ CREATE TABLE  WM_PRODUCT_CLASS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_product_class' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -9595,8 +9520,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PURCHASE_ORDERS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PURCHASE_ORDERS_ID                      BIGINT               not null
 
@@ -10140,12 +10064,12 @@ CREATE TABLE  WM_PURCHASE_ORDERS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_purchase_orders' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PURCHASE_ORDERS_ID)
 
@@ -10161,8 +10085,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PURCHASE_ORDERS_LINE_ITEM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PURCHASE_ORDERS_ID                      BIGINT               not null
 
@@ -10710,12 +10633,12 @@ CREATE TABLE  WM_PURCHASE_ORDERS_LINE_ITEM
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_purchase_orders_line_item' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_PURCHASE_ORDERS_ID, WM_PURCHASE_ORDERS_LINE_ITEM_ID)
 
@@ -10731,8 +10654,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PURCHASE_ORDERS_LINE_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PURCHASE_ORDERS_LINE_STATUS             SMALLINT                not null
 
@@ -10742,12 +10664,12 @@ CREATE TABLE  WM_PURCHASE_ORDERS_LINE_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_purchase_orders_line_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10763,8 +10685,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PURCHASE_ORDERS_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_PURCHASE_ORDERS_STATUS                  SMALLINT                not null
 
@@ -10774,12 +10695,12 @@ CREATE TABLE  WM_PURCHASE_ORDERS_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_purchase_orders_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10795,8 +10716,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_PUTAWAY_LOCK
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_LOCN_ID                                 STRING       not null
 
@@ -10818,12 +10738,12 @@ CREATE TABLE  WM_PUTAWAY_LOCK
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_putaway_lock' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -10839,8 +10759,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_RACK_TYPE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_RACK_TYPE_ID                            BIGINT               not null
 
@@ -11004,12 +10923,12 @@ CREATE TABLE  WM_RACK_TYPE
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_rack_type' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11025,8 +10944,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_RACK_TYPE_LEVEL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_RACK_LEVEL_ID                           BIGINT               not null
 
@@ -11158,12 +11076,12 @@ CREATE TABLE  WM_RACK_TYPE_LEVEL
 
 , UPDATE_TSTMP                               TIMESTAMP                   not null
 
-, LOAD_TSTMP                                 TIMESTAMP                   not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                   not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_rack_type_level' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11179,8 +11097,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_RESV_LOCN_HDR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_RESV_LOCN_HDR_ID                        INT                not null
 
@@ -11241,7 +11158,7 @@ CREATE TABLE  WM_RESV_LOCN_HDR
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_resv_locn_hdr' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11255,8 +11172,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SEC_USER
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SEC_USER_ID                             INT                not null
 
@@ -11303,7 +11219,7 @@ CREATE TABLE  WM_SEC_USER
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_sec_user' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -11317,8 +11233,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SHIPMENT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SHIPMENT_ID                             BIGINT               not null
 
@@ -12084,12 +11999,12 @@ CREATE TABLE  WM_SHIPMENT
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_shipment' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_SHIPMENT_ID)
 
@@ -12105,8 +12020,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SHIPMENT_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SHIPMENT_STATUS                         SMALLINT                 not null
 
@@ -12116,12 +12030,12 @@ CREATE TABLE  WM_SHIPMENT_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_shipment_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12137,8 +12051,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SHIP_VIA
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SHIP_VIA_ID                             INT                 not null
 
@@ -12191,7 +12104,7 @@ CREATE TABLE  WM_SHIP_VIA
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_ship_via' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12205,8 +12118,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SIZE_UOM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SIZE_UOM_ID                             INT                 not null
 
@@ -12258,12 +12170,12 @@ CREATE TABLE  WM_SIZE_UOM
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_size_uom' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12279,8 +12191,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SLOT_ITEM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SLOT_ITEM_ID                            DECIMAL(19,0)                not null
 
@@ -12458,12 +12369,12 @@ CREATE TABLE  WM_SLOT_ITEM
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_slot_item' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_SLOT_ITEM_ID)
 
@@ -12479,8 +12390,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SLOT_ITEM_SCORE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SLOT_ITEM_SCORE_ID                      DECIMAL(19,0)                not null
 
@@ -12500,12 +12410,12 @@ CREATE TABLE  WM_SLOT_ITEM_SCORE
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_slot_item_score' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_SLOT_ITEM_SCORE_ID)
 
@@ -12521,8 +12431,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_STANDARD_UOM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_STANDARD_UOM_ID                         SMALLINT                 not null
 
@@ -12548,12 +12457,12 @@ CREATE TABLE  WM_STANDARD_UOM
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_standard_uom' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12569,8 +12478,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_STOP
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_SHIPMENT_ID                             BIGINT                not null
 
@@ -12818,12 +12726,12 @@ CREATE TABLE  WM_STOP
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_stop' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_SHIPMENT_ID)
 
@@ -12839,8 +12747,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_STOP_STATUS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_STOP_STATUS                             SMALLINT                 not null
 
@@ -12850,12 +12757,12 @@ CREATE TABLE  WM_STOP_STATUS
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_stop_status' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12871,8 +12778,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_SYS_CODE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_REC_TYPE                                STRING         not null
 
@@ -12911,7 +12817,7 @@ CREATE TABLE  WM_SYS_CODE
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_sys_code' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -12925,8 +12831,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TASK_DTL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TASK_DTL_ID                             INT                 not null
 
@@ -13102,12 +13007,12 @@ CREATE TABLE  WM_TASK_DTL
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_task_dtl' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_TASK_DTL_ID)
 
@@ -13123,8 +13028,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TASK_HDR
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TASK_HDR_ID                             INT                 not null
 
@@ -13256,12 +13160,12 @@ CREATE TABLE  WM_TASK_HDR
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_task_hdr' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_TASK_HDR_ID)
 
@@ -13277,8 +13181,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TRAILER_CONTENTS
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TRAILER_CONTENTS_ID                     INT                 not null
 
@@ -13308,12 +13211,12 @@ CREATE TABLE  WM_TRAILER_CONTENTS
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_trailer_contents' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_TRAILER_CONTENTS_ID)
 
@@ -13329,8 +13232,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TRAILER_REF
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TRAILER_ID                              BIGINT                not null
 
@@ -13371,7 +13273,7 @@ CREATE TABLE  WM_TRAILER_REF
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_trailer_ref' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13385,8 +13287,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TRAILER_TYPE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_TRAILER_TYPE_ID                         TINYINT                 not null
 
@@ -13398,12 +13299,12 @@ CREATE TABLE  WM_TRAILER_TYPE
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_trailer_type' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13419,8 +13320,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TRAILER_VISIT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_VISIT_ID                                INT                 not null
 
@@ -13446,12 +13346,12 @@ CREATE TABLE  WM_TRAILER_VISIT
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_trailer_visit' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_VISIT_ID)
 
@@ -13467,8 +13367,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_TRAILER_VISIT_DTL
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_VISIT_DETAIL_ID                         INT                 not null
 
@@ -13508,12 +13407,12 @@ CREATE TABLE  WM_TRAILER_VISIT_DTL
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_trailer_visit_dtl' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_VISIT_DETAIL_ID)
 
@@ -13529,8 +13428,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_UN_NUMBER
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_UN_NBR_ID                               BIGINT                not null
 
@@ -13678,12 +13576,12 @@ CREATE TABLE  WM_UN_NUMBER
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_un_number' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -13699,8 +13597,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_USER_PROFILE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_USER_PROFILE_ID                         INT                 not null
 
@@ -13802,12 +13699,12 @@ CREATE TABLE  WM_USER_PROFILE
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_user_profile' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_USER_PROFILE_ID)
 
@@ -13823,8 +13720,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_VEND_PERF_TRAN
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_VEND_PERF_TRAN_ID                       INT                 not null
 
@@ -13866,7 +13762,7 @@ CREATE TABLE  WM_VEND_PERF_TRAN
 
 , CHRG_AMT                                   DECIMAL(9,2) 
 
-, "COMMENT"                                  STRING 
+, COMMENT                                  STRING 
 
 , WM_USER_ID                                 STRING 
 
@@ -13885,7 +13781,7 @@ CREATE TABLE  WM_VEND_PERF_TRAN
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_vend_perf_tran' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_VEND_PERF_TRAN_ID)
 
@@ -13901,8 +13797,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_WAVE_PARM
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_WAVE_PARM_ID                            INT                 not null
 
@@ -14292,12 +14187,12 @@ CREATE TABLE  WM_WAVE_PARM
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_wave_parm' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_WAVE_PARM_ID)
 
@@ -14313,8 +14208,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_YARD
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_YARD_ID                                 BIGINT                not null
 
@@ -14385,7 +14279,7 @@ CREATE TABLE  WM_YARD
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_yard' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON (WM_YARD_ID)
 
@@ -14401,8 +14295,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_YARD_ZONE
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_YARD_ID                                 BIGINT                not null
 
@@ -14432,12 +14325,12 @@ CREATE TABLE  WM_YARD_ZONE
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_yard_zone' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
@@ -14453,8 +14346,7 @@ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
 
 
 CREATE TABLE  WM_YARD_ZONE_SLOT
-(
-, LOCATION_ID INT not null
+( LOCATION_ID INT not null
 
 , WM_YARD_ID                                 BIGINT                not null
 
@@ -14500,12 +14392,12 @@ CREATE TABLE  WM_YARD_ZONE_SLOT
 
 , UPDATE_TSTMP                               TIMESTAMP                    not null
 
-, LOAD_TSTMP                                 TIMESTAMP                    not null  default " "('now(0)')
+, LOAD_TSTMP                                 TIMESTAMP                    not null  
 
 )
 USING delta 
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/supplychain/wms/wm_yard_zone_slot' 
-TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+;
 
 --DISTRIBUTE ON RANDOM
 
