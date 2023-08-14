@@ -37,7 +37,7 @@ def trigger_rocky_job(payload):
 import csv
 
 with open(
-    "/Workspace/Repos/pshekhar@petsmart.com/nz-databricks-migration/Datalake/WMS/WMS_TO_SCDS_DAILY/tables/wms_scds_daily_rocky_config.csv",
+    "../tables/wms_scds_daily_rocky_config.csv",
     newline="",
 ) as csvfile:
     reader = csv.reader(csvfile, delimiter=",", quotechar='"')
