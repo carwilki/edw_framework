@@ -19,4 +19,4 @@ CREATE TABLE raw.sf2delta_pkey_tstcols (
   tstmp_cols1 STRING)
 USING delta;
 
-insert into raw.sf2delta_pKey_tstcols select * from dev_raw.sf2delta_pkey_tstcols;
+insert into raw.sf2delta_pKey_tstcols select * from dev_raw.sf2delta_pkey_tstcols_external;
