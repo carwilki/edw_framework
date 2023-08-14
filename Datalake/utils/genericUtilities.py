@@ -58,13 +58,8 @@ def sfWriter(df, options, tblName, mode):
     ).save()
 
 
-def sfReader(options, tblName):
-    df = (
-        spark.read.format("snowflake")
-        .options(**options)
-        .option("dbtable", tblName)
-        .load()
-    )
+def sfReader(options, query):
+    df = spark.read.format("snowflake").options(**options).option("query", query).load()
     return df
 
 
