@@ -142,7 +142,7 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
 
-    if conditionCols is None or len(conditionCols) == 0:
+    if conditionCols is None or conditionCols == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
@@ -179,7 +179,7 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
 
-    if conditionCols is None or len(conditionCols) == 0:
+    if conditionCols is None or conditionCols == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
