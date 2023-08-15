@@ -14,7 +14,7 @@ if env == "prod":
     work_db = "work"
     platform_db = "stranger_things"
     token = dbutils.secrets.get(scope="db-token-jobsapi", key="password")
-    instance_id = "143446717932641.1.gcp.databricks.com"
+    instance_id = "3609071286715921.1.gcp.databricks.com"
 else:
     work_db = "qa_work"
     platform_db = "qa_stranger_things"
@@ -37,7 +37,7 @@ def trigger_rocky_job(payload):
 import csv
 
 with open(
-    "../tables/wms_scds_daily_rocky_config.csv",
+    "/Workspace/Repos/gcpdatajobs-shared@petsmart.com/nz-databricks-migration/Datalake/WMS/WMS_TO_SCDS_DAILY/deployment/PROD_wms_scds_daily_rocky_config.csv",
     newline="",
 ) as csvfile:
     reader = csv.reader(csvfile, delimiter=",", quotechar='"')
@@ -45,7 +45,7 @@ with open(
         table = row[4]
         print(table)
         job_id = spark.sql(
-            f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}'"""
+            f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' where table_group='NZ_Migration'"""
         ).collect()[0][0]
         print(job_id)
         try:
