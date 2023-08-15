@@ -6,14 +6,14 @@
 -- MAGIC   v_cust_sensitive_db = 'cust_sensitive'
 -- MAGIC   v_refine_db = "refine"
 -- MAGIC   v_work_db = "work"
--- MAGIC   v_nz_db = "NZ_Mako8"
+-- MAGIC   v_nz_db = "NZ_Export_Mako8"
 -- MAGIC else:
 -- MAGIC   print(spark.conf.get('spark.databricks.clusterUsageTags.gcpProjectId'))
 -- MAGIC   print("Executing Run On Dev/QA Cluster...")
 -- MAGIC   v_cust_sensitive_db = 'qa_cust_sensitive'
 -- MAGIC   v_refine_db = "qa_refine"
 -- MAGIC   v_work_db = "qa_work"
--- MAGIC   v_nz_db = "NZ_Mako4"
+-- MAGIC   v_nz_db = "NZ_Export_Mako4"
 -- MAGIC
 -- MAGIC dbutils.widgets.text("cust_sensitive_db", v_cust_sensitive_db)
 -- MAGIC dbutils.widgets.text("refine_db", v_refine_db)
@@ -30,7 +30,7 @@ drop view if exists ${refine_db}.tp_invoice_rpt
 
 -- COMMAND ----------
 
-INSERT INTO ${v_work_db}.rocky_ingestion_metadata (
+INSERT INTO ${work_db}.rocky_ingestion_metadata (
 table_group, table_group_desc, source_type, source_db, source_table, 
 table_desc, is_pii, pii_type, has_hard_deletes, target_sink, 
 target_db, target_schema, target_table_name, load_type, source_delta_column,
@@ -39,7 +39,7 @@ expected_start_time, job_watchers, max_retry, job_tag, is_scheduled,
 job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , snowflake_pre_sql , snowflake_post_sql ,additional_config
 )
 VALUES (
-"NZ_Migration", null, ${v_nz_db}, "EDW_PRD", "TP_INVOICE_RPT",
+"NZ_Migration", null, '${nz_db}', "EDW_PRD", "TP_INVOICE_RPT",
 null, true, "customer", false, "delta",
 "refine", "public", "tp_invoice_rpt", "full", null, 
 null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
@@ -49,12 +49,12 @@ null, null ,"ALL_MUST_BE_MET" ,null ,null , null, null
 
 -- COMMAND ----------
 
-INSERT INTO ${v_work_db}.pii_dynamic_view_control (
+INSERT INTO ${work_db}.pii_dynamic_view_control (
 secured_database, secured_table_name, view_database, view_name,
 view_created_flg, load_user_name, load_dt_tm, update_dt_tm
 )
 VALUES (
-"cust_sensitive", "refine_tp_invoice_rpt", "refine", "tp_invoice_rpt",
+'${cust_sensitive_db}', "refine_tp_invoice_rpt", "refine", "tp_invoice_rpt",
 False, "rjalan", current_timestamp(), current_timestamp()
 );
 

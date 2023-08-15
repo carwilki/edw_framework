@@ -5,14 +5,21 @@
 -- MAGIC   print("Executing Run On Production Cluster...")
 -- MAGIC   v_work_db = "work"
 -- MAGIC   v_nz_db = "NZ_Mako8"
+-- MAGIC   v_legacy_db = "qa_legacy"
 -- MAGIC else:
 -- MAGIC   print(spark.conf.get('spark.databricks.clusterUsageTags.gcpProjectId'))
 -- MAGIC   print("Executing Run On Dev/QA Cluster...")
 -- MAGIC   v_work_db = "qa_work"
 -- MAGIC   v_nz_db = "NZ_Mako4"
+-- MAGIC   v_legacy_db = "qa_legacy"
 -- MAGIC
 -- MAGIC dbutils.widgets.text("work_db", v_work_db)
 -- MAGIC dbutils.widgets.text("nz_db", v_nz_db)
+-- MAGIC dbutils.widgets.text("legacy_db", v_legacy_db)
+
+-- COMMAND ----------
+
+drop table if exists ${legacy_db}.site_profile_rpt
 
 -- COMMAND ----------
 
@@ -25,7 +32,7 @@ expected_start_time, job_watchers, max_retry, job_tag, is_scheduled,
 job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , snowflake_pre_sql , snowflake_post_sql ,additional_config
 )
 VALUES (
-"NZ_Migration", null, ${v_nz_db}, "EDW_PRD", "SITE_PROFILE_RPT",
+"NZ_Migration", null, '${nz_db}', "EDW_PRD", "SITE_PROFILE_RPT",
 null, false, null, false, "delta",
 "legacy", "public", "site_profile_rpt", "full", null, 
 null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 

@@ -4,14 +4,17 @@
 -- MAGIC   print(spark.conf.get('spark.databricks.clusterUsageTags.gcpProjectId'))
 -- MAGIC   print("Executing Run On Production Cluster...")
 -- MAGIC   v_work_db = "work"
--- MAGIC   v_nz_db = "NZ_Mako8"
+-- MAGIC   v_nz_db = "NZ_Export_Mako8"
+-- MAGIC   v_cust_sensitive_db = "cust_sensitive"
 -- MAGIC else:
 -- MAGIC   print(spark.conf.get('spark.databricks.clusterUsageTags.gcpProjectId'))
 -- MAGIC   print("Executing Run On Dev/QA Cluster...")
 -- MAGIC   v_work_db = "qa_work"
--- MAGIC   v_nz_db = "NZ_Mako4"
+-- MAGIC   v_nz_db = "NZ_Export_Mako4"
+-- MAGIC   v_cust_sensitive_db = "qa_cust_sensitive"
 -- MAGIC
 -- MAGIC dbutils.widgets.text("work_db", v_work_db)
+-- MAGIC dbutils.widgets.text("cust_sensitive_db", v_cust_sensitive_db)
 -- MAGIC dbutils.widgets.text("nz_db", v_nz_db)
 
 -- COMMAND ----------
@@ -25,7 +28,7 @@ expected_start_time, job_watchers, max_retry, job_tag, is_scheduled,
 job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , snowflake_pre_sql , snowflake_post_sql ,additional_config
 )
 VALUES (
-"NZ_Migration", null, ${nz_db}, "EDW_PRD", "site_profile_rpt",
+"NZ_Migration", null, '${nz_db}', "EDW_PRD", "sds_order_item_rpt",
 null, false, null, false, "delta",
 "legacy", "public", "sds_order_item_rpt", "full", null, 
 null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
@@ -40,7 +43,7 @@ secured_database, secured_table_name, view_database, view_name,
 view_created_flg, load_user_name, load_dt_tm, update_dt_tm
 )
 VALUES (
-"cust_sensitive", "legacy_sds_order_item_rpt", "legacy", "sds_order_item_rpt",
+'${cust_sensitive_db}', "legacy_sds_order_item_rpt", "legacy", "sds_order_item_rpt",
 False, "rjalan", current_timestamp(), current_timestamp()
 );
 
