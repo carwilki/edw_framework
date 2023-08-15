@@ -56,7 +56,7 @@ CUSTOMER_EID,
 CUSTOMER_SRC_ID,
 CUSTOMER_SRC_VALUE,
 ACTIVE_FLG
-FROM {enterprise}.CUSTOMER_XREF""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {legacy}.CUSTOMER_XREF""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -91,7 +91,7 @@ FIRST_NAME,
 LAST_NAME,
 LOYALTY_EMAIL,
 EMAIL_OPT_OUT_FLAG
-FROM {enterprise}.CUSTOMER_LOYALTY""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {legacy}.CUSTOMER_LOYALTY""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -401,7 +401,7 @@ FIL_NULL_EMAILS = EXP_CUST_DATA_temp.selectExpr(
 # Processing node RNK_SINGLE_RECORD_PER_CUSTOMER, type RANK 
 # COLUMN COUNT: 32
 
-RNK_SINGLE_RECORD_PER_CUSTOMER = FIL_NULL_EMAILS.withColumn('RANKINDEX', rank().over(Window.partitionBy(col('TP_CUSTOMER_NBR'), col('CREATE_DT')).orderBy(col('TP_INVOICE_NBR').desc()))).filter('RANKINDEX <= 1')
+RNK_SINGLE_RECORD_PER_CUSTOMER = FIL_NULL_EMAILS.withColumn('RANKINDEX', row_number().over(Window.partitionBy(col('TP_CUSTOMER_NBR'), col('CREATE_DT')).orderBy(col('TP_INVOICE_NBR'), col('SKU_DESC').desc()))).filter('RANKINDEX <= 1')
 
 # COMMAND ----------
 

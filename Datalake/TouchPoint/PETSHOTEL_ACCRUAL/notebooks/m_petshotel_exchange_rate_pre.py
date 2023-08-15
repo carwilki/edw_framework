@@ -41,22 +41,22 @@ starttime = datetime.now() #start timestamp of the script
 # COLUMN COUNT: 3
 
 SQ_Shortcut_to_CURRENCY_DAY = spark.sql(f"""SELECT day_dt, 'CA' country_cd, a.exchange_rate_pcnt
-  FROM {enterprise}.currency_day a
+  FROM {legacy}.currency_day a
  WHERE day_dt > TO_DATE ('01-01-2005', 'mm-dd-yyyy')
 UNION
 SELECT day_dt, 'US' country_cd, 1 exchange_rate_pcnt
-  FROM {enterprise}.currency_day a
+  FROM {legacy}.currency_day a
  WHERE day_dt > TO_DATE ('01-01-2005', 'mm-dd-yyyy')
 UNION
 SELECT a.day_dt, 'CA' country_cd, c.exchange_rate_pcnt
   FROM {enterprise}.days a, (SELECT exchange_rate_pcnt, day_dt
-                             FROM {enterprise}.currency_day
-                             WHERE day_dt = (SELECT MAX (day_dt) FROM {enterprise}.currency_day)) c
+                             FROM {legacy}.currency_day
+                             WHERE day_dt = (SELECT MAX (day_dt) FROM {legacy}.currency_day)) c
  WHERE a.day_dt > c.day_dt
 UNION
 SELECT a.day_dt, 'US' country_cd, 1 exchange_rate_pcnt
   FROM {enterprise}.days a
- WHERE a.day_dt > (SELECT MAX (day_dt) FROM {enterprise}.currency_day)""").withColumn("sys_row_id", monotonically_increasing_id())
+ WHERE a.day_dt > (SELECT MAX (day_dt) FROM {legacy}.currency_day)""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # Conforming fields names to the component layout
 SQ_Shortcut_to_CURRENCY_DAY = (SQ_Shortcut_to_CURRENCY_DAY
