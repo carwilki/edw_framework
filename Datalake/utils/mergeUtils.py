@@ -141,8 +141,8 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
-
-    if conditionCols is None or conditionCols == "":
+    print(conditionCols)
+    if conditionCols == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
@@ -179,10 +179,11 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
 
-    if conditionCols is None or conditionCols == "":
+    if conditionCols == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
+        
     print(mergeDatasetSql)
 
     df_table = spark.sql(mergeDatasetSql)
