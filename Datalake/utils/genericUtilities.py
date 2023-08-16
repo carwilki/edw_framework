@@ -180,13 +180,6 @@ def jdbcOracleConnection(query, username, password, connection_string):
         .option("driver", "oracle.jdbc.OracleDriver")
         .option("fetchsize", 10000)
         .option("oracle.jdbc.timezoneAsRegion", "false")
-        .option(
-            "sessionInitStatement",
-            """begin 
-            execute immediate 'alter session set time_zone=''-07:00''';
-            end;
-        """,
-        )
         .load()
     )
     return df
