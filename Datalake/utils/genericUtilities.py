@@ -129,7 +129,7 @@ def getSFEnvSuffix(env: str):
     return envSuffix
 
 
-#Schema for custsensitive prefix. In non prod schema is prefixed with 'data_harness_'
+# Schema for custsensitive prefix. In non prod schema is prefixed with 'data_harness_'
 def getCustSensitivePrefix(env: str):
     print(env)
     if env.lower() == "dev":
@@ -180,6 +180,13 @@ def jdbcOracleConnection(query, username, password, connection_string):
         .option("driver", "oracle.jdbc.OracleDriver")
         .option("fetchsize", 10000)
         .option("oracle.jdbc.timezoneAsRegion", "false")
+        .option(
+            "sessionInitStatement",
+            """begin 
+            execute immediate 'alter session set time_zone=''-07:00''';
+            end;
+        """,
+        )
         .load()
     )
     return df
@@ -213,6 +220,7 @@ def parseArgEnv(env):
     # env = args.env
     return args
 
+
 def getParameterValue(raw, param_file_name, param_section, param_key):
     from datetime import datetime
     from Datalake.utils.configs import getMaxDate
@@ -223,8 +231,9 @@ def getParameterValue(raw, param_file_name, param_section, param_key):
         where parameter_file_name='{param_file_name}' and parameter_section='{param_section}' and parameter_key='{param_key}'"""
     ).collect()[0][0]
     logger.info("Extracted param_value from parameter_config table")
-    
+
     return param_value
+
 
 def resetPrevRunDt(input_csv, reset_date, logTableName):
     import pandas
