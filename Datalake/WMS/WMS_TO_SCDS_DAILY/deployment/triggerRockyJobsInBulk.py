@@ -46,7 +46,7 @@ with open(
         table = row[4]
         print(table)
         job_id = spark.sql(
-            f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' where table_group='NZ_Migration'"""
+            f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
         ).collect()[0][0]
         print(job_id)
         try:
