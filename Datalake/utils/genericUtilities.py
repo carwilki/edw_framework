@@ -276,3 +276,84 @@ def resetPrevRunDt(input_csv, reset_date, logTableName):
     spark.sql(ins_sql_query)
 
     print("Reset is completed for the tables in the query " + ins_sql_query)
+    
+def removeTransactionFiles(filePath):
+    fileList = dbutils.fs.ls(filePath)
+
+    for file in fileList:
+        if (
+            file.name.startswith("_SUCCESS")
+            or file.name.startswith("_started")
+            or file.name.startswith("_committed")
+        ):
+            dbutils.fs.rm(filePath.strip("/") + "/" + file.name)
+
+
+def renamePartFileName(filePath, newFilename):
+    fileList = dbutils.fs.ls(filePath)
+
+    for file in fileList:
+        if file.name.startswith("part-0000"):
+            print(file.name)
+            partFileName = filePath.strip("/") + "/" + file.name
+            dbutils.fs.mv(partFileName, newFilename)
+
+
+def writeToFlatFile(df, filePath, fileName, mode):
+    df.repartition(1).write.format("csv").mode(mode).option("header", "True").option(
+        "inferSchema", "true"
+    ).option("delimiter", "|").option("ignoreTrailingWhiteSpace","False").csv(filePath)
+
+    removeTransactionFiles(filePath)
+    newFilePath=filePath.strip("/") + "/" + fileName
+
+    renamePartFileName(filePath, newFilePath)
+
+import os,paramiko
+def execute_cmd_on_edge_node (cmd_parameter,mykey): 
+
+    try:
+      from StringIO import StringIO
+    except ImportError:
+      from io import StringIO
+
+    p = paramiko.SSHClient()
+    p.load_system_host_keys()
+    p.set_missing_host_key_policy(paramiko.AutoAddPolicy()) 
+    p.connect("10.120.0.80", port=22, username="gcpdatajobs-shared_petsmart_com", pkey=mykey)
+
+    tr = p.get_transport()
+    p.default_max_packet_size = 300000000
+    p.default_window_size = 100000000
+    getcmd=cmd_parameter
+
+    print("[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" --> Command Execution Starts \n" +getcmd)
+
+    stdin, stdout, stderr = p.exec_command(getcmd)
+    error_message = stderr.readlines()
+    stdout_message = stdout.readlines()
+
+    if stdout.channel.recv_exit_status() > 0:
+        err_out = "".join(map(str, error_message))
+        print("\n[Error] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Command Execution Failed\n")
+        print("[Error] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Error Message : \n"+err_out)
+        p.close()
+        raise Exception("Command Execution Failed!")
+    else:
+        std_out = "".join(map(str, stdout_message))
+        print("\n[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Command Execution Successfull\n")
+        print("[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Standard Output Message : \n"+std_out)
+        p.close()
+        return std_out
+spark.udf.register("execute_cmd_on_edge_node", execute_cmd_on_edge_node)
+
+def copy_file_to_nas(gs_source_path,nas_target_path):
+      try:
+        from StringIO import StringIO
+      except ImportError:
+        from io import StringIO
+
+      key_string=dbutils.secrets.get(scope = "dataprocedgenode-creds",key = "pkey")
+      keyfile = StringIO(key_string)
+      mykey = paramiko.RSAKey.from_private_key(keyfile)
+      execute_cmd_on_edge_node("gsutil cp "+gs_source_path+ " "+nas_target_path, mykey)
