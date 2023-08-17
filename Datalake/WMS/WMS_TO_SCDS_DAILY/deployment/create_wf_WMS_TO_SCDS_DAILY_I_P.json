@@ -1,6 +1,6 @@
 {
     "run_as": {
-        "user_name": "cwilkins01@petsmart.com"
+        "user_name": "gcpdatajobs-shared@petsmart.com"
     },
     "name": "WMS_TO_SCDS_DAILY_I_P",
     "email_notifications": {
@@ -4771,7 +4771,7 @@
                 },
                 "gcp_attributes": {
                     "use_preemptible_executors": false,
-                    "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
                     "availability": "ON_DEMAND_GCP",
                     "zone_id": "auto"
                 },
