@@ -395,3 +395,10 @@ def m_WM_Item_Cbo_PRE(dcnbr, env):
         "CAST(GIFT_CARD_TYPE AS STRING) as GIFT_CARD_TYPE",
         "CAST(LOAD_TSTMP_EXP AS TIMESTAMP) as LOAD_TSTMP"
     )
+    
+    overwriteDeltaPartition(Shortcut_to_WM_ITEM_CBO_PRE,"DC_NBR",dcnbr,target_table_name)
+
+    logger.info(
+        "Shortcut_to_WM_ILM_YARD_ACTIVITY_PRE is written to the target table - "
+        + target_table_name
+    )    
