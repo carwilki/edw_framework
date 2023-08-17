@@ -141,10 +141,12 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
+    conditionCols: list[str] = list(filter(None, conditionCols))
 
-    mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
-    )
+    if len(conditionCols)==0:
+        mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
+    else:
+        mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
 
     print(mergeDatasetSql)
 
@@ -161,7 +163,7 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
             SFTable,
             json.loads(primaryKeys),
         ).push_data(df_table, write_mode="merge")
-        
+
 
 def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     import datetime as dt
@@ -177,10 +179,12 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
+    conditionCols: list[str] = list(filter(None, conditionCols))
 
-    mergeDatasetSql = (
-        f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
-    )
+    if len(conditionCols)==0:
+        mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
+    else:
+        mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
 
     print(mergeDatasetSql)
 
@@ -197,7 +201,7 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
             SFTable,
             json.loads(primaryKeys),
         ).push_data(df_table, write_mode="merge")
-        
+
 
 def IngestFromSFHistoricalData(env, deltaTable):
     print("Ingest_historical_data_from_Snowflake")
