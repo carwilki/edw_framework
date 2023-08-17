@@ -35,6 +35,7 @@ def trigger_rocky_job(payload):
 
 
 import csv
+import time
 
 with open(
     "/Workspace/Repos/gcpdatajobs-shared@petsmart.com/nz-databricks-migration/Datalake/WMS/WMS_TO_SCDS_DAILY/deployment/PROD_wms_scds_daily_rocky_config.csv",
@@ -51,6 +52,7 @@ with open(
         try:
             run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
             print("response:", run_info)
+            time.sleep(30)
             # run_id = json.loads(run_info)['run_id']
             # print(run_id)
         except Exception as e:
