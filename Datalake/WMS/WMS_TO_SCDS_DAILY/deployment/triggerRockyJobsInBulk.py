@@ -52,7 +52,7 @@ with open(
         try:
             run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
             print("response:", run_info)
-            time.sleep(30)
+            time.sleep(240)
             # run_id = json.loads(run_info)['run_id']
             # print(run_id)
         except Exception as e:
