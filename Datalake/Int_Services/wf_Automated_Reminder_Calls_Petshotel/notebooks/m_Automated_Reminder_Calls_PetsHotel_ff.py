@@ -842,10 +842,8 @@ Automated_Reminder_Calls_PetsHotel_FF = Automated_Reminder_Calls_PetsHotel_FF.dr
 )
 
 
-today = datetime.now()
-dateAppendeFileName = (
-    "RoboCalling_" + str(current_date) + "." + "Profile_PetsHotel_Reminder_Calls.txt"
-)
+dateAppendeFileName = "RoboCalling_" + datetime.now().strftime("%Y%m%d%H%m%S") + "." + "Profile_PetsHotel_Reminder_Calls.txt"
+print(dateAppendeFileName)
 if env == "prod":
     dirPath = (
         "gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
