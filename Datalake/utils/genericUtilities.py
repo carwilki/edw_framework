@@ -316,7 +316,9 @@ def execute_cmd_on_edge_node (cmd_parameter,mykey):
       from StringIO import StringIO
     except ImportError:
       from io import StringIO
-
+    
+    from datetime import datetime
+    
     p = paramiko.SSHClient()
     p.load_system_host_keys()
     p.set_missing_host_key_policy(paramiko.AutoAddPolicy()) 
