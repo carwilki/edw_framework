@@ -56,7 +56,7 @@ LastRunDate = getParameterValue(
 )
 
 
-RunDate = genPrevRunDtFlatFile('Automated_Reminder_Calls_PetsHotel_FF', raw)
+RunDate = genPrevRunDtFlatFile("Automated_Reminder_Calls_PetsHotel_FF", raw)
 # RunDate="2023-07-24"
 
 
@@ -239,8 +239,8 @@ SELECT DISTINCT
   DISTRICT_DESC
 FROM {cust_sensitive}.refine_tp_invoice_rpt a JOIN {legacy}.SITE_PROFILE_RPT s ON a.location_id=s.location_id
   AND a.TP_APPT_STATUS_DESC = 'Booked'
-  AND date(a.APPT_START_TSTMP) >= current_date  - interval 23 day
-  AND a.APPT_START_TSTMP <= current_date  - interval 23 day + interval 12 day
+  AND date(a.APPT_START_TSTMP) >= current_date 
+  AND a.APPT_START_TSTMP <= current_date + interval 12 day
   AND s.STORE_NBR NOT IN {PRStoreList}
  JOIN {cust_sensitive}.refine_tp_customer c ON c.tp_customer_nbr = a.tp_customer_nbr
  JOIN {cust_sensitive}.refine_tp_invoice_service_rpt b ON b.tp_invoice_nbr = a.tp_invoice_nbr
@@ -868,7 +868,19 @@ try:
         "overwrite",
     )
     copy_file_to_nas(gs_source_path, nas_target_path)
-    logPrevRunDt("Automated_Reminder_Calls_PetsHotel_FF", "Automated_Reminder_Calls_PetsHotel_FF", "Completed", "N/A", f"{raw}.log_run_details")
+    logPrevRunDt(
+        "Automated_Reminder_Calls_PetsHotel_FF",
+        "Automated_Reminder_Calls_PetsHotel_FF",
+        "Completed",
+        "N/A",
+        f"{raw}.log_run_details",
+    )
 except Exception as e:
-    logPrevRunDt("Automated_Reminder_Calls_PetsHotel_FF", "Automated_Reminder_Calls_PetsHotel_FF","Failed",str(e), f"{raw}.log_run_details" )
+    logPrevRunDt(
+        "Automated_Reminder_Calls_PetsHotel_FF",
+        "Automated_Reminder_Calls_PetsHotel_FF",
+        "Failed",
+        str(e),
+        f"{raw}.log_run_details",
+    )
     raise e
