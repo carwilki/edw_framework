@@ -841,8 +841,8 @@ Automated_Reminder_Calls_PetsHotel_FF = Automated_Reminder_Calls_PetsHotel_FF.dr
     "FileName"
 )
 
-
-dateAppendeFileName = "RoboCalling_" + datetime.now().strftime("%Y%m%d%H%m%S") + "." + "Profile_PetsHotel_Reminder_Calls.txt"
+current_date = starttime.strftime("%Y%m%d%H%M%S")
+dateAppendeFileName = "RoboCalling_" + current_date + "." + "Profile_PetsHotel_Reminder_Calls.txt"
 print(dateAppendeFileName)
 if env == "prod":
     dirPath = (
