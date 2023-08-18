@@ -311,6 +311,7 @@ def removeTransactionFiles(filePath):
             or file.name.startswith("_started")
             or file.name.startswith("_committed")
         ):
+            print(file.name)
             dbutils.fs.rm(filePath.strip("/") + "/" + file.name)
 
 
@@ -321,14 +322,16 @@ def renamePartFileName(filePath, newFilename):
         if file.name.startswith("part-0000"):
             print(file.name)
             partFileName = filePath.strip("/") + "/" + file.name
+            print('part file name:',partFileName)
             dbutils.fs.mv(partFileName, newFilename)
 
 
 def writeToFlatFile(df, filePath, fileName, mode):
+    print(filePath)
     df.repartition(1).write.format("csv").mode(mode).option("header", "True").option(
         "inferSchema", "true"
     ).option("delimiter", "|").option("ignoreTrailingWhiteSpace","False").csv(filePath)
-
+    print('File added to GCS Path')
     removeTransactionFiles(filePath)
     newFilePath=filePath.strip("/") + "/" + fileName
 
