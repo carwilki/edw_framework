@@ -20,11 +20,11 @@ from Datalake.utils.logger import *
 spark = SparkSession.getActiveSession()
 # dbutils = DBUtils(spark)
 
-# parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
+parser.add_argument('env', type=str, help='Env Variable')
+args = parser.parse_args()
+env = args.env
 
-env = "dev"
+# env = "dev"
 
 if env is None or env == "":
     raise ValueError("env is not set")
@@ -61,7 +61,7 @@ LastRunDate = getParameterValue(
 print(LastRunDate)
 
 # RunDate=args.RunDate
-RunDate = "2023-07-24"
+RunDate = genPrevRunDtFlatFile("Automated_Reminder_Calls_DDC_FF", raw)
 # RunDate="2023-08-05"
 # print(str(date.today() - timedelta(days = 1)))
 # NextRunDate=args.NextRunDate
@@ -838,7 +838,7 @@ try:
         "overwrite",
     )
     copy_file_to_nas(gs_source_path, nas_target_path)
-    # logPrevRunDt("Automated_Reminder_Calls_PetsHotel_FF", "Automated_Reminder_Calls_PetsHotel_FF", "Completed", "N/A", f"{raw}.log_run_details")
+    logPrevRunDt("Automated_Reminder_Calls_DDC_FF", "Automated_Reminder_Calls_DDC_FF", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-    # logPrevRunDt("Automated_Reminder_Calls_PetsHotel_FF", "Automated_Reminder_Calls_PetsHotel_FF","Failed",str(e), f"{raw}.log_run_details", )
+    logPrevRunDt("Automated_Reminder_Calls_DDC_FF", "Automated_Reminder_Calls_DDC_FF","Failed",str(e), f"{raw}.log_run_details", )
     raise e
