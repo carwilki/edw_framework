@@ -23,3 +23,5 @@ USING delta
 LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/IT/automated_call_rules';
 
 insert into legacy.automated_call_rules select * from qa_legacy.automated_call_rules1;
+
+insert into raw.parameter_config select * from dev_raw.parameter_config1 where parameter_section = 'INT_Services.WF:wf_Automated_Reminder_Calls_DDC_ff' or parameter_section='INT_Services.WF:wf_Automated_Reminder_Calls_PetsHotel_ff';
