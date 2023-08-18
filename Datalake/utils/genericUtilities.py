@@ -328,7 +328,10 @@ def renamePartFileName(filePath, newFilename):
 
 def writeToFlatFile(df, filePath, fileName, mode):
     print(filePath)
-    df.repartition(1).write.format("csv").mode(mode).option("header", "True").option(
+    if mode == 'overwrite':
+        dbutils.fs.rm(filePath.strip("/") + "/",True)
+        
+    df.repartition(1).write.mode(mode).option("header", "True").option(
         "inferSchema", "true"
     ).option("delimiter", "|").option("ignoreTrailingWhiteSpace","False").csv(filePath)
     print('File added to GCS Path')
