@@ -179,10 +179,10 @@ def genPrevRunDtFlatFile(refine_table_name, raw):
         from {raw}.log_run_details
         where lower(table_name)='{refine_table_name}' and lower(status)= 'completed'"""
     ).collect()[0][0]
-    logger.info("Extracted prev_run_dt from log_run_details table")
+    print("Extracted prev_run_dt from log_run_details table")
 
     if prev_run_dt is None:
-        logger.info(
+        print(
             "Prev_run_dt is none so getting prev_run_dt from current date-1 "
         )
         prev_run_dt = str(date.today() - timedelta(days=1))
@@ -190,7 +190,7 @@ def genPrevRunDtFlatFile(refine_table_name, raw):
     else:
         prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
         prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
-
+    print(prev_run_dt)
     return prev_run_dt
 
 
