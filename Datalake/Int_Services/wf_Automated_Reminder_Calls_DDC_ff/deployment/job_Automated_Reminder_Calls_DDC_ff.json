@@ -1,0 +1,97 @@
+{
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    },
+    "name": "wf_Automated_Reminder_Calls_DDC_ff",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 100,
+    "tasks": [
+        {
+            "task_key": "s_Automated_Reminder_Calls_DDC_ff",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/Int_Services/wf_Automated_Reminder_Calls_DDC_ff/notebooks/m_Automated_Reminder_Calls_DDC_ff.py",
+                "parameters": [
+                    "dev"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Automated_Reminder_Calls_DDC_ff",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "paramiko"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+  "job_clusters": [
+        {
+            "job_cluster_key": "automated_reminder_calls_ddc_ff_cluster",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "zone_id": "auto"
+                },
+                "custom_tags": {
+                    "Department": "Netezza-Migration"
+                },
+                "instance_pool_id": "0719-055920-manic10-pool-xfsvha2y",
+                "driver_instance_pool_id": "0719-055920-manic10-pool-xfsvha2y",
+                "runtime_engine": "STANDARD",
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "Netezza-Migration"
+    },
+    "format": "MULTI_TASK"
+}
