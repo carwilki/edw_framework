@@ -594,7 +594,7 @@ Automated_Reminder_Calls_PetsHotel_FF = Automated_Reminder_Calls_PetsHotel_FF.dr
 #writeToFlatFile(Automated_Reminder_Calls_PetsHotel_FF,filePath,dateAppendeFileName,"overwrite")
 
 current_date = starttime.strftime("%Y%m%d%H%M%S")
-dateAppendeFileName="RoboCalling_"+current_date+".Profile_PetsHotel_Reminder_Calls.txt"
+dateAppendeFileName="RoboCalling_"+current_date+".Profile_DDC_Reminder_Calls.txt"
 print(dateAppendeFileName)
 if env == "prod":
   dirPath="gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_reminder_ddc/"
