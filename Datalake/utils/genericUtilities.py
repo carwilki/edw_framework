@@ -340,9 +340,9 @@ def writeToFlatFile(df, filePath, fileName, mode):
 
     renamePartFileName(filePath, newFilePath)
 
-import os,paramiko
-def execute_cmd_on_edge_node (cmd_parameter,mykey): 
 
+def execute_cmd_on_edge_node (cmd_parameter,mykey): 
+    import os,paramiko
     try:
       from StringIO import StringIO
     except ImportError:
@@ -380,13 +380,14 @@ def execute_cmd_on_edge_node (cmd_parameter,mykey):
         return std_out
 spark.udf.register("execute_cmd_on_edge_node", execute_cmd_on_edge_node)
 
-def copy_file_to_nas(gs_source_path,nas_target_path):
-      try:
+def copy_file_to_nas(gs_source_path,nas_target_path):    
+    import os,paramiko
+    try:
         from StringIO import StringIO
-      except ImportError:
+    except ImportError:
         from io import StringIO
 
-      key_string=dbutils.secrets.get(scope = "dataprocedgenode-creds",key = "pkey")
-      keyfile = StringIO(key_string)
-      mykey = paramiko.RSAKey.from_private_key(keyfile)
-      execute_cmd_on_edge_node("gsutil cp "+gs_source_path+ " "+nas_target_path, mykey)
+    key_string=dbutils.secrets.get(scope = "dataprocedgenode-creds",key = "pkey")
+    keyfile = StringIO(key_string)
+    mykey = paramiko.RSAKey.from_private_key(keyfile)
+    execute_cmd_on_edge_node("gsutil cp "+gs_source_path+ " "+nas_target_path, mykey)
