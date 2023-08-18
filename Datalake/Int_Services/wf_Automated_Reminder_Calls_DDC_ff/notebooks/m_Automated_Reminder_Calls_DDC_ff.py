@@ -204,8 +204,8 @@ SELECT DISTINCT
   DISTRICT_DESC
 FROM {cust_sensitive}.refine_tp_invoice_rpt a JOIN {legacy}.SITE_PROFILE_RPT s ON a.location_id=s.location_id
  and a.TP_APPT_STATUS_DESC = 'Booked'
- and date(a.APPT_START_TSTMP) >= current_date -interval 23 day
- and a.APPT_START_TSTMP <= current_date -interval 23 day  + interval 6 day
+ and date(a.APPT_START_TSTMP) >= current_date
+ and a.APPT_START_TSTMP <= current_date + interval 6 day
  AND s.STORE_NBR NOT IN {PRStoreList}
  JOIN {cust_sensitive}.refine_tp_customer c ON c.tp_customer_nbr = a.tp_customer_nbr
  JOIN {cust_sensitive}.refine_tp_invoice_service_rpt b ON b.tp_invoice_nbr = a.tp_invoice_nbr
