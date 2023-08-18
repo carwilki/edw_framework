@@ -15,7 +15,7 @@ from Datalake.utils.logger import *
 
 # COMMAND ----------
 
-# parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser()
 
 spark = SparkSession.getActiveSession()
 # dbutils = DBUtils(spark)
