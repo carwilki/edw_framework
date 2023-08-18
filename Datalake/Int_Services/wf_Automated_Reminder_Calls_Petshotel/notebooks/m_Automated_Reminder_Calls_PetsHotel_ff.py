@@ -848,6 +848,7 @@ if env == "prod":
     dirPath = (
         "gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
     )
+    today=datetime.now()
     filePath = dirPath + today.strftime("%Y%m%d")
     gs_source_path = filePath + "/*.txt"
     nas_target_path = "/mnt/nas05/edwshare/DataLake/Temp_NZ_Migration/"
@@ -855,6 +856,7 @@ else:
     dirPath = (
         "gs://petm-bdpl-dev-nas-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
     )
+    today=datetime.now()
     filePath = dirPath + today.strftime("%Y%m%d")
     gs_source_path = filePath + "/*.txt"
     nas_target_path = "/mnt/ssgnas01/devl-edwshare/DataLake/NZ_Migration_Test/"
