@@ -16,7 +16,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/Int_Services/wf_Automated_Reminder_Calls_DDC_ff/notebooks/m_Automated_Reminder_Calls_DDC_ff.py",
                 "parameters": [
-                    "dev"
+                    "prod"
                 ],
                 "source": "GIT"
             },
