@@ -4458,7 +4458,7 @@
                     "prod",
                     "WM_LPN_AUDIT_RESULTS",
                     "LOCATION_ID,WM_LPN_AUDIT_RESULTS_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "WM_WM_CREATED_TSTMP,WM_WM_LAST_UPDATED_TSTMP"
                 ],
                 "source": "GIT"
             },
