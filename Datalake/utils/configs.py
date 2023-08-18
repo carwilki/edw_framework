@@ -181,7 +181,7 @@ def mtx_prd_sqlServer(env):
             + db
             + ";encrypt=true;trustServerCertificate=true;"
         )
-    return (username, password, connection_string)
+        return (username, password, connection_string)
 
     if env.lower() == "prod":
         # username, password, hostname
@@ -190,7 +190,16 @@ def mtx_prd_sqlServer(env):
         hostname = "172.20.89.138"
         portnumber = "1840"
         db = "EnterpriseSiteDataHub"
-        connection_string = f"jdbc:sqlserver://"+ hostname + ":" + portnumber +";databaseName=" + db+";encrypt=true;trustServerCertificate=true;" """
+        connection_string = (
+            f"jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
 
 
 def getConfig(DC_NBR, env):
