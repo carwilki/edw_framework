@@ -673,8 +673,7 @@ Automated_Reminder_Calls_PetsHotel_FF=Automated_Reminder_Calls_PetsHotel_FF.drop
 
 
 today = datetime.now()
-current_date1 = current_date
-dateAppendeFileName="RoboCalling_"+current_date1+"."+"Profile_PetsHotel_Reminder_Calls.txt"
+dateAppendeFileName="RoboCalling_"+str(current_date)+"."+"Profile_PetsHotel_Reminder_Calls.txt"
 if env == "prod":
   dirPath="gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
   filePath=dirPath+today.strftime('%Y%m%d')
