@@ -183,15 +183,13 @@ def mtx_prd_sqlServer(env):
         )
     return (username, password, connection_string)
 
-
-"""     elif env.lower() == "prod":
+    if env.lower() == "prod":
         # username, password, hostname
-        username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
-        password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
-        hostname = "172.17.89.188"
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="esdh_password")
+        hostname = "172.20.89.138"
         portnumber = "1840"
-        db = "MTX_PRD"
-        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
+        db = "EnterpriseSiteDataHub"
         connection_string = f"jdbc:sqlserver://"+ hostname + ":" + portnumber +";databaseName=" + db+";encrypt=true;trustServerCertificate=true;" """
 
 
