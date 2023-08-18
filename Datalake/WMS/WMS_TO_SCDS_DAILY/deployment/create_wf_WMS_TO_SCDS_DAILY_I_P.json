@@ -17,7 +17,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc10",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -58,7 +58,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc10",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -99,7 +99,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc12",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -140,7 +140,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc12",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -181,7 +181,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc14",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -222,7 +222,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc14",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -263,7 +263,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc22",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -304,7 +304,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc22",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -345,7 +345,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc36",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -386,7 +386,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc36",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -427,7 +427,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc38",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -468,7 +468,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc38",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -509,7 +509,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc41",
-                    "prod",
+                    "qa",
                     "set_I_P_1"
                 ],
                 "source": "GIT"
@@ -550,7 +550,7 @@
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/WL_SCDS_STG_PRE_LOAD_DC.py",
                 "parameters": [
                     "dc41",
-                    "prod",
+                    "qa",
                     "set_I_P_2"
                 ],
                 "source": "GIT"
@@ -3619,10 +3619,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ORDER_LINE_ITEM",
                     "LOCATION_ID,WM_ORDER_ID,WM_LINE_ITEM_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3663,10 +3663,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ORDER_STATUS",
                     "LOCATION_ID,WM_ORDER_STATUS_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3707,7 +3707,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ORDERS",
                     "LOCATION_ID,WM_ORDER_ID",
                     "LOAD_TSTMP"
@@ -3751,10 +3751,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_OUTPT_LPN",
                     "LOCATION_ID,WM_OUTPT_LPN_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3795,10 +3795,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_OUTPT_LPN_DETAIL",
                     "LOCATION_ID,WM_OUTPT_LPN_DETAIL_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3839,10 +3839,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_PICK_LOCN_DTL",
                     "LOCATION_ID,WM_PICK_LOCN_DTL_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3883,10 +3883,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_PICK_LOCN_HDR",
                     "LOCATION_ID,WM_PICK_LOCN_HDR_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3927,10 +3927,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_PICK_LOCN_HDR_SLOTTING",
                     "LOCATION_ID,WM_PICK_LOCN_HDR_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3971,10 +3971,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ITEM_CBO",
                     "LOCATION_ID,WM_ITEM_ID",
-                    "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP,WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4015,10 +4015,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ITEM_FACILITY_MAPPING_WMS",
                     "LOCATION_ID,WM_ITEM_FACILITY_MAPPING_ID",
-                    "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4059,7 +4059,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ITEM_PACKAGE_CBO",
                     "LOCATION_ID,WM_ITEM_PACKAGE_ID",
                     "LOAD_TSTMP"
@@ -4103,10 +4103,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_ITEM_WMS",
                     "LOCATION_ID,WM_ITEM_ID",
-                    "WM_AUDIT_CREATED_TSTMP,WM_AUDIT_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4147,10 +4147,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LABOR_ACTIVITY",
                     "LOCATION_ID,WM_LABOR_ACTIVITY_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4191,10 +4191,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LABOR_CRITERIA",
                     "LOCATION_ID,WM_CRIT_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4235,10 +4235,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LABOR_MSG",
                     "LOCATION_ID,WM_LABOR_MSG_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_DTTM"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4279,10 +4279,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LABOR_MSG_DTL",
                     "LOCATION_ID,WM_LABOR_MSG_DTL_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4323,10 +4323,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LABOR_MSG_DTL_CRIT",
                     "LOCATION_ID,WM_LABOR_MSG_DTL_CRIT_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4367,10 +4367,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LOCN_HDR",
                     "LOCATION_ID,WM_LOCN_HDR_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4411,10 +4411,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN",
                     "LOCATION_ID,WM_LPN_ID",
-                    "WM_CREATED_TSTMP,WM_EXT_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4455,10 +4455,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_AUDIT_RESULTS",
                     "LOCATION_ID,WM_LPN_AUDIT_RESULTS_ID",
-                    "WM_WM_CREATED_TSTMP,WM_WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4499,10 +4499,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_DETAIL",
                     "LOCATION_ID,WM_LPN_ID,WM_LPN_DETAIL_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4543,7 +4543,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_FACILITY_STATUS",
                     "LOCATION_ID,WM_LPN_FACILITY_STATUS,INBOUND_OUTBOUND_IND",
                     "LOAD_TSTMP"
@@ -4587,10 +4587,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_LOCK",
                     "LOCATION_ID,WM_LPN_LOCK_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4631,10 +4631,10 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_SIZE_TYPE",
                     "LOCATION_ID,WM_LPN_SIZE_TYPE_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4675,7 +4675,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_STATUS",
                     "LOCATION_ID,WM_LPN_STATUS",
                     "LOAD_TSTMP"
@@ -4719,7 +4719,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/utils/SF_Ingest_v2.py",
                 "parameters": [
-                    "prod",
+                    "qa",
                     "WM_LPN_TYPE",
                     "LOCATION_ID,WM_LPN_TYPE",
                     "LOAD_TSTMP"
@@ -4788,7 +4788,7 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "main"
+        "git_branch": "DNM-5882"
     },
     "tags": {
         "Department": "Netezza-Migration"
