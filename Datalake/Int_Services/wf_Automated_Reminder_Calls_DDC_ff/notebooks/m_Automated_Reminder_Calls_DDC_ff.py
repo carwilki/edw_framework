@@ -796,7 +796,7 @@ Automated_Reminder_Calls_PetsHotel_FF = FIL_FirstTime_DDCCustomer.selectExpr(
     "CAST(POSTAL_CD AS STRING) as TP_Store_Zip",
     "CAST(SITE_CITY AS STRING) as TP_Store_City",
     "CAST(STATE_CD AS STRING) as TP_Store_State",
-    "CAST(COUNTRY_CD AS STRING) as TP_Store_Country",
+    "TRIM(CAST(COUNTRY_CD AS STRING)) as TP_Store_Country",
     "CAST(TimeZone AS STRING) as TP_Store_Timezone",
     "CAST(SITE_MAIN_TELE_NO AS LONG) as TP_Store_Phone",
     "CAST(REGION_DESC AS STRING) as TP_Store_District",
