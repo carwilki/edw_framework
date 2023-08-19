@@ -631,7 +631,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -715,7 +715,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -799,7 +799,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Detail_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -883,7 +883,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Asn_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -967,7 +967,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Business_Partner.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1051,7 +1051,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_Leader_Audit.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1135,7 +1135,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_C_TMS_Plan.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1219,7 +1219,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Carrier_Code.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1303,7 +1303,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Commodity_Code.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1387,7 +1387,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Do_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1471,7 +1471,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Dock_Door.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1555,7 +1555,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1639,7 +1639,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1723,7 +1723,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Act_Elm_Crit.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1807,7 +1807,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Aud_Log.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1891,7 +1891,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Crit_Val.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1975,7 +1975,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2059,7 +2059,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Elm_Crit.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2143,7 +2143,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Dtl.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2227,7 +2227,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Emp_Stat_Code.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2311,7 +2311,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Evnt_Smry_Hdr.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2395,7 +2395,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_E_Job_Function.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2479,7 +2479,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Labor_Type_Code.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2563,7 +2563,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2647,7 +2647,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2731,7 +2731,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Calc.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2815,7 +2815,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Msrmnt_Rule_Condition.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2899,7 +2899,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_E_Shift.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2983,7 +2983,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3067,7 +3067,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Equipment_Instance.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3151,7 +3151,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Facility.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3235,7 +3235,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Objects.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3319,7 +3319,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3403,7 +3403,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appointment_Type.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3487,7 +3487,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_Wm_Ilm_Appointments.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3571,7 +3571,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ilm_Appt_Equipments.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },

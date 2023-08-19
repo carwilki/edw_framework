@@ -634,7 +634,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Picking_Short_Item.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -718,7 +718,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Pix_Tran.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -802,7 +802,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Product_Class.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -886,7 +886,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -970,7 +970,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Line_Item.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1054,7 +1054,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Line_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1138,7 +1138,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Purchase_Orders_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1222,7 +1222,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Putaway_Lock.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1306,7 +1306,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Rack_Type.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1390,7 +1390,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Rack_Type_Level.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1474,7 +1474,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Resv_Locn_Hdr.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1558,7 +1558,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Sec_User.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1642,7 +1642,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Ship_Via.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1726,7 +1726,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Shipment.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1810,7 +1810,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Shipment_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1894,7 +1894,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Size_Uom.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -1978,7 +1978,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Slot_Item.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2062,7 +2062,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Slot_Item_Score.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2146,7 +2146,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Standard_UOM.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2230,7 +2230,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Stop.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2314,7 +2314,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Stop_Status.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2398,7 +2398,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Sys_Code.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2482,7 +2482,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Task_Dtl.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2566,7 +2566,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Task_Hdr.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2650,7 +2650,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Contents.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2734,7 +2734,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Ref.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2818,7 +2818,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Type.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2902,7 +2902,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Visit.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -2986,7 +2986,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Trailer_Visit_Dtl.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3070,7 +3070,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_UN_Number.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3154,7 +3154,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_User_Profile.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3238,7 +3238,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Vend_Perf_Tran.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3322,7 +3322,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Wave_Parm.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3406,7 +3406,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3490,7 +3490,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard_Zone.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
@@ -3574,7 +3574,7 @@
             "spark_python_task": {
                 "python_file": "Datalake/WMS/WMS_TO_SCDS_DAILY/notebooks/m_WM_Yard_Zone_Slot.py",
                 "parameters": [
-                    "prod"
+                    "qa"
                 ],
                 "source": "GIT"
             },
