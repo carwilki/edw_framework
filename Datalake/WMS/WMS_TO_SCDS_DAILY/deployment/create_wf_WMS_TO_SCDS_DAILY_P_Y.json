@@ -1,6 +1,6 @@
 {
     "run_as": {
-        "user_name": "gcpdatajobs-shared@petsmart.com"
+        "user_name": "cwilkins01@petsmart.com"
     },
     "name": "WMS_TO_SCDS_DAILY_P_Y",
     "email_notifications": {
@@ -4589,7 +4589,7 @@
                 "parameters": [
                     "qa",
                     "WM_YARD_ZONE_SLOT",
-                    "LOCATION_ID,WM_YARD_ID",
+                    "LOCATION_ID,WM_YARD_ID,WM_YARD_ZONE_SLOT_ID,WM_YARD_ID",
                     "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
@@ -4639,7 +4639,8 @@
                 },
                 "gcp_attributes": {
                     "use_preemptible_executors": false,
-                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",              "availability": "ON_DEMAND_GCP",
+                    "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
                     "zone_id": "auto"
                 },
                 "node_type_id": "n2-standard-8",
