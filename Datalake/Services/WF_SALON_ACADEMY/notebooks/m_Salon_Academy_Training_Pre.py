@@ -25,7 +25,7 @@ refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
-(username,password,connection_string) = mtx_prd_sqlServer(env)
+(username,password,connection_string) = SalonAcademy_prd_sqlServer(env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_To_SITE_PROFILE, type SOURCE 

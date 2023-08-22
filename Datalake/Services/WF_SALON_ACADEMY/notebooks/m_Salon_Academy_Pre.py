@@ -27,7 +27,7 @@ refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
-(username,password,connection_string) = mtx_prd_sqlServer(env)
+(username,password,connection_string) = SalonAcademy_prd_sqlServer(env)
 # COMMAND ----------
 # Processing node LKP_ACADEMY_TYPE_SRC, type SOURCE Cached data from connected lookup object
 # COLUMN COUNT: 3
