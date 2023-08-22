@@ -257,10 +257,10 @@ def PetTraining_prd_sqlServer(env):
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="username")
-        password = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="esdh_password")
-        #hostname = "172.20.89.138"
-        #portnumber = "1840"
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="pettrn_password")
+        hostname = "172.20.89.187"
+        portnumber = "1840"
         db = "PetTraining"
         connection_string = (
             f"jdbc:sqlserver://"
