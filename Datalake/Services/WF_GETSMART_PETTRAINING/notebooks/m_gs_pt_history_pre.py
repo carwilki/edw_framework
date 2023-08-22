@@ -79,4 +79,4 @@ Shortcut_to_GS_PT_HISTORY_PRE = EXP_LOAD_TSTMP.selectExpr(
 	"CAST(Action AS STRING) as ACTION",
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
 )
-Shortcut_to_GS_PT_HISTORY_PRE.write.mode("append").saveAsTable(f'{raw}.GS_PT_HISTORY_PRE')
+Shortcut_to_GS_PT_HISTORY_PRE.write.mode("overwrite").saveAsTable(f'{raw}.GS_PT_HISTORY_PRE')
