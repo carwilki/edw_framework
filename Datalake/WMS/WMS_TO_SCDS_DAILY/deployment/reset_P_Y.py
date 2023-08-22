@@ -14,9 +14,7 @@ def create_job(payload):
     api_version = "/api/2.1"
     api_command = "/jobs/reset"
     url = f"https://{instance_id}{api_version}{api_command}"
-    job_id = 182576057205935
     params = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
-    payload = {"job_id": job_id, "new_settings": payload}
     response = requests.post(url=url, headers=params, data=payload)
 
     return response.text
