@@ -62,10 +62,10 @@ EXP_LOAD_TSTMP = SQ_Shortcut_to_GS_TrainingType_temp.selectExpr(
 
 
 Shortcut_to_GS_PT_TRAINING_TYPE_PRE = EXP_LOAD_TSTMP.selectExpr(
-	"CAST(TypeID AS BIGINT) as GS_PT_TRAINING_TYPE_ID",
+	"CAST(TypeID AS INT) as GS_PT_TRAINING_TYPE_ID",
 	"CAST(TrainingName AS STRING) as TRAINING_NAME",
-	"CAST(CutOffDays AS BIGINT) as CUT_OFF_DAYS",
-	"CAST(IsActive as INT) as IS_ACTIVE",
+	"CAST(CutOffDays AS INT) as CUT_OFF_DAYS",
+	"CAST(IsActive as SMALLINT) as IS_ACTIVE",
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
 )
 Shortcut_to_GS_PT_TRAINING_TYPE_PRE.write.mode("overwrite").saveAsTable(f'{raw}.GS_PT_TRAINING_TYPE_PRE')
