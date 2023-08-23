@@ -69,8 +69,8 @@ EXP_LOAD_TSTMP = SQ_Shortcut_to_GS_History_temp.selectExpr(
 
 
 Shortcut_to_GS_PT_HISTORY_PRE = EXP_LOAD_TSTMP.selectExpr(
-	"CAST(HistoryID as INT) as GS_PT_HISTORY_ID",
-	"CAST(TrainingID as INT) as GS_PT_TRAINING_ID",
+	"CAST(HistoryID as BIGINT) as GS_PT_HISTORY_ID",
+	"CAST(TrainingID as BIGINT) as GS_PT_TRAINING_ID",
 	"CAST(FieldName AS STRING) as FIELD_NAME",
 	"CAST(OldValue AS STRING) as OLD_VALUE",
 	"CAST(NewValue AS STRING) as NEW_VALUE",
