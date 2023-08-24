@@ -23,7 +23,7 @@ def create_job(payload):
 # COMMAND ----------
 payload = """
 {
-    "job_id":<paste job id to reset>,
+    "job_id":194887990419371,
     "new_settings":{
     "run_as": {
         "user_name": "gcpdatajobs-shared@petsmart.com"
