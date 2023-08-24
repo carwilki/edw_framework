@@ -181,19 +181,97 @@ def mtx_prd_sqlServer(env):
             + db
             + ";encrypt=true;trustServerCertificate=true;"
         )
-    return (username, password, connection_string)
+        return (username, password, connection_string)
 
-
-"""     elif env.lower() == "prod":
+    if env.lower() == "prod":
         # username, password, hostname
+        username = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="username")
+        password = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="esdh_password")
+        hostname = "172.20.89.138"
+        portnumber = "1840"
+        db = "EnterpriseSiteDataHub"
+        connection_string = (
+            f"jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
+
+def SalonAcademy_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
         username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
         password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"{db}_password")
-        connection_string = f"jdbc:sqlserver://"+ hostname + ":" + portnumber +";databaseName=" + db+";encrypt=true;trustServerCertificate=true;" """
+        connection_string = (
+            "jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
 
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="salon_password")
+        hostname = "172.20.89.187"
+        portnumber = "1840"
+        db = "SalonAcademy"
+        connection_string = (
+            f"jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)    
+    
+def PetTraining_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = (
+            "jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="pettrn_password")
+        hostname = "172.20.89.187"
+        portnumber = "1840"
+        db = "PetTraining"
+        connection_string = (
+            f"jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)        
 
 def getConfig(DC_NBR, env):
     logger.info("getConfig function is getting executed")
