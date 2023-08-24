@@ -3619,7 +3619,7 @@
                     "prod",
                     "WM_ASN",
                     "LOCATION_ID,WM_ASN_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3663,7 +3663,7 @@
                     "prod",
                     "WM_ASN_DETAIL",
                     "LOCATION_ID,WM_ASN_DETAIL_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3707,7 +3707,7 @@
                     "prod",
                     "WM_ASN_STATUS",
                     "LOCATION_ID,WM_ASN_STATUS",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3751,7 +3751,7 @@
                     "prod",
                     "WM_BUSINESS_PARTNER",
                     "LOCATION_ID,WM_BUSINESS_PARTNER_ID,WM_TC_COMPANY_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3795,7 +3795,7 @@
                     "prod",
                     "WM_C_LEADER_AUDIT",
                     "LOCATION_ID,WM_C_LEADER_AUDIT_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3839,7 +3839,7 @@
                     "prod",
                     "WM_C_TMS_PLAN",
                     "LOCATION_ID,WM_C_TMS_PLAN_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3883,7 +3883,7 @@
                     "prod",
                     "WM_COMMODITY_CODE",
                     "LOCATION_ID,WM_COMMODITY_CD_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -3971,7 +3971,7 @@
                     "prod",
                     "WM_DOCK_DOOR",
                     "LOCATION_ID,WM_DOCK_DOOR_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4015,7 +4015,7 @@
                     "prod",
                     "WM_E_ACT",
                     "LOCATION_ID,WM_ACT_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4059,7 +4059,7 @@
                     "prod",
                     "WM_E_ACT_ELM",
                     "LOCATION_ID,WM_ACT_ID,WM_ELM_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4103,7 +4103,7 @@
                     "prod",
                     "WM_E_ACT_ELM_CRIT",
                     "LOCATION_ID,WM_ACT_ID,WM_ELM_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4147,7 +4147,7 @@
                     "prod",
                     "WM_E_AUD_LOG",
                     "LOCATION_ID,WM_AUD_ID",
-                    "WM_CREATE_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4191,7 +4191,7 @@
                     "prod",
                     "WM_E_CRIT_VAL",
                     "LOCATION_ID,WM_CRIT_ID,WM_CRIT_VAL_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4235,7 +4235,7 @@
                     "prod",
                     "WM_E_ELM",
                     "LOCATION_ID,WM_ELM_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4279,7 +4279,7 @@
                     "prod",
                     "WM_E_EMP_DTL",
                     "LOCATION_ID,WM_EMP_DTL_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4323,7 +4323,7 @@
                     "prod",
                     "WM_E_EMP_STAT_CODE",
                     "LOCATION_ID,WM_EMP_STAT_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4367,7 +4367,7 @@
                     "prod",
                     "WM_E_EVNT_SMRY_HDR",
                     "LOCATION_ID,WM_ELS_TRAN_ID",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4411,7 +4411,7 @@
                     "prod",
                     "WM_E_JOB_FUNCTION",
                     "LOCATION_ID,WM_JOB_FUNCTION_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4455,7 +4455,7 @@
                     "prod",
                     "WM_E_LABOR_TYPE_CODE",
                     "LOCATION_ID,WM_LABOR_TYPE_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4499,7 +4499,7 @@
                     "prod",
                     "WM_E_MSRMNT",
                     "LOCATION_ID,WM_MSRMNT_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4543,7 +4543,7 @@
                     "prod",
                     "WM_E_MSRMNT_RULE",
                     "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4587,7 +4587,7 @@
                     "prod",
                     "WM_E_MSRMNT_RULE_CALC",
                     "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,CALC_SEQ_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4631,7 +4631,7 @@
                     "prod",
                     "WM_E_MSRMNT_RULE_CONDITION",
                     "LOCATION_ID,WM_MSRMNT_ID,WM_RULE_NBR,RULE_SEQ_NBR",
-                    "WM_CREATE_TSTMP,WM_MOD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4675,7 +4675,7 @@
                     "prod",
                     "WM_E_SHIFT",
                     "LOCATION_ID,WM_SHIFT_ID",
-                    "WM_CREATED_TSTMP,WM_CREATE_TSTMP,WM_MOD_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4719,7 +4719,7 @@
                     "prod",
                     "WM_FACILITY",
                     "LOCATION_ID,WM_FACILITY_ID",
-                    "WM_CREATED_TSTMP,WM_LAST_UPDATED_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -4785,7 +4785,7 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "main"
+        "git_branch": "DNM-5882"
     },
     "tags": {
         "Department": "Netezza-Migration"

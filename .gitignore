@@ -230,3 +230,4 @@ $RECYCLE.BIN/
 *.vsix
 /.idea/
 .databricks/.*
+.databricks
