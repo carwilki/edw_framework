@@ -45,7 +45,7 @@ print("The prev run date is " + prev_run_dt)
 CREATE_DATE = (datetime.strptime(prev_run_dt, '%Y-%m-%d') - timedelta(days=1)).strftime("%Y-%m-%d")
 UPDATE_DATE = (datetime.strptime(prev_run_dt, '%Y-%m-%d') - timedelta(days=1)).strftime("%Y-%m-%d")
 
-(username, password, connection_string) = mtx_prd_sqlServer(env)
+(username, password, connection_string) = petHotel_prd_sqlServer(env)
 
 # COMMAND ----------
 
