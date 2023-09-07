@@ -312,7 +312,6 @@ def getMaxDate(refine_table_name, schema):
 
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
-
     metadata_df = spark.table(f"{schema}.ingestion_metadata")
     try:
         columns = (
