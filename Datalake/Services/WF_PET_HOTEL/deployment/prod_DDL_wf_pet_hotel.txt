@@ -1,0 +1,642 @@
+
+
+--*****  Creating table:  "E_RES_ADD_ONS_PRE" , ***** Creating table: "E_RES_ADD_ONS_PRE"
+
+
+use raw;
+CREATE TABLE IF NOT EXISTS  E_RES_ADD_ONS_PRE
+( ADD_ON_ID INT not null
+
+, ADD_ON_NAME                                  STRING 
+
+, SKU_NBR                                      STRING 
+
+, ADD_ON_DESCRIPTION                           STRING 
+
+, ADD_ON_CATEGORY_ID INT
+
+, GROUP_ID INT
+
+, SPECIES_ID INT
+
+, ALLOW_MULTIPLE                               TINYINT 
+
+, SCHEDULABLE                                  TINYINT 
+
+, BREED_QUALIFIER                              TINYINT 
+
+, RATE_TYPE SMALLINT
+
+, IMAGE_URL                                    STRING 
+
+, SORT_ORDER INT
+
+, IS_DELETED                                   TINYINT 
+
+, CREATED_AT                                   TIMESTAMP 
+
+, UPDATED_BY                                   STRING 
+
+, CREATED_BY                                   STRING 
+
+, UPDATE_AT                                    TIMESTAMP 
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/services/e_res_add_ons_pre' 
+;
+
+--DISTRIBUTE ON (ADD_ON_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_ADD_ON_CATEGORY_PRE" , ***** Creating table: "E_RES_ADD_ON_CATEGORY_PRE"
+
+
+use raw;
+CREATE TABLE IF NOT EXISTS  E_RES_ADD_ON_CATEGORY_PRE
+( ADD_ON_CATEGORY_ID INT not null
+
+, ADD_ON_CATEGORY_NAME                         STRING 
+
+, ALLOW_MULTIPLE_SERVICES                      TINYINT 
+
+, CREATED_AT                                   TIMESTAMP 
+
+, UPDATED_BY                                   STRING 
+
+, CREATED_BY                                   STRING 
+
+, UPDATED_AT                                   TIMESTAMP 
+
+, IS_DELETED                                   TINYINT 
+
+, IMAGE_URL                                    STRING 
+
+, DESCRIPTION                                  STRING 
+
+, SORT_ORDER INT
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/services/e_res_add_on_category_pre' 
+;
+
+--DISTRIBUTE ON (ADD_ON_CATEGORY_ID)
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_PETS_PRE" , ***** Creating table: "E_RES_PETS_PRE"
+
+
+use cust_sensitive;
+ CREATE TABLE IF NOT EXISTS raw_E_RES_PETS_PRE 
+( PET_ID INT not null
+
+, EXTERNAL_ID                                  STRING 
+
+, REQUEST_ID INT
+
+, NAME     STRING 
+
+, SPECIES_ID INT
+
+, BREED_ID INT
+
+, COLOR_ID INT
+
+, GENDER                                       STRING 
+
+, MIXED                                        TINYINT 
+
+, FIXED                                        TINYINT 
+
+, DATE_OF_BIRTH                                TIMESTAMP 
+
+, WEIGHT                                       DECIMAL(15,2) 
+
+, ROOM_SHARED                                  TINYINT 
+
+, INSTRUCTIONS                                 STRING 
+
+, ROOM_TYPE                                    STRING 
+
+, ROOM_UNIT_PRICE                              DECIMAL(15,2) 
+
+, ROOM_TOTAL                                   DECIMAL(15,2) 
+
+, VET_NAME                                     STRING 
+
+, VET_PHONE                                    STRING 
+
+, PET_TOTAL                                    DECIMAL(15,2) 
+
+, BOOKING_REFERENCE                            STRING 
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-cust-sensitive-raw-p1-gcs-gbl/services/e_res_pets_pre' 
+;
+
+--DISTRIBUTE ON (PET_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_REQUESTS_PRE" , ***** Creating table: "E_RES_REQUESTS_PRE"
+
+
+use cust_sensitive;
+ CREATE TABLE IF NOT EXISTS raw_E_RES_REQUESTS_PRE 
+( REQUEST_ID INT not null
+
+, CART_ID INT
+
+, EXTERNAL_ID                                  STRING 
+
+, STORE_NUMBER INT
+
+, FIRST_NAME                                   STRING 
+
+, LAST_NAME                                    STRING 
+
+, PRIMARY_PHONE                                STRING 
+
+, SECONDARY_PHONE                              STRING 
+
+, EMAIL                                        STRING 
+
+, ADDRESS1                                     STRING 
+
+, ADDRESS2                                     STRING 
+
+, CITY     STRING 
+
+, STATE_PROVINCE                               STRING 
+
+, POSTAL                                       STRING 
+
+, CHECK_IN                                     TIMESTAMP 
+
+, CHECK_OUT                                    TIMESTAMP 
+
+, NOTES                                        STRING 
+
+, TOTAL_AMOUNT                                 DECIMAL(15,2) 
+
+, CUSTOMER_CALLED                              TINYINT 
+
+, CALL_REASON                                  STRING 
+
+, CALL_COMMENT                                 STRING 
+
+, CLOSING_COMMENT                              STRING 
+
+, STATUS SMALLINT
+
+, LOCKED_BY                                    STRING 
+
+, LOCKED_DT                                    TIMESTAMP 
+
+, CREATED_BY                                   STRING 
+
+, CREATED_DT                                   TIMESTAMP 
+
+, UPDATED_BY                                   STRING 
+
+, UPDATED_DT                                   TIMESTAMP 
+
+, IS_DELETED                                   TINYINT 
+
+, SOURCE                                       STRING 
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-cust-sensitive-raw-p1-gcs-gbl/services/e_res_requests_pre' 
+;
+
+--DISTRIBUTE ON (REQUEST_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_SELECTED_ADD_ONS_PRE" , ***** Creating table: "E_RES_SELECTED_ADD_ONS_PRE"
+
+
+use raw;
+CREATE TABLE IF NOT EXISTS  E_RES_SELECTED_ADD_ONS_PRE
+( SELECTED_ADD_ON_ID INT not null
+
+, PET_ID INT
+
+, CATEGORY                                     STRING 
+
+, ADD_ON                                       STRING 
+
+, FREQUENCY                                    STRING 
+
+, UNIT_PRICE                                   DECIMAL(15,2) 
+
+, TOTAL_PRICE                                  DECIMAL(15,2) 
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/services/e_res_selected_add_ons_pre' 
+;
+
+--DISTRIBUTE ON (SELECTED_ADD_ON_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_SELECTED_MEDICATIONS_PRE" , ***** Creating table: "E_RES_SELECTED_MEDICATIONS_PRE"
+
+
+use raw;
+CREATE TABLE IF NOT EXISTS  E_RES_SELECTED_MEDICATIONS_PRE
+( SELECTED_MEDICATION_ID INT not null
+
+, PET_ID INT
+
+, NAME     STRING 
+
+, DOSE     STRING 
+
+, TIME_OF_DAY                                  STRING 
+
+, AILMENTS                                     STRING 
+
+, INSTRUCTIONS                                 STRING 
+
+, FREQUENCY                                    STRING 
+
+, UNIT_PRICE                                   DECIMAL(15,2) 
+
+, TOTAL_PRICE                                  DECIMAL(15,2) 
+
+, LOAD_TSTMP                                   TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/services/e_res_selected_medications_pre' 
+;
+
+--DISTRIBUTE ON (SELECTED_MEDICATION_ID)
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_ADD_ONS" , ***** Creating table: "E_RES_ADD_ONS"
+
+
+use legacy;
+CREATE TABLE IF NOT EXISTS  E_RES_ADD_ONS
+( E_RES_ADD_ON_ID INT not null
+
+, ADD_ON_NAME                           STRING 
+
+, SKU_NBR                               STRING 
+
+, ADD_ON_DESC                           STRING 
+
+, E_RES_ADD_ON_CATEGORY_ID INT
+
+, E_RES_GROUP_ID INT
+
+, PETM_PET_SPECIES_ID INT
+
+, ALLOW_MULTIPLE_ADD_ONS_FLAG           TINYINT 
+
+, SCHEDULABLE_FLAG                      TINYINT 
+
+, BREED_QUALIFIER_FLAG                  TINYINT 
+
+, E_RES_ADD_ON_RATE_TYPE_ID SMALLINT
+
+, IMAGE_URL                             STRING 
+
+, SORT_ORDER_NBR INT
+
+, DELETED_FLAG                          TINYINT 
+
+, E_RES_CREATED_TSTMP                   TIMESTAMP 
+
+, E_RES_CREATED_BY                      STRING 
+
+, E_RES_UPDATE_TSTMP                    TIMESTAMP 
+
+, E_RES_UPDATED_BY                      STRING 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/services/e_res_add_ons' 
+;
+
+--DISTRIBUTE ON (E_RES_ADD_ON_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_ADD_ON_CATEGORY" , ***** Creating table: "E_RES_ADD_ON_CATEGORY"
+
+
+use legacy;
+CREATE TABLE IF NOT EXISTS  E_RES_ADD_ON_CATEGORY
+( E_RES_ADD_ON_CATEGORY_ID INT not null
+
+, E_RES_ADD_ON_CATEGORY_NAME            STRING 
+
+, E_RES_ADD_ON_CATEGORY_DESC            STRING 
+
+, ALLOW_MULTIPLE_SERVICES_FLAG          TINYINT 
+
+, IMAGE_URL                             STRING 
+
+, SORT_ORDER_NBR INT
+
+, DELETED_FLAG                          TINYINT 
+
+, E_RES_CREATED_TSTMP                   TIMESTAMP 
+
+, E_RES_CREATED_BY                      STRING 
+
+, E_RES_UPDATE_TSTMP                    TIMESTAMP 
+
+, E_RES_UPDATED_BY                      STRING 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/services/e_res_add_on_category' 
+;
+
+--DISTRIBUTE ON (E_RES_ADD_ON_CATEGORY_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_PETS" , ***** Creating table: "E_RES_PETS"
+
+
+use cust_sensitive;
+ CREATE TABLE IF NOT EXISTS legacy_E_RES_PETS 
+( E_RES_PET_ID INT not null
+
+, E_RES_PET_EXT_ID                      STRING 
+
+, E_RES_REQUEST_ID INT
+
+, PET_NAME                              STRING 
+
+, PETM_PET_SPECIES_ID INT
+
+, PETM_PET_BREED_ID INT
+
+, PETM_PET_COLOR_ID INT
+
+, PET_GENDER_CD                         STRING 
+
+, MIXED_BREED_FLAG                      TINYINT 
+
+, FIXED_FLAG                            TINYINT 
+
+, PET_BIRTH_DT DATE
+
+, PET_WEIGHT                            DECIMAL(15,2) 
+
+, ROOM_SHARED_FLAG                      TINYINT 
+
+, ROOM_TYPE                             STRING 
+
+, ROOM_UNIT_PRICE                       DECIMAL(15,2) 
+
+, ROOM_TOTAL_AMT                        DECIMAL(15,2) 
+
+, INSTRUCTIONS                          STRING 
+
+, VET_NAME                              STRING 
+
+, VET_PHONE                             STRING 
+
+, PET_TOTAL_AMT                         DECIMAL(15,2) 
+
+, BOOKING_REFERENCE                     STRING 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-cust-sensitive-nzlegacy-p1-gcs-gbl/services/e_res_pets' 
+;
+
+--DISTRIBUTE ON (E_RES_PET_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_REQUESTS" , ***** Creating table: "E_RES_REQUESTS"
+
+
+use cust_sensitive;
+ CREATE TABLE IF NOT EXISTS legacy_E_RES_REQUESTS 
+( E_RES_REQUEST_ID INT not null
+
+, E_RES_CART_ID INT
+
+, E_RES_REQUEST_EXT_ID                  STRING 
+
+, STORE_NBR INT
+
+, CUST_FIRST_NAME                       STRING 
+
+, CUST_LAST_NAME                        STRING 
+
+, PRIMARY_PHONE                         STRING 
+
+, SECONDARY_PHONE                       STRING 
+
+, EMAIL                                 STRING 
+
+, ADDR1                                 STRING 
+
+, ADDR2                                 STRING 
+
+, CITY                                  STRING 
+
+, STATE_PROV                            STRING 
+
+, POSTAL_CD                             STRING 
+
+, CHECK_IN_TSTMP                        TIMESTAMP 
+
+, CHECK_OUT_TSTMP                       TIMESTAMP 
+
+, NOTES                                 STRING 
+
+, TOTAL_AMT                             DECIMAL(15,2) 
+
+, CUST_CALLED_FLAG                      TINYINT 
+
+, CALL_REASON                           STRING 
+
+, CALL_COMMENT                          STRING 
+
+, CLOSING_COMMENT                       STRING 
+
+, E_RES_STATUS_ID SMALLINT
+
+, DELETED_FLAG                          TINYINT 
+
+, E_RES_SOURCE                          STRING 
+
+, E_RES_LOCKED_BY                       STRING 
+
+, E_RES_LOCKED_TSTMP                    TIMESTAMP 
+
+, E_RES_CREATED_BY                      STRING 
+
+, E_RES_CREATED_TSTMP                   TIMESTAMP 
+
+, E_RES_UPDATED_BY                      STRING 
+
+, E_RES_UPDATED_TSTMP                   TIMESTAMP 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-cust-sensitive-nzlegacy-p1-gcs-gbl/services/e_res_requests' 
+;
+
+--DISTRIBUTE ON (E_RES_REQUEST_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_SELECTED_ADD_ONS" , ***** Creating table: "E_RES_SELECTED_ADD_ONS"
+
+
+use legacy;
+CREATE TABLE IF NOT EXISTS  E_RES_SELECTED_ADD_ONS
+( E_RES_SELECTED_ADD_ON_ID INT not null
+
+, E_RES_PET_ID INT
+
+, E_RES_ADD_ON_CATEGORY_NAME            STRING 
+
+, E_RES_ADD_ON_DESC                     STRING 
+
+, ADD_ON_FREQ                           STRING 
+
+, UNIT_PRICE_AMT                        DECIMAL(15,2) 
+
+, TOTAL_PRICE_AMT                       DECIMAL(15,2) 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/services/e_res_selected_add_ons' 
+;
+
+--DISTRIBUTE ON (E_RES_SELECTED_ADD_ON_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "E_RES_SELECTED_MEDICATIONS" , ***** Creating table: "E_RES_SELECTED_MEDICATIONS"
+
+
+use legacy;
+CREATE TABLE IF NOT EXISTS  E_RES_SELECTED_MEDICATIONS
+( E_RES_SELECTED_MEDICATION_ID INT not null
+
+, E_RES_PET_ID INT
+
+, MEDICATION_NAME                       STRING 
+
+, MEDICATION_DOSE                       STRING 
+
+, MEDICATION_TIME_OF_DAY                STRING 
+
+, MEDICATION_FREQ                       STRING 
+
+, AILMENTS                              STRING 
+
+, MEDICATION_INSTRUCTIONS               STRING 
+
+, UNIT_PRICE_AMT                        DECIMAL(15,2) 
+
+, TOTAL_PRICE_AMT                       DECIMAL(15,2) 
+
+, UPDATE_TSTMP                          TIMESTAMP 
+
+, LOAD_TSTMP                            TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/services/e_res_selected_medications' 
+;
+
+--DISTRIBUTE ON (E_RES_SELECTED_MEDICATION_ID)
+
+
+
+
+
