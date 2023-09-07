@@ -3,7 +3,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'EDW_PRD' --source_db
+, '`EDW_`PRD' --source_db
 , 'TS_ACTIVITY' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
