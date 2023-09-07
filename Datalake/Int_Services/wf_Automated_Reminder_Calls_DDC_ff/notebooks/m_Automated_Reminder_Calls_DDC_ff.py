@@ -819,7 +819,7 @@ current_date = starttime.strftime("%Y%m%d%H%M%S")
 dateAppendeFileName = "RoboCalling_" + current_date + ".Profile_DDC_Reminder_Calls.txt"
 print(dateAppendeFileName)
 if env == "prod":
-    dirPath = "gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_reminder_ddc/"
+    dirPath = "gs://petm-bdpl-prod-cust-sensitive-apps-p1-gcs-gbl/nzmigration/automated_reminder_ddc/"
     today = datetime.now()
     filePath = dirPath + today.strftime("%Y%m%d")
     gs_source_path = filePath + "/*.txt"
