@@ -225,7 +225,7 @@ def timesmart_prd_sqlServer(env):
         # username, password, hostname
         username = dbutils.secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = dbutils.secrets.get(scope="SVC_BD_SQL_P_READ", key="time_tracking_password")
-        hostname = "172.20.89.138"
+        hostname = "172.20.72.51"
         portnumber = "1840"
         db = "Time_Tracking"
         connection_string = (
@@ -261,7 +261,7 @@ def petHotel_prd_sqlServer(env):
         # username, password, hostname
         username = dbutils.secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = dbutils.secrets.get(scope="SVC_BD_SQL_P_READ", key="ereserv_password")
-        hostname = "172.20.89.138"
+        hostname = "172.20.89.184"
         portnumber = "1840"
         db = "eReservations"
         connection_string = (
@@ -529,8 +529,8 @@ def or_kro_read_edhp1(env):
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
     
     if env.lower() == "prod":
-        hostname = "172.17.89.238"
-        portnumber = "1800"
+        hostname = "172.20.89.163"
+        portnumber = "1804"
         db = "EDHP1"
         username = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"username")
         password = secrets.get(scope="SVC_BD_ORA_P_READ", key=f"edhp1_password")
