@@ -391,3 +391,25 @@ def copy_file_to_nas(gs_source_path,nas_target_path):
     keyfile = StringIO(key_string)
     mykey = paramiko.RSAKey.from_private_key(keyfile)
     execute_cmd_on_edge_node("gsutil cp "+gs_source_path+ " "+nas_target_path, mykey)
+
+
+def insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value):
+
+  id= spark.sql(f"select max(id) from {raw}.parameter_config").collect()[0][0]
+
+  spark.sql(f"insert into table {raw}.parameter_config values ({id+1},'{parameter_file_name}','{parameter_section}','{parameter_key}','{parameter_value}')")
+  return f"ID of the {parameter_key} is {id+1}"
+
+
+def get_source_file(key, _bucket):
+  import builtins
+  
+  
+  if not key.startswith("gl_"):
+      key = f"gl_{key}"
+  lst = dbutils.fs.ls(_bucket)
+  dirs = [item for item in lst if item.isDir()]
+  fldr = builtins.max(dirs, key=lambda x: x.name).name
+  lst = dbutils.fs.ls(_bucket + fldr)
+  files = [x.path for x in lst if x.name.startswith(key)]
+  return files[0] if files else None
