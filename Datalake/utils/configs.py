@@ -206,7 +206,7 @@ def timesmart_prd_sqlServer(env):
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = secrets.get(scope="SVC_BD_SQL_P_READ", key="time_tracking_password")
         hostname = "172.20.72.51"
-        portnumber = "1840"
+        portnumber = "1433"
         db = "Time_Tracking"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
