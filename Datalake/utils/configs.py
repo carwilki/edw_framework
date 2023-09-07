@@ -172,10 +172,7 @@ def mtx_prd_sqlServer(env):
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -186,10 +183,7 @@ def mtx_prd_sqlServer(env):
         hostname = "172.20.89.138"
         portnumber = "1840"
         db = "EnterpriseSiteDataHub"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -203,10 +197,7 @@ def timesmart_prd_sqlServer(env):
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -217,10 +208,7 @@ def timesmart_prd_sqlServer(env):
         hostname = "172.20.72.51"
         portnumber = "1840"
         db = "Time_Tracking"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -234,10 +222,7 @@ def petHotel_prd_sqlServer(env):
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -248,10 +233,7 @@ def petHotel_prd_sqlServer(env):
         hostname = "172.20.89.184"
         portnumber = "1840"
         db = "eReservations"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -265,10 +247,7 @@ def SalonAcademy_prd_sqlServer(env):
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -279,10 +258,7 @@ def SalonAcademy_prd_sqlServer(env):
         hostname = "172.20.89.187"
         portnumber = "1840"
         db = "SalonAcademy"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -296,10 +272,7 @@ def PetTraining_prd_sqlServer(env):
         hostname = "172.17.89.188"
         portnumber = "1840"
         db = "MTX_PRD"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
@@ -310,10 +283,7 @@ def PetTraining_prd_sqlServer(env):
         hostname = "172.20.89.187"
         portnumber = "1840"
         db = "PetTraining"
-        connection_string = f"""
-        jdbc:sqlserver://{hostname}:{portnumber};
-        databaseName={db};encrypt=true;
-        trustServerCertificate=true;"""
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
