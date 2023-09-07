@@ -441,3 +441,16 @@ def getMaxDate(refine_table_name, schema):
     print(f"Max date: {maxDate}")
     logger.info("Returning max date")
     return maxDate
+
+
+
+def or_kro_read_edhp1(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "edhp1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_edhp1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
