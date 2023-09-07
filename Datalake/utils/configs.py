@@ -312,7 +312,16 @@ def getMaxDate(refine_table_name, schema):
 
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
-    metadata_df = spark.table(f"{schema}.ingestion_metadata")
+     
+    env = schema.split("_")[0]
+    if env.lower() == "dev":
+      platform_db = "dev_stranger_things"
+    elif env.lower() == "qa":
+      platform_db = "qa_stranger_things"
+    elif "_" not in env.lower():
+      platform_db = "stranger_things"
+
+    metadata_df = spark.table(f"{platform_db}.ingestion_metadata")
     try:
         columns = (
             metadata_df.select("timestamp_columns")
