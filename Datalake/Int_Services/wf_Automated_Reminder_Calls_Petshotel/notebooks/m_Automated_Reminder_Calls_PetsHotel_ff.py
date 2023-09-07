@@ -846,7 +846,7 @@ dateAppendeFileName = "RoboCalling_" + current_date + "." + "Profile_PetsHotel_R
 print(dateAppendeFileName)
 if env == "prod":
     dirPath = (
-        "gs://petm-bdpl-prod-nas-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
+        "gs://petm-bdpl-prod-cust-sensitive-apps-p1-gcs-gbl/nzmigration/automated_petshotel_reminder/"
     )
     today=datetime.now()
     filePath = dirPath + today.strftime("%Y%m%d")
