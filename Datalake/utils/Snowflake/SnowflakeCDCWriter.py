@@ -2,7 +2,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, desc, row_number, when
 from pyspark.sql.window import Window
-from vars.SnowflakeCDCWriter import (
+from Datalake.utils.Snowflake.vars import (
     cdc_metadata_catalog,
     cdc_metadata_schema,
     cdc_metadata_table,

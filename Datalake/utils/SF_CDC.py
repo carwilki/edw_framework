@@ -17,12 +17,11 @@ args:
     excludedCols: cols that have been excluded from cdc
 """
 import argparse
-import json
 from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
 
-from Datalake.utils.SnowflakeCDCWriter import SnowflakeCDCWriter
+from Datalake.utils.Snowflake.SnowflakeCDCWriter import SnowflakeCDCWriter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str, help="Environment value", default="dev")
