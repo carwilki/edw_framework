@@ -1,6 +1,8 @@
-from pyspark.sql import SparkSession
-from Datalake.utils.genericUtilities import getSfCredentials
 from logging import getLogger
+
+from pyspark.sql import SparkSession
+
+from Datalake.utils.genericUtilities import getSfCredentials
 
 logger = getLogger()
 
@@ -36,8 +38,9 @@ def genMergeUpsertQuery(target_table, source_table, targetColList, primaryKeyStr
 
 
 def executeMerge(sourceDataFrame, targetTable, primaryKeyString):
+    from logging import INFO, getLogger
+
     import deepdiff
-    from logging import getLogger, INFO
 
     logger = getLogger()
 
@@ -76,10 +79,10 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
     import datetime as dt
 
     print("Merge_To_SF function")
-    from Datalake.utils.genericUtilities import getSfCredentials
-    from logging import getLogger
     import json
-    from Datalake.utils.genericUtilities import getEnvPrefix
+    from logging import getLogger
+
+    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
     from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
 
     logger = getLogger()
@@ -131,10 +134,10 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
     import datetime as dt
 
     print("Merge_To_SF function")
-    from Datalake.utils.genericUtilities import getSfCredentials
-    from logging import getLogger
     import json
-    from Datalake.utils.genericUtilities import getEnvPrefix
+    from logging import getLogger
+
+    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
     from Datalake.utils.SF_Merge_Utils_v2 import SnowflakeWriter, getAppendQuery
 
     logger = getLogger()
@@ -143,7 +146,7 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
     conditionCols: list[str] = list(filter(None, conditionCols))
 
-    if len(conditionCols)==0:
+    if len(conditionCols) == 0:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
@@ -169,10 +172,10 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     import datetime as dt
 
     print("Merge_To_SF function")
-    from Datalake.utils.genericUtilities import getSfCredentials
-    from logging import getLogger
     import json
-    from Datalake.utils.genericUtilities import getEnvPrefix
+    from logging import getLogger
+
+    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
     from Datalake.utils.SF_Merge_Utils_v2 import SnowflakeWriter, getAppendQuery
 
     logger = getLogger()
@@ -181,7 +184,7 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
     conditionCols: list[str] = list(filter(None, conditionCols))
 
-    if len(conditionCols)==0:
+    if len(conditionCols) == 0:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
@@ -203,12 +206,104 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
         ).push_data(df_table, write_mode="merge")
 
 
+def mergeToSFPII(
+    env,
+    deltaTableSchema,
+    deltaTable,
+    primaryKeys,
+    conditionCols,
+    refineOrLegacy,
+    mode,
+    SFSchema=None,
+):
+    import datetime as dt
+    import json
+    from logging import getLogger
+
+    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
+    from Datalake.utils.SF_Merge_Utils_v2 import SnowflakeWriter, getAppendQuery
+
+    logger = getLogger()
+    sfOptions = getSfCredentials(env)
+
+    if SFSchema is not None:
+        sfOptions[
+            "sfSchema"
+        ] = SFSchema  # Overriding sfOptions schema if provided as input parameters
+
+    ### Adding _lgcy suffix to snowflake table based on whether its legacy or refine
+    if refineOrLegacy.lower() == "refine":
+        deltaTableName = f"refine_{deltaTable}"
+        SFTable = deltaTable
+    elif refineOrLegacy.lower() == "legacy":
+        deltaTableName = f"legacy_{deltaTable}"
+        SFTable = f"{deltaTable}_lgcy"
+
+    schemaForDeltaTable = getEnvPrefix(env) + deltaTableSchema
+
+    if mode.lower() == "merge":
+        logger.info("Started merging data to Snowflake tables for table - ", deltaTable)
+        append_query = getAppendQuery(env, deltaTable, conditionCols)
+
+        mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}` where {append_query}"""
+
+        print(mergeDatasetSql)
+
+        df_table = spark.sql(mergeDatasetSql)
+
+        row_count = df_table.count()
+
+        if row_count == 0:
+            logger.info("No new records to insert or update into Snowflake")
+        else:
+            SnowflakeWriter(
+                sfOptions,
+                SFTable,
+                json.loads(primaryKeys),
+            ).push_data(df_table, write_mode="merge")
+            logger.info(
+                "Completed merging data to Snowflake tables for table - ", deltaTable
+            )
+
+    elif mode.lower() == "overwrite":
+        logger.info(
+            "Started Overwriting data to Snowflake tables for table - ", deltaTable
+        )
+
+        df_table = spark.table(f"{schemaForDeltaTable}.{deltaTableName}")
+        if refineOrLegacy.lower() == "legacy":
+            df_table = df_table.withColumn(
+                "SNF_LOAD_TSTMP", current_timestamp()
+            ).withColumn("SNF_UPDATE_TSTMP", current_timestamp())
+
+        SnowflakeWriter(sfOptions, SFTable).push_data(df_table, write_mode="full")
+        logger.info(
+            "Completed Overwriting data to Snowflake tables for table - ", deltaTable
+        )
+
+    elif mode.lower() == "append":
+        logger.info(
+            "Started appending data to Snowflake tables for table - ", deltaTable
+        )
+
+        df_table = spark.table(f"{schemaForDeltaTable}.{deltaTableName}")
+        if refineOrLegacy.lower() == "legacy":
+            df_table = df_table.withColumn(
+                "SNF_LOAD_TSTMP", current_timestamp()
+            ).withColumn("SNF_UPDATE_TSTMP", current_timestamp())
+
+        SnowflakeWriter(sfOptions, SFTable).push_data(df_table, write_mode="append")
+        logger.info(
+            "Completed appending data to Snowflake tables for table - ", deltaTable
+        )
+
+
 def IngestFromSFHistoricalData(env, deltaTable):
     print("Ingest_historical_data_from_Snowflake")
-    from Datalake.utils.genericUtilities import getSfCredentials
-    from logging import getLogger
     import json
-    from Datalake.utils.genericUtilities import getEnvPrefix
+    from logging import getLogger
+
+    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
     from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
 
     logger = getLogger()

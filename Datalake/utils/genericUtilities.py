@@ -1,9 +1,9 @@
-import Datalake.utils.secrets as secrets
 from logging import INFO, getLogger
 
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
+import Datalake.utils.secrets as secrets
 from Datalake.utils.logger import logPrevRunDt
 
 logger = getLogger()
@@ -171,9 +171,9 @@ def genPrevRunDt(refine_table_name, refine, raw):
 
 def genPrevRunDtFlatFile(refine_table_name, raw):
     print("get Prev_run date")
-    from datetime import datetime , date , timedelta
+    from datetime import date, datetime, timedelta
 
-    refine_table_name=refine_table_name.lower()
+    refine_table_name = refine_table_name.lower()
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date)
         from {raw}.log_run_details
@@ -182,9 +182,7 @@ def genPrevRunDtFlatFile(refine_table_name, raw):
     print("Extracted prev_run_dt from log_run_details table")
 
     if prev_run_dt is None:
-        print(
-            "Prev_run_dt is none so getting prev_run_dt from current date-1 "
-        )
+        print("Prev_run_dt is none so getting prev_run_dt from current date-1 ")
         prev_run_dt = str(date.today() - timedelta(days=1))
 
     else:
@@ -248,6 +246,7 @@ def parseArgEnv(env):
 
 def getParameterValue(raw, param_file_name, param_section, param_key):
     from datetime import datetime
+
     from Datalake.utils.configs import getMaxDate
 
     param_value = spark.sql(
@@ -261,8 +260,9 @@ def getParameterValue(raw, param_file_name, param_section, param_key):
 
 
 def resetPrevRunDt(input_csv, reset_date, logTableName):
-    import pandas
     from datetime import datetime
+
+    import pandas
     from pyspark.sql.functions import col
 
     df = pandas.read_csv(input_csv, header=0)
@@ -301,7 +301,8 @@ def resetPrevRunDt(input_csv, reset_date, logTableName):
     spark.sql(ins_sql_query)
 
     print("Reset is completed for the tables in the query " + ins_sql_query)
-    
+
+
 def removeTransactionFiles(filePath):
     fileList = dbutils.fs.ls(filePath)
 
@@ -322,45 +323,55 @@ def renamePartFileName(filePath, newFilename):
         if file.name.startswith("part-0000"):
             print(file.name)
             partFileName = filePath.strip("/") + "/" + file.name
-            print('part file name:',partFileName)
+            print("part file name:", partFileName)
             dbutils.fs.mv(partFileName, newFilename)
 
 
 def writeToFlatFile(df, filePath, fileName, mode):
     print(filePath)
-    if mode == 'overwrite':
-        dbutils.fs.rm(filePath.strip("/") + "/",True)
-        
+    if mode == "overwrite":
+        dbutils.fs.rm(filePath.strip("/") + "/", True)
+
     df.repartition(1).write.mode(mode).option("header", "True").option(
         "inferSchema", "true"
-    ).option("delimiter", "|").option("ignoreTrailingWhiteSpace","False").csv(filePath)
-    print('File added to GCS Path')
+    ).option("delimiter", "|").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
+    print("File added to GCS Path")
     removeTransactionFiles(filePath)
-    newFilePath=filePath.strip("/") + "/" + fileName
+    newFilePath = filePath.strip("/") + "/" + fileName
 
     renamePartFileName(filePath, newFilePath)
 
 
-def execute_cmd_on_edge_node (cmd_parameter,mykey): 
-    import os,paramiko
+def execute_cmd_on_edge_node(cmd_parameter, mykey):
+    import os
+
+    import paramiko
+
     try:
-      from StringIO import StringIO
+        from StringIO import StringIO
     except ImportError:
-      from io import StringIO
-    
+        from io import StringIO
+
     from datetime import datetime
-    
+
     p = paramiko.SSHClient()
     p.load_system_host_keys()
-    p.set_missing_host_key_policy(paramiko.AutoAddPolicy()) 
-    p.connect("10.120.0.80", port=22, username="gcpdatajobs-shared_petsmart_com", pkey=mykey)
+    p.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    p.connect(
+        "10.120.0.80", port=22, username="gcpdatajobs-shared_petsmart_com", pkey=mykey
+    )
 
     tr = p.get_transport()
     p.default_max_packet_size = 300000000
     p.default_window_size = 100000000
-    getcmd=cmd_parameter
+    getcmd = cmd_parameter
 
-    print("[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" --> Command Execution Starts \n" +getcmd)
+    print(
+        "[Info] "
+        + datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")
+        + " --> Command Execution Starts \n"
+        + getcmd
+    )
 
     stdin, stdout, stderr = p.exec_command(getcmd)
     error_message = stderr.readlines()
@@ -368,26 +379,50 @@ def execute_cmd_on_edge_node (cmd_parameter,mykey):
 
     if stdout.channel.recv_exit_status() > 0:
         err_out = "".join(map(str, error_message))
-        print("\n[Error] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Command Execution Failed\n")
-        print("[Error] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Error Message : \n"+err_out)
+        print(
+            "\n[Error] "
+            + datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")
+            + " -->  Command Execution Failed\n"
+        )
+        print(
+            "[Error] "
+            + datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")
+            + " -->  Error Message : \n"
+            + err_out
+        )
         p.close()
         raise Exception("Command Execution Failed!")
     else:
         std_out = "".join(map(str, stdout_message))
-        print("\n[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Command Execution Successfull\n")
-        print("[Info] "+datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")+" -->  Standard Output Message : \n"+std_out)
+        print(
+            "\n[Info] "
+            + datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")
+            + " -->  Command Execution Successfull\n"
+        )
+        print(
+            "[Info] "
+            + datetime.now().astimezone().strftime("%d-%b-%Y %I:%M:%S %p %Z")
+            + " -->  Standard Output Message : \n"
+            + std_out
+        )
         p.close()
         return std_out
+
+
 spark.udf.register("execute_cmd_on_edge_node", execute_cmd_on_edge_node)
 
-def copy_file_to_nas(gs_source_path,nas_target_path):    
-    import os,paramiko
+
+def copy_file_to_nas(gs_source_path, nas_target_path):
+    import os
+
+    import paramiko
+
     try:
         from StringIO import StringIO
     except ImportError:
         from io import StringIO
 
-    key_string=dbutils.secrets.get(scope = "dataprocedgenode-creds",key = "pkey")
+    key_string = dbutils.secrets.get(scope="dataprocedgenode-creds", key="pkey")
     keyfile = StringIO(key_string)
     mykey = paramiko.RSAKey.from_private_key(keyfile)
     execute_cmd_on_edge_node("gsutil cp "+gs_source_path+ " "+nas_target_path, mykey)

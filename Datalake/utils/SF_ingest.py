@@ -1,9 +1,10 @@
-from pyspark.sql.session import SparkSession
-from logging import getLogger, INFO
-from Datalake.utils.mergeUtils import MergeToSF
 import argparse
 import json
+from logging import INFO, getLogger
 
+from pyspark.sql.session import SparkSession
+
+from Datalake.utils.mergeUtils import MergeToSF
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str, help="Environment value")

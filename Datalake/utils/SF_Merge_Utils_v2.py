@@ -1,7 +1,5 @@
 class SnowflakeWriter:
-    def __init__(
-        self, sfOptions, table, primary_keys=None, update_excl_columns=[]
-    ):
+    def __init__(self, sfOptions, table, primary_keys=None, update_excl_columns=[]):
         import Datalake.utils.secrets as secrets
         from Datalake.utils.genericUtilities import getSFEnvSuffix
 
@@ -12,8 +10,8 @@ class SnowflakeWriter:
         self.primary_keys = primary_keys
         self.env = sfOptions["env"]
         self.sfOptions = sfOptions
-        #print(env)
-        #envSuffix = getSFEnvSuffix(self.env)
+        # print(env)
+        # envSuffix = getSFEnvSuffix(self.env)
         """  self.sfOptions = {
             "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
             "sfUser": secrets.get("databricks_service_account", "username"),
@@ -26,6 +24,7 @@ class SnowflakeWriter:
             "sfRole": f"edw{envSuffix}_owner",
         }
         """
+
     def run_sf_query(self, query):
         from pyspark.sql import SparkSession
 
@@ -61,13 +60,12 @@ class SnowflakeWriter:
                     clause = clause + " , " + "base." + k + " = pre." + k
                 elif clause_type == "insert":
                     clause = clause + ",pre." + k
-                    
+
         if clause_type == "update":
             clause = clause + ", base.SNF_UPDATE_TSTMP = CURRENT_TIMESTAMP()"
         if clause_type == "insert":
             clause = clause + ", CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()"
-              
-        
+
         return clause
 
     def create_upsert_query(self, cols):
@@ -100,6 +98,7 @@ class SnowflakeWriter:
 def getAppendQuery(env, deltaTable, conditionCols):
     print("get Append query")
     from pyspark.sql import SparkSession
+
     from Datalake.utils.genericUtilities import getEnvPrefix
 
     spark: SparkSession = SparkSession.getActiveSession()

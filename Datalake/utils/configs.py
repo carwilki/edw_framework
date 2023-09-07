@@ -1,8 +1,10 @@
+from logging import INFO, getLogger
+
 import pyspark.sql.functions as F
-import Datalake.utils.secrets as secrets
-from logging import getLogger, INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
+
+import Datalake.utils.secrets as secrets
 
 logger = getLogger()
 logger.setLevel(INFO)
@@ -305,8 +307,8 @@ def getConfig(DC_NBR, env):
 
 
 def getMaxDate(refine_table_name, schema):
-    from logging import getLogger
     import datetime as dt
+    from logging import getLogger
 
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
