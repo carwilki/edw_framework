@@ -3,7 +3,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_DOC_TYPE' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -41,7 +41,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_CATEGORY' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -79,7 +79,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'BAL_FILE_INTRFACE' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -117,7 +117,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_PROFIT_CENTER' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -155,7 +155,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'SAP_CATEGORY' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -193,7 +193,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_PLAN_FORECAST_MONTH' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -231,7 +231,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'BAL_FILE_INTRFACE_TXT' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -269,7 +269,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_ACTUAL_DAY_DETAIL' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -307,7 +307,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_ACCT_GRP' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -345,7 +345,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_ACTUAL_DAY' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -383,7 +383,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_ACTUAL_MONTH' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
@@ -421,7 +421,7 @@ INSERT INTO work.rocky_ingestion_metadata(table_group,table_group_desc,source_ty
 VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
-, 'SDS_PRD' --source_db
+, 'EDW_PRD' --source_db
 , 'GL_ACCOUNT' --source_table
 , null --table_desc
 , 'FALSE' --is_pii
