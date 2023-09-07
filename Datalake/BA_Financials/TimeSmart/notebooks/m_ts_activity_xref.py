@@ -38,7 +38,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 # FROM {legacy}.UDH_TS_WORK_ASSIGNMENT""")
 
 query ="""(SELECT UDH_TS_WORK_ASSIGNMENT.Ts_Work_Assign_Cd, UDH_TS_WORK_ASSIGNMENT.Ts_Activity_Xref_Id from UserDataFeed.dbo.UDH_TS_WORK_ASSIGNMENT WHERE 1=1) AS SRC"""
-username,password,connection_string =mtx_prd_sqlServer(env)
+username,password,connection_string =timesmart_prd_sqlServer(env)
 UDH_TS_WORK_ASSIGNMENT= jdbcSqlServerConnection(query,username,password,connection_string)
 
 LKP_CHECKRFCDESC_SRC = UDH_TS_WORK_ASSIGNMENT.select(
