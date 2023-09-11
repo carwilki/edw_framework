@@ -61,14 +61,14 @@ logger = getLogger()
 logger.setLevel(INFO)
 sfcdc = SnowflakeCDCWriter(
     env=env,
-    spar=spark,
+    spark=spark,
     dl_schema=dl_schema,
     dl_table=dl_table,
     sf_database=sf_database,
     sf_schema=sf_schema,
     sf_table=sf_table,
-    primaryKeys=primaryKeys,
-    excludedCols=excludedCols,
+    primary_keys=primaryKeys,
+    update_excl_columns=excludedCols,
 )
 
 logger.info(

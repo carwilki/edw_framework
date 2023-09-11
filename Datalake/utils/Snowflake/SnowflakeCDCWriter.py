@@ -1,8 +1,8 @@
-# Databricks notebook source
-from pyspark.sql import SparkSession
+from typing import Optional
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, desc, row_number, when
 from pyspark.sql.window import Window
-from Datalake.utils.Snowflake.vars import (
+from vars import (
     cdc_metadata_catalog,
     cdc_metadata_schema,
     cdc_metadata_table,
@@ -55,7 +55,7 @@ class SnowflakeCDCLogger:
         self._createLogTable()
 
     def _createLogTable(self):
-        """Creates the metadata table for the snowflake cdc."""
+        """Creates the metadata table for the snowflake cdc if it does not exist"""
         self.spark.sql(
             f"""create table if not exists {self.log_table}(
             dlSchema string,
@@ -67,12 +67,12 @@ class SnowflakeCDCLogger:
             timestamp timestamp)"""
         ).collect()
 
-    def _get_metadata_table(self):
+    def _get_metadata_table(self) -> str:
         """Get the metadata table name from the env and the values set in the var.SnowflakeCDCWriter
         if var.SnowflakeCDCWriter.cdc_metadata_catalog is not None then will contain the catalog if
         given. Otherwise it will only contain the schema and the table name.
         """
-        if cdc_metadata_catalog is None:
+        if cdc_metadata_catalog is not None:
             metadata_table = (
                 f"{cdc_metadata_catalog}.{cdc_metadata_schema}.{cdc_metadata_table}"
             )
@@ -81,7 +81,7 @@ class SnowflakeCDCLogger:
 
         return getEnvPrefix(self.env) + metadata_table
 
-    def getLastSeenVersion(self):
+    def getLastSeenVersion(self) -> Optional[int]:
         """This function gets the last version that was inserted into the cdc metadata table to
         to handle cdc
         """
@@ -89,35 +89,62 @@ class SnowflakeCDCLogger:
             schema = f"{self.dl_catalog}.{self.dl_schema}"
         else:
             schema = self.dl_schema
-        self.spark.sql(
-            f"""select version from {self.log_table} where 
-                            dlSchema = {schema} and dlTable = {self.dl_table}
-                            and targetDatabase = {self.sf_database}
-                            and targetSchema = {self.sf_schema}
-                            and targetTable = {self.sf_table}
-                            and timestamp in (select max(timestamp) from {self.log_table}
-                                                where dlSchema = {schema}
-                                                and dlTable = {self.dl_table}
-                                                and targetDatabase = {self.sf_database}
-                                                and targetSchema ={self.sf_schema}
-                                                and targetTable ={self.sf_table}))"""
-        ).collect[0][0]
+        query = f"""select version from {self.log_table} where 
+                        dlSchema = '{schema}' and dlTable = '{self.dl_table}'
+                        and targetDatabase = '{self.sf_database}'
+                        and targetSchema = '{self.sf_schema}'
+                        and targetTable = '{self.sf_table}'
+                        and timestamp in (select max(timestamp) from {self.log_table}
+                            where dlSchema = '{schema}'
+                            and dlTable = '{self.dl_table}'
+                            and targetDatabase = '{self.sf_database}'
+                            and targetSchema = '{self.sf_schema}'
+                            and targetTable = '{self.sf_table}' )"""
 
-    def logLastSeenVersion(self, version):
+        print("SnowflakeCDCLogger::getLastSeenVersion::Query::", query)
+        df = self.spark.sql(query)
+        if df.count() > 0:
+            return df.collect()[0][0]
+        else:
+            return None
+
+    def logLastSeenVersion(self, version: int) -> None:
         """function logs the version that is speciffied to the metadata table. this should the version
         that is most current at the time of write
         """
-        from datetime import datetime
-
         if self.dl_catalog is not None:
             schema = f"{self.dl_catalog}.{self.dl_schema}"
         else:
             schema = self.dl_schema
 
-        self.spark.sql(
-            f"""insert into {self.log_table}(dlSchema,dlTable,targetDatabase,targetSchema,targetTable,version,timestamp)
-              values('{schema}','{self.dl_table}','{self.sf_database}','{self.sf_schema}','{self.sf_table}',{version},{datetime.now()})"""
-        )
+        query = f"""insert into {self.log_table}(
+                        dlSchema,dlTable,targetDatabase,targetSchema,targetTable,version,timestamp)
+                    values('{schema}','{self.dl_table}','{self.sf_database}',
+                    '{self.sf_schema}','{self.sf_table}',{version},
+                    current_timestamp())"""
+
+        print("SnowflakeCDCLogger::logLastSeenVersion::Query::", query)
+
+        self.spark.sql(query)
+
+    def getChangesForTable(self, table_fqn: str) -> Optional[DataFrame]:
+        lastSeenVersion = self.getLastSeenVersion()
+
+        if lastSeenVersion is None:
+            lastSeenVersion = 0
+
+        print(lastSeenVersion)
+
+        cdc_query = f"select * from table_changes('{table_fqn}',{lastSeenVersion})"
+
+        df = self.spark.sql(cdc_query)
+
+        count = df.count()
+
+        if count > 0:
+            return df
+        else:
+            return None
 
 
 class SnowflakeCDCWriter:
@@ -126,7 +153,7 @@ class SnowflakeCDCWriter:
     by the log_table parameter. The user that runs this code must be able to creat the
     table if the table does not exist.
 
-    The table name for the metadat is specified by the vars.SnowflakeCDCWriter
+    The table name for the metadata is specified by the vars.SnowflakeCDCWriter
     cdc_metadata_table variable.
     :param env: The environment variable used to identify the environment.
     :param spark: The spark session.
@@ -154,6 +181,7 @@ class SnowflakeCDCWriter:
         update_excl_columns=[],
     ):
         self.cdc_logger = SnowflakeCDCLogger(
+            env=env,
             spark=spark,
             dl_catalog=dl_catalog,
             dl_schema=dl_schema,
@@ -161,8 +189,6 @@ class SnowflakeCDCWriter:
             sf_database=sf_database,
             sf_schema=sf_schema,
             sf_table=sf_table,
-            primary_keys=primary_keys,
-            update_excl_columns=update_excl_columns,
         )
         self.spark = spark
         self.env = env
@@ -174,7 +200,7 @@ class SnowflakeCDCWriter:
         self.sf_schema = sf_schema
         self.sf_table = sf_table
         self.primary_keys = primary_keys
-        self.log_table = self._get_metadata_table()
+        self.log_table = self.cdc_logger._get_metadata_table()
         if self.env == "prod":
             self.sfOptions = {
                 "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
@@ -206,10 +232,12 @@ class SnowflakeCDCWriter:
 
     def _write_df_to_sf(self, df, table=None):
         if table is None:
-            table = self.table
+            table = self.sf_table
+        print("SnowflakeCDCWriter::_write_df_to_sf::table::", table)
         df.write.format("net.snowflake.spark.snowflake").options(
             **self.sfOptions
         ).option("dbtable", table).mode("append").save()
+        print("SnowflakeCDCWriter::_write_df_to_sf::Temp table write completed")
 
     def _get_clause(self, column_list, clause_type):
         clause_type = clause_type.lower()
@@ -231,6 +259,11 @@ class SnowflakeCDCWriter:
                 elif clause_type == "insert":
                     clause = clause + ",pre." + k
 
+        if clause_type == "update":
+            clause = clause + ", base.SNF_UPDATE_TSTMP = CURRENT_TIMESTAMP()"
+        if clause_type == "insert":
+            clause = clause + ", CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()"
+
         return clause
 
     def _create_upsert_query(self, cols):
@@ -238,21 +271,24 @@ class SnowflakeCDCWriter:
             raise Exception(
                 "primary_keys cannot be null for write_mode = merge, create SnowflakeWriter with primary_keys"
             )
-        return f"""merge into {self.table} as base using TEMP_{self.table} as pre on 
-      {self._get_clause(self.primary_keys, "merge_key")}
-      when matched then update set
-      {self._get_clause(cols, "update")}
-      when not matched then insert ({','.join(cols)}) VALUES ({self._get_clause(cols, "insert")})"""
+        upsert_query = f"""merge into {self.sf_table} as base using TEMP_{self.sf_table} as pre on 
+                            {self._get_clause(self.primary_keys, "merge_key")}
+                            when matched then update 
+                            set {self._get_clause(cols, "update")}
+                            when not matched then 
+                            insert ({','.join(cols)},SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP) 
+                            VALUES ({self._get_clause(cols, "insert")})"""
+        return upsert_query
 
     def _push_data(self, df, write_mode="merge"):
         if write_mode.lower() == "merge":
             upsert_query = self._create_upsert_query(df.columns)
-            print("running upsert ", upsert_query)
-            self._write_df_to_sf(df, f"TEMP_{self.table}")
+            print("SnowflakeCDCWriter::_push_data::running upsert ", upsert_query)
+            self._write_df_to_sf(df, f"TEMP_{self.sf_table}")
             self._run_sf_query(upsert_query)
-            self._run_sf_query(f"DROP TABLE TEMP_{self.table}")
+            self._run_sf_query(f"DROP TABLE TEMP_{self.sf_table}")
         elif write_mode.lower() == "full":
-            self._run_sf_query(f"TRUNCATE TABLE {self.table}")
+            self._run_sf_query(f"TRUNCATE TABLE {self.sf_table}")
             self._write_df_to_sf(df)
         elif write_mode.lower() == "append":
             self._write_df_to_sf(df)
@@ -264,7 +300,8 @@ class SnowflakeCDCWriter:
     def _identify_deletes(self, df):
         if self.primary_keys is None and not self.primary_keys:
             raise Exception(
-                "primary_keys cannot be null for CDC, create SnowflakeWriter with primary_keys"
+                """SnowflakeCDCWriter::_identify_deletes::primary_keys cannot be null for CDC,
+                create SnowflakeWriter with primary_keys"""
             )
         windowSpec = Window.partitionBy(*self.primary_keys).orderBy(
             desc("_commit_version")
@@ -283,17 +320,24 @@ class SnowflakeCDCWriter:
     def _create_merge_query_cdc(self, cols):
         if self.primary_keys is None and not self.primary_keys:
             raise Exception(
-                "primary_keys cannot be null for write_mode = merge, create SnowflakeWriter with primary_keys"
+                """SnowflakeCDCWriter::_create_merge_query_cdc::primary_keys cannot be null for write_mode = merge,
+                create SnowflakeWriter with primary_keys"""
             )
+
         self.update_excl_columns.append("_change_type")
         self.update_excl_columns.append("_commit_version")
         self.update_excl_columns.append("_commit_timestamp")
-        return f"""merge into {self.table} as base using TEMP_{self.table} as pre on 
-        {self._get_clause(self.primary_keys, "merge_key")}
-        when matched and hard_delete_flag = 0 then update set
-        {self._get_clause(cols, "update")}
-        when matched and hard_delete_flag = 1 then delete
-        when not matched and hard_delete_flag = 0 then insert ({','.join(cols)}) VALUES ({self._get_clause(cols, "insert")})"""
+
+        query = f"""merge into {self.sf_table} as base using TEMP_{self.sf_table} as pre on
+                        {self._get_clause(self.primary_keys, "merge_key")}
+                    when matched and hard_delete_flag = 0 then
+                    update set{self._get_clause(cols, "update")}
+                    when matched and hard_delete_flag = 1 then delete
+                    when not matched and hard_delete_flag = 0 then
+                        insert ({','.join(cols)},SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP)
+                        VALUES ({self._get_clause(cols, "insert")})"""
+
+        return query
 
     def _push_cdc(self, df):
         if not all(
@@ -312,21 +356,43 @@ class SnowflakeCDCWriter:
         merge_query = self._create_merge_query_cdc(
             [i for i in cdc_df.columns if i not in ["hard_delete_flag"]]
         )
-        self._write_df_to_sf(cdc_df, f"TEMP_{self.table}")  # write temp table in SFLK
+        self._run_sf_query(
+            f"DROP TABLE IF EXISTS TEMP_{self.sf_table}"
+        )  # drop temp table
+
+        self._write_df_to_sf(
+            cdc_df, f"TEMP_{self.sf_table}"
+        )  # write temp table in SFLK
         print("merge :", merge_query)
         self._run_sf_query(merge_query)
-        self._run_sf_query(f"DROP TABLE TEMP_{self.table}")  # drop temp table
+        self._run_sf_query(f"DROP TABLE TEMP_{self.sf_table}")  # drop temp table
         return df.agg({"_commit_version": "max"}).collect()[0]["max(_commit_version)"]
 
-    def push_cdc(self):
+    def push_cdc(self) -> Optional[int]:
         """Push the cdc data to the snowflake table that is configured for this writer from the
         datalake table that has been configured for this writer"""
         if self.dl_catalog is None:
             table = f"{self.dl_schema}.{self.dl_table}"
         else:
             table = f"{self.dl_catalog}.{self.dl_schema}.{self.dl_table}"
+
         lastSeenVersion = self.cdc_logger.getLastSeenVersion()
-        cdc_query = f"select * from table_changes({table},{lastSeenVersion})"
+
+        if lastSeenVersion is None:
+            lastSeenVersion = 0
+
+        print(lastSeenVersion)
+
+        cdc_query = f"select * from table_changes('{table}',{lastSeenVersion})"
+
         df = self.spark.sql(cdc_query)
-        lastSeenVersion = self._push_cdc(df)
-        self.cdc_logger.logLastSeenVersion(lastSeenVersion)
+
+        count = df.count()
+
+        if count > 0:
+            lastSeenVersion = self._push_cdc(df)
+            self.cdc_logger.logLastSeenVersion(lastSeenVersion)
+            return count
+        else:
+            print(f"No changes found for {table}")
+            return None
