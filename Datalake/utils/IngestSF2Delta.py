@@ -1,7 +1,7 @@
 import argparse
+
 from Datalake.utils.DeltaLakeWriter import DeltaLakeWriter
 from Datalake.utils.genericUtilities import getSfCredentials
-
 
 parser = argparse.ArgumentParser()
 

@@ -93,6 +93,7 @@ class SnowflakeWriter:
 def getAppendQuery(env, deltaTable, conditionCols):
     print("get Append query")
     from pyspark.sql import SparkSession
+
     from Datalake.utils.genericUtilities import getEnvPrefix
 
     spark: SparkSession = SparkSession.getActiveSession()

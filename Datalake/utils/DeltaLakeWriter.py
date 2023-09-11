@@ -1,6 +1,7 @@
 class DeltaLakeWriter:
     def __init__(self, sfOptions, table, delta_schema):
         from pyspark.sql import SparkSession
+
         from Datalake.utils.genericUtilities import getEnvPrefix
 
         self.spark: SparkSession = SparkSession.getActiveSession()
@@ -16,8 +17,8 @@ class DeltaLakeWriter:
         self.raw = getEnvPrefix(self.env) + "raw"
 
     def genPrevRunDt(self, refine_table_name, refine, raw):
-        from logging import getLogger, INFO
         from datetime import datetime
+        from logging import INFO, getLogger
 
         print("get Prev_run date")
         logger = getLogger()
@@ -37,10 +38,12 @@ class DeltaLakeWriter:
 
     def getAppendQuery(self, env, deltaTable, conditionCols):
         print("get Append query")
-        from pyspark.sql import SparkSession
-        from Datalake.utils.genericUtilities import getEnvPrefix
         import json
         from datetime import datetime, timedelta
+
+        from pyspark.sql import SparkSession
+
+        from Datalake.utils.genericUtilities import getEnvPrefix
 
         raw = getEnvPrefix(env) + "raw"
 
@@ -71,11 +74,12 @@ class DeltaLakeWriter:
     def logRun(
         self, process, table, sf_row_count, delta_row_count, status, error, logTableName
     ):
-        from logging import getLogger, INFO
         import json
+        from logging import INFO, getLogger
 
         logger = getLogger()
-        from datetime import datetime as dt, timedelta
+        from datetime import datetime as dt
+        from datetime import timedelta
 
         # Getting current date and time
         now = dt.now()
@@ -142,7 +146,7 @@ class DeltaLakeWriter:
         return clause
 
     def generateMergequery(self, cols, sfTable, schemaForDeltaTable):
-        from logging import getLogger, INFO
+        from logging import INFO, getLogger
 
         logger = getLogger()
         sfTable = sfTable + "_vw"
@@ -179,16 +183,18 @@ class DeltaLakeWriter:
                    when not matched then insert ({','.join(cols)}) VALUES ({self.generateClause(cols, "insert")})"""
 
     def pull_data(self):
-        from logging import getLogger, INFO
-        from Datalake.utils.genericUtilities import getEnvPrefix, sfReader
+        from logging import INFO, getLogger
+
+        from pyspark.sql.functions import col
         from pyspark.sql.types import (
+            ByteType,
             DecimalType,
-            ShortType,
             IntegerType,
             LongType,
-            ByteType,
+            ShortType,
         )
-        from pyspark.sql.functions import col
+
+        from Datalake.utils.genericUtilities import getEnvPrefix, sfReader
 
         logger = getLogger()
 
@@ -329,7 +335,7 @@ class DeltaLakeWriter:
             raise e
 
     def sf2delta_fullLoad(self, df_sf, schemaForDeltaTable):
-        from logging import getLogger, INFO
+        from logging import INFO, getLogger
 
         logger = getLogger()
         # schemaForDeltaTable = self.delta_schema

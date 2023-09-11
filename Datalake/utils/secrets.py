@@ -1,7 +1,7 @@
-from retry import retry
 from py4j.protocol import Py4JJavaError
-from pyspark.sql import SparkSession
 from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
+from retry import retry
 
 sc = SparkSession.getActiveSession()
 dbutils = DBUtils(sc)

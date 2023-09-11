@@ -1,8 +1,10 @@
+from logging import INFO, getLogger
+
 import pyspark.sql.functions as F
-import Datalake.utils.secrets as secrets
-from logging import getLogger, INFO
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
+
+import Datalake.utils.secrets as secrets
 
 logger = getLogger()
 logger.setLevel(INFO)
@@ -305,8 +307,8 @@ def getConfig(DC_NBR, env):
 
 
 def getMaxDate(refine_table_name, schema):
-    from logging import getLogger
     import datetime as dt
+    from logging import getLogger
 
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
@@ -384,7 +386,7 @@ def or_kro_read_edhp1(env):
         db = "edhp1"
         password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_edhp1_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
-            
+
         return (username, password, connection_string)
 
     if env.lower() == "prod":
@@ -396,5 +398,5 @@ def or_kro_read_edhp1(env):
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
-    
+
     raise Exception(f"Environment {env} is not supported")
