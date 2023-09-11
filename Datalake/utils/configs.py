@@ -386,7 +386,7 @@ def or_kro_read_edhp1(env):
         db = "edhp1"
         password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_edhp1_password")
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
-            
+
         return (username, password, connection_string)
 
     if env.lower() == "prod":
@@ -398,5 +398,5 @@ def or_kro_read_edhp1(env):
         connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
         return (username, password, connection_string)
-    
+
     raise Exception(f"Environment {env} is not supported")

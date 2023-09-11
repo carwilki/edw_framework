@@ -1,12 +1,9 @@
 from typing import Optional
-from pyspark.sql import SparkSession, DataFrame
+
+from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col, desc, row_number, when
 from pyspark.sql.window import Window
-from vars import (
-    cdc_metadata_catalog,
-    cdc_metadata_schema,
-    cdc_metadata_table,
-)
+from vars import cdc_metadata_catalog, cdc_metadata_schema, cdc_metadata_table
 
 from Datalake.utils import secrets
 from Datalake.utils.genericUtilities import getEnvPrefix

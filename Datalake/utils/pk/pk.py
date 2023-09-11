@@ -1,5 +1,4 @@
-from pyspark.sql import SparkSession, DataFrame
-
+from pyspark.sql import DataFrame, SparkSession
 from vars import pk_metadata_catalog, pk_metadata_schema, pk_metadata_table
 
 
