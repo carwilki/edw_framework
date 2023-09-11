@@ -71,7 +71,7 @@ class PrimaryKeyManager(object):
         ).collect()
 
         return keys.split("|")
-
+    
     def upsert_pk(self, schema: str, table: str, keys: list[str], catalog: str = None):
         self.spark.sql(
             f"""

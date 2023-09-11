@@ -98,7 +98,10 @@ class SnowflakeCDCLogger:
                             and targetSchema = '{self.sf_schema}'
                             and targetTable = '{self.sf_table}' )"""
 
-        print("SnowflakeCDCLogger::getLastSeenVersion::Query::", query)
+        print(
+            f"""SnowflakeCDCLogger::getLastSeenVersion::Query
+              {query}""",
+        )
         df = self.spark.sql(query)
         if df.count() > 0:
             return df.collect()[0][0]
@@ -120,7 +123,10 @@ class SnowflakeCDCLogger:
                     '{self.sf_schema}','{self.sf_table}',{version},
                     current_timestamp())"""
 
-        print("SnowflakeCDCLogger::logLastSeenVersion::Query::", query)
+        print(
+            f"""SnowflakeCDCLogger::logLastSeenVersion::Query
+              {query}""",
+        )
 
         self.spark.sql(query)
 
@@ -382,6 +388,11 @@ class SnowflakeCDCWriter:
 
         cdc_query = f"select * from table_changes('{table}',{lastSeenVersion})"
 
+        print(
+            f"""SnowflakeCDCWriter::push_cdc::running cdc query:
+              {cdc_query}"""
+        )
+
         df = self.spark.sql(cdc_query)
 
         count = df.count()
@@ -391,5 +402,8 @@ class SnowflakeCDCWriter:
             self.cdc_logger.logLastSeenVersion(lastSeenVersion)
             return count
         else:
-            print(f"No changes found for {table}")
+            print(
+                f"""SnowflakeCDCWriter::push_cdc 
+                  No changes found for {table}"""
+            )
             return None
