@@ -52,7 +52,7 @@ class PrimaryKeyManager(object):
             CREATE TABLE IF NOT EXISTS {self.table_fqn}
             (
                 catalog string,
-                schema sting,
+                schema string,
                 table string,
                 keys string,
                 created_at timestamp,
@@ -62,9 +62,9 @@ class PrimaryKeyManager(object):
 
     def get_pk(self, schema: str, table: str, catalog: str = None) -> list[str]:
         if catalog is not None:
-            filter = f"shchema='{schema}' and table='{table}' and catalog='{catalog}'"
+            filter = f"schema='{schema}' and table='{table}' and catalog='{catalog}'"
         else:
-            filter = f"shchema='{schema}' and table='{table}'"
+            filter = f"schema='{schema}' and table='{table}'"
 
         keys = self.spark.sql(
             f"""SELECT keys from {self.table_fqn} where {filter}"""
@@ -87,6 +87,7 @@ class PrimaryKeyManager(object):
             """
         ).collect()
         keys = "|".join(keys)
+        
         self.spark.sql(
             f"""
             MERGE INTO {self.table_fqn} USING Temp_PKS 
