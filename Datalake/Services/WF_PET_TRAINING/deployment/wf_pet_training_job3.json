@@ -20,7 +20,7 @@
                     "cust_sensitive",
                     "PET_TRAINING_RESERVATION",
                     "PET_TRAINING_RESERVATION_ID",
-                    "CREATED_TSTMP",
+                    "LOAD_TSTMP,UPDATE_TSTMP",
                     "public",
                     "legacy",
                     "merge"
@@ -57,7 +57,7 @@
                     "prod",
                     "TRAINING_CLASS_TYPE",
                     "TRAINING_CLASS_TYPE_ID",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -100,7 +100,7 @@
                     "prod",
                     "TRAINING_CATEGORY_TYPE_FOCUS_AREA",
                     "TRAINING_CATEGORY_TYPE_FOCUS_AREA_ID",
-                    "LAST_MODIFIED"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -135,7 +135,7 @@
                     "cust_sensitive",
                     "TRAINING_CUSTOMER",
                     "TRAINING_CUSTOMER_ID",
-                    "SRC_CREATE_TSTMP",
+                    "LOAD_TSTMP,UPDATE_TSTMP",
                     "cust_sensitive",
                     "legacy",
                     "merge"
@@ -177,7 +177,7 @@
                     "prod",
                     "TRAINING_FOCUS_AREA",
                     "TRAINING_FOCUS_AREA_ID",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -216,7 +216,7 @@
                     "prod",
                     "TRAINING_INVOICE",
                     "TRAINING_INVOICE_ID",
-                    "SRC_LAST_MODIFIED_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -255,7 +255,7 @@
                     "prod",
                     "TRAINING_PET_FOCUS_AREA",
                     "TRAINING_PET_FOCUS_AREA_ID",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -295,7 +295,7 @@
                     "cust_sensitive",
                     "TRAINING_RESERVATION",
                     "TRAINING_RESERVATION_ID",
-                    "SRC_CREATE_TSTMP",
+                    "LOAD_TSTMP,UPDATE_TSTMP",
                     "public",
                     "legacy",
                     "merge"
@@ -337,7 +337,7 @@
                     "prod",
                     "TRAINING_SCHED_STORE_CLASS",
                     "TRAINING_SCHED_STORE_CLASS_ID",
-                    "LAST_MODIFIED_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -376,7 +376,7 @@
                     "prod",
                     "TRAINING_SCHED_STORE_CLASS_DETAIL",
                     "TRAINING_SCHED_STORE_CLASS_DETAIL_ID ",
-                    "LAST_MODIFIED_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -415,7 +415,7 @@
                     "prod",
                     "TRAINING_SCHED_TRAINER",
                     "TRAINING_SCHED_TRAINER_ID",
-                    "LAST_MODIFIED_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
