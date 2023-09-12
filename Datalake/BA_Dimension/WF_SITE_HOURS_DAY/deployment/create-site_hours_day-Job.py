@@ -49,49 +49,49 @@ print(response)
 
 # COMMAND ----------
 
-# def set_permission(payload,job_id):
-#   api_version = '/api/2.1'
-#   api_command = f'/permissions/jobs/{job_id}'
-#   url = f"https://{instance_id}{api_version}{api_command}"
+def set_permission(payload,job_id):
+  api_version = '/api/2.0'
+  api_command = f'/permissions/jobs/{job_id}'
+  url = f"https://{instance_id}{api_version}{api_command}"
 
-#   params = {
-#     "Authorization" : "Bearer " + token,
-#     "Content-Type" : "application/json"
-#   }
+  params = {
+    "Authorization" : "Bearer " + token,
+    "Content-Type" : "application/json"
+  }
 
-#   response = requests.put(
-#     url = url,
-#     headers = params,
-#     data = payload
-#   )
+  response = requests.patch(
+    url = url,
+    headers = params,
+    data = payload
+  )
 
-#   return response.text
-
-
+  return response.text
 
 
 
-# COMMAND ----------
-
-# permission_json= {
-#       "access_control_list": [
-#         {
-#           "group_name": "App_Databricks_Dev_AutomationEngineer",
-#           "permission_level": "CAN_MANAGE"
-#         },
-#         {
-#           "group_name": "App_Databricks_Dev_BusinessAnalytics",
-#           "permission_level": "CAN_VIEW"
-#         }
-#       ]
-#     }
 
 
 # COMMAND ----------
 
+permission_json= {
+      "access_control_list": [
+        {
+          "group_name": "App_Databricks_DE_Prod_BigDataOperations",
+          "permission_level": "CAN_MANAGE"
+        },
+        {
+          "group_name": "App_Databricks_DE_Prod_Viewer",
+          "permission_level": "CAN_VIEW"
+        }
+      ]
+    }
 
 
-# payload = json.dumps(permission_json)
+# COMMAND ----------
 
-# response=set_permission(permission_json,job_id)
-# print(response)
+
+
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,job_id)
+print(response)
