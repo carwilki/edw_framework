@@ -168,7 +168,7 @@
                     "prod",
                     "SITE_HOURS_DAY",
                     "DAY_DT,LOCATION_ID,BUSINESS_AREA",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP, UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
