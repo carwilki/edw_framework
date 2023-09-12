@@ -207,7 +207,7 @@
                 "node_type_id": "n2-standard-8",
                 "driver_node_type_id": "n2-standard-8",
                 "custom_tags": {
-                    "Department": "Netezza-Migration"
+                    "Department": "NZ-Migration"
 				  
 								   
 																	   
@@ -226,7 +226,7 @@
         "git_branch": "main"
     },
     "tags": {
-        "Department": "Netezza_Migration"
+        "Department": "NZ-Migration"
     },
     "format": "MULTI_TASK"
 }
