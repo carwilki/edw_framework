@@ -29,6 +29,7 @@ def getJobId(json_response):
   import re
   id=json_response.split(":")[1]
   return re.findall(r'\d+',id )[0]
+
 # COMMAND ----------
 
 import json
@@ -43,30 +44,54 @@ payload = json.dumps(job_payload)
 # COMMAND ----------
 
 response = create_job(payload)
-response=getJobId(response)
+job_id=getJobId(response)
 print(response)
 
 # COMMAND ----------
-def set_permission(payload,job_id):
-  api_version = '/api/2.1'
-  api_command = f'/permissions/jobs/{job_id}'
-  url = f"https://{instance_id}{api_version}{api_command}"
 
-  params = {
-    "Authorization" : "Bearer " + token,
-    "Content-Type" : "application/json"
-  }
+# def set_permission(payload,job_id):
+#   api_version = '/api/2.1'
+#   api_command = f'/permissions/jobs/{job_id}'
+#   url = f"https://{instance_id}{api_version}{api_command}"
 
-  response = requests.post(
-    url = url,
-    headers = params,
-    data = payload
-  )
+#   params = {
+#     "Authorization" : "Bearer " + token,
+#     "Content-Type" : "application/json"
+#   }
 
-  return response.text
+#   response = requests.put(
+#     url = url,
+#     headers = params,
+#     data = payload
+#   )
 
-
-
+#   return response.text
 
 
 
+
+
+# COMMAND ----------
+
+# permission_json= {
+#       "access_control_list": [
+#         {
+#           "group_name": "App_Databricks_Dev_AutomationEngineer",
+#           "permission_level": "CAN_MANAGE"
+#         },
+#         {
+#           "group_name": "App_Databricks_Dev_BusinessAnalytics",
+#           "permission_level": "CAN_VIEW"
+#         }
+#       ]
+#     }
+
+
+# COMMAND ----------
+
+
+
+# payload = json.dumps(permission_json)
+
+# response=set_permission(permission_json,job_id)
+# print(response)
