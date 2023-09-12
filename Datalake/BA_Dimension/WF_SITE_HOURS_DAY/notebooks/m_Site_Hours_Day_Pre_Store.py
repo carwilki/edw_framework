@@ -70,7 +70,9 @@ WHERE SITE_PROFILE.STORE_NBR=store_nbr"""
 # Processing node Exp_ServicesHours, type EXPRESSION
 # COLUMN COUNT: 6
 
-api_url = "https://petm-qa-facility-svc.cloudhub.io/facility-svc/v1/store/all/hours"
+api_url=getParameterValue(raw,'BA_Dimension_Parameter.prm','BA_Dimension.WF:wf_site_hours_day','source_url')
+
+#api_url = "https://petm-qa-facility-svc.cloudhub.io/facility-svc/v1/store/all/hours"
 
 headers = CaseInsensitiveDict()
 headers["Accept"] = "application/xml"
