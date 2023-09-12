@@ -32,7 +32,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 starttime = datetime.now() #start timestamp of the script
 
 # Read in relation source variables
-(username, password, connection_string) = mtx_prd_sqlServer(env)
+(username, password, connection_string) = pettraining_prd_sqlServer_training(env)
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_CategoryType, type SOURCE 

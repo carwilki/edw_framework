@@ -32,7 +32,7 @@ site_profile_table = f"{legacy}.SITE_PROFILE"
 starttime = datetime.now() #start timestamp of the script
 
 # Read in relation source variables
-(username, password, connection_string) = mtx_prd_sqlServer(env)
+(username, password, connection_string) = pettraining_prd_sqlServer_training(env)
 
 # COMMAND ----------
 # Variable_declaration_comment

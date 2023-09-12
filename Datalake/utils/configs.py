@@ -191,6 +191,53 @@ def mtx_prd_sqlServer(env):
 
     raise Exception(f"Environment {env} is not supported")
 
+def pettraining_prd_sqlServer_training(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="training_password")
+        hostname = "20.62.132.163"
+        portnumber = "1433"
+        db = "Training"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    raise Exception(f"Environment {env} is not supported")
+
+def pettraining_prd_sqlServer_trainingSched(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="trnsched_prd_password")
+        hostname = "172.20.89.184"
+        portnumber = "1840"
+        db = "TrainingSched_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    raise Exception(f"Environment {env} is not supported")
 
 def timesmart_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
