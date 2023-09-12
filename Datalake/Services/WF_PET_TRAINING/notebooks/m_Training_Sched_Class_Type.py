@@ -1,0 +1,199 @@
+#Code converted on 2023-08-09 10:48:13
+import os
+import argparse
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql.types import *
+from datetime import datetime
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
+# COMMAND ----------
+
+parser = argparse.ArgumentParser()
+spark = SparkSession.getActiveSession()
+parser.add_argument('env', type=str, help='Env Variable')
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
+
+if env is None or env == '':
+    raise ValueError('env is not set')
+
+refine = getEnvPrefix(env) + 'refine'
+raw = getEnvPrefix(env) + 'raw'
+legacy = getEnvPrefix(env) + 'legacy'
+
+# Set global variables
+starttime = datetime.now() #start timestamp of the script
+
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE, type SOURCE 
+# COLUMN COUNT: 10
+
+SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE = spark.sql(f"""SELECT
+TRAINING_SCHED_CLASS_TYPE_ID,
+TRAINING_SCHED_CLASS_TYPE_NAME,
+TRAINING_SCHED_CLASS_TYPE_SHORT_DESC,
+DURATION,
+PRICE_AMT,
+UPC_CD,
+INFO_PAGE,
+VISIBILITY_LEVEL,
+ACTIVE_FLAG,
+LOAD_TSTMP
+FROM {legacy}.TRAINING_SCHED_CLASS_TYPE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE, type SOURCE 
+# COLUMN COUNT: 9
+
+SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE = spark.sql(f"""SELECT
+CLASS_TYPE_ID,
+NAME,
+SHORT_DESCRIPTION,
+DURATION,
+PRICE,
+UPC,
+INFO_PAGE,
+IS_ACTIVE,
+VISIBILITY_LEVEL
+FROM {raw}.TRAINING_SCHED_CLASS_TYPE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node JNR_TRAINING_SCHED_CLASS_TYPE, type JOINER . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 19
+
+# for each involved DataFrame, append the dataframe name to each column
+SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE_temp = SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE.toDF(*["SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___" + col for col in SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE.columns])
+SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_temp = SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE.toDF(*["SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___" + col for col in SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE.columns])
+
+JNR_TRAINING_SCHED_CLASS_TYPE = SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_temp.join(SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE_temp,[SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_temp.SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___TRAINING_SCHED_CLASS_TYPE_ID == SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE_temp.SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___CLASS_TYPE_ID],'right_outer').selectExpr( \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___CLASS_TYPE_ID as CLASS_TYPE_ID", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___NAME as NAME", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___SHORT_DESCRIPTION as SHORT_DESCRIPTION", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___DURATION as DURATION", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___PRICE as PRICE", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___UPC as UPC", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___INFO_PAGE as INFO_PAGE", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___IS_ACTIVE as IS_ACTIVE", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE_PRE___VISIBILITY_LEVEL as VISIBILITY_LEVEL", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___TRAINING_SCHED_CLASS_TYPE_ID as lkp_TRAINING_SCHED_CLASS_TYPE_ID", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___TRAINING_SCHED_CLASS_TYPE_NAME as lkp_TRAINING_SCHED_CLASS_TYPE_NAME", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___TRAINING_SCHED_CLASS_TYPE_SHORT_DESC as lkp_TRAINING_SCHED_CLASS_TYPE_SHORT_DESC", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___DURATION as lkp_DURATION1", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___PRICE_AMT as lkp_PRICE_AMT", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___UPC_CD as lkp_UPC_CD", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___INFO_PAGE as lkp_INFO_PAGE1", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___VISIBILITY_LEVEL as lkp_VISIBILITY_LEVEL1", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___ACTIVE_FLAG as lkp_ACTIVE_FLAG", \
+	"SQ_Shortcut_to_TRAINING_SCHED_CLASS_TYPE___LOAD_TSTMP as lkp_LOAD_TSTMP")
+
+# COMMAND ----------
+# Processing node FIL_UNCHANGED_RECORDS, type FILTER 
+# COLUMN COUNT: 19
+
+# for each involved DataFrame, append the dataframe name to each column
+JNR_TRAINING_SCHED_CLASS_TYPE_temp = JNR_TRAINING_SCHED_CLASS_TYPE.toDF(*["JNR_TRAINING_SCHED_CLASS_TYPE___" + col for col in JNR_TRAINING_SCHED_CLASS_TYPE.columns])
+
+FIL_UNCHANGED_RECORDS = JNR_TRAINING_SCHED_CLASS_TYPE_temp.selectExpr( \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___CLASS_TYPE_ID as CLASS_TYPE_ID", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___NAME as NAME", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___SHORT_DESCRIPTION as SHORT_DESCRIPTION", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___DURATION as DURATION", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___PRICE as PRICE", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___UPC as UPC", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___INFO_PAGE as INFO_PAGE", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___IS_ACTIVE as IS_ACTIVE", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___VISIBILITY_LEVEL as VISIBILITY_LEVEL", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_TRAINING_SCHED_CLASS_TYPE_ID as lkp_TRAINING_SCHED_CLASS_TYPE_ID", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_TRAINING_SCHED_CLASS_TYPE_NAME as lkp_TRAINING_SCHED_CLASS_TYPE_NAME", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_TRAINING_SCHED_CLASS_TYPE_SHORT_DESC as lkp_TRAINING_SCHED_CLASS_TYPE_SHORT_DESC", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_DURATION1 as lkp_DURATION1", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_PRICE_AMT as lkp_PRICE_AMT", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_UPC_CD as lkp_UPC_CD", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_INFO_PAGE1 as lkp_INFO_PAGE1", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_VISIBILITY_LEVEL1 as lkp_VISIBILITY_LEVEL1", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_ACTIVE_FLAG as lkp_ACTIVE_FLAG", \
+	"JNR_TRAINING_SCHED_CLASS_TYPE___lkp_LOAD_TSTMP as lkp_LOAD_TSTMP").filter("lkp_TRAINING_SCHED_CLASS_TYPE_ID IS NULL OR ( lkp_TRAINING_SCHED_CLASS_TYPE_ID IS NOT NULL AND ( IF (LTRIM ( RTRIM ( NAME ) ) IS NULL, ' ', LTRIM ( RTRIM ( NAME ) )) != IF (LTRIM ( RTRIM ( lkp_TRAINING_SCHED_CLASS_TYPE_NAME ) ) IS NULL, ' ', LTRIM ( RTRIM ( lkp_TRAINING_SCHED_CLASS_TYPE_NAME ) )) OR IF (LTRIM ( RTRIM ( SHORT_DESCRIPTION ) ) IS NULL, ' ', LTRIM ( RTRIM ( SHORT_DESCRIPTION ) )) != IF (LTRIM ( RTRIM ( lkp_TRAINING_SCHED_CLASS_TYPE_SHORT_DESC ) ) IS NULL, ' ', LTRIM ( RTRIM ( lkp_TRAINING_SCHED_CLASS_TYPE_SHORT_DESC ) )) OR IF (DURATION IS NULL, cast(99 as int), DURATION) != IF (lkp_DURATION1 IS NULL, cast(99 as int), lkp_DURATION1) OR IF (PRICE IS NULL, cast(99 as int), PRICE) != IF (lkp_PRICE_AMT IS NULL, cast(99 as int), lkp_PRICE_AMT) OR IF (LTRIM ( RTRIM ( UPC ) ) IS NULL, ' ', LTRIM ( RTRIM ( UPC ) )) != IF (LTRIM ( RTRIM ( lkp_UPC_CD ) ) IS NULL, ' ', LTRIM ( RTRIM ( lkp_UPC_CD ) )) OR IF (LTRIM ( RTRIM ( INFO_PAGE ) ) IS NULL, ' ', LTRIM ( RTRIM ( INFO_PAGE ) )) != IF (LTRIM ( RTRIM ( lkp_INFO_PAGE1 ) ) IS NULL, ' ', LTRIM ( RTRIM ( lkp_INFO_PAGE1 ) )) OR IF (IS_ACTIVE IS NULL, cast(99 as int), IS_ACTIVE) != IF (lkp_ACTIVE_FLAG IS NULL, cast(99 as int), lkp_ACTIVE_FLAG) OR IF (VISIBILITY_LEVEL IS NULL, cast(99 as int), VISIBILITY_LEVEL) != IF (lkp_VISIBILITY_LEVEL1 IS NULL, cast(99 as int), lkp_VISIBILITY_LEVEL1) ) )").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node EXP_UPDATE_VALIDATOR, type EXPRESSION 
+# COLUMN COUNT: 12
+
+# for each involved DataFrame, append the dataframe name to each column
+FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns])
+
+EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
+	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
+	"FIL_UNCHANGED_RECORDS___CLASS_TYPE_ID as CLASS_TYPE_ID", \
+	"FIL_UNCHANGED_RECORDS___NAME as NAME", \
+	"FIL_UNCHANGED_RECORDS___SHORT_DESCRIPTION as SHORT_DESCRIPTION", \
+	"FIL_UNCHANGED_RECORDS___DURATION as DURATION", \
+	"FIL_UNCHANGED_RECORDS___PRICE as PRICE", \
+	"FIL_UNCHANGED_RECORDS___UPC as UPC", \
+	"FIL_UNCHANGED_RECORDS___INFO_PAGE as INFO_PAGE", \
+	"FIL_UNCHANGED_RECORDS___IS_ACTIVE as IS_ACTIVE", \
+	"FIL_UNCHANGED_RECORDS___VISIBILITY_LEVEL as VISIBILITY_LEVEL", \
+	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_TRAINING_SCHED_CLASS_TYPE_ID IS NULL, 1, 2) as UPDATE_FLAG" \
+)
+
+# COMMAND ----------
+# Processing node UPD_INSERT_UPDATE, type UPDATE_STRATEGY 
+# COLUMN COUNT: 12
+
+# for each involved DataFrame, append the dataframe name to each column
+EXP_UPDATE_VALIDATOR_temp = EXP_UPDATE_VALIDATOR.toDF(*["EXP_UPDATE_VALIDATOR___" + col for col in EXP_UPDATE_VALIDATOR.columns])
+
+UPD_INSERT_UPDATE = EXP_UPDATE_VALIDATOR_temp.selectExpr( \
+	"EXP_UPDATE_VALIDATOR___CLASS_TYPE_ID as CLASS_TYPE_ID", \
+	"EXP_UPDATE_VALIDATOR___NAME as NAME", \
+	"EXP_UPDATE_VALIDATOR___SHORT_DESCRIPTION as SHORT_DESCRIPTION", \
+	"EXP_UPDATE_VALIDATOR___DURATION as DURATION", \
+	"EXP_UPDATE_VALIDATOR___PRICE as PRICE", \
+	"EXP_UPDATE_VALIDATOR___UPC as UPC", \
+	"EXP_UPDATE_VALIDATOR___INFO_PAGE as INFO_PAGE", \
+	"EXP_UPDATE_VALIDATOR___IS_ACTIVE as IS_ACTIVE", \
+	"EXP_UPDATE_VALIDATOR___VISIBILITY_LEVEL as VISIBILITY_LEVEL", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_FLAG as UPDATE_FLAG") \
+	.withColumn('pyspark_data_action', when(col('UPDATE_FLAG') ==(lit(1)) , lit(0)) .when(col('UPDATE_FLAG') ==(lit(2)) , lit(1)))
+
+# COMMAND ----------
+# Processing node Shortcut_to_TRAINING_SCHED_CLASS_TYPE1, type TARGET 
+# COLUMN COUNT: 11
+
+
+Shortcut_to_TRAINING_SCHED_CLASS_TYPE1 = UPD_INSERT_UPDATE.selectExpr( \
+	"CAST(CLASS_TYPE_ID AS INT) as TRAINING_SCHED_CLASS_TYPE_ID", \
+	"CAST(NAME AS STRING) as TRAINING_SCHED_CLASS_TYPE_NAME", \
+	"CAST(SHORT_DESCRIPTION AS STRING) as TRAINING_SCHED_CLASS_TYPE_SHORT_DESC", \
+	"CAST(DURATION AS INT) as DURATION", \
+	"CAST(PRICE AS DECIMAL(8,2)) as PRICE_AMT", \
+	"CAST(UPC as BIGINT) as UPC_CD", \
+	"CAST(INFO_PAGE AS STRING) as INFO_PAGE", \
+	"CAST(VISIBILITY_LEVEL AS INT) as VISIBILITY_LEVEL", \
+	"CAST(IS_ACTIVE AS TINYINT) as ACTIVE_FLAG", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", \
+	"pyspark_data_action as pyspark_data_action" \
+)
+# Shortcut_to_TRAINING_SCHED_CLASS_TYPE1.write.saveAsTable(f'{raw}.TRAINING_SCHED_CLASS_TYPE', mode = 'overwrite')
+# spark.sql("""set spark.sql.legacy.timeParserPolicy = LEGACY""")
+# Shortcut_to_TRAINING_SCHED_CLASS_TYPE1.printSchema()
+try:
+  primary_key = """source.TRAINING_SCHED_CLASS_TYPE_ID = target.TRAINING_SCHED_CLASS_TYPE_ID"""
+  refined_perf_table = f"{legacy}.TRAINING_SCHED_CLASS_TYPE"
+  executeMerge(Shortcut_to_TRAINING_SCHED_CLASS_TYPE1, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("TRAINING_SCHED_CLASS_TYPE", "TRAINING_SCHED_CLASS_TYPE", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("TRAINING_SCHED_CLASS_TYPE", "TRAINING_SCHED_CLASS_TYPE","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

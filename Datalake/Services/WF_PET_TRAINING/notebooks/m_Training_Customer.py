@@ -1,0 +1,190 @@
+#Code converted on 2023-08-09 10:47:58
+import os
+import argparse
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql.types import *
+from datetime import datetime
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
+# COMMAND ----------
+
+parser = argparse.ArgumentParser()
+spark = SparkSession.getActiveSession()
+parser.add_argument('env', type=str, help='Env Variable')
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
+
+if env is None or env == '':
+    raise ValueError('env is not set')
+
+sensitive = getEnvPrefix(env) + 'cust_sensitive'
+raw = getEnvPrefix(env) + 'raw'
+legacy = getEnvPrefix(env) + 'legacy'
+
+# Set global variables
+starttime = datetime.now() #start timestamp of the script
+
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_CUSTOMER_PRE, type SOURCE 
+# COLUMN COUNT: 11
+
+SQ_Shortcut_to_TRAINING_CUSTOMER_PRE = spark.sql(f"""SELECT
+CUSTOMER_ID,
+PROVIDER_ID,
+FIRST_NAME,
+LAST_NAME,
+EMAIL_ADDRESS,
+PRIMARY_PHONE,
+PRIMARY_PHONE_TYPE,
+ALTERNATE_PHONE,
+ALTERNATE_PHONE_TYPE,
+CREATE_DATE_TIME,
+EXTERNAL_CUSTOMER_ID
+FROM {sensitive}.raw_TRAINING_CUSTOMER_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_CUSTOMER, type SOURCE 
+# COLUMN COUNT: 3
+
+SQ_Shortcut_to_TRAINING_CUSTOMER = spark.sql(f"""SELECT
+TRAINING_CUSTOMER_ID,
+SRC_CREATE_TSTMP,
+LOAD_TSTMP
+FROM {sensitive}.legacy_TRAINING_CUSTOMER""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node JNR_TRAINING_CUSTOMER, type JOINER . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 14
+
+# for each involved DataFrame, append the dataframe name to each column
+SQ_Shortcut_to_TRAINING_CUSTOMER_temp = SQ_Shortcut_to_TRAINING_CUSTOMER.toDF(*["SQ_Shortcut_to_TRAINING_CUSTOMER___" + col for col in SQ_Shortcut_to_TRAINING_CUSTOMER.columns])
+SQ_Shortcut_to_TRAINING_CUSTOMER_PRE_temp = SQ_Shortcut_to_TRAINING_CUSTOMER_PRE.toDF(*["SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___" + col for col in SQ_Shortcut_to_TRAINING_CUSTOMER_PRE.columns])
+
+JNR_TRAINING_CUSTOMER = SQ_Shortcut_to_TRAINING_CUSTOMER_temp.join(SQ_Shortcut_to_TRAINING_CUSTOMER_PRE_temp,[SQ_Shortcut_to_TRAINING_CUSTOMER_temp.SQ_Shortcut_to_TRAINING_CUSTOMER___TRAINING_CUSTOMER_ID == SQ_Shortcut_to_TRAINING_CUSTOMER_PRE_temp.SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___CUSTOMER_ID],'right_outer').selectExpr( \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___CUSTOMER_ID as CUSTOMER_ID", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___PROVIDER_ID as PROVIDER_ID", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___FIRST_NAME as FIRST_NAME", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___LAST_NAME as LAST_NAME", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___EMAIL_ADDRESS as EMAIL_ADDRESS", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___PRIMARY_PHONE as PRIMARY_PHONE", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___PRIMARY_PHONE_TYPE as PRIMARY_PHONE_TYPE", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___ALTERNATE_PHONE as ALTERNATE_PHONE", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___ALTERNATE_PHONE_TYPE as ALTERNATE_PHONE_TYPE", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER_PRE___EXTERNAL_CUSTOMER_ID as EXTERNAL_CUSTOMER_ID", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER___TRAINING_CUSTOMER_ID as lkp_TRAINING_CUSTOMER_ID", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER___SRC_CREATE_TSTMP as lkp_SRC_CREATE_TSTMP", \
+	"SQ_Shortcut_to_TRAINING_CUSTOMER___LOAD_TSTMP as lkp_LOAD_TSTMP")
+
+# COMMAND ----------
+# Processing node FIL_UNCHANGED_RECORDS, type FILTER 
+# COLUMN COUNT: 14
+
+# for each involved DataFrame, append the dataframe name to each column
+JNR_TRAINING_CUSTOMER_temp = JNR_TRAINING_CUSTOMER.toDF(*["JNR_TRAINING_CUSTOMER___" + col for col in JNR_TRAINING_CUSTOMER.columns])
+
+FIL_UNCHANGED_RECORDS = JNR_TRAINING_CUSTOMER_temp.selectExpr( \
+	"JNR_TRAINING_CUSTOMER___CUSTOMER_ID as CUSTOMER_ID", \
+	"JNR_TRAINING_CUSTOMER___PROVIDER_ID as PROVIDER_ID", \
+	"JNR_TRAINING_CUSTOMER___FIRST_NAME as FIRST_NAME", \
+	"JNR_TRAINING_CUSTOMER___LAST_NAME as LAST_NAME", \
+	"JNR_TRAINING_CUSTOMER___EMAIL_ADDRESS as EMAIL_ADDRESS", \
+	"JNR_TRAINING_CUSTOMER___PRIMARY_PHONE as PRIMARY_PHONE", \
+	"JNR_TRAINING_CUSTOMER___PRIMARY_PHONE_TYPE as PRIMARY_PHONE_TYPE", \
+	"JNR_TRAINING_CUSTOMER___ALTERNATE_PHONE as ALTERNATE_PHONE", \
+	"JNR_TRAINING_CUSTOMER___ALTERNATE_PHONE_TYPE as ALTERNATE_PHONE_TYPE", \
+	"JNR_TRAINING_CUSTOMER___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"JNR_TRAINING_CUSTOMER___EXTERNAL_CUSTOMER_ID as EXTERNAL_CUSTOMER_ID", \
+	"JNR_TRAINING_CUSTOMER___lkp_TRAINING_CUSTOMER_ID as lkp_TRAINING_CUSTOMER_ID", \
+	"JNR_TRAINING_CUSTOMER___lkp_SRC_CREATE_TSTMP as lkp_SRC_CREATE_TSTMP", \
+	"JNR_TRAINING_CUSTOMER___lkp_LOAD_TSTMP as lkp_LOAD_TSTMP").filter("lkp_TRAINING_CUSTOMER_ID IS NULL OR ( lkp_TRAINING_CUSTOMER_ID IS NOT NULL AND IF (CREATE_DATE_TIME IS NULL, To_DATE ( '12-31-9999' , 'MM-DD-YYYY' ), CREATE_DATE_TIME) != IF (lkp_SRC_CREATE_TSTMP IS NULL, To_DATE ( '12-31-9999' , 'MM-DD-YYYY' ), lkp_SRC_CREATE_TSTMP) )").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node EXP_UPDATE_VALIDATOR, type EXPRESSION 
+# COLUMN COUNT: 14
+
+# for each involved DataFrame, append the dataframe name to each column
+FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns])
+
+EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
+	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
+	"FIL_UNCHANGED_RECORDS___CUSTOMER_ID as CUSTOMER_ID", \
+	"FIL_UNCHANGED_RECORDS___PROVIDER_ID as PROVIDER_ID", \
+	"FIL_UNCHANGED_RECORDS___FIRST_NAME as FIRST_NAME", \
+	"FIL_UNCHANGED_RECORDS___LAST_NAME as LAST_NAME", \
+	"FIL_UNCHANGED_RECORDS___EMAIL_ADDRESS as EMAIL_ADDRESS", \
+	"FIL_UNCHANGED_RECORDS___PRIMARY_PHONE as PRIMARY_PHONE", \
+	"FIL_UNCHANGED_RECORDS___PRIMARY_PHONE_TYPE as PRIMARY_PHONE_TYPE", \
+	"FIL_UNCHANGED_RECORDS___ALTERNATE_PHONE as ALTERNATE_PHONE", \
+	"FIL_UNCHANGED_RECORDS___ALTERNATE_PHONE_TYPE as ALTERNATE_PHONE_TYPE", \
+	"FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"FIL_UNCHANGED_RECORDS___EXTERNAL_CUSTOMER_ID as EXTERNAL_CUSTOMER_ID", \
+	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_TRAINING_CUSTOMER_ID IS NULL, 1, 2) as UPDATE_FLAG" \
+)
+
+# COMMAND ----------
+# Processing node UPD_INSERT_UPDATE, type UPDATE_STRATEGY 
+# COLUMN COUNT: 14
+
+# for each involved DataFrame, append the dataframe name to each column
+EXP_UPDATE_VALIDATOR_temp = EXP_UPDATE_VALIDATOR.toDF(*["EXP_UPDATE_VALIDATOR___" + col for col in EXP_UPDATE_VALIDATOR.columns])
+
+UPD_INSERT_UPDATE = EXP_UPDATE_VALIDATOR_temp.selectExpr( \
+	"EXP_UPDATE_VALIDATOR___CUSTOMER_ID as CUSTOMER_ID", \
+	"EXP_UPDATE_VALIDATOR___PROVIDER_ID as PROVIDER_ID", \
+	"EXP_UPDATE_VALIDATOR___FIRST_NAME as FIRST_NAME", \
+	"EXP_UPDATE_VALIDATOR___LAST_NAME as LAST_NAME", \
+	"EXP_UPDATE_VALIDATOR___EMAIL_ADDRESS as EMAIL_ADDRESS", \
+	"EXP_UPDATE_VALIDATOR___PRIMARY_PHONE as PRIMARY_PHONE", \
+	"EXP_UPDATE_VALIDATOR___PRIMARY_PHONE_TYPE as PRIMARY_PHONE_TYPE", \
+	"EXP_UPDATE_VALIDATOR___ALTERNATE_PHONE as ALTERNATE_PHONE", \
+	"EXP_UPDATE_VALIDATOR___ALTERNATE_PHONE_TYPE as ALTERNATE_PHONE_TYPE", \
+	"EXP_UPDATE_VALIDATOR___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"EXP_UPDATE_VALIDATOR___EXTERNAL_CUSTOMER_ID as EXTERNAL_CUSTOMER_ID", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_FLAG as UPDATE_FLAG") \
+	.withColumn('pyspark_data_action', when(col('UPDATE_FLAG') ==(lit(1)) , lit(0)) .when(col('UPDATE_FLAG') ==(lit(2)) , lit(1)))
+
+# COMMAND ----------
+# Processing node Shortcut_to_TRAINING_CUSTOMER1, type TARGET 
+# COLUMN COUNT: 13
+
+
+Shortcut_to_TRAINING_CUSTOMER1 = UPD_INSERT_UPDATE.selectExpr( \
+	"CAST(CUSTOMER_ID AS BIGINT) as TRAINING_CUSTOMER_ID", \
+	"CAST(EXTERNAL_CUSTOMER_ID AS int) as TRAINING_EXT_CUSTOMER_ID", \
+	"CAST(PROVIDER_ID AS STRING) as TRAINING_PROVIDER_ID", \
+	"CAST(FIRST_NAME AS STRING) as FIRST_NAME", \
+	"CAST(LAST_NAME AS STRING) as LAST_NAME", \
+	"CAST(EMAIL_ADDRESS AS STRING) as EMAIL_ADDR", \
+	"CAST(PRIMARY_PHONE AS STRING) as PRIMARY_PHONE_NBR", \
+	"CAST(PRIMARY_PHONE_TYPE AS STRING) as PRIMARY_PHONE_TYPE", \
+	"CAST(ALTERNATE_PHONE AS STRING) as ALTERNATE_PHONE_NBR", \
+	"CAST(ALTERNATE_PHONE_TYPE AS STRING) as ALTERNATE_PHONE_TYPE", \
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as SRC_CREATE_TSTMP", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", \
+	"pyspark_data_action as pyspark_data_action" \
+)
+# Shortcut_to_TRAINING_CUSTOMER1.write.saveAsTable(f'{raw}.TRAINING_CUSTOMER', mode = 'overwrite')
+spark.sql("""set spark.sql.legacy.timeParserPolicy = LEGACY""")
+
+try:
+  primary_key = """source.TRAINING_CUSTOMER_ID = target.TRAINING_CUSTOMER_ID"""
+  refined_perf_table = f"{sensitive}.legacy_TRAINING_CUSTOMER"
+  executeMerge(Shortcut_to_TRAINING_CUSTOMER1, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("TRAINING_CUSTOMER", "TRAINING_CUSTOMER", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("TRAINING_CUSTOMER", "TRAINING_CUSTOMER","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

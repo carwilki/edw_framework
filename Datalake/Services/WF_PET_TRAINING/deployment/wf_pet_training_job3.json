@@ -1,0 +1,488 @@
+{
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    },
+    "name": "wf_pet_training_snowflake",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 100,
+    "tasks": [
+        {
+            "task_key": "SF_PET_TRAINING_RESERVATION",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Ingest_PII.py",
+                "parameters": [
+                    "prod",
+                    "cust_sensitive",
+                    "PET_TRAINING_RESERVATION",
+                    "PET_TRAINING_RESERVATION_ID",
+                    "CREATED_TSTMP",
+                    "public",
+                    "legacy",
+                    "merge"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_CLASS_TYPE",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_CLASS_TYPE",
+                    "TRAINING_CLASS_TYPE_ID",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 2000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "description": ""
+        },
+        {
+            "task_key": "SF_TRAINING_CATEGORY_TYPE_FOCUS_AREA",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_CLASS_TYPE"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_CATEGORY_TYPE_FOCUS_AREA",
+                    "TRAINING_CATEGORY_TYPE_FOCUS_AREA_ID",
+                    "LAST_MODIFIED"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_CUSTOMER",
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Ingest_PII.py",
+                "parameters": [
+                    "prod",
+                    "cust_sensitive",
+                    "TRAINING_CUSTOMER",
+                    "TRAINING_CUSTOMER_ID",
+                    "SRC_CREATE_TSTMP",
+                    "cust_sensitive",
+                    "legacy",
+                    "merge"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_FOCUS_AREA",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_CATEGORY_TYPE_FOCUS_AREA"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_FOCUS_AREA",
+                    "TRAINING_FOCUS_AREA_ID",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_INVOICE",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_CUSTOMER"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_INVOICE",
+                    "TRAINING_INVOICE_ID",
+                    "SRC_LAST_MODIFIED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_PET_FOCUS_AREA",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_INVOICE"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_PET_FOCUS_AREA",
+                    "TRAINING_PET_FOCUS_AREA_ID",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_RESERVATION",
+            "depends_on": [
+                {
+                    "task_key": "SF_PET_TRAINING_RESERVATION"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Ingest_PII.py",
+                "parameters": [
+                    "prod",
+                    "cust_sensitive",
+                    "TRAINING_RESERVATION",
+                    "TRAINING_RESERVATION_ID",
+                    "SRC_CREATE_TSTMP",
+                    "public",
+                    "legacy",
+                    "merge"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_SCHED_STORE_CLASS",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_RESERVATION"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_SCHED_STORE_CLASS",
+                    "TRAINING_SCHED_STORE_CLASS_ID",
+                    "LAST_MODIFIED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_SCHED_STORE_CLASS_DETAIL",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_SCHED_STORE_CLASS"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_SCHED_STORE_CLASS_DETAIL",
+                    "TRAINING_SCHED_STORE_CLASS_DETAIL_ID ",
+                    "LAST_MODIFIED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_TRAINING_SCHED_TRAINER",
+            "depends_on": [
+                {
+                    "task_key": "SF_TRAINING_SCHED_STORE_CLASS_DETAIL"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "TRAINING_SCHED_TRAINER",
+                    "TRAINING_SCHED_TRAINER_ID",
+                    "LAST_MODIFIED_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_pet_training",
+            "libraries": [
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 86400,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+    "job_clusters": [
+        {
+            "job_cluster_key": "wf_pet_training",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+          "spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+                                   
+                                         
+                       
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "NZ-Migration"
+    },
+    "format": "MULTI_TASK"
+}

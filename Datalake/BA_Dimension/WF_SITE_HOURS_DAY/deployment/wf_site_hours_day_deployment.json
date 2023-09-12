@@ -1,0 +1,232 @@
+{
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    },
+    "name": "wf_site_hours_day",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "m_Site_Hours_Day_Pre_Store",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Dimension/WF_SITE_HOURS_DAY/notebooks/m_Site_Hours_Day_Pre_Store",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_site_hours_day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.databricks:spark-xml_2.12:0.16.0"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Site_Hours_Day_Pre_DC",
+            "depends_on": [
+                {
+                    "task_key": "m_Site_Hours_Day_Pre_Store"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Dimension/WF_SITE_HOURS_DAY/notebooks/m_Site_Hours_Day_Pre_DC",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_site_hours_day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Site_Hours_Day_Pre_Vendor",
+            "depends_on": [
+                {
+                    "task_key": "m_Site_Hours_Day_Pre_DC"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Dimension/WF_SITE_HOURS_DAY/notebooks/m_Site_Hours_Day_Pre_Vendor",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_site_hours_day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Site_Hours_Day",
+            "depends_on": [
+                {
+                    "task_key": "m_Site_Hours_Day_Pre_Vendor"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Dimension/WF_SITE_HOURS_DAY/notebooks/m_Site_Hours_Day",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_site_hours_day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_Site_Hours_Day",
+            "depends_on": [
+                {
+                    "task_key": "m_Site_Hours_Day"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "SITE_HOURS_DAY",
+                    "DAY_DT,LOCATION_ID,BUSINESS_AREA",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_site_hours_day",
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+    "job_clusters": [
+        {
+            "job_cluster_key": "wf_site_hours_day",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+					"spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+				  
+								   
+																	   
+                },
+                "enable_elastic_disk": false,
+																		
+																			   
+											 
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "NZ-Migration"
+    },
+    "format": "MULTI_TASK"
+}
