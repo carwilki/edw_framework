@@ -16,6 +16,8 @@ from Datalake.utils.configs import *
 from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
 from requests.structures import CaseInsensitiveDict
+import Datalake.utils.secrets as secrets
+
 
 # COMMAND ----------
 
