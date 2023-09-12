@@ -1,0 +1,1381 @@
+--*****  Creating table:  "TRAINING_CATEGORY_TYPE_PRE" , ***** Creating table: "TRAINING_CATEGORY_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_CATEGORY_TYPE_PRE
+
+(CATEGORY_ID INT not null
+
+, CATEGORY_NAME              STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_category_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CATEGORY_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_CATEGORY_TYPE_FOCUS_AREA_PRE" , ***** Creating table: "TRAINING_CATEGORY_TYPE_FOCUS_AREA_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_CATEGORY_TYPE_FOCUS_AREA_PRE
+
+(CATEGORY_TYPE_FOCUS_AREA_ID INT not null
+
+, CATEGORY_ID INT
+
+, FOCUS_AREA_ID INT
+
+, LAST_MODIFIED              TIMESTAMP
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_category_type_focus_area_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CATEGORY_TYPE_FOCUS_AREA_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_CLASS_PROMOTION_PRE" , ***** Creating table: "TRAINING_CLASS_PROMOTION_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_CLASS_PROMOTION_PRE
+
+(CLASS_PROMOTION_ID INT not null
+
+, NAME                       STRING
+
+, DESCRIPTION                STRING
+
+, DISCOUNT_AMOUNT            DECIMAL(19,4)
+
+, START_DATE DATE
+
+, END_DATE DATE
+
+, CLASS_TYPE_ID INT
+
+, COUNTRY_ABBREVIATION       STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_class_promotion_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CLASS_PROMOTION_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_CLASS_TYPE_PRE" , ***** Creating table: "TRAINING_CLASS_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_CLASS_TYPE_PRE
+
+(CLASS_TYPE_ID INT not null
+
+, NAME                       STRING
+
+, SHORT_DESCRIPTION          STRING
+
+, DURATION INT
+
+, PRICE                      DECIMAL(19,4)
+
+, UPC                        STRING
+
+, INFO_URL                   STRING
+
+, LAST_MODIFIED              TIMESTAMP
+
+, SORT_ORDER_ID INT
+
+, IS_ACTIVE INT
+
+, CATEGORY_ID INT
+
+, DURATION_UNIT_OF_MEASURE_ID INT
+
+, SESSION_LENGTH INT
+
+, SESSION_UNIT_OF_MEASURE_ID INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_class_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CLASS_TYPE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_CLASS_TYPE_DETAIL_PRE" , ***** Creating table: "TRAINING_CLASS_TYPE_DETAIL_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_CLASS_TYPE_DETAIL_PRE
+
+(CLASS_TYPE_DETAIL_ID INT not null
+
+, CLASS_TYPE_ID INT
+
+, NAME                       STRING
+
+, SHORT_DESCRIPTION          STRING
+
+, DURATION INT
+
+, PRICE                      DECIMAL(19,4)
+
+, UPC                        STRING
+
+, INFO_URL                   STRING
+
+, LAST_MODIFIED              TIMESTAMP
+
+, SKU                        STRING
+
+, COUNTRY_ABBREVIATION       STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_class_type_detail_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CLASS_TYPE_DETAIL_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_CUSTOMER_PRE" , ***** Creating table: "TRAINING_CUSTOMER_PRE"
+
+ 
+
+use dev_cust_sensitive;
+
+ 
+
+CREATE TABLE raw_TRAINING_CUSTOMER_PRE
+
+ 
+
+( CUSTOMER_ID INT not null
+
+, PROVIDER_ID                STRING
+
+, FIRST_NAME                 STRING
+
+, LAST_NAME                  STRING
+
+, EMAIL_ADDRESS              STRING
+
+, PRIMARY_PHONE              STRING
+
+, PRIMARY_PHONE_TYPE         STRING
+
+, ALTERNATE_PHONE            STRING
+
+, ALTERNATE_PHONE_TYPE       STRING
+
+, CREATE_DATE_TIME           TIMESTAMP
+
+, EXTERNAL_CUSTOMER_ID BIGINT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-cust-sensitive-raw-p1-gcs-gbl/services/training_customer_pre'
+
+;
+
+ 
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CUSTOMER_ID)
+
+ 
+
+ 
+
+--*****  Creating table:  "TRAINING_FOCUS_AREA_PRE" , ***** Creating table: "TRAINING_FOCUS_AREA_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_FOCUS_AREA_PRE
+
+(FOCUS_AREA_ID INT not null
+
+, FOCUS_AREA_NAME            STRING       not null
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_focus_area_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (FOCUS_AREA_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_INVOICE_PRE" , ***** Creating table: "TRAINING_INVOICE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_INVOICE_PRE
+
+(INVOICE_ID INT not null
+
+, STATUS INT
+
+, COUNTRY_ABBREVIATION       STRING
+
+, SKU                        STRING
+
+, UPC                        STRING
+
+, BASE_PRICE                 DECIMAL(19,4)
+
+, DISCOUNT_AMOUNT            DECIMAL(19,4)
+
+, SUB_TOTAL                  DECIMAL(19,4)
+
+, CREATE_DATE_TIME           TIMESTAMP
+
+, LAST_MODIFIED_DATE_TIME                                        TIMESTAMP
+
+, CLASS_PROMOTION_ID INT
+
+, PACKAGE_PROMOTION_ID INT
+
+, RESERVATION_ID INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_invoice_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (INVOICE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PACKAGE_PRE" , ***** Creating table: "TRAINING_PACKAGE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PACKAGE_PRE
+
+(PACKAGE_ID INT not null
+
+, NAME                       STRING
+
+, LAST_MODIFIED              TIMESTAMP
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_package_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PACKAGE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PACKAGE_OPTION_PRE" , ***** Creating table: "TRAINING_PACKAGE_OPTION_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PACKAGE_OPTION_PRE
+
+(PACKAGE_OPTION_ID INT not null
+
+, PACKAGE_ID INT
+
+, NAME                       STRING
+
+, DISPLAY_NAME               STRING
+
+, DESCRIPTION                STRING
+
+, UPC                        STRING
+
+, PRICE                      DECIMAL(19,4)
+
+, LAST_MODIFIED              TIMESTAMP
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_package_option_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PACKAGE_OPTION_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PACKAGE_OPTION_CLASS_TYPE_PRE" , ***** Creating table: "TRAINING_PACKAGE_OPTION_CLASS_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PACKAGE_OPTION_CLASS_TYPE_PRE
+
+(PACKAGE_OPTION_CLASS_TYPE_ID INT not null
+
+, PACKAGE_OPTION_ID INT
+
+, CLASS_TYPE_ID INT
+
+, LAST_MODIFIED              TIMESTAMP
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_package_option_class_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PACKAGE_OPTION_CLASS_TYPE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PACKAGE_OPTION_DETAIL_PRE" , ***** Creating table: "TRAINING_PACKAGE_OPTION_DETAIL_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PACKAGE_OPTION_DETAIL_PRE
+
+(PACKAGE_OPTION_DETAIL_ID INT not null
+
+, PACKAGE_OPTION_ID INT
+
+, PACKAGE_ID INT
+
+, NAME                       STRING
+
+, DISPLAY_NAME               STRING
+
+, DESCRIPTION                STRING
+
+, UPC                        STRING
+
+, PRICE                      DECIMAL(19,4)
+
+, LAST_MODIFIED              TIMESTAMP
+
+, SKU                        STRING
+
+, COUNTRY_ABBREVIATION       STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_package_option_detail_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PACKAGE_OPTION_DETAIL_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PACKAGE_PROMOTION_PRE" , ***** Creating table: "TRAINING_PACKAGE_PROMOTION_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PACKAGE_PROMOTION_PRE
+
+(PACKAGE_PROMOTION_ID INT not null
+
+, NAME                       STRING
+
+, DESCRIPTION                STRING
+
+, DISCOUNT_AMOUNT            DECIMAL(19,4)
+
+, START_DATE DATE
+
+, END_DATE DATE
+
+, PACKAGE_ID INT
+
+, COUNTRY_ABBREVIATION       STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_package_promotion_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PACKAGE_PROMOTION_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PET_PRE" , ***** Creating table: "TRAINING_PET_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PET_PRE
+
+(PET_ID INT not null
+
+, PROVIDER_ID                STRING
+
+, NAME                       STRING
+
+, BREED                      STRING
+
+, BIRTH_DATE DATE
+
+, NOTES                      STRING
+
+, CREATE_DATE_TIME           TIMESTAMP
+
+, EXTERNAL_PET_ID BIGINT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_pet_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PET_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_PET_FOCUS_AREA_PRE" , ***** Creating table: "TRAINING_PET_FOCUS_AREA_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_PET_FOCUS_AREA_PRE
+
+(PET_FOCUS_AREA_ID INT not null
+
+, PET_ID INT not null
+
+, FOCUS_AREA_ID INT not null
+
+, LAST_MODIFIED              TIMESTAMP                    not null
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_pet_focus_area_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (PET_FOCUS_AREA_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_RESERVATION_PRE" , ***** Creating table: "TRAINING_RESERVATION_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_RESERVATION_PRE
+
+(RESERVATION_ID INT not null
+
+, CUSTOMER_ID INT
+
+, PET_ID INT
+
+, STORE_CLASS_ID INT
+
+, STORE_NUMBER INT
+
+, ENROLLMENT_DATE_TIME       TIMESTAMP
+
+, CREATE_DATE_TIME           TIMESTAMP
+
+, PACKAGE_OPTION_ID INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_reservation_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (RESERVATION_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_RESERVATION_HISTORY_PRE" , ***** Creating table: "TRAINING_RESERVATION_HISTORY_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_RESERVATION_HISTORY_PRE
+
+(RESERVATION_HISTORY_ID INT not null
+
+, RESERVATION_ID INT
+
+, STORE_CLASS_ID INT
+
+, CLASS_START_DATE_TIME      TIMESTAMP
+
+, CLASS_TYPE_NAME            STRING
+
+, CLASS_DURATION_WEEKS INT
+
+, CLASS_PRICE                DECIMAL(19,4)
+
+, CLASS_UPC                  STRING
+
+, TRAINER_NAME               STRING
+
+, CREATE_DATE_TIME           TIMESTAMP
+
+, TRAINING_PACKAGE_NAME      STRING
+
+, TRAINING_PACKAGE_OPTION_NAME                                   STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_reservation_history_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (RESERVATION_HISTORY_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_CHANGE_CAPTURE_PRE" , ***** Creating table: "TRAINING_SCHED_CHANGE_CAPTURE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_CHANGE_CAPTURE_PRE
+
+(CHANGE_ID INT not null
+
+, CHANGE_TYPE_ID INT
+
+, ENTITY_ID INT
+
+, ENTITY_TYPE_ID INT
+
+, STORE_NUMBER INT
+
+, CHANGE_USER                STRING
+
+, CHANGE_DATE_TIME           TIMESTAMP
+
+, CHANGE_STATE_ID INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_change_capture_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CHANGE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_CHANGE_STATE_PRE" , ***** Creating table: "TRAINING_SCHED_CHANGE_STATE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_CHANGE_STATE_PRE
+
+ 
+
+( CHANGE_STATE_ID INT not null
+
+, CHANGE_STATE_NAME          STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_change_state_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CHANGE_STATE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_CHANGE_TYPE_PRE" , ***** Creating table: "TRAINING_SCHED_CHANGE_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_CHANGE_TYPE_PRE
+
+ 
+
+( CHANGE_TYPE_ID INT not null
+
+, CHANGE_TYPE_NAME           STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_change_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CHANGE_TYPE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_CLASS_TYPE_PRE" , ***** Creating table: "TRAINING_SCHED_CLASS_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_CLASS_TYPE_PRE
+
+ 
+
+( CLASS_TYPE_ID INT not null
+
+, NAME                       STRING
+
+, SHORT_DESCRIPTION          STRING
+
+, DURATION INT
+
+, PRICE                      DECIMAL(8,2)
+
+, UPC                        STRING
+
+, INFO_PAGE                  STRING
+
+, IS_ACTIVE                  TINYINT
+
+, VISIBILITY_LEVEL INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_class_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (CLASS_TYPE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_ENTITY_TYPE_PRE" , ***** Creating table: "TRAINING_SCHED_ENTITY_TYPE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_ENTITY_TYPE_PRE
+
+ 
+
+( ENTITY_TYPE_ID INT not null
+
+, ENTITY_TYPE_NAME           STRING
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_entity_type_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (ENTITY_TYPE_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_STORE_CLASS_PRE" , ***** Creating table: "TRAINING_SCHED_STORE_CLASS_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_STORE_CLASS_PRE
+
+ 
+
+( STORE_CLASS_ID INT not null
+
+, CLASS_TYPE_ID INT
+
+, STORE_NUMBER INT
+
+, START_DATE_TIME            TIMESTAMP
+
+, LAST_MODIFIED              TIMESTAMP
+
+, IS_ACTIVE                  TINYINT
+
+, IS_FULL                    TINYINT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_store_class_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (STORE_CLASS_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_STORE_CLASS_DETAIL_PRE" , ***** Creating table: "TRAINING_SCHED_STORE_CLASS_DETAIL_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_STORE_CLASS_DETAIL_PRE
+
+ 
+
+( STORE_CLASS_DETAIL_ID INT not null
+
+, STORE_CLASS_ID INT
+
+, CLASS_DATE_TIME            TIMESTAMP
+
+, CLASS_TYPE_ID INT
+
+, IS_ACTIVE                  TINYINT
+
+, LAST_MODIFIED              TIMESTAMP
+
+, TRAINER_ID INT
+
+, STORE_NUMBER INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_store_class_detail_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (STORE_CLASS_DETAIL_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_SCHED_TRAINER_PRE" , ***** Creating table: "TRAINING_SCHED_TRAINER_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_SCHED_TRAINER_PRE
+
+ 
+
+( TRAINER_ID INT not null
+
+, STORE_NUMBER INT
+
+, FIRST_NAME                 STRING
+
+, LAST_NAME                  STRING
+
+, ASSOCIATE_ID INT
+
+, IS_ACTIVE                  TINYINT
+
+, LAST_MODIFIED              TIMESTAMP
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_sched_trainer_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (TRAINER_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_STORE_BLACKOUTS_PRE" , ***** Creating table: "TRAINING_STORE_BLACKOUTS_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_STORE_BLACKOUTS_PRE
+
+ 
+
+( STORE_NUMBER INT not null
+
+, BLACK_OUT_START_DATE DATE
+
+, BLACK_OUT_END_DATE DATE
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_store_blackouts_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (STORE_NUMBER)
+
+ 
+
+--*****  Creating table:  "TRAINING_STORE_CLASS_PRE" , ***** Creating table: "TRAINING_STORE_CLASS_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_STORE_CLASS_PRE
+
+ 
+
+( STORE_CLASS_ID INT not null
+
+, CLASS_TYPE_ID INT
+
+, STORE_NUMBER INT
+
+, START_DATE_TIME            TIMESTAMP
+
+, LAST_MODIFIED              TIMESTAMP
+
+, TRAINER_ID INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_store_class_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (STORE_CLASS_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_STORE_CLASS_DETAIL_PRE" , ***** Creating table: "TRAINING_STORE_CLASS_DETAIL_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_STORE_CLASS_DETAIL_PRE
+
+ 
+
+( STORE_CLASS_DETAIL_ID INT not null
+
+, STORE_CLASS_ID INT
+
+, CLASS_DATE_TIME            TIMESTAMP
+
+, CLASS_TYPE_ID INT
+
+, LAST_MODIFIED              TIMESTAMP
+
+, STORE_NUMBER INT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_store_class_detail_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (STORE_CLASS_DETAIL_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_TRAINER_PRE" , ***** Creating table: "TRAINING_TRAINER_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_TRAINER_PRE
+
+ 
+
+( TRAINER_ID INT not null
+
+, FORMATTED_NAME             STRING
+
+, IS_DELETED                 TINYINT
+
+, LOAD_TSTMP                 TIMESTAMP
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_trainer_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (TRAINER_ID)
+
+ 
+
+--*****  Creating table:  "TRAINING_UNIT_OF_MEASURE_PRE" , ***** Creating table: "TRAINING_UNIT_OF_MEASURE_PRE"
+
+ 
+
+use dev_raw;
+
+ 
+
+CREATE TABLE  TRAINING_UNIT_OF_MEASURE_PRE
+
+ 
+
+( UNIT_OF_MEASURE_ID INT not null
+
+, UNIT_OF_MEASURE            STRING
+
+, UNIT_OF_MEASURE_PLURAL     STRING
+
+)
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-dev-raw-p1-gcs-gbl/services/training_unit_of_measure_pre'
+
+ 
+
+TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+ 
+
+ 
+
+--DISTRIBUTE ON (UNIT_OF_MEASURE_ID)
+
+ 
+
+ 

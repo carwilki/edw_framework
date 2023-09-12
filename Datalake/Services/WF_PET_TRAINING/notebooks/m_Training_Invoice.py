@@ -1,0 +1,202 @@
+#Code converted on 2023-08-09 10:48:00
+import os
+import argparse
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql.types import *
+from datetime import datetime
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
+# COMMAND ----------
+
+parser = argparse.ArgumentParser()
+spark = SparkSession.getActiveSession()
+parser.add_argument('env', type=str, help='Env Variable')
+args = parser.parse_args()
+env = args.env
+# env = 'dev'
+
+if env is None or env == '':
+    raise ValueError('env is not set')
+
+refine = getEnvPrefix(env) + 'refine'
+raw = getEnvPrefix(env) + 'raw'
+legacy = getEnvPrefix(env) + 'legacy'
+
+# Set global variables
+starttime = datetime.now() #start timestamp of the script
+
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_INVOICE_PRE, type SOURCE 
+# COLUMN COUNT: 13
+
+SQ_Shortcut_to_TRAINING_INVOICE_PRE = spark.sql(f"""SELECT
+INVOICE_ID,
+STATUS,
+COUNTRY_ABBREVIATION,
+SKU,
+UPC,
+BASE_PRICE,
+DISCOUNT_AMOUNT,
+SUB_TOTAL,
+CREATE_DATE_TIME,
+LAST_MODIFIED_DATE_TIME,
+CLASS_PROMOTION_ID,
+PACKAGE_PROMOTION_ID,
+RESERVATION_ID
+FROM {raw}.TRAINING_INVOICE_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node SQ_Shortcut_to_TRAINING_INVOICE, type SOURCE 
+# COLUMN COUNT: 3
+
+SQ_Shortcut_to_TRAINING_INVOICE = spark.sql(f"""SELECT
+TRAINING_INVOICE_ID,
+SRC_LAST_MODIFIED_TSTMP,
+LOAD_TSTMP
+FROM {legacy}.TRAINING_INVOICE""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node JNR_TRAINING_INVOICE, type JOINER . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 16
+
+# for each involved DataFrame, append the dataframe name to each column
+SQ_Shortcut_to_TRAINING_INVOICE_temp = SQ_Shortcut_to_TRAINING_INVOICE.toDF(*["SQ_Shortcut_to_TRAINING_INVOICE___" + col for col in SQ_Shortcut_to_TRAINING_INVOICE.columns])
+SQ_Shortcut_to_TRAINING_INVOICE_PRE_temp = SQ_Shortcut_to_TRAINING_INVOICE_PRE.toDF(*["SQ_Shortcut_to_TRAINING_INVOICE_PRE___" + col for col in SQ_Shortcut_to_TRAINING_INVOICE_PRE.columns])
+
+JNR_TRAINING_INVOICE = SQ_Shortcut_to_TRAINING_INVOICE_temp.join(SQ_Shortcut_to_TRAINING_INVOICE_PRE_temp,[SQ_Shortcut_to_TRAINING_INVOICE_temp.SQ_Shortcut_to_TRAINING_INVOICE___TRAINING_INVOICE_ID == SQ_Shortcut_to_TRAINING_INVOICE_PRE_temp.SQ_Shortcut_to_TRAINING_INVOICE_PRE___INVOICE_ID],'right_outer').selectExpr( \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___INVOICE_ID as INVOICE_ID", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___STATUS as STATUS", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___COUNTRY_ABBREVIATION as COUNTRY_ABBREVIATION", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___SKU as SKU", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___UPC as UPC", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___BASE_PRICE as BASE_PRICE", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___DISCOUNT_AMOUNT as DISCOUNT_AMOUNT", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___SUB_TOTAL as SUB_TOTAL", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___LAST_MODIFIED_DATE_TIME as LAST_MODIFIED_DATE_TIME", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___CLASS_PROMOTION_ID as CLASS_PROMOTION_ID", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___PACKAGE_PROMOTION_ID as PACKAGE_PROMOTION_ID", \
+	"SQ_Shortcut_to_TRAINING_INVOICE_PRE___RESERVATION_ID as RESERVATION_ID", \
+	"SQ_Shortcut_to_TRAINING_INVOICE___TRAINING_INVOICE_ID as lkp_TRAINING_INVOICE_ID", \
+	"SQ_Shortcut_to_TRAINING_INVOICE___SRC_LAST_MODIFIED_TSTMP as lkp_SRC_LAST_MODIFIED_TSTMP", \
+	"SQ_Shortcut_to_TRAINING_INVOICE___LOAD_TSTMP as lkp_LOAD_TSTMP")
+
+# COMMAND ----------
+# Processing node FIL_UNCHANGED_RECORDS, type FILTER 
+# COLUMN COUNT: 16
+
+# for each involved DataFrame, append the dataframe name to each column
+JNR_TRAINING_INVOICE_temp = JNR_TRAINING_INVOICE.toDF(*["JNR_TRAINING_INVOICE___" + col for col in JNR_TRAINING_INVOICE.columns])
+
+FIL_UNCHANGED_RECORDS = JNR_TRAINING_INVOICE_temp.selectExpr( \
+	"JNR_TRAINING_INVOICE___INVOICE_ID as INVOICE_ID", \
+	"JNR_TRAINING_INVOICE___STATUS as STATUS", \
+	"JNR_TRAINING_INVOICE___COUNTRY_ABBREVIATION as COUNTRY_ABBREVIATION", \
+	"JNR_TRAINING_INVOICE___SKU as SKU", \
+	"JNR_TRAINING_INVOICE___UPC as UPC", \
+	"JNR_TRAINING_INVOICE___BASE_PRICE as BASE_PRICE", \
+	"JNR_TRAINING_INVOICE___DISCOUNT_AMOUNT as DISCOUNT_AMOUNT", \
+	"JNR_TRAINING_INVOICE___SUB_TOTAL as SUB_TOTAL", \
+	"JNR_TRAINING_INVOICE___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"JNR_TRAINING_INVOICE___LAST_MODIFIED_DATE_TIME as LAST_MODIFIED_DATE_TIME", \
+	"JNR_TRAINING_INVOICE___CLASS_PROMOTION_ID as CLASS_PROMOTION_ID", \
+	"JNR_TRAINING_INVOICE___PACKAGE_PROMOTION_ID as PACKAGE_PROMOTION_ID", \
+	"JNR_TRAINING_INVOICE___RESERVATION_ID as RESERVATION_ID", \
+	"JNR_TRAINING_INVOICE___lkp_TRAINING_INVOICE_ID as lkp_TRAINING_INVOICE_ID", \
+	"JNR_TRAINING_INVOICE___lkp_SRC_LAST_MODIFIED_TSTMP as lkp_SRC_LAST_MODIFIED_TSTMP", \
+	"JNR_TRAINING_INVOICE___lkp_LOAD_TSTMP as lkp_LOAD_TSTMP").filter("lkp_TRAINING_INVOICE_ID IS NULL OR ( lkp_TRAINING_INVOICE_ID IS NOT NULL AND IF (LAST_MODIFIED_DATE_TIME IS NULL, To_DATE ( '12-31-9999' , 'MM-DD-YYYY' ), LAST_MODIFIED_DATE_TIME) != IF (lkp_SRC_LAST_MODIFIED_TSTMP IS NULL, To_DATE ( '12-31-9999' , 'MM-DD-YYYY' ), lkp_SRC_LAST_MODIFIED_TSTMP) )").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
+# Processing node EXP_UPDATE_VALIDATOR, type EXPRESSION 
+# COLUMN COUNT: 16
+
+# for each involved DataFrame, append the dataframe name to each column
+FIL_UNCHANGED_RECORDS_temp = FIL_UNCHANGED_RECORDS.toDF(*["FIL_UNCHANGED_RECORDS___" + col for col in FIL_UNCHANGED_RECORDS.columns])
+
+EXP_UPDATE_VALIDATOR = FIL_UNCHANGED_RECORDS_temp.selectExpr( \
+	"FIL_UNCHANGED_RECORDS___sys_row_id as sys_row_id", \
+	"FIL_UNCHANGED_RECORDS___INVOICE_ID as INVOICE_ID", \
+	"FIL_UNCHANGED_RECORDS___STATUS as STATUS", \
+	"FIL_UNCHANGED_RECORDS___COUNTRY_ABBREVIATION as COUNTRY_ABBREVIATION", \
+	"FIL_UNCHANGED_RECORDS___SKU as SKU", \
+	"BIGINT(FIL_UNCHANGED_RECORDS___UPC) as o_UPC", \
+	"FIL_UNCHANGED_RECORDS___BASE_PRICE as BASE_PRICE", \
+	"FIL_UNCHANGED_RECORDS___DISCOUNT_AMOUNT as DISCOUNT_AMOUNT", \
+	"FIL_UNCHANGED_RECORDS___SUB_TOTAL as SUB_TOTAL", \
+	"FIL_UNCHANGED_RECORDS___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"FIL_UNCHANGED_RECORDS___LAST_MODIFIED_DATE_TIME as LAST_MODIFIED_DATE_TIME", \
+	"FIL_UNCHANGED_RECORDS___CLASS_PROMOTION_ID as CLASS_PROMOTION_ID", \
+	"FIL_UNCHANGED_RECORDS___PACKAGE_PROMOTION_ID as PACKAGE_PROMOTION_ID", \
+	"FIL_UNCHANGED_RECORDS___RESERVATION_ID as RESERVATION_ID", \
+	"CURRENT_TIMESTAMP as UPDATE_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP IS NULL, CURRENT_TIMESTAMP, FIL_UNCHANGED_RECORDS___lkp_LOAD_TSTMP) as LOAD_TSTMP", \
+	"IF (FIL_UNCHANGED_RECORDS___lkp_TRAINING_INVOICE_ID IS NULL, 1, 2) as UPDATE_FLAG" \
+)
+
+# COMMAND ----------
+# Processing node UPD_INSERT_UPDATE, type UPDATE_STRATEGY . Note: using additional SELECT to rename incoming columns
+# COLUMN COUNT: 16
+
+# for each involved DataFrame, append the dataframe name to each column
+EXP_UPDATE_VALIDATOR_temp = EXP_UPDATE_VALIDATOR.toDF(*["EXP_UPDATE_VALIDATOR___" + col for col in EXP_UPDATE_VALIDATOR.columns])
+
+UPD_INSERT_UPDATE = EXP_UPDATE_VALIDATOR_temp.selectExpr( \
+	"EXP_UPDATE_VALIDATOR___INVOICE_ID as INVOICE_ID", \
+	"EXP_UPDATE_VALIDATOR___STATUS as STATUS", \
+	"EXP_UPDATE_VALIDATOR___COUNTRY_ABBREVIATION as COUNTRY_ABBREVIATION", \
+	"EXP_UPDATE_VALIDATOR___SKU as SKU", \
+	"EXP_UPDATE_VALIDATOR___o_UPC as UPC", \
+	"EXP_UPDATE_VALIDATOR___BASE_PRICE as BASE_PRICE", \
+	"EXP_UPDATE_VALIDATOR___DISCOUNT_AMOUNT as DISCOUNT_AMOUNT", \
+	"EXP_UPDATE_VALIDATOR___SUB_TOTAL as SUB_TOTAL", \
+	"EXP_UPDATE_VALIDATOR___CREATE_DATE_TIME as CREATE_DATE_TIME", \
+	"EXP_UPDATE_VALIDATOR___LAST_MODIFIED_DATE_TIME as LAST_MODIFIED_DATE_TIME", \
+	"EXP_UPDATE_VALIDATOR___CLASS_PROMOTION_ID as CLASS_PROMOTION_ID", \
+	"EXP_UPDATE_VALIDATOR___PACKAGE_PROMOTION_ID as PACKAGE_PROMOTION_ID", \
+	"EXP_UPDATE_VALIDATOR___RESERVATION_ID as RESERVATION_ID", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_TSTMP as UPDATE_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___LOAD_TSTMP as LOAD_TSTMP", \
+	"EXP_UPDATE_VALIDATOR___UPDATE_FLAG as UPDATE_FLAG") \
+	.withColumn('pyspark_data_action', when(col('UPDATE_FLAG') ==(lit(1)) , lit(0)) .when(col('UPDATE_FLAG') ==(lit(2)) , lit(1)))
+
+# COMMAND ----------
+# Processing node Shortcut_to_TRAINING_INVOICE1, type TARGET 
+# COLUMN COUNT: 15
+
+
+Shortcut_to_TRAINING_INVOICE1 = UPD_INSERT_UPDATE.selectExpr( \
+	"CAST(INVOICE_ID AS INT) as TRAINING_INVOICE_ID", \
+	"CAST(STATUS AS INT) as TRAINING_INVOICE_STATUS", \
+	"CAST(CLASS_PROMOTION_ID AS INT) as TRAINING_CLASS_PROMO_ID", \
+	"CAST(PACKAGE_PROMOTION_ID AS INT) as TRAINING_PACKAGE_PROMO_ID", \
+	"CAST(RESERVATION_ID AS INT) as TRAINING_RESERVATION_ID", \
+	"CAST(COUNTRY_ABBREVIATION AS STRING) as COUNTRY_CD", \
+	"CAST(SKU AS INT) as SKU_NBR", \
+	"CAST(UPC as BIGINT) as UPC_ID", \
+	"CAST(BASE_PRICE AS DECIMAL(19,4)) as BASE_PRICE_AMT", \
+	"CAST(DISCOUNT_AMOUNT AS DECIMAL(19,4)) as DISC_AMT", \
+	"CAST(SUB_TOTAL AS DECIMAL(19,4)) as SUB_TOTAL_AMT", \
+	"CAST(CREATE_DATE_TIME AS TIMESTAMP) as SRC_CREATE_TSTMP", \
+	"CAST(LAST_MODIFIED_DATE_TIME AS TIMESTAMP) as SRC_LAST_MODIFIED_TSTMP", \
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP", \
+	"pyspark_data_action as pyspark_data_action" \
+)
+# Shortcut_to_TRAINING_INVOICE1.write.saveAsTable(f'{raw}.TRAINING_INVOICE', mode = 'overwrite')
+spark.sql("""set spark.sql.legacy.timeParserPolicy = LEGACY""")
+
+try:
+  primary_key = """source.TRAINING_INVOICE_ID = target.TRAINING_INVOICE_ID"""
+  refined_perf_table = f"{legacy}.TRAINING_INVOICE"
+  executeMerge(Shortcut_to_TRAINING_INVOICE1, refined_perf_table, primary_key)
+  logger.info(f"Merge with {refined_perf_table} completed]")
+  logPrevRunDt("TRAINING_INVOICE", "TRAINING_INVOICE", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("TRAINING_INVOICE", "TRAINING_INVOICE","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
+	

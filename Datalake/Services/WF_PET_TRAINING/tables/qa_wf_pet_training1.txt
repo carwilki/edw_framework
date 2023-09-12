@@ -1,0 +1,284 @@
+
+
+CREATE TABLE qa_legacy.training_trainer (
+
+  TRAINING_TRAINER_ID INT NOT NULL,
+
+  TRAINING_TRAINER_NAME STRING,
+
+  DELETED_FLAG TINYINT,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_trainer'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_store_class_detail (
+
+  TRAINING_STORE_CLASS_DETAIL_ID INT NOT NULL,
+
+  TRAINING_STORE_CLASS_ID INT,
+
+  TRAINING_CLASS_TYPE_ID INT,
+
+  STORE_NBR INT,
+
+  CLASS_TSTMP TIMESTAMP,
+
+  SRC_LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  DELETED_FLAG TINYINT,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-dev-refine-p1-gcs-gbl/services/training_store_class_detail'
+
+TBLPROPERTIES (
+
+  'delta.feature.allowColumnDefaults' = 'supported',
+
+  'delta.feature.invariants' = 'supported',
+
+  'delta.minReaderVersion' = '1',
+
+  'delta.minWriterVersion' = '7')
+
+
+
+
+ 
+
+CREATE TABLE qa_legacy.training_store_class (
+
+  TRAINING_STORE_CLASS_ID INT NOT NULL,
+
+  TRAINING_CLASS_TYPE_ID INT,
+
+  STORE_NBR INT,
+
+  TRAINING_TRAINER_ID INT,
+
+  START_TSTMP TIMESTAMP,
+
+  SRC_LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  DELETED_FLAG TINYINT,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_store_class'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_store_blackouts (
+
+  STORE_NBR INT NOT NULL,
+
+  BLACK_OUT_START_DT DATE,
+
+  BLACK_OUT_END_DT DATE,
+
+  DELETED_FLAG TINYINT,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_store_blackouts'
+
+ 
+
+%sql
+
+CREATE TABLE qa_legacy.training_sched_store_class (
+
+  TRAINING_SCHED_STORE_CLASS_ID INT NOT NULL,
+
+  TRAINING_SCHED_CLASS_TYPE_ID INT,
+
+  STORE_NBR INT,
+
+  START_TSTMP TIMESTAMP,
+
+  FULL_FLAG TINYINT,
+
+  ACTIVE_FLAG TINYINT,
+
+  LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_sched_store_class'
+
+ 
+
+%sql
+
+CREATE TABLE qa_legacy.training_sched_trainer (
+
+  TRAINING_SCHED_TRAINER_ID INT NOT NULL,
+
+  STORE_NBR INT,
+
+  EMPLOYEE_ID INT,
+
+  FIRST_NAME STRING,
+
+  LAST_NAME STRING,
+
+  ACTIVE_FLAG TINYINT,
+
+  LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_sched_trainer'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_sched_store_class_detail (
+
+  TRAINING_SCHED_STORE_CLASS_DETAIL_ID INT NOT NULL,
+
+  TRAINING_SCHED_STORE_CLASS_ID INT,
+
+  CLASS_TSTMP TIMESTAMP,
+
+  TRAINING_SCHED_CLASS_TYPE_ID INT,
+
+  TRAINING_SCHED_TRAINER_ID INT,
+
+  STORE_NBR INT,
+
+  ACTIVE_FLAG TINYINT,
+
+  LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_sched_store_class_detail'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_sched_entity_type (
+
+  TRAINING_SCHED_ENTITY_TYPE_ID INT NOT NULL,
+
+  TRAINING_SCHED_ENTITY_TYPE_NAME STRING,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_sched_entity_type'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_sched_class_type (
+
+  TRAINING_SCHED_CLASS_TYPE_ID INT NOT NULL,
+
+  TRAINING_SCHED_CLASS_TYPE_NAME STRING,
+
+  TRAINING_SCHED_CLASS_TYPE_SHORT_DESC STRING,
+
+  DURATION INT,
+
+  PRICE_AMT DECIMAL(8,2),
+
+  UPC_CD BIGINT,
+
+  INFO_PAGE STRING,
+
+  VISIBILITY_LEVEL INT,
+
+  ACTIVE_FLAG TINYINT,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_sched_class_type'
+
+ 
+
+ 
+
+CREATE TABLE qa_legacy.training_invoice (
+
+  TRAINING_INVOICE_ID INT NOT NULL,
+
+  TRAINING_INVOICE_STATUS INT,
+
+  TRAINING_CLASS_PROMO_ID INT,
+
+  TRAINING_PACKAGE_PROMO_ID INT,
+
+  TRAINING_RESERVATION_ID INT,
+
+  COUNTRY_CD STRING,
+
+  SKU_NBR INT,
+
+  UPC_ID BIGINT,
+
+  BASE_PRICE_AMT DECIMAL(19,4),
+
+  DISC_AMT DECIMAL(19,4),
+
+  SUB_TOTAL_AMT DECIMAL(19,4),
+
+  SRC_CREATE_TSTMP TIMESTAMP,
+
+  SRC_LAST_MODIFIED_TSTMP TIMESTAMP,
+
+  UPDATE_TSTMP TIMESTAMP,
+
+  LOAD_TSTMP TIMESTAMP)
+
+USING delta
+
+LOCATION 'gs://petm-bdpl-qa-refine-p1-gcs-gbl/services/training_invoice'
+
+ 
