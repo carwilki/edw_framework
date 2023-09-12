@@ -7,6 +7,29 @@ instance_id = dbutils.secrets.get(scope = "db-token-jobsapi", key = "instance_id
 
 # COMMAND ----------
 
+def set_permission(payload,job_id):
+  api_version = '/api/2.0'
+  api_command = f'/permissions/jobs/{job_id}'
+  url = f"https://{instance_id}{api_version}{api_command}"
+
+  params = {
+    "Authorization" : "Bearer " + token,
+    "Content-Type" : "application/json"
+  }
+
+  response = requests.patch(
+    url = url,
+    headers = params,
+    data = payload
+  )
+
+  return response.text
+
+
+
+
+# COMMAND ----------
+
 def create_job(payload):
   api_version = '/api/2.1'
   api_command = '/jobs/create'
@@ -48,6 +71,7 @@ print(payload)
 
 response = create_job(payload)
 print(response)
+
 # COMMAND ----------
 
 wf_pet_training_pre_job_id=getJobId(response)
@@ -67,6 +91,7 @@ print(payload)
 
 response = create_job(payload)
 print(response)
+
 # COMMAND ----------
 
 wf_pet_training_refine_job_id=getJobId(response)
@@ -86,6 +111,7 @@ print(payload)
 
 response = create_job(payload)
 print(response)
+
 # COMMAND ----------
 
 wf_pet_training_snowflake_job_id=getJobId(response)
@@ -160,7 +186,49 @@ parentJson = f"""{{
     ],
     "format": "MULTI_TASK"
 }}"""
+
 # COMMAND ----------
 
 response = create_job(parentJson)
+print(response)
+
+# COMMAND ----------
+
+permission_json= {
+      "access_control_list": [
+        {
+          "group_name": "App_Databricks_DE_Prod_BigDataOperations",
+          "permission_level": "CAN_MANAGE"
+        },
+        {
+          "group_name": "App_Databricks_DE_Prod_Viewer",
+          "permission_level": "CAN_VIEW"
+        }
+      ]
+    }
+
+
+# COMMAND ----------
+
+
+
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,wf_pet_training_pre_job_id)
+print(response)
+
+# COMMAND ----------
+
+
+
+
+response=set_permission(payload,wf_pet_training_refine_job_id)
+print(response)
+
+# COMMAND ----------
+
+
+
+
+response=set_permission(payload,wf_pet_training_snowflake_job_id)
 print(response)
