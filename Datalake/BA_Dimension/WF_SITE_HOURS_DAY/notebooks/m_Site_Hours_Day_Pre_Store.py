@@ -42,8 +42,18 @@ store_nbr = 133
 # COMMAND ----------
 # Variable_declaration_comment
 
-mPar_ClientId = "33920cc3f6e042e1ab648b8663196d3b"
-mPar_ClientSecret = "d4E51B043aB14490a77ed96A2ED39374"
+# mPar_ClientId = "33920cc3f6e042e1ab648b8663196d3b"
+# mPar_ClientSecret = "d4E51B043aB14490a77ed96A2ED39374"
+scopeName=""
+if env.lower() == "prod":
+    scopeName='MULESOFT_API_P'
+else :
+    scopeName='MULESOFT_API_NP'    
+
+mPar_ClientId = secrets.get(scope=scopeName, key="client_id")
+mPar_ClientSecret = secrets.get(scope=scopeName, key="secret")
+     
+
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE
