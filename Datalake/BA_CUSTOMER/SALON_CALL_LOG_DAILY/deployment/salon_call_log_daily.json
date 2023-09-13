@@ -129,7 +129,7 @@
             }
         }
     ],
-      "job_clusters": [
+    "job_clusters": [
         {
             "job_cluster_key": "Salon_Call_Log_Daily",
             "new_cluster": {
