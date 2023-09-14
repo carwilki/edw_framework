@@ -242,4 +242,4 @@ PET_ID AS PODS_PET_ID
 ,UPDATE_DT_TM AS PODS_UPDATE_TSTMP
 ,current_timestamp() AS UPDATE_TSTMP
 ,current_timestamp() AS LOAD_TSTMP
-from refine.pods_pet
+from refine.pods_pet;
