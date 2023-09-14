@@ -65,7 +65,7 @@ Shortcut_To_PHYS_INV_CURRENT = ASQ_Shortcut_To_PHYS_INV_HISTORY.selectExpr(
 # COMMAND ----------
 
 try:	
-  Shortcut_To_PHYS_INV_CURRENT.write.mode("append").saveAsTable(f'{legacy}.PHYS_INV_CURRENT')
+  Shortcut_To_PHYS_INV_CURRENT.write.mode("overwrite").saveAsTable(f'{legacy}.PHYS_INV_CURRENT')
   logPrevRunDt("PHYS_INV_CURRENT", "PHYS_INV_CURRENT", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
   logPrevRunDt("PHYS_INV_CURRENT", "PHYS_INV_CURRENT","Failed",str(e), f"{raw}.log_run_details")

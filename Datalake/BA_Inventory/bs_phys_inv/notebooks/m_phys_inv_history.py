@@ -11,6 +11,7 @@ from Datalake.utils.genericUtilities import *
 from Datalake.utils.configs import *
 from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
+from datetime import timedelta
 
 # COMMAND ----------
 
@@ -140,10 +141,15 @@ SQ_Shortcut_To_PHYS_INV_HDR_PRE = SQ_Shortcut_To_PHYS_INV_HDR_PRE \
 # for each involved DataFrame, append the dataframe name to each column
 SQ_Shortcut_To_PHYS_INV_HDR_PRE_temp = SQ_Shortcut_To_PHYS_INV_HDR_PRE.toDF(*["SQ_Shortcut_To_PHYS_INV_HDR_PRE___" + col for col in SQ_Shortcut_To_PHYS_INV_HDR_PRE.columns])
 
+is_leap_year_lambda = lambda year: 366 if ((year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)) else 365
+
+is_leap_year_udf = udf(is_leap_year_lambda, IntegerType())
+
 EXPTRANS = SQ_Shortcut_To_PHYS_INV_HDR_PRE_temp\
   .withColumn("NO_DATE", to_date ( lit('00010101') , 'yyyyMMdd' )) \
-	.withColumn("LAST_MONTH", date_add(date_trunc ( 'day',current_timestamp() ), -1)) \
-	.withColumn("LAST_YEAR", date_add(date_trunc ( 'day',current_timestamp() ), -12)).selectExpr(
+  .withColumn("LAST_MONTH", date_add(current_date(), -dayofmonth(trunc(current_date(), "MM")-timedelta(days=1))))\
+	.withColumn("LAST_YEAR", date_add(current_date(), -is_leap_year_udf((year(trunc(current_date(), "YYYY")-timedelta(days=1)))) )).\
+   selectExpr(
 	"SQ_Shortcut_To_PHYS_INV_HDR_PRE___sys_row_id as sys_row_id",
 	"SQ_Shortcut_To_PHYS_INV_HDR_PRE___DAY_DT as DAY_DT",
 	"SQ_Shortcut_To_PHYS_INV_HDR_PRE___LOCATION_ID as LOCATION_ID",
@@ -174,20 +180,24 @@ Shortcut_To_PHYS_INV_HISTORY = EXPTRANS.selectExpr(
 	"CAST(LOAD_DT AS TIMESTAMP) as LOAD_DT"
 )
 #overwriteDeltaPartition(Shortcut_To_PHYS_INV_HISTORY,'DC_NBR',dcnbr,f'{raw}.PHYS_INV_HISTORY')
-Shortcut_To_PHYS_INV_HISTORY.write.mode("append").saveAsTable(f'{legacy}.PHYS_INV_HISTORY')
+# Shortcut_To_PHYS_INV_HISTORY.write.mode("append").saveAsTable(f'{legacy}.PHYS_INV_HISTORY')
 
 # COMMAND ----------
 
-#try:
-#  primary_key = """source.DAY_DT = target.DAY_DT AND source.LOCATION_ID = target.LOCATION_ID AND source.PHYS_INV_TYPE_ID = target.PHYS_INV_TYPE_ID"""
-#  refined_perf_table = f"{legacy}.PHYS_INV_HISTORY"
-# 	executeMerge(Shortcut_To_PHYS_INV_HISTORY, refined_perf_table, primary_key)
-# 	logger.info(f"Merge with {refined_perf_table} completed]")
-# 	logPrevRunDt("PHYS_INV_HISTORY", "PHYS_INV_HISTORY", "Completed", "N/A", f"{raw}.log_run_details")
-#except Exception as e:
-#  logPrevRunDt("PHYS_INV_HISTORY", "PHYS_INV_HISTORY","Failed",str(e), f"{raw}.log_run_details")
-# 	raise e
-		
+try:
+  refined_perf_table = f"{legacy}.PHYS_INV_HISTORY"
+  Shortcut_To_PHYS_INV_HISTORY.createOrReplaceTempView('temp_PHYS_INV_HISTORY')
+  merge_sql = f"""MERGE INTO {refined_perf_table} as target
+                  USING temp_PHYS_INV_HISTORY as source
+                  ON source.DAY_DT = target.DAY_DT AND source.LOCATION_ID = target.LOCATION_ID AND source.PHYS_INV_TYPE_ID = target.PHYS_INV_TYPE_ID
+                  WHEN MATCHED THEN
+                    UPDATE SET *
+                  WHEN NOT MATCHED THEN
+                    INSERT *
+                  """
+  spark.sql(merge_sql)
+except Exception as e:
+  raise e
 
 # COMMAND ----------
 

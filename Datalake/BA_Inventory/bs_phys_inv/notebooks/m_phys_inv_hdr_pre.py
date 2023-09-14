@@ -38,22 +38,22 @@ source_bucket = dbutils.widgets.get('source_bucket')
 # Processing node SQ_Shortcut_To_IKPF_Physical_Inventory, type SOURCE 
 # COLUMN COUNT: 9
 
-def get_source_file():
-    import builtins
-    _bucket=getParameterValue(raw,'BA_Inventory_Parameter.prm','BA_Inventory.WF:bs_phys_inv','source_bucket')
-    #_bucket = "gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/phys_inv/"
-    lst = dbutils.fs.ls(_bucket)
-    fldr = builtins.max(lst, key=lambda x: x.name).name
-    lst = dbutils.fs.ls(_bucket + fldr)
-    files = [x.path for x in lst]
-    return files[0] if files else None
-    # return lst[0] if lst else None
+_bucket=getParameterValue(raw,'BA_Inventory_Parameter.prm','BA_Inventory.WF:bs_phys_inv','source_bucket')
+key ="phys"
 
-source_file = get_source_file()
+def get_source_file(key, _bucket):
+    import builtins
+    lst = dbutils.fs.ls(_bucket)
+    dirs = [item for item in lst if item.isDir()]
+    fldr = builtins.max(dirs, key=lambda x: x.name).name
+    lst = dbutils.fs.ls(_bucket + fldr)
+    files = [x.path for x in lst if x.name.startswith(key)]
+    return files[0] if files else None
+
+source_file = get_source_file(key, _bucket)
 # TESTED WITH SPECIFIC FILE BELOW
 #source_file = "gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/phys_inv/20230825/physinv20230824_170352.dat"
 print(source_file)
-
 
 csv_options = {
     "sep": ",",
@@ -61,7 +61,6 @@ csv_options = {
 }
 
 SQ_Shortcut_to_BPC_PLAN_AND_FORECAST_FLAT = spark.read.csv(source_file, **csv_options)
-
 
 
 
