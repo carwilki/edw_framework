@@ -368,10 +368,12 @@ def getMaxDate(refine_table_name, schema):
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
 
-    if "dev" in schema or "qa" in schema:
-        metadataSchema = schema.split("_")[0] + "_refine"
+    if "dev" in schema:
+      metadataSchema = "dev_stranger_things"
+    elif "qa" in schema:
+      metadataSchema = "qa_stranger_things"
     else:
-        metadataSchema = "refine"
+      metadataSchema = "stranger_things"
 
     metadata_df = spark.table(f"{metadataSchema}.ingestion_metadata")
     try:
