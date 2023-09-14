@@ -2,7 +2,7 @@ CREATE TABLE stranger_things.ingestion_metadata (
   table_name STRING,
   timestamp_columns STRING)
 USING delta
-LOCATION 'gs://petm-bdpl-prod-systemdb-p1-gcs-gbl/metdata/tables/ingestion_metadata'
+LOCATION 'gs://petm-bdpl-prod-systemdb-p1-gcs-gbl/metadata/tables/ingestion_metadata'
 TBLPROPERTIES (
   'delta.autoOptimize.autoCompact' = 'true',
   'delta.autoOptimize.optimizeWrite' = 'true',
