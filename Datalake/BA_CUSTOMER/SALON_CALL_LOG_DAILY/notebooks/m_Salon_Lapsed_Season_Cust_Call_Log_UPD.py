@@ -30,7 +30,7 @@ raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
 cust_sensitive = getEnvPrefix(env) + "cust_sensitive"
 
-(username, password, connection_string) = mtx_prd_sqlServer(env)
+(username, password, connection_string) = salon_call_log_daily_prd_sqlServer(env)
 sqlTable = "staging.DB_SALON_LAPSED_SEASON_CUST_CALL_LOG_PRE"
 
 Prev_Run_Dt=genPrevRunDt("SALON_LAPSED_SEASON_CUST_CALL_LOG", refine, raw)
