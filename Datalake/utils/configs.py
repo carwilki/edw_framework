@@ -184,15 +184,15 @@ def salon_call_log_daily_prd_sqlServer(env):
             + db
             + ";encrypt=true;trustServerCertificate=true;"
         )
-    return (username, password, connection_string)
+        return (username, password, connection_string)
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="training_password")
-        hostname = "20.62.132.163"
-        portnumber = "1433"
-        db = "Training"
+        username = secrets.get(scope="svc_bd_sql_p_write", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_p_write", key="mtx_password")
+        hostname = "172.20.89.186"
+        portnumber = "1840"
+        db = "MTX_PRD"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)

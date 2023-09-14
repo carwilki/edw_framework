@@ -1,0 +1,237 @@
+# Databricks notebook source
+# Code converted on 2023-08-24 13:54:01
+import os
+import argparse
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql.types import *
+from datetime import datetime
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
+
+# COMMAND ----------
+
+spark = SparkSession.getActiveSession()
+dbutils = DBUtils(spark)
+
+dbutils.widgets.text(name="env", defaultValue="dev")
+env = dbutils.widgets.get("env")
+
+if env is None or env == '':
+    raise ValueError('env is not set')
+
+refine = getEnvPrefix(env) + 'refine'
+raw = getEnvPrefix(env) + 'raw'
+legacy = getEnvPrefix(env) + 'legacy'
+
+
+# COMMAND ----------
+
+# Processing node SQ_Shortcut_to_IHOP_DETAIL_PRE, type SOURCE 
+# COLUMN COUNT: 71
+
+SQ_Shortcut_to_IHOP_DETAIL_PRE = spark.sql(f"""SELECT  IDP.ALLOCATION_ID, IDP.ALLOCATION_QTY, IDP.CAPACITY_WAVE_ELIGIBLE, sp1.location_id FROM_LOCATION_ID, IDP.DC_NBR, IDP.EVENT_NBR,
+
+sp.PRODUCT_ID, IDP.SKU_NBR, sp2.LOCATION_ID, IDP.STORE_NBR, VP.VENDOR_ID, IDP.VENDOR_NBR, IDP.WAVE_TYPE_ID, IDP.ALLOC_W_ASSIGNMENT_ID,
+
+IDP.PRIMARY_WAVE_ID, IDP.ALLOC_W_ASSIGN_NEED_BY_DT, IDP.ARTICLE_NAME, IDP.ARTICLE_CUBIC_VOLUME, IDP.ARTICLE_CASE_QTY, IDP.SLOTTING_GROUP_ID,
+
+IDP.ARTICLE_CUBIC_VOL_BY_PIECE, IDP.CONSTRAINT_TYPE_ID, IDP.CTYPE_CODE, IDP.CTYPE_NAME, IDP.CTYPE_DESC, IDP.IS_STORE_DEFAULT, IDP.IS_WAVE_ELIGIBLE, IDP.DC_NAME,
+
+IDP.DC_FLAGGED_FOR_REVIEW, IDP.DC_IS_DELETED, IDP.DC_TO_STORE_LEAD_TIME_IN_DAYS, IDP.EXPECTEDDELIVERYDT as EXPECTED_DELIVERY_DT, IDP.PICK_DAY_WK, IDP.REPLENISHMENT_DAY_WK, IDP.EVENT_NAME,
+
+IDP.EVENT_START_DATE, IDP.EVENT_END_DATE,  TRANSLATE(TRANSLATE(IDP.EVENT_DESC,CHR(13),''),CHR(10),'') AS EVENT_DESC,
+
+IDP.EVENT_PARAMETER_ID,IDP.OB_ALLOC_ASSIG_DELIV_DT,
+
+IDP.OB_ALLOC_ASSIG_QTY, IDP.STORE_DESC, IDP.SLOTTING_GROUP_NAME, IDP.STORE_TRANS_ORDER_ID, IDP.STORE_TRANS_ORD_SPLIT, IDP.STORE_TRANS_ORD_PG,
+
+IDP.STORE_TRANS_ORD_DELIV_DT, IDP.STORE_TRANS_ORD_QTY, IDP.VEND_TO_DC_SMOOTH_TYPE_ID, IDP.INCREM_LEAD_TIME_ABOVE_STD, IDP.VENDOR_CAPACITY,
+
+IDP.TRUCK_RELEASE_DATE, IDP.DC_HOLD_OUT_DATE, IDP.VENDOR_NAME, IDP.VENDOR_IS_DELETED, IDP.VENDOR_STD_LEAD_TIME, IDP.VENDORS_TO_DC_LEAD_TIME_IN_DAYS,
+
+IDP.VEND_TO_DC_SMOOTH_TYPE_CODE, IDP.VEND_TO_DC_SMOOTH_TYPE_NAME, IDP.VEND_TO_DC_SMOOTH_TYPE_DESC, IDP.WAVE_ID, IDP.WAVE_CODE, IDP.WAVE_RELEASE_DATE,
+
+IDP.WAVE_IS_PRIMARY, IDP.WAVE_IS_VENDOR_MANAGED, IDP.PETSMART_MANAGED, IDP.VENDOR_MANAGED,
+
+IDP.WAVE_TYPE_CODE, IDP.WAVE_TYPE_NAME, IDP.CASE_CUBE, IDP.WAVE_CUBE
+
+FROM {raw}.IHOP_DETAIL_RPT_PRE IDP
+
+JOIN {legacy}.SITE_PROFILE sp1
+
+   ON IDP.DC_NBR = SP1.STORE_NBR
+
+ JOIN {legacy}.SITE_PROFILE sp2
+
+   ON IDP.STORE_NBR = SP2.STORE_NBR
+
+ LEFT outer join {legacy}.vendor_profile VP
+
+   ON IDP.VENDOR_NBR = VP.VENDOR_NBR
+
+ JOIN {legacy}.SKU_PROFILE sp
+
+   ON IDP.SKU_NBR = SP.SKU_NBR""").withColumn("sys_row_id", monotonically_increasing_id())
+# Conforming fields names to the component layout
+SQ_Shortcut_to_IHOP_DETAIL_PRE = SQ_Shortcut_to_IHOP_DETAIL_PRE \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[0],'ALLOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[1],'ALLOCATION_QTY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[2],'CAPACITY_WAVE_ELIGIBLE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[3],'FROM_LOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[4],'DC_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[5],'EVENT_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[6],'PRODUCT_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[7],'SKU_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[8],'LOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[9],'STORE_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[10],'VENDOR_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[11],'VENDOR_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[12],'WAVE_TYPE_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[13],'ALLOC_W_ASSIGNMENT_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[14],'PRIMARY_WAVE_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[15],'ALLOC_W_ASSIGN_NEED_BY_DT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[16],'ARTICLE_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[17],'ARTICLE_CUBIC_VOLUME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[18],'ARTICLE_CASE_QTY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[19],'SLOTTING_GROUP_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[20],'ARTICLE_CUBIC_VOL_BY_PIECE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[21],'CONSTRAINT_TYPE_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[22],'CTYPE_CODE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[23],'CTYPE_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[24],'CTYPE_DESC') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[25],'IS_STORE_DEFAULT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[26],'IS_WAVE_ELIGIBLE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[27],'DC_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[28],'DC_FLAGGED_FOR_REVIEW') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[29],'DC_IS_DELETED') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[30],'DC_TO_STORE_LEAD_TIME_IN_DAYS') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[31],'EXPECTED_DELIVERY_DT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[32],'PICK_DAY_WK') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[33],'REPLENISHMENT_DAY_WK') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[34],'EVENT_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[35],'EVENT_START_DATE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[36],'EVENT_END_DATE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[37],'EVENT_DESC') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[38],'EVENT_PARAMETER_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[39],'OB_ALLOC_ASSIG_DELIV_DT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[40],'OB_ALLOC_ASSIG_QTY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[41],'STORE_DESC') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[42],'SLOTTING_GROUP_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[43],'STORE_TRANS_ORDER_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[44],'STORE_TRANS_ORD_SPLIT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[45],'STORE_TRANS_ORD_PG') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[46],'STORE_TRANS_ORD_DELIV_DT') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[47],'STORE_TRANS_ORD_QTY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[48],'VEND_TO_DC_SMOOTH_TYPE_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[49],'INCREM_LEAD_TIME_ABOVE_STD') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[50],'VENDOR_CAPACITY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[51],'TRUCK_RELEASE_DATE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[52],'DC_HOLD_OUT_DATE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[53],'VENDOR_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[54],'VENDOR_IS_DELETED') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[55],'VENDOR_STD_LEAD_TIME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[56],'VENDORS_TO_DC_LEAD_TIME_IN_DAYS') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[57],'VEND_TO_DC_SMOOTH_TYPE_CODE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[58],'VEND_TO_DC_SMOOTH_TYPE_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[59],'VEND_TO_DC_SMOOTH_TYPE_DESC') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[60],'WAVE_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[61],'WAVE_CODE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[62],'WAVE_RELEASE_DATE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[63],'WAVE_IS_PRIMARY') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[64],'WAVE_IS_VENDOR_MANAGED') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[65],'PETSMART_MANAGED') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[66],'VENDOR_MANAGED') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[67],'WAVE_TYPE_CODE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[68],'WAVE_TYPE_NAME') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[69],'CASE_CUBE') \
+	.withColumnRenamed(SQ_Shortcut_to_IHOP_DETAIL_PRE.columns[70],'WAVE_CUBE')
+
+# COMMAND ----------
+
+# Processing node Shortcut_to_IHOP_DETAIL_RPT, type TARGET 
+# COLUMN COUNT: 71
+
+
+Shortcut_to_IHOP_DETAIL_RPT = SQ_Shortcut_to_IHOP_DETAIL_PRE.selectExpr(
+	"CAST(ALLOCATION_ID AS INT) as ALLOCATION_ID",
+	"CAST(ALLOCATION_QTY AS INT) as ALLOCATION_QTY",
+	"CAST(CAPACITY_WAVE_ELIGIBLE AS INT) as CAPACITY_WAVE_ELIGIBLE",
+	"CAST(FROM_LOCATION_ID AS INT) as FROM_LOCATION_ID",
+	"CAST(DC_NBR AS INT) as DC_NBR",
+	"CAST(EVENT_NBR AS INT) as EVENT_NBR",
+	"CAST(PRODUCT_ID AS INT) as PRODUCT_ID",
+	"CAST(SKU_NBR AS INT) as SKU_NBR",
+	"CAST(LOCATION_ID AS INT) as LOCATION_ID",
+	"CAST(STORE_NBR AS INT) as STORE_NBR",
+	"CAST(VENDOR_ID AS INT) as VENDOR_ID",
+	"CAST(VENDOR_NBR AS INT) as VENDOR_NBR",
+	"CAST(WAVE_TYPE_ID AS INT) as WAVE_TYPE_ID",
+	"CAST(ALLOC_W_ASSIGNMENT_ID AS INT) as ALLOC_W_ASSIGNMENT_ID",
+	"CAST(PRIMARY_WAVE_ID AS INT) as PRIMARY_WAVE_ID",
+	"CAST(ALLOC_W_ASSIGN_NEED_BY_DT AS TIMESTAMP) as ALLOC_W_ASSIGN_NEED_BY_DT",
+	"CAST(ARTICLE_NAME AS STRING) as ARTICLE_NAME",
+	"ARTICLE_CUBIC_VOLUME as ARTICLE_CUBIC_VOLUME",
+	"CAST(ARTICLE_CASE_QTY AS INT) as ARTICLE_CASE_QTY",
+	"CAST(SLOTTING_GROUP_ID AS INT) as SLOTTING_GROUP_ID",
+	"CAST(ARTICLE_CUBIC_VOL_BY_PIECE AS INT) as ARTICLE_CUBIC_VOL_BY_PIECE",
+	"CAST(CONSTRAINT_TYPE_ID AS INT) as CONSTRAINT_TYPE_ID",
+	"CAST(CTYPE_CODE AS INT) as CTYPE_CODE",
+	"CAST(CTYPE_NAME AS STRING) as CTYPE_NAME",
+	"CAST(CTYPE_DESC AS STRING) as CTYPE_DESC",
+	"CAST(IS_STORE_DEFAULT AS INT) as IS_STORE_DEFAULT",
+	"CAST(IS_WAVE_ELIGIBLE AS INT) as IS_WAVE_ELIGIBLE",
+	"CAST(DC_NAME AS STRING) as DC_NAME",
+	"CAST(DC_FLAGGED_FOR_REVIEW AS INT) as DC_FLAGGED_FOR_REVIEW",
+	"CAST(DC_IS_DELETED AS INT) as DC_IS_DELETED",
+	"CAST(DC_TO_STORE_LEAD_TIME_IN_DAYS AS INT) as DC_TO_STORE_LEAD_TIME_IN_DAYS",
+	"CAST(EXPECTED_DELIVERY_DT AS INT) as EXPECTED_DELIVERY_DT",
+	"CAST(PICK_DAY_WK AS INT) as PICK_DAY_WK",
+	"CAST(REPLENISHMENT_DAY_WK AS INT) as REPLENISHMENT_DAY_WK",
+	"CAST(EVENT_NAME AS STRING) as EVENT_NAME",
+	"CAST(EVENT_START_DATE AS TIMESTAMP) as EVENT_START_DATE",
+	"CAST(EVENT_END_DATE AS TIMESTAMP) as EVENT_END_DATE",
+	"CAST(EVENT_DESC AS STRING) as EVENT_DESC",
+	"CAST(EVENT_PARAMETER_ID AS INT) as EVENT_PARAMETER_ID",
+	"CAST(OB_ALLOC_ASSIG_DELIV_DT AS TIMESTAMP) as OB_ALLOC_ASSIG_DELIV_DT",
+	"CAST(OB_ALLOC_ASSIG_QTY AS INT) as OB_ALLOC_ASSIG_QTY",
+	"CAST(STORE_DESC AS STRING) as STORE_DESC",
+	"CAST(SLOTTING_GROUP_NAME AS STRING) as SLOTTING_GROUP_NAME",
+	"CAST(STORE_TRANS_ORDER_ID AS INT) as STORE_TRANS_ORDER_ID",
+	"CAST(STORE_TRANS_ORD_SPLIT AS INT) as STORE_TRANS_ORD_SPLIT",
+	"CAST(STORE_TRANS_ORD_PG AS INT) as STORE_TRANS_ORD_PG",
+	"CAST(STORE_TRANS_ORD_DELIV_DT AS TIMESTAMP) as STORE_TRANS_ORD_DELIV_DT",
+	"CAST(STORE_TRANS_ORD_QTY AS INT) as STORE_TRANS_ORD_QTY",
+	"CAST(VEND_TO_DC_SMOOTH_TYPE_ID AS INT) as VEND_TO_DC_SMOOTH_TYPE_ID",
+	"CAST(INCREM_LEAD_TIME_ABOVE_STD AS INT) as INCREM_LEAD_TIME_ABOVE_STD",
+	"CAST(VENDOR_CAPACITY AS INT) as VENDOR_CAPACITY",
+	"CAST(TRUCK_RELEASE_DATE AS TIMESTAMP) as TRUCK_RELEASE_DATE",
+	"CAST(DC_HOLD_OUT_DATE AS TIMESTAMP) as DC_HOLD_OUT_DATE",
+	"CAST(VENDOR_NAME AS STRING) as VENDOR_NAME",
+	"CAST(VENDOR_IS_DELETED AS INT) as VENDOR_IS_DELETED",
+	"CAST(VENDOR_STD_LEAD_TIME AS INT) as VENDOR_STD_LEAD_TIME",
+	"CAST(VENDORS_TO_DC_LEAD_TIME_IN_DAYS AS INT) as VENDORS_TO_DC_LEAD_TIME_IN_DAYS",
+	"CAST(VEND_TO_DC_SMOOTH_TYPE_CODE AS INT) as VEND_TO_DC_SMOOTH_TYPE_CODE",
+	"CAST(VEND_TO_DC_SMOOTH_TYPE_NAME AS STRING) as VEND_TO_DC_SMOOTH_TYPE_NAME",
+	"CAST(VEND_TO_DC_SMOOTH_TYPE_DESC AS STRING) as VEND_TO_DC_SMOOTH_TYPE_DESC",
+	"CAST(WAVE_ID AS INT) as WAVE_ID",
+	"CAST(WAVE_CODE AS INT) as WAVE_CODE",
+	"CAST(WAVE_RELEASE_DATE AS TIMESTAMP) as WAVE_RELEASE_DATE",
+	"CAST(WAVE_IS_PRIMARY AS INT) as WAVE_IS_PRIMARY",
+	"CAST(WAVE_IS_VENDOR_MANAGED AS INT) as WAVE_IS_VENDOR_MANAGED",
+	"CAST(PETSMART_MANAGED AS STRING) as PETSMART_MANAGED",
+	"CAST(VENDOR_MANAGED AS STRING) as VENDOR_MANAGED",
+	"CAST(WAVE_TYPE_CODE AS INT) as WAVE_TYPE_CODE",
+	"CAST(WAVE_TYPE_NAME AS STRING) as WAVE_TYPE_NAME",
+	"CASE_CUBE as CASE_CUBE",
+	"WAVE_CUBE as WAVE_CUBE"
+)
+# overwriteDeltaPartition(Shortcut_to_IHOP_DETAIL_RPT,'DC_NBR',dcnbr,f'{raw}.IHOP_DETAIL_RPT')
+Shortcut_to_IHOP_DETAIL_RPT.write.mode("overwrite").saveAsTable(f'{legacy}.IHOP_DETAIL_RPT')
+
+# COMMAND ----------
+
+
