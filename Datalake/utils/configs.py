@@ -188,7 +188,7 @@ def salon_call_log_daily_prd_sqlServer(env):
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = secrets.get(scope="svc_bd_sql_p_write", key="mtx_username")
+        username = secrets.get(scope="svc_bd_sql_p_write", key="username")
         password = secrets.get(scope="svc_bd_sql_p_write", key="mtx_password")
         hostname = "172.20.89.186"
         portnumber = "1840"
