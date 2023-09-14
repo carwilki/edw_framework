@@ -65,8 +65,17 @@ JNRTRANS = SQ_Shortcut_to_GS_PT_TRAINING_TYPE_temp.join(SQ_Shortcut_to_GS_PT_TRA
 # for each involved DataFrame, append the dataframe name to each column
 JNRTRANS_temp = JNRTRANS.toDF(*["JNRTRANS___" + col for col in JNRTRANS.columns])
 
+JNRTRANS_temp = JNRTRANS_temp.selectExpr('*', '''md5(concat ( ifnull(JNRTRANS___TRAINING_NAME  , "") 
+, ifnull(JNRTRANS___CUT_OFF_DAYS , "") 
+, ifnull(JNRTRANS___IS_ACTIVE , "")
+)) as md5pre''',
+'''md5(concat( ifnull(JNRTRANS___TRAINING_NAME1 , "") 
+, ifnull(JNRTRANS___CUT_OFF_DAYS1 , "") 
+, ifnull(JNRTRANS___IS_ACTIVE1 , "")
+)) as md5base''')
+
 EXP_MD5_UPD_FLAG = JNRTRANS_temp\
-.withColumn("MD5_RESULTS", expr("""IF (MD5 ( concat ( JNRTRANS___TRAINING_NAME , JNRTRANS___CUT_OFF_DAYS , JNRTRANS___IS_ACTIVE ) ) != MD5 (concat( JNRTRANS___TRAINING_NAME1 , JNRTRANS___CUT_OFF_DAYS1 , JNRTRANS___IS_ACTIVE1 )), 1, 0)""")) \
+.withColumn("MD5_RESULTS", expr("""IF (md5pre != md5base, 1, 0)""")) \
 	.withColumn("v_UPD_FLAG", expr("""IF (JNRTRANS___GS_PT_TRAINING_TYPE_ID1 IS NULL, 0, IF (MD5_RESULTS = 1, 1, 3))""")).selectExpr(
 	"JNRTRANS___LOAD_TSTMP as i_LOAD_TSTMP",
 	"JNRTRANS___GS_PT_TRAINING_TYPE_ID as GS_PT_TRAINING_TYPE_ID",

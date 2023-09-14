@@ -73,8 +73,25 @@ JNRTRANS = SQ_Shortcut_to_GS_PT_HISTORY_temp.join(SQ_Shortcut_to_GS_PT_HISTORY_P
 # for each involved DataFrame, append the dataframe name to each column
 JNRTRANS_temp = JNRTRANS.toDF(*["JNRTRANS___" + col for col in JNRTRANS.columns])
 
+JNRTRANS_temp = JNRTRANS_temp.selectExpr('*', '''md5(concat ( ifnull(JNRTRANS___GS_PT_TRAINING_ID  , "") 
+, ifnull(JNRTRANS___FIELD_NAME , "") 
+, ifnull(JNRTRANS___OLD_VALUE , "") 
+, ifnull(JNRTRANS___NEW_VALUE , "") 
+, ifnull(JNRTRANS___UPDATE_BY , "") 
+, ifnull(JNRTRANS___UPDATED_DT , "") 
+, ifnull(JNRTRANS___ACTION , "") 
+)) as md5pre''',
+'''md5(concat( ifnull(JNRTRANS___GS_PT_TRAINING_ID1 , "") 
+, ifnull(JNRTRANS___FIELD_NAME1 , "") 
+, ifnull(JNRTRANS___OLD_VALUE1 , "") 
+, ifnull(JNRTRANS___NEW_VALUE1 , "") 
+, ifnull(JNRTRANS___UPDATE_BY1 , "") 
+, ifnull(JNRTRANS___UPDATED_DT1 , "") 
+, ifnull(JNRTRANS___ACTION1 , "") 
+)) as md5base''')
+
 EXP_MD5_UPD_FLAG = JNRTRANS_temp\
-	.withColumn("MD5_RESULTS", expr("""IF (MD5 ( concat ( JNRTRANS___GS_PT_TRAINING_ID , JNRTRANS___FIELD_NAME , JNRTRANS___OLD_VALUE , JNRTRANS___NEW_VALUE , JNRTRANS___UPDATE_BY , JNRTRANS___UPDATED_DT , JNRTRANS___ACTION ) ) != MD5 (concat( JNRTRANS___GS_PT_TRAINING_ID1 , JNRTRANS___FIELD_NAME1 , JNRTRANS___OLD_VALUE1 , JNRTRANS___NEW_VALUE1 , JNRTRANS___UPDATE_BY1 , JNRTRANS___UPDATED_DT1 , JNRTRANS___ACTION1 )), 1, 0)""")) \
+	.withColumn("MD5_RESULTS", expr("""IF (md5pre != md5base, 1, 0)""")) \
 	.withColumn("v_UPD_FLAG", expr("""IF (JNRTRANS___GS_PT_HISTORY_ID1 IS NULL, 0, IF (MD5_RESULTS = 1, 1, 3))"""))\
 .selectExpr(
 	"JNRTRANS___LOAD_TSTMP as i_LOAD_TSTMP",
