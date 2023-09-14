@@ -29,7 +29,7 @@ job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , sn
 )
 VALUES (
 "NZ_Migration", null, '${nz_db}', "EDW_PRD", "sds_order_item_rpt",
-null, false, null, false, "delta",
+null, true, "customer", false, "delta",
 "legacy", "public", "sds_order_item_rpt", "full", null, 
 null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
 null, array("rjalan@petsmart.com", "DL_BIG_DATA_OPERATIONS@PetSmart.com"), 1, null, false,
