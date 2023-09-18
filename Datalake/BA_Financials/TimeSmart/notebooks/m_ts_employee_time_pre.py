@@ -26,7 +26,7 @@ refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
-(username,password,connection_string) = timesmart_prd_sqlServer(env)
+(username,password,connection_string,linked_server) = timesmart_prd_sqlServer(env)
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_Employee_Time, type SOURCE 
 # COLUMN COUNT: 7
@@ -39,7 +39,7 @@ Employee_Time.DayDT,
 Employee_Time.Hours,
 Employee_Time.RFCNBR,
 Employee_Time.CreateDate
-FROM Time_Tracking.dbo.Employee_Time
+FROM {linked_server}.Time_Tracking.dbo.Employee_Time
 WHERE daydt >= dateadd(day,-45,convert(varchar,getdate(),112))) as src"""
 
 SQ_Shortcut_to_Employee_Time = jdbcSqlServerConnection(query,username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
@@ -51,7 +51,7 @@ SQ_Shortcut_to_Employee_Time = jdbcSqlServerConnection(query,username,password,c
 query = f"""(SELECT
 Employee_Time_Comments.EmpTimeID,
 Employee_Time_Comments.Comment
-FROM Time_Tracking.dbo.Employee_Time_Comments) as src"""
+FROM {linked_server}.Time_Tracking.dbo.Employee_Time_Comments) as src"""
 
 SQ_Shortcut_to_Employee_Time_Comments = jdbcSqlServerConnection(query,username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
