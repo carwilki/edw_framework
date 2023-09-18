@@ -38,7 +38,7 @@ cust_sensitive = getEnvPrefix(env) + "cust_sensitive"
 starttime = datetime.now()  # start timestamp of the script
 
 # Read in relation source variables
-(username, password, connection_string) = mtx_prd_sqlServer(env)
+(username, password, connection_string) = esdh_prd_sqlServer(env)
 
 from datetime import date, timedelta
 

@@ -166,7 +166,7 @@ def dc41(env):
 
         return (username, password, connection_string)
 
-def mtx_prd_sqlServer(env):
+def esdh_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
         password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
@@ -188,6 +188,7 @@ def mtx_prd_sqlServer(env):
 
         return (username, password, connection_string)
     raise Exception(f"Environment {env} is not supported")
+
 
 def salon_call_log_daily_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
