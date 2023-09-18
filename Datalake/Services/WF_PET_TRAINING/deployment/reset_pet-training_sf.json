@@ -17,7 +17,7 @@
                     "parameters": [
                         "prod",
                         "cust_sensitive",
-                        "PET_TRAINING_RESERVATION",
+                        "legacy_PET_TRAINING_RESERVATION",
                         "PET_TRAINING_RESERVATION_ID",
                         "LOAD_TSTMP,UPDATE_TSTMP",
                         "public",
@@ -323,16 +323,16 @@
                 ],
                 "run_if": "ALL_SUCCESS",
                 "spark_python_task": {
-                    "python_file": "Datalake/utils/SF_Ingest_PII.py",
+                    "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
                     "parameters": [
                         "prod",
                         "cust_sensitive",
                         "TRAINING_RESERVATION",
                         "TRAINING_RESERVATION_ID",
-                        "LOAD_TSTMP,UPDATE_TSTMP",
-                        "public",
-                        "legacy",
-                        "merge"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
+								 
+								 
+							   
                     ],
                     "source": "GIT"
                 },
