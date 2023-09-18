@@ -36,7 +36,7 @@ starttime = datetime.now() #start timestamp of the script
 
 # COMMAND ----------
 # Variable_declaration_comment
-CREATE_DATE = genPrevRunDt('legacy_PET_TRAINING_RESERVATION',sensitive,raw)
+CREATE_DATE = genPrevRunDt('PET_TRAINING_RESERVATION',sensitive,raw)
 # CREATE_DATE='2023-07-09'
 # COMMAND ----------
 # Processing node LKP_SITE_PROFILE_SRC, type SOURCE Cached data from connected lookup object
