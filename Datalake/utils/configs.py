@@ -221,6 +221,7 @@ def salon_call_log_daily_prd_sqlServer(env):
 
     raise Exception(f"Environment {env} is not supported")
 
+
 def pettraining_prd_sqlServer_training(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
@@ -245,6 +246,7 @@ def pettraining_prd_sqlServer_training(env):
 
     raise Exception(f"Environment {env} is not supported")
 
+
 def pettraining_prd_sqlServer_trainingSched(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
@@ -268,6 +270,7 @@ def pettraining_prd_sqlServer_trainingSched(env):
         return (username, password, connection_string)
 
     raise Exception(f"Environment {env} is not supported")
+
 
 def timesmart_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
@@ -480,6 +483,28 @@ def getMaxDate(refine_table_name, schema):
     print(f"Max date: {maxDate}")
     logger.info("Returning max date")
     return maxDate
+
+
+def or_kro_read_krap1(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "krap1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_krap1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        username = secrets.get(scope="SVC_BD_ORA_P_READ", key="username")
+        hostname = "172.20.89.168"
+        portnumber = "1812"
+        db = "KRAP1"
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key="krap1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
 
 
 def or_kro_read_edhp1(env):

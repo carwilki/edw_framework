@@ -1,4 +1,6 @@
+from uuid import uuid4
 from pyspark.sql import DataFrame, SparkSession
+from Datalake.utils.genericUtilities import getEnvPrefix
 from vars import pk_metadata_catalog, pk_metadata_schema, pk_metadata_table
 
 
@@ -17,9 +19,9 @@ class DuplicateChecker(object):
         primary_keys: list[str],
     ) -> None:
         keys = ",".join(primary_keys)
-        values.createOrReplaceTempView("temp_dupe_check_view")
+        values.createOrReplaceTempView(f"temp_dupe_check_view_{uuid4()}")
         ret = spark.sql(
-            f"""select {keys} from temp_dupe_check_view 
+            f"""select {keys} from temp_dupe_check_view
                   group by {keys} having count(*)>1"""
         ).collect()
 
@@ -34,7 +36,7 @@ class PrimaryKeyManager(object):
 
     def __init__(self, spark: SparkSession):
         self.pk_catalog = pk_metadata_catalog
-        self.pk_schema = pk_metadata_schema
+        self.pk_schema = getEnvPrefix() + pk_metadata_schema
         self.pk_metadata_table = pk_metadata_table
         self.spark = spark
         self.table_fqn = self._get_table_pk_metadata_fqdn()
@@ -71,7 +73,7 @@ class PrimaryKeyManager(object):
         ).collect()
 
         return keys.split("|")
-    
+
     def upsert_pk(self, schema: str, table: str, keys: list[str], catalog: str = None):
         self.spark.sql(
             f"""
@@ -87,7 +89,7 @@ class PrimaryKeyManager(object):
             """
         ).collect()
         keys = "|".join(keys)
-        
+
         self.spark.sql(
             f"""
             MERGE INTO {self.table_fqn} USING Temp_PKS 
