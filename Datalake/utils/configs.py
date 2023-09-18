@@ -166,7 +166,28 @@ def dc41(env):
 
         return (username, password, connection_string)
 
+def mtx_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="SVC_BD_SQL_READ", key="username")
+        password = secrets.get(scope="SVC_BD_SQL_READ", key="esdh_password")
+        hostname = "172.20.89.138"
+        portnumber = "1840"
+        db = "EnterpriseSiteDataHub"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+    raise Exception(f"Environment {env} is not supported")
 
 def salon_call_log_daily_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
