@@ -236,7 +236,7 @@ def pettraining_prd_sqlServer_training(env):
         # username, password, hostname
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = secrets.get(scope="SVC_BD_SQL_P_READ", key="training_password")
-        hostname = "20.62.132.163"
+        hostname = "10.116.133.31"
         portnumber = "1433"
         db = "Training"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
