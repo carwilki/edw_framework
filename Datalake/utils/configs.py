@@ -236,7 +236,7 @@ def pettraining_prd_sqlServer_training(env):
         # username, password, hostname
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = secrets.get(scope="SVC_BD_SQL_P_READ", key="training_password")
-        hostname = "20.62.132.163"
+        hostname = "10.116.133.31"
         portnumber = "1433"
         db = "Training"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
@@ -280,16 +280,18 @@ def timesmart_prd_sqlServer(env):
 
         return (username, password, connection_string)
 
-    if env.lower() == "prod":
-        # username, password, hostname
+    if env.lower() == "prod":      
+        # Access time_tracking db through a linked server in MTX_PRD
+        # username, password, hostname        
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="time_tracking_password")
-        hostname = "172.20.72.51"
-        portnumber = "1433"
-        db = "Time_Tracking"
+        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="mtx_password")
+        hostname = "172.20.89.186"
+        portnumber = "1840"
+        db = "MTX_PRD"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+        linked_server = "timetracking"
 
-        return (username, password, connection_string)
+        return (username, password, connection_string, linked_server)
 
     raise Exception(f"Environment {env} is not supported")
 

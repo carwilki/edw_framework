@@ -26,7 +26,7 @@ refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
-(username,password,connection_string) = timesmart_prd_sqlServer(env)
+(username,password,connection_string,linked_server) = timesmart_prd_sqlServer(env)
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_Activity_Category, type SOURCE 
 # COLUMN COUNT: 2
@@ -34,7 +34,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 query = f"""(SELECT
 Activity_Category.ActCategoryID,
 Activity_Category.ActCatDesc
-FROM Time_Tracking.dbo.Activity_Category) as src"""
+FROM {linked_server}.Time_Tracking.dbo.Activity_Category) as src"""
 
 SQ_Shortcut_to_Activity_Category = jdbcSqlServerConnection(query,username,password,connection_string).withColumn("sys_row_id", monotonically_increasing_id())
 
