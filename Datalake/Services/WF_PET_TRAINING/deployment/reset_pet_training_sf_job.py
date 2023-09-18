@@ -7,9 +7,9 @@ instance_id = dbutils.secrets.get(scope = "db-token-jobsapi", key = "instance_id
 
 # COMMAND ----------
 
-def create_job(payload):
+def reset_job(payload):
   api_version = '/api/2.1'
-  api_command = '/jobs/create'
+  api_command = '/jobs/reset'
   url = f"https://{instance_id}{api_version}{api_command}"
 
   params = {
@@ -39,5 +39,5 @@ payload = json.dumps(job_payload)
 
 # COMMAND ----------
 
-response = create_job(payload)
+response = reset_job(payload)
 print(response)
