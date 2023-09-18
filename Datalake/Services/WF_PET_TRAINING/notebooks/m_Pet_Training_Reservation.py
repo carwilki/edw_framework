@@ -294,8 +294,8 @@ try:
   refined_perf_table = f"{sensitive}.legacy_PET_TRAINING_RESERVATION"
   executeMerge(Shortcut_to_PET_TRAINING_RESERVATION1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
-  logPrevRunDt("legacy_PET_TRAINING_RESERVATION", "legacy_PET_TRAINING_RESERVATION", "Completed", "N/A", f"{raw}.log_run_details")
+  logPrevRunDt("PET_TRAINING_RESERVATION", "PET_TRAINING_RESERVATION", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-  logPrevRunDt("legacy_PET_TRAINING_RESERVATION", "legacy_PET_TRAINING_RESERVATION","Failed",str(e), f"{raw}.log_run_details", )
+  logPrevRunDt("PET_TRAINING_RESERVATION", "PET_TRAINING_RESERVATION","Failed",str(e), f"{raw}.log_run_details", )
   raise e
 	
