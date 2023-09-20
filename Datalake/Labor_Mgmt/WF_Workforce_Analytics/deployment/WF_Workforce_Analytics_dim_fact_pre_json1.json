@@ -36,6 +36,11 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
                 }
             ],
             "timeout_seconds": 0,
@@ -71,6 +76,11 @@
                 {
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
                     }
                 }
             ],
@@ -108,6 +118,11 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
                 }
             ],
             "timeout_seconds": 0,
@@ -144,46 +159,10 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
-                }
-            ],
-            "timeout_seconds": 0,
-            "email_notifications": {},
-            "notification_settings": {
-                "no_alert_for_skipped_runs": false,
-                "no_alert_for_canceled_runs": false,
-                "alert_on_last_attempt": false
-            }
-        },
-        {
-            "task_key": "s_wfa_tdtl_diff_pre",
-            "depends_on": [
-                {
-                    "task_key": "s_wfa_tdtl_pre"
-                }
-            ],
-            "run_if": "ALL_SUCCESS",
-            "spark_python_task": {
-                "python_file": "Datalake/Labor_Mgmt/WF_Workforce_Analytics/notebooks/m_wfa_tdtl_diff_pre.py",
-                "parameters": [
-                    "prod"
-                ],
-                "source": "GIT"
-            },
-            "job_cluster_key": "WF_Workforce_Analytics",
-            "libraries": [
-                {
-                    "pypi": {
-                        "package": "retry"
-                    }
-                },
-                {
-                    "pypi": {
-                        "package": "deepdiff"
-                    }
                 },
                 {
                     "maven": {
-                        "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
                     }
                 }
             ],
@@ -235,6 +214,11 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
                 }
             ],
             "timeout_seconds": 0,
@@ -275,6 +259,11 @@
                 {
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
                     }
                 }
             ],
@@ -317,6 +306,11 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
                 }
             ],
             "timeout_seconds": 0,
@@ -358,6 +352,11 @@
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
                     }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
                 }
             ],
             "timeout_seconds": 0,
@@ -398,6 +397,57 @@
                 {
                     "maven": {
                         "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_wfa_tdtl_diff_pre",
+            "depends_on": [
+                {
+                    "task_key": "s_wfa_tdtl_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/Labor_Mgmt/WF_Workforce_Analytics/notebooks/m_wfa_tdtl_diff_pre.py",
+                "parameters": [
+                    "prod"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
                     }
                 }
             ],

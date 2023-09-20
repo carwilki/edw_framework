@@ -23,6 +23,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -49,6 +56,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -81,6 +95,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -113,6 +134,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -140,6 +168,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -167,6 +202,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -193,6 +235,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -225,6 +274,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -257,6 +313,13 @@
                 "source": "GIT"
             },
             "job_cluster_key": "WF_Workforce_Analytics",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
