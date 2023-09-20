@@ -190,7 +190,6 @@ Shortcut_to_WFA_TIME_SHEET_PUNCH = EXP_WFA_TIME_SHEET_PUNCH.selectExpr( \
 	"CAST(UPDATE_DT AS TIMESTAMP) as UPDATE_DT", \
 	"CAST(LOAD_DT AS TIMESTAMP) as LOAD_DT" \
 )
-print(Shortcut_to_WFA_TIME_SHEET_PUNCH.count())
-print(legacy)
+
 # is this an overwrite / Merge ?  ,mode='append' from session its an insert  prev step mapping would have done the delete.
 Shortcut_to_WFA_TIME_SHEET_PUNCH.write.mode("append").saveAsTable(f'{legacy}.WFA_TIME_SHEET_PUNCH')
