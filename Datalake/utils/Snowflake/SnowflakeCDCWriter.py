@@ -92,14 +92,16 @@ class SnowflakeCDCLogger:
         return getEnvPrefix(self.env) + metadata_table
 
     def _get_datalake_table(self) -> str:
+        
         """Get the datalake table name from the provided parameters"""
-
-        if self.dl_schema is not None:
+        
+        if self.dl_catalog is not None:
+            print('dl_catalog Not None',dl_catalog)
             dltable = f"{self.dl_catalog}.{self.dl_schema}.{self.dl_table}"
         else:
-            dltable = f".{self.dl_schema}.{self.dl_table}"
+            dltable = f"{self.dl_schema}.{self.dl_table}"
 
-        return getEnvPrefix(self.env) + dltable
+        return  dltable
 
     def getLastSeenVersion(self) -> int:
         """This function gets the last version that was inserted into the cdc metadata table to
@@ -234,7 +236,7 @@ class SnowflakeCDCWriter:
             env=env,
             spark=spark,
             dl_catalog=dl_catalog,
-            dl_schema=dl_schema,
+            dl_schema = getEnvPrefix(env) + dl_schema,
             dl_table=dl_table,
             sf_database=sf_database,
             sf_schema=sf_schema,
@@ -243,7 +245,7 @@ class SnowflakeCDCWriter:
         self.spark = spark
         self.env = env.strip()
         self.dl_catalog = dl_schema.strip() if dl_catalog is not None else None
-        self.dl_schema = dl_schema.strip()
+        self.dl_schema = getEnvPrefix(self.env) + dl_schema.strip()
         self.dl_table = dl_table.strip()
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
         self.sf_database = sf_database.strip()
