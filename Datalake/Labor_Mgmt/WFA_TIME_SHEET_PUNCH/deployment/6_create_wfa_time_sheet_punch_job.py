@@ -95,3 +95,7 @@ payload = json.dumps(permission_json)
 
 response=set_permission(payload,job_id)
 print(response)
+
+# COMMAND ----------
+
+

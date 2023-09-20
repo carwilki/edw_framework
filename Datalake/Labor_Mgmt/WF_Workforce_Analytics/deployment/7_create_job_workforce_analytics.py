@@ -39,6 +39,43 @@ def getJobId(json_response):
 
 # COMMAND ----------
 
+def set_permission(payload,job_id):
+  api_version = '/api/2.0'
+  api_command = f'/permissions/jobs/{job_id}'
+  url = f"https://{instance_id}{api_version}{api_command}"
+
+  params = {
+    "Authorization" : "Bearer " + token,
+    "Content-Type" : "application/json"
+  }
+
+  response = requests.patch(
+    url = url,
+    headers = params,
+    data = payload
+  )
+
+  return response.text
+
+
+# COMMAND ----------
+
+permission_json= {
+      "access_control_list": [
+        {
+          "group_name": "App_Databricks_DE_Prod_BigDataOperations",
+          "permission_level": "CAN_MANAGE"
+        },
+        {
+          "group_name": "App_Databricks_DE_Prod_Viewer",
+          "permission_level": "CAN_VIEW"
+        }
+      ]
+    }
+
+
+# COMMAND ----------
+
 
 import json
 child_json_1 = 'WF_Workforce_Analytics_dim_fact_pre_json1.json'
@@ -54,6 +91,13 @@ print(response)
 # COMMAND ----------
 
 WF_Workforce_Analytics_dim_fact_pre=getJobId(response)
+
+# COMMAND ----------
+
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,WF_Workforce_Analytics_dim_fact_pre)
+print(response)
 
 # COMMAND ----------
 
@@ -74,6 +118,13 @@ WF_Workforce_Analytics_dim_fact_for_next_run=getJobId(response)
 
 # COMMAND ----------
 
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,WF_Workforce_Analytics_dim_fact_for_next_run)
+print(response)
+
+# COMMAND ----------
+
 import json
 child_json_3 = 'WF_Workforce_Analytics_SF_json3.json'
 
@@ -88,6 +139,14 @@ print(response)
 # COMMAND ----------
 
 WF_Workforce_Analytics_SF=getJobId(response)
+
+# COMMAND ----------
+
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,WF_Workforce_Analytics_SF)
+print(response)
+
 
 # COMMAND ----------
 
@@ -168,6 +227,14 @@ parentJson = f"""
 # COMMAND ----------
 
 response = create_job(parentJson)
+job_id=getJobId(response)
+print(response)
+
+# COMMAND ----------
+
+payload = json.dumps(permission_json)
+
+response=set_permission(payload,job_id)
 print(response)
 
 # COMMAND ----------
