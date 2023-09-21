@@ -30,18 +30,23 @@ def trigger_rocky_job(payload):
 import csv
 import time
 
-tables = ["GL_EXCHANGE_RATE", "GL_PLAN_FORECAST_MONTH", "GL_PLAN_FORECAST_DAY", "GL_PROFIT_CENTER"]
-for table in tables:    
-  print(table)
-  query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
-  print(query)
-  job_id = spark.sql(query).collect()[0][0]
-  print(job_id)
-  try:
-      run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
-      print("response:", run_info)
-      time.sleep(240)
-      # run_id = json.loads(run_info)['run_id']
-      # print(run_id)
-  except Exception as e:
-      print("failed for", table, e)
+tables = [
+    "GL_EXCHANGE_RATE",
+    "GL_PLAN_FORECAST_MONTH",
+    "GL_PLAN_FORECAST_DAY",
+    "GL_PROFIT_CENTER",
+]
+for table in tables:
+    print(table)
+    query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
+    print(query)
+    job_id = spark.sql(query).collect()[0][0]
+    print(job_id)
+    try:
+        run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
+        print("response:", run_info)
+        time.sleep(240)
+        # run_id = json.loads(run_info)['run_id']
+        # print(run_id)
+    except Exception as e:
+        print("failed for", table, e)
