@@ -9,26 +9,26 @@
 --*****  Creating table:  "GL_PROFIT_CENTER" , ***** Creating table: "GL_PROFIT_CENTER"
 
 
-use legacy;
-CREATE TABLE  GL_PROFIT_CENTER
-(
- GL_PROFIT_CTR_CD                            STRING                not null
+-- use legacy;
+-- CREATE TABLE  GL_PROFIT_CENTER
+-- (
+--  GL_PROFIT_CTR_CD                            STRING                not null
 
-, GL_PROFIT_CTR_DESC                          STRING 
+-- , GL_PROFIT_CTR_DESC                          STRING 
 
-, LOCATION_ID INT
+-- , LOCATION_ID INT
 
-, VALID_FROM_DT                               TIMESTAMP 
+-- , VALID_FROM_DT                               TIMESTAMP 
 
-, EXP_DT                                      TIMESTAMP 
+-- , EXP_DT                                      TIMESTAMP 
 
-, CURRENCY_ID                                 STRING 
+-- , CURRENCY_ID                                 STRING 
 
-, LOAD_DT                                     TIMESTAMP 
+-- , LOAD_DT                                     TIMESTAMP 
 
-)
-USING delta 
-LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/financials/gl_profit_center';
+-- )
+-- USING delta 
+-- LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/financials/gl_profit_center';
 
 --DISTRIBUTE ON (GL_PROFIT_CTR_CD)
 
