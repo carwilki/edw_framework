@@ -283,7 +283,7 @@
         "git_branch": "main"
     },
     "tags": {
-        "Department": "NZ_Migration"
+        "Department": "NZ-Migration"
     },
     "format": "MULTI_TASK"
 }
