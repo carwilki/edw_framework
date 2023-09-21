@@ -41,40 +41,40 @@
 --*****  Creating table:  "GL_PLAN_FORECAST_MONTH" , ***** Creating table: "GL_PLAN_FORECAST_MONTH"
 
 
-use legacy;
-CREATE TABLE  GL_PLAN_FORECAST_MONTH
-(
- FISCAL_MO INT not null
+-- use legacy;
+-- CREATE TABLE  GL_PLAN_FORECAST_MONTH
+-- (
+--  FISCAL_MO INT not null
 
-, GL_ACCT_NBR INT not null
+-- , GL_ACCT_NBR INT not null
 
-, GL_CATEGORY_CD                              STRING                 not null
+-- , GL_CATEGORY_CD                              STRING                 not null
 
-, GL_PROFIT_CTR_CD                            STRING                not null
+-- , GL_PROFIT_CTR_CD                            STRING                not null
 
-, LOCATION_ID INT not null
+-- , LOCATION_ID INT not null
 
-, LOC_CURRENCY_ID                             STRING 
+-- , LOC_CURRENCY_ID                             STRING 
 
-, GL_PLAN_AMT_LOC                             DECIMAL(15,2) 
+-- , GL_PLAN_AMT_LOC                             DECIMAL(15,2) 
 
-, GL_PLAN_AMT_US                              DECIMAL(15,2) 
+-- , GL_PLAN_AMT_US                              DECIMAL(15,2) 
 
-, GL_FORECAST_AMT_LOC                         DECIMAL(15,2) 
+-- , GL_FORECAST_AMT_LOC                         DECIMAL(15,2) 
 
-, GL_FORECAST_AMT_US                          DECIMAL(15,2) 
+-- , GL_FORECAST_AMT_US                          DECIMAL(15,2) 
 
-, GL_F1_ADJ_AMT_LOC                           DECIMAL(15,2) 
+-- , GL_F1_ADJ_AMT_LOC                           DECIMAL(15,2) 
 
-, GL_F1_ADJ_AMT_US                            DECIMAL(15,2) 
+-- , GL_F1_ADJ_AMT_US                            DECIMAL(15,2) 
 
-, UPDATE_DT                                   TIMESTAMP 
+-- , UPDATE_DT                                   TIMESTAMP 
 
-, LOAD_DT                                     TIMESTAMP 
+-- , LOAD_DT                                     TIMESTAMP 
 
-)
-USING delta 
-LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/financials/gl_plan_forecast_month';
+-- )
+-- USING delta 
+-- LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/financials/gl_plan_forecast_month';
 
 --DISTRIBUTE ON (GL_ACCT_NBR, FISCAL_MO)
 
