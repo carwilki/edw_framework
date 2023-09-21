@@ -8,9 +8,10 @@ CREATE TABLE stranger_things.snowflake_cdc_log (
   version BIGINT,
   timestamp TIMESTAMP)
 USING delta
-LOCATION 'gs://petm-bdpl-prod-systemdb-p1-gcs-gbl/metadata/tables/snowflake_cdc_log'
+LOCATION 'gs://petm-bdpl-prod-systemdb-p1-gcs-gbl/metadata/tables/snowflake_cdc_log';
 
 -- COMMAND ----------
 
-INSERT INTO stranger_things.snowflake_cdc_log
-SELECT max(version) FROM (DESCRIBE HISTORY legacy.WFA_TIME_SHEET_PUNCH)
+INSERT INTO legacy.snowflake_cdc_log values("legacy","WFA_TIME_SHEET_PUNCH","EDW_PROD","public","wfa_time_sheet_punch_lgcy",NULL,CURRENT_DATE);
+
+update legacy.snowflake_cdc_log set version = (SELECT max(version) FROM (DESCRIBE HISTORY legacy.WFA_TIME_SHEET_PUNCH)) where dlTable = "WFA_TIME_SHEET_PUNCH";
