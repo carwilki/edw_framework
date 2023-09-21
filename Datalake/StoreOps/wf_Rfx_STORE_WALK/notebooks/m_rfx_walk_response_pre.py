@@ -54,8 +54,8 @@ def get_source_file(key, _bucket):
 # Processing node SQ_Shortcut_to_RFX_WALK_RESPONSE, type SOURCE 
 # COLUMN COUNT: 20
 
-#source_file = get_source_file('RFX_WALK_RESPONSE', source_bucket)
-source_file = 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_walk_response/20230831/RFX_WALK_RESPONSE-en-us-120710099-20230831.csv'
+source_file = get_source_file('RFX_WALK_RESPONSE', source_bucket)
+#source_file = 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_walk_response/20230831/RFX_WALK_RESPONSE-en-us-120710099-20230831.csv'
 
 csv_options = {
     "sep": ",",
