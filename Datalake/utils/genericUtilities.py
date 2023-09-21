@@ -475,4 +475,14 @@ def loadDFtoSQLTarget(df,sqlTable,username,password,connStr):
     df.write.jdbc(url=connStr, table=sqlTable, properties=properties,mode='append')   
   except Exception as e:
     print('Truncate and load failed for ' + sqlTable )  
-    raise(Exception(str(e)))      
+    raise(Exception(str(e)))    
+
+
+def get_source_file_bs_wkly(fname,_bucket):
+    import builtins
+    lst = dbutils.fs.ls(_bucket)
+    fldr = builtins.max(lst, key=lambda x: x.name).name
+    lst = dbutils.fs.ls(_bucket + fldr)
+    files = [x.path for x in lst if x.name == fname]
+    return files[0] if files else None
+  
