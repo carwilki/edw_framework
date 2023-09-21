@@ -1,0 +1,169 @@
+
+
+
+
+
+--*****  Creating table:  "WFA_TIME_SHEET_PUNCH_PRE" , ***** Creating table: "WFA_TIME_SHEET_PUNCH_PRE"
+
+
+use raw;
+CREATE TABLE  WFA_TIME_SHEET_PUNCH_PRE
+(
+, DAY_DT        TIMESTAMP                             not null
+
+, TIME_SHEET_ITEM_ID                                BIGINT                         not null
+
+, STRT_DTM      TIMESTAMP 
+
+, END_DTM       TIMESTAMP 
+
+, STORE_NBR INT
+
+, EMPLOYEE_ID BIGINT
+
+, WFA_BUSN_AREA_DESC                                STRING 
+
+, WFA_DEPT_DESC                                     STRING 
+
+, WFA_TASK_DESC                                     STRING 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/labor_mgmt/wfa_time_sheet_punch_pre' 
+ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+--DISTRIBUTE ON (DAY_DT)
+
+
+
+
+
+
+
+--*****  Creating table:  "WFA_DEPARTMENT" , ***** Creating table: "WFA_DEPARTMENT"
+
+
+use legacy;
+CREATE TABLE  WFA_DEPARTMENT
+(
+, WFA_DEPT_ID SMALLINT not null
+
+, WFA_DEPT_DESC                                    national  STRING 
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/labor_mgmt/wfa_department' 
+ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+--DISTRIBUTE ON (WFA_DEPT_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "WFA_BUSINESS_AREA" , ***** Creating table: "WFA_BUSINESS_AREA"
+
+
+use legacy;
+CREATE TABLE  WFA_BUSINESS_AREA
+(
+, WFA_BUSN_AREA_ID SMALLINT not null
+
+, WFA_BUSN_AREA_DESC                               national  STRING 
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/labor_mgmt/wfa_business_area' 
+ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+--DISTRIBUTE ON (WFA_BUSN_AREA_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "WFA_TASK" , ***** Creating table: "WFA_TASK"
+
+
+use legacy;
+CREATE TABLE  WFA_TASK
+(
+, WFA_TASK_ID SMALLINT not null
+
+, WFA_TASK_DESC                                    national  STRING 
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/labor_mgmt/wfa_task' 
+ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+--DISTRIBUTE ON (WFA_TASK_ID)
+
+
+
+
+
+
+
+--*****  Creating table:  "WFA_TIME_SHEET_PUNCH" , ***** Creating table: "WFA_TIME_SHEET_PUNCH"
+
+
+use legacy;
+CREATE TABLE  WFA_TIME_SHEET_PUNCH
+(
+, DAY_DT        TIMESTAMP                             not null
+
+, WEEK_DT       TIMESTAMP 
+
+, TIME_SHEET_ITEM_ID                                BIGINT                         not null
+
+, STRT_DTM      TIMESTAMP 
+
+, END_DTM       TIMESTAMP 
+
+, LOCATION_ID INT
+
+, EMPLOYEE_ID BIGINT
+
+, WFA_BUSN_AREA_ID SMALLINT
+
+, WFA_BUSN_AREA_DESC                                STRING 
+
+, WFA_DEPT_ID SMALLINT
+
+, WFA_DEPT_DESC                                     STRING 
+
+, WFA_TASK_ID SMALLINT
+
+, WFA_TASK_DESC                                     STRING 
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/labor_mgmt/wfa_time_sheet_punch' 
+ TBLPROPERTIES ('delta.feature.allowColumnDefaults' = 'supported');
+
+--DISTRIBUTE ON (DAY_DT)
+
+
