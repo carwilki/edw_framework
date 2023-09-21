@@ -117,7 +117,7 @@ parentJson = f"""
             "task_key": "m_bpc_to_gl_plan_pre_AND_gl_forecast_pre",
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_plan_pre_AND_gl_forecast_pre",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_plan_pre_AND_gl_forecast_pre",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -153,7 +153,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_exchange_rate_FORECAST",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_exchange_rate_FORECAST",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -189,7 +189,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_profit_ctr_GL_FORECAST_PRE",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_profit_ctr_GL_FORECAST_PRE",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -225,7 +225,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_forecast_month_pre_SQL",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_forecast_month_pre_SQL",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -261,7 +261,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_forecast",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_forecast",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -297,7 +297,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_exchange_rate_PLAN",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_bpc_to_gl_exchange_rate_PLAN",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -333,7 +333,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_profit_ctr_GL_PLAN_PRE",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_profit_ctr_GL_PLAN_PRE",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -369,7 +369,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_month_pre_SQL",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_month_pre_SQL",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -405,7 +405,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_delete",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_delete",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -441,7 +441,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_F1_Adj",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_F1_Adj",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -477,7 +477,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_F1_Adj_closed_store_UPD",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_month_F1_Adj_closed_store_UPD",
                 "base_parameters": {{
                     "env": "prod"
                 }},
@@ -513,7 +513,7 @@ parentJson = f"""
             ],
             "run_if": "ALL_SUCCESS",
             "notebook_task": {{
-                "notebook_path": "Datalake/Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_day_SQL",
+                "notebook_path": "Datalake/BA_Financials/bs_GL_Forecast_Weekly/notebooks/m_gl_plan_forecast_day_SQL",
                 "base_parameters": {{
                     "env": "prod"
                 }},
