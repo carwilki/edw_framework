@@ -10,6 +10,6 @@ USING delta
 LOCATION 'gs://petm-bdpl-prod-systemdb-p1-gcs-gbl/metadata/tables/snowflake_cdc_log';
 
  
-INSERT INTO qa_legacy.snowflake_cdc_log values("legacy","GL_PLAN_FORECAST_MONTH","EDW_PROD","public","gl_plan_forecast_month_lgcy",NULL,CURRENT_DATE);
+INSERT INTO legacy.snowflake_cdc_log values("legacy","GL_PLAN_FORECAST_MONTH","EDW_PROD","public","gl_plan_forecast_month_lgcy",NULL,CURRENT_DATE);
 
-update qa_legacy.snowflake_cdc_log set version = (SELECT max(version) FROM (DESCRIBE HISTORY qa_legacy.WFA_TIME_SHEET_PUNCH)) where dlTable = "GL_PLAN_FORECAST_MONTH";
+update legacy.snowflake_cdc_log set version = (SELECT max(version) FROM (DESCRIBE HISTORY legacy.WFA_TIME_SHEET_PUNCH)) where dlTable = "GL_PLAN_FORECAST_MONTH";
