@@ -1,7 +1,11 @@
 from uuid import uuid4
 from pyspark.sql import DataFrame, SparkSession
 from Datalake.utils.genericUtilities import getEnvPrefix
-from vars import pk_metadata_catalog, pk_metadata_schema, pk_metadata_table
+from Datalake.utils.pk.vars import (
+    pk_metadata_catalog,
+    pk_metadata_schema,
+    pk_metadata_table,
+)
 
 
 class DuplicateKeyException(Exception):
