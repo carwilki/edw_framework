@@ -9,9 +9,9 @@ from Datalake.utils.pk.vars import (
 
 
 class DuplicateKeyException(Exception):
-    def __init__(self, table_fqn: list, primary_keys: list[str]):
+    def __init__(self, values: list, primary_keys: list[str]):
         super(DuplicateKeyException, self).__init__()
-        self.args(table_fqn, primary_keys)
+        self.args(values, primary_keys)
 
 
 class DuplicateChecker(object):
@@ -30,8 +30,8 @@ class DuplicateChecker(object):
                   group by {keys} having count(*)>1"""
         ).collect()
 
-        if ret.count() > 0:
-            raise DuplicateKeyException(ret[0], primary_keys)
+        if len(ret) > 0:
+            raise DuplicateKeyException(ret[:10], primary_keys)
 
 
 class PrimaryKeyManager(object):
