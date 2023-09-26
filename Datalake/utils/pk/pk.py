@@ -23,9 +23,10 @@ class DuplicateChecker(object):
         primary_keys: list[str],
     ) -> None:
         keys = ",".join(primary_keys)
-        values.createOrReplaceTempView(f"temp_dupe_check_view_{uuid4()}")
+        temp = f"temp_dupe_check_view_{uuid4().replace('-','')}"
+        values.createOrReplaceTempView(temp)
         ret = spark.sql(
-            f"""select {keys} from temp_dupe_check_view
+            f"""select {keys} from {temp}
                   group by {keys} having count(*)>1"""
         ).collect()
 
