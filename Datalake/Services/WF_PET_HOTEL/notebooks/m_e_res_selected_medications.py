@@ -10,6 +10,7 @@ from Datalake.utils.genericUtilities import *
 from Datalake.utils.configs import *
 from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
+from Datalake.utils.pk.pk import DuplicateChecker
 
 # COMMAND ----------
 
@@ -214,6 +215,9 @@ Shortcut_to_E_RES_SELECTED_MEDICATIONS1 = UPD_E_RES_SELECTED_MEDICATIONS.selectE
 try:
 	primary_key = """source.E_RES_SELECTED_MEDICATION_ID = target.E_RES_SELECTED_MEDICATION_ID"""
 	refined_perf_table = f"{legacy}.E_RES_SELECTED_MEDICATIONS"
+	DuplicateChecker.check_for_duplicate_primary_keys(
+		spark, Shortcut_to_E_RES_SELECTED_MEDICATIONS1, ["E_RES_SELECTED_MEDICATION_ID"]
+    )
 	executeMerge(Shortcut_to_E_RES_SELECTED_MEDICATIONS1, refined_perf_table, primary_key)
 	logger.info(f"Merge with {refined_perf_table} completed]")
 	logPrevRunDt("E_RES_SELECTED_MEDICATIONS", "E_RES_SELECTED_MEDICATIONS", "Completed", "N/A", f"{raw}.log_run_details")
