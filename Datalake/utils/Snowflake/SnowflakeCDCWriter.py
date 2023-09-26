@@ -111,17 +111,18 @@ class SnowflakeCDCLogger:
             schema = f"{self.dl_catalog}.{self.dl_schema}"
         else:
             schema = self.dl_schema
-        query = f"""select version from {self.log_table} where 
-                        dlSchema = '{schema}' and dlTable = '{self.dl_table}'
-                        and targetDatabase = '{self.sf_database}'
-                        and targetSchema = '{self.sf_schema}'
-                        and targetTable = '{self.sf_table}'
+        query = f"""select version from {self.log_table} where
+                        lower(dlSchema) = lower('{schema}')
+                        and lower(dlTable) = lower('{self.dl_table}')
+                        and lower(targetDatabase) = lower('{self.sf_database}')
+                        and lower(targetSchema) = lower('{self.sf_schema}')
+                        and lower(targetTable) = lower('{self.sf_table}')
                         and timestamp in (select max(timestamp) from {self.log_table}
-                            where dlSchema = '{schema}'
-                            and dlTable = '{self.dl_table}'
-                            and targetDatabase = '{self.sf_database}'
-                            and targetSchema = '{self.sf_schema}'
-                            and targetTable = '{self.sf_table}' )"""
+                            where lower(dlSchema) = lower('{schema}')
+                            and lower(dlTable) = lower('{self.dl_table}')
+                            and lower(targetDatabase) = lower('{self.sf_database}')
+                            and lower(targetSchema) = lower('{self.sf_schema}')
+                            and lower(targetTable) = lower('{self.sf_table}'))"""
 
         print(
             f"""SnowflakeCDCLogger::getLastSeenVersion::Query
