@@ -42,6 +42,7 @@ legacy = getEnvPrefix(env) + "legacy"
 store_nbr = 133
 
 # COMMAND ----------
+
 # Variable_declaration_comment
 
 # mPar_ClientId = "33920cc3f6e042e1ab648b8663196d3b"
@@ -58,6 +59,7 @@ mPar_ClientSecret = secrets.get(scope=scopeName, key="secret")
 
 
 # COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE, type SOURCE
 # COLUMN COUNT: 1
 
@@ -69,6 +71,7 @@ WHERE SITE_PROFILE.STORE_NBR=store_nbr"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node Exp_ServicesHours, type EXPRESSION
 # COLUMN COUNT: 6
 
@@ -101,76 +104,42 @@ Store_ServiceHours = spark.createDataFrame([], schema)
 df = (
     spark.read.format("com.databricks.spark.xml")
     .option("rootTag", "Stores")
+    .option("excludeAttribute",True)
     .option("rowTag", "StoreGetStoreHoursResponseViewModel")
     .load("dbfs:/FileStore/shared_uploads/text_xml.xml")
 )
 
-result_dict = {row["StoreNumber"]: row["StoreHours"] for row in df.collect()}
+df2 = df.select("StoreNumber","StoreHours.StoreHoursForDateViewModel")\
+  .withColumnRenamed("StoreHoursForDateViewModel","StoreHours")\
+    .select(col("StoreNumber"),explode("StoreHours").alias('Daily_Hours'))\
+    .select("StoreNumber","Daily_Hours.*") 
+    
+df3 = df2.selectExpr(
+      "StoreNumber",
+      "null as Name",
+      "CloseTime",
+      "DayOfWeek",
+      "ForDate",
+      "IsClosed",
+      "OpenTime"
+    )
 
-for key in result_dict:
-    if key == store_nbr:
-        tpl = result_dict[key]
-        for key2 in tpl:
-            for key3 in key2:
-                hourlist = key3.asDict()
-                opentime = hourlist["OpenTime"].asDict()
-                closetime = hourlist["CloseTime"].asDict()
-                newRow = spark.createDataFrame(
-                    [
-                        (
-                            key,
-                            None,
-                            str(hourlist["ForDate"]),
-                            opentime["_VALUE"],
-                            closetime["_VALUE"],
-                            hourlist["IsClosed"],
-                        )
-                    ],
-                    schema,
-                )
-                Store_ServiceHoursNew = Store_ServiceHours.union(newRow)
-                Store_ServiceHours = Store_ServiceHoursNew
+df4 = df.select("StoreNumber","StoreServices.StoreServiceHoursForDateServiceViewModel")\
+  .withColumnRenamed("StoreServiceHoursForDateServiceViewModel","StoreServices")\
+    .select(col("StoreNumber"),explode("StoreServices").alias('Services'))\
+    .select("StoreNumber","Services.*") 
 
-result_dict = {row["StoreNumber"]: row["StoreServices"] for row in df.collect()}
+df5 = df4.select("StoreNumber","Name","StoreServiceHoursForDateList.StoreServiceHoursForDateViewModel")\
+  .withColumnRenamed("StoreServiceHoursForDateViewModel","StoreServiceHoursForDateList")\
+    .select(col("StoreNumber"),col("Name"),explode("StoreServiceHoursForDateList").alias('ServiceList'))\
+    .select("StoreNumber","Name","ServiceList.*")
 
-for key in result_dict:
-    if key == store_nbr:
-        tpl = result_dict[key]
-        for key2 in tpl:
-            for key3 in key2:
-                # print (key3,"\n")
-                taglist = key3.asDict()
-                # print (taglist,"\n")
-                hourlist = taglist["StoreServiceHoursForDateList"].asDict()
-                for key4 in hourlist:
-                    rowhours = hourlist[key4]
-                    for key5 in rowhours:
-                        hourstaglist = key5.asDict()
-                        opentime = hourstaglist["OpenTime"].asDict()
-                        closetime = hourstaglist["CloseTime"].asDict()
-                        # print(key,',',taglist['Name'],',',opentime['_VALUE'],,',closetime['_VALUE'],',',hourstaglist['ForDate'],',',hourstaglist['IsClosed'])
-                        newRow = spark.createDataFrame(
-                            [
-                                (
-                                    key,
-                                    taglist["Name"],
-                                    str(hourstaglist["ForDate"]),
-                                    opentime["_VALUE"],
-                                    closetime["_VALUE"],
-                                    hourstaglist["IsClosed"],
-                                )
-                            ],
-                            schema,
-                        )
-                        Store_ServiceHoursNew = Store_ServiceHours.union(newRow)
-                        Store_ServiceHours = Store_ServiceHoursNew
+Store_ServiceHours = df3.union(df5)
 
-Unn_Store_ServiceHours = Store_ServiceHours.join(
-    SQ_Shortcut_to_SITE_PROFILE,
-    Store_ServiceHours.n3_StoreNumber0 == SQ_Shortcut_to_SITE_PROFILE.STORE_NBR,
-    "inner",
-)
+
+
 # COMMAND ----------
+
 # Processing node Fil_StoreHours, type FILTER
 # COLUMN COUNT: 6
 
@@ -193,6 +162,7 @@ Fil_StoreHours = (
 )
 
 # COMMAND ----------
+
 # Processing node Exp_Site_Hours_Day_Pre, type EXPRESSION
 # COLUMN COUNT: 8
 
@@ -277,7 +247,9 @@ Exp_Site_Hours_Day_Pre = (
         "CURRENT_TIMESTAMP as LOAD_TSTMP",
     )
 )
+
 # COMMAND ----------
+
 # Processing node Shortcut_to_SITE_HOURS_DAY_PRE, type TARGET
 # COLUMN COUNT: 8
 
