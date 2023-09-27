@@ -32,7 +32,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/masterdata/employee/ztb_event_ctrl/')
 # source_bucket = dbutils.widgets.get('source_bucket')
-_bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight','source_bucket')
+source_bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight.M:m_ZTB_Event_CTRL_pre','source_bucket')
 
 def get_source_file(key, _bucket):
   import builtins
@@ -44,7 +44,7 @@ def get_source_file(key, _bucket):
   files = [x.path for x in lst if x.name.startswith(key)]
   return files[0] if files else None
 
-file_path = get_source_file('ztb_event_ctrl',_bucket)
+file_path = get_source_file('ztb_event_ctrl',source_bucket)
 
 if not file_path:
     raise FileNotFoundError(f"Unexpected Error: cannot find source data file")
