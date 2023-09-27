@@ -34,7 +34,6 @@ legacy = getEnvPrefix(env) + 'legacy'
 # source_bucket = dbutils.widgets.get('source_bucket')
 
 _bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight','source_bucket')
-source_bucket=_bucket+"ztb_event_hold/"
 
 def get_source_file(_bucket):
   import builtins
@@ -46,7 +45,7 @@ def get_source_file(_bucket):
   files = [x.path for x in lst if x.name.startswith(key)]
   return files[0] if files else None
 
-file_path = get_source_file('ztb_event_hold',source_bucket)
+file_path = get_source_file('ztb_event_hold',_bucket)
 
 if not file_path:
     raise FileNotFoundError(f"Unexpected Error: cannot find source data file")

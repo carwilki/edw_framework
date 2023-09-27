@@ -34,7 +34,6 @@ legacy = getEnvPrefix(env) + 'legacy'
 # source_bucket = dbutils.widgets.get('source_bucket')
 
 _bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight','source_bucket')
-source_bucket=_bucket+"ztb_holiday_sto/"
 
 def get_source_file(_bucket):
   import builtins
@@ -46,7 +45,7 @@ def get_source_file(_bucket):
   files = [x.path for x in lst if x.name.startswith(key)]
   return files[0] if files else None
 
-file_path = get_source_file('ztb_holiday_sto',source_bucket)
+file_path = get_source_file('ztb_holiday_sto',_bucket)
 
 #file_path = "gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/masterdata/employee/ztb_holiday_sto/20230907/ztb_holiday_sto_20230907.dat"
 
