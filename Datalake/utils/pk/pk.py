@@ -1,13 +1,5 @@
-from uuid import uuid4
 from pyspark.sql import DataFrame, SparkSession
-from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.pk.vars import (
-    pk_metadata_catalog,
-    pk_metadata_schema,
-    pk_metadata_table,
-)
-from pyspark.sql.functions import col, count
-
+from pyspark.sql.functions import col
 
 class DuplicateSourceKeyException(Exception):
     """_summary_
@@ -66,10 +58,8 @@ class DuplicateChecker(object):
             new_values.select(*primary_keys)
             .unionByName(current)
             .groupby(*primary_keys)
-            .agg(count(col(primary_keys)).alias("count"))
-            .filter(col("count") > 1)
-            .collect()
+            .count().filter(col("count") > 1).collect()
         )
-
+        
         if len(ret) > 0:
             raise DuplicateSourceKeyException(ret[:10], primary_keys)
