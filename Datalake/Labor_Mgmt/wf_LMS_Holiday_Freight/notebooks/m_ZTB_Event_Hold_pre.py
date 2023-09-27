@@ -35,7 +35,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 source_bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight.M:m_ZTB_Event_Hold_pre','source_bucket')
 
-def get_source_file(_bucket):
+def get_source_file(key, _bucket):
   import builtins
 
   lst = dbutils.fs.ls(_bucket)
