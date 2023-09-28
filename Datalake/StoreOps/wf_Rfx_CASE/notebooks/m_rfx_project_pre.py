@@ -39,7 +39,7 @@ source_bucket=_bucket+"rfx_project/"
 # Processing node SQ_Shortcut_to_RFX_PROJECT, type SOURCE 
 # COLUMN COUNT: 35
 
-source_file = get_source_file_rfx('RFX_PROJECT', source_bucket)
+source_file = get_src_file('RFX_PROJECT', source_bucket)
 #source_file='gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_project/20230907/'
 
 csv_options = {

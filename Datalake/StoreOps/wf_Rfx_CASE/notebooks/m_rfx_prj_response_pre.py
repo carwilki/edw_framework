@@ -38,7 +38,7 @@ source_bucket=_bucket+"rfx_prj_response/"
 # Processing node SQ_Shortcut_to_RFX_LOOK_UP, type SOURCE 
 # COLUMN COUNT: 3
 
-source_file = get_source_file_rfx('RFX_PRJ_RESPONSE', source_bucket)
+source_file = get_src_file('RFX_PRJ_RESPONSE', source_bucket)
 #source_file='gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_prj_response/20230907/'
 
 csv_options = {

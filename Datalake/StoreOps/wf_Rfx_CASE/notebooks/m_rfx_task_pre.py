@@ -39,7 +39,7 @@ source_bucket=_bucket+"rfx_task/"
 # Processing node SQ_Shortcut_to_RFX_TASK, type SOURCE 
 # COLUMN COUNT: 19
 
-source_file = get_source_file_rfx('RFX_TASK', source_bucket)
+source_file = get_src_file('RFX_TASK', source_bucket)
 #source_file='gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_task/20230907/'
 
 csv_options = {

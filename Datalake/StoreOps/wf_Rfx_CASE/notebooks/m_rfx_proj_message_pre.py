@@ -41,7 +41,7 @@ source_bucket=_bucket+"rfx_proj_message/"
 # Processing node SQ_Shortcut_to_RFX_LOOK_UP, type SOURCE 
 # COLUMN COUNT: 3
 
-source_file = get_source_file_rfx('RFX_PROJ_MESSAGE', source_bucket)
+source_file = get_src_file('RFX_PROJ_MESSAGE', source_bucket)
 #source_file='gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_proj_message/20230907/'
 
 

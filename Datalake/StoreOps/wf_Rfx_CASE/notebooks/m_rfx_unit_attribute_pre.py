@@ -38,7 +38,7 @@ source_bucket=_bucket+"rfx_unit_attribute/"
 # Processing node SQ_Shortcut_to_RFX_UNIT_ATTRIBUTE, type SOURCE 
 # COLUMN COUNT: 7
 
-source_file = get_source_file_rfx('RFX_UNIT_ATTRIBUTE', source_bucket)
+source_file = get_src_file('RFX_UNIT_ATTRIBUTE', source_bucket)
 #source_file='gs://petm-bdpl-prod-raw-p1-gcs-gbl/nas/storeops/rfx_unit_attribute/20230907/'
 
 csv_options = {
