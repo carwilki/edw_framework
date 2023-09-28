@@ -487,3 +487,10 @@ def get_source_file_bs_wkly(fname,_bucket):
     files = [x.path for x in lst if x.name == fname]
     return files[0] if files else None
   
+def get_source_file_rfx(key, _bucket):
+  import builtins
+  lst = dbutils.fs.ls(_bucket)
+  fldr = builtins.max(lst, key=lambda x: x.name).name
+  lst = dbutils.fs.ls(_bucket + fldr)
+  files = [x.path for x in lst if x.name.startswith(key)]
+  return files[0] if files else None
