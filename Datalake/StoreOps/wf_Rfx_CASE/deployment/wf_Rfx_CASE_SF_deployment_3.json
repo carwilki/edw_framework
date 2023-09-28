@@ -19,7 +19,8 @@
                     "prod",
                     "RFX_RTM_DEPT",
                     "RFX_DEPT_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -46,7 +47,8 @@
                     "prod",
                     "RFX_RTM_PROJECT",
                     "RFX_PROJECT_ID,LOCATION_ID",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -73,7 +75,8 @@
                     "prod",
                     "RFX_RTM_PROJECT_EXECUTION_STATUS",
                     "RFX_PROJECT_EXECUTION_STATUS_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -100,7 +103,8 @@
                     "prod",
                     "RFX_RTM_PROJECT_PRIORITY",
                     "RFX_PROJECT_PRIORITY_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -127,7 +131,8 @@
                     "prod",
                     "RFX_RTM_PROJECT_STATUS",
                     "RFX_PROJECT_STATUS_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -154,7 +159,8 @@
                     "prod",
                     "RFX_RTM_PROJECT_TYPE",
                     "RFX_PROJECT_TYPE_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -181,7 +187,8 @@
                     "prod",
                     "RFX_RTM_ROLE",
                     "RFX_ROLE_CD",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP",
+                    "UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },

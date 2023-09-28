@@ -511,7 +511,7 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "feature/wf_Rfx_CASE"
+        "git_branch": "main"
     },
     "tags": {
         "Department": "NZ-Migration"
