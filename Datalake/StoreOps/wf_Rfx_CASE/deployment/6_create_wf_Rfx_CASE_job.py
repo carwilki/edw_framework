@@ -167,7 +167,7 @@ parentJson = f"""
             "task_key": "wf_Rfx_CASE_Pre",
             "run_if": "ALL_SUCCESS",
             "run_job_task": {{
-                "job_id": {wf_Rfx_CASE_Pre},
+                "job_id": {wf_Rfx_CASE_pre},
                 "python_params": [
                     "prod"
                 ]

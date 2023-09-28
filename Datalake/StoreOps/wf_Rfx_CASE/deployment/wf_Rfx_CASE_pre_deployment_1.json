@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "gcpdatajobs-shared@petsmart.com"
     },
-    "name": "wf_Rfx_CASE_Pre",
+    "name": "wf_Rfx_CASE_pre",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
@@ -20,7 +20,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -56,7 +56,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -92,7 +92,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -128,7 +128,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -164,7 +164,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -200,7 +200,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
@@ -236,7 +236,7 @@
                 },
                 "source": "GIT"
             },
-            "job_cluster_key": "wf_Rfx_CASE_Pre",
+            "job_cluster_key": "wf_Rfx_CASE",
             "libraries": [
                 {
                     "pypi": {
