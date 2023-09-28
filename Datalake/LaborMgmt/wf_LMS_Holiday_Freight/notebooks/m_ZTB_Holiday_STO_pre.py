@@ -33,7 +33,8 @@ legacy = getEnvPrefix(env) + 'legacy'
 # dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/masterdata/employee/ztb_holiday_sto/')
 # source_bucket = dbutils.widgets.get('source_bucket')
 
-source_bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight.M:m_ZTB_Holiday_STO_pre','source_bucket')
+_bucket=getParameterValue(raw,'INT_Labor_Mgmt_Parameter.prm','INT_Labor_Mgmt.WF:wf_LMS_Holiday_Freight','source_bucket')
+source_bucket=_bucket+"ztb_holiday_sto/"
 
 def get_source_file(key, _bucket):
   import builtins
