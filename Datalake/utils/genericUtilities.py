@@ -501,5 +501,5 @@ def get_src_file(key, _bucket):
     dirs = [item for item in lst if item.isDir()]
     fldr = builtins.max(dirs, key=lambda x: x.name).name
     lst = dbutils.fs.ls(_bucket + fldr)
-    files = [x.path for x in lst if x.name.lower().startswith(key)]
+    files = [x.path for x in lst if x.name.lower().startswith(key.lower())]
     return files[0] if files else None
