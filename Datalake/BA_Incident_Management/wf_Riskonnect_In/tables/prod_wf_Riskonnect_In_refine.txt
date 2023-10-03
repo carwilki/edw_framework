@@ -1,0 +1,1159 @@
+
+
+--*****  Creating table:  "INCIDENT_CLAIMS_PRE" , ***** Creating table: "INCIDENT_CLAIMS_PRE"
+
+ 
+
+ 
+
+ 
+
+use raw;
+
+ 
+
+CREATE TABLE  IF NOT EXISTS INCIDENT_CLAIMS_PRE
+
+ 
+
+( CLAIM_NUMBER                                  STRING                not null
+
+, ACADEMY_TRAINED                               STRING
+
+, ACCIDENT_DESCRIPTION                          STRING
+
+, ACCIDENT_TIME                                 STRING
+
+, ACTIVITY_ENGAGED_IN                           STRING
+
+, ANIMAL_CARE_CUSTODY                           STRING
+
+, ANIMAL_INJ_TYPE                               STRING
+
+, ANIMAL_INVOLVED_IN_THE_INCIDENT               STRING
+
+, ASSOCIATE_NAME                                STRING
+
+, BANFIELD_AMOUNT                               STRING
+
+, BRAND_RISK_DEPT                               STRING
+
+, BRAND_RISK_ESCALATION_FACTORS                 STRING
+
+, CASH_AMOUNT                                   STRING
+
+, CAUSE     STRING
+
+, CAUSE_GENERAL                                 STRING
+
+, CAUSE_SRC                                     STRING
+
+, CLAIM_SUBSTATUS                               STRING
+
+, CLAIMANT_LENGTH_SERVICE                       STRING
+
+, CLAIMANT_NAME                                 STRING
+
+, COMPED_PRODUCTS                               STRING
+
+, COMPED_SERVICE_S                              STRING
+
+, COVERAGE_MAJOR                                STRING
+
+, DATE_CLOSED                                   STRING
+
+, DATE_HIRED                                    STRING
+
+, DATE_OF_LOSS                                  STRING
+
+, DATE_OPENED                                   STRING
+
+, DATE_PRODUCT_PURCH                            STRING
+
+, DATE_REPORTED_TO_CLIENT                       STRING
+
+, DATE_SAFETY_CERTIFIED                         STRING
+
+, DAY_CAMP_CAPACITY                             STRING
+
+, DEPARTMENT                                    STRING
+
+, DID_ASSOCIATE_GO_TO_HOSPITAL                  STRING
+
+, EMPLOYEE_ID                                   STRING
+
+, FLOWERS                                       STRING
+
+, FULL_RECOVERY_EXPECTED                        STRING
+
+, GIFT_CARDS_S                                  STRING
+
+, HAS_THE_PET_BEEN_NEUTERED_SPAYED              STRING
+
+, HEADER_CODE                                   STRING
+
+, HEALTH_CHART_COMPLETED_DURING_STAY            STRING
+
+, HOW_DID_STORE_FIND_OUT                        STRING
+
+, HOW_MANY_PETS_IN_PLAYTIME                     STRING
+
+, HOW_MANY_PETS_IN_TRAINING_CLASS               STRING
+
+, HUMAN_INJURY_ESCALATION                       STRING
+
+, INCIDENT_OCCUR_DURING_PETSMART_ACADEMY        STRING
+
+, INJURY_ILLNESS_CONFIRMED_BY_VETERINARIAN      STRING
+
+, LOST_TIME_INDICATOR                           STRING
+
+, MATTED_PET_RELEASE                            STRING
+
+, NATURE                                        STRING
+
+, NATURE_GENERAL                                STRING
+
+, NET_INCURRED                                  STRING
+
+, NODE_CODE                                     STRING
+
+, OTHER     STRING
+
+, OTHER_POLICY_VIOLATION                        STRING
+
+, P_CARD_AMOUNT                                 STRING
+
+, PART      STRING
+
+, PART_GENERAL                                  STRING
+
+, PART_POSITION                                 STRING
+
+, PET_AGE                                       STRING
+
+, PET_BREED                                     STRING
+
+, PET_BREED_TYPE                                STRING
+
+, PET_EXPENSE_TYPE                              STRING
+
+, PET_GENDER                                    STRING
+
+, PET_INCIDENT_TYPE                             STRING
+
+, PET_ORIGIN                                    STRING
+
+, PET_PARENT_VET_EXP                            STRING
+
+, PET_SAFETY_CAUSE                              STRING
+
+, PET_SAFETY_CAUSE_GENERAL                      STRING
+
+, PET_SAFETY_EQUIP                              STRING
+
+, PET_SAFETY_NATURE                             STRING
+
+, PET_SAFETY_NATURE_GENERAL                     STRING
+
+, PET_SAFETY_PART                                   STRING
+
+, PET_SAFETY_PART_GENERAL                           STRING
+
+, PET_SAFETY_PRIORITY                               STRING
+
+, PET_SYMPTOMS                                      STRING
+
+, PET_TAKEN_TO_VET                                  STRING
+
+, PET_UPC       STRING
+
+, PET_WEIGHT                                        STRING
+
+, PETSMART_INCIDENT_TYPE                            STRING
+
+, POLICY_VIOLATION                                  STRING
+
+, PRODUCT_BEST_BY_DATE                              STRING
+
+, PRODUCT_LOT_CODE                                  STRING
+
+, PRODUCT_SKU_SHORT_PRODUCT_CODE                    STRING
+
+, PRODUCT_UPC_LONG_PRODUCT_CODE                     STRING
+
+, REASON_CODE                                       STRING
+
+, SERVICE_PERFORMED                                 STRING
+
+, SHAVE_AUTHORIZATION                               STRING
+
+, SPECIFIC_STORE_AREA                               STRING
+
+, SRVC_CARD_SIGNED                                  STRING
+
+, STATUS        STRING
+
+, STORE_DC_AREA                                     STRING
+
+, TIME_EMPLOYEE_BEGAN_WORK                          STRING
+
+, TPA_CARRIER                                       STRING
+
+, TPA_CLAIM_NUMBER                                  STRING
+
+, TREATMENT_INTENT                                  STRING
+
+, WAS_911_CALLED                                    STRING
+
+, WAS_ASSOCIATE_ADMITTED_TO_HOSPITAL                STRING
+
+, WAS_ASSOCIATE_TRANSPORTED_BY_AMBULANCE            STRING
+
+, WHAT_POINT_DID_THE_INCIDENT_OCCUR                 STRING
+
+, WHAT_POINT_DURING_SERVICE_OCCUR_HOTEL             STRING
+
+, WORK_RELATED                                      STRING
+
+, TYPE_OF_INCIDENT_REPORTED                         STRING
+
+, SCORECARD_EXCEPTION_FLAG                          STRING
+
+, RESPONSIBLE_ASSOCIATE_ID                          STRING
+
+, CHECK_AMOUNT                                      STRING
+
+, CLAIM_TYPE_SRC                                    STRING
+
+, CAUSE_LEGACY                                      STRING
+
+, REASON_LEGACY                                     STRING
+
+, DATE_REPORTED_TO_TPA                              STRING
+
+, ADOPTION_GROUP                                    STRING
+
+, CLOSED_ISSUE_DATE                                 STRING
+
+, EMPLOYEE_JOB_TITLE                                STRING
+
+, RECEIVED_DATE                                     STRING
+
+, RESPONDED_DATE                                    STRING
+
+, RESPONSE_DUE_DATE                                 STRING
+
+, LOAD_TSTMP                                        TIMESTAMP
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/incident_management/incident_claims_pre' 
+
+;
+
+
+ 
+
+--DISTRIBUTE ON (CLAIM_NUMBER)
+
+ 
+
+ 
+
+ 
+
+--*****  Creating table:  "INCIDENT_INVESTIGATIONS_PRE" , ***** Creating table: "INCIDENT_INVESTIGATIONS_PRE"
+
+ 
+
+ 
+
+ 
+
+use raw;
+
+ 
+
+CREATE TABLE IF NOT EXISTS INCIDENT_INVESTIGATIONS_PRE
+
+ 
+
+( CLAIM_NUMBER                                      STRING                not null
+
+, ACTION_PLAN_DEADLINE_1                            STRING
+
+, ACTION_PLAN_DEADLINE_2                            STRING
+
+, ACTION_PLAN_DEADLINE_3                            STRING
+
+, ACTION_PLAN_OWNER_1                               STRING
+
+, ACTION_PLAN_OWNER_2                               STRING
+
+, ACTION_PLAN_OWNER_3                               STRING
+
+, ACTION_PLAN_OWNER_JOB_TITLE_1                     STRING
+
+, ACTION_PLAN_OWNER_JOB_TITLE_2                     STRING
+
+, ACTION_PLAN_OWNER_JOB_TITLE_3                     STRING
+
+, ACTION_PLAN_OWNER_PHONE_1                         STRING
+
+, ACTION_PLAN_OWNER_PHONE_2                         STRING
+
+, ACTION_PLAN_OWNER_PHONE_3                         STRING
+
+, ACTION_PLAN_STATUS_1                              STRING
+
+, ACTION_PLAN_STATUS_2                              STRING
+
+, ACTION_PLAN_STATUS_3                              STRING
+
+, ADDITIONAL_CONTRIBUTING_CONDITIONS                STRING
+
+, ASSOCIATE_S_SHIFT_END                             STRING
+
+, DATE_OF_ASSOCIATE_RE_TRAINING                     STRING
+
+, DATE_OF_COMPLETION_1                              STRING
+
+, DATE_OF_COMPLETION_2                              STRING
+
+, DATE_OF_COMPLETION_3                              STRING
+
+, DATE_OF_TEAM_RE_TRAINING                          STRING
+
+, DESCRIBE_UNSAFE_CONDITION                         STRING
+
+, DESCRIPTION_DEVIATION                             STRING
+
+, DESCRIPTION_EQUIPMENT                             STRING
+
+, DESCRIPTION_IF_FUNCTIONING_IMPROPERLY             STRING
+
+, DESCRIPTION_MACHIN_TOOL_SUBSTANCE_OBJECT          STRING
+
+, DESCRIPTION_OF_CORRECTIVE_ACTION_1                STRING
+
+, DESCRIPTION_OF_CORRECTIVE_ACTION_2                STRING
+
+, DESCRIPTION_OF_CORRECTIVE_ACTION_3                STRING
+
+, DESCRIPTION_OF_INCIDENT                           STRING
+
+, DESCRIPTION_UNSAFE_ACT                            STRING
+
+, DEVIATION_FROM_CURRENT_POLICY_PROCEDURE           STRING
+
+, DID_ASSOCIATE_GO_TO_HOSPITAL                      STRING
+
+, EMPLOYEE_JOB_TITLE                                STRING
+
+, EQUIP_FUNCTIONING_PROPERLY                        STRING
+
+, HOP_COMPLETED_BY                                  STRING
+
+, HOW_INCIDENT_COULD_HAVE_BEEN_PREVENTED            STRING
+
+, HOW_WILL_STORE_LEADERSHIP_SUPPORT                 STRING
+
+, LEADER_COMPLETING                                 STRING
+
+, LEADER_JOB_TITLE                                  STRING
+
+, MACHINE_TOOL_SUBSTANCE_OBJECT_INVOLVED            STRING
+
+, PERSONAL_PROTECTIVE_EQUIP_REQUIRED                STRING
+
+, PET_INCIDENT_CASE_NUMBER                          STRING
+
+, PRIOR_INCIDENTS                                   STRING
+
+, RESPONSIBLE_ASSOCIATE_ID                          STRING
+
+, SERVICES_LEADER                                   STRING
+
+, SERVICES_LEADER_PRESENT                           STRING
+
+, SERVICES_LEADER_SIGN_OFF                          STRING
+
+, SIGN_OFF_DATE_SERVICES_LEADER                     STRING
+
+, SIGN_OFF_DATE_STORE_LEADER                        STRING
+
+, SIMILAR_INCIDENTS_LAST_12_MONTHS                  STRING
+
+, STORE_LEADER_SIGN_OFF                             STRING
+
+, TENURE_IN_CURRENT_ROLE                            STRING
+
+, UNSAFE_ACT_CONTRIBUTED                            STRING
+
+, UNSAFE_CONDITION_ACT_PRIOR_TO_INCIDENT            STRING
+
+, UNSAFE_CONDITION_CONTRIBUTED                      STRING
+
+, WAS_PERSONAL_PROTECTIVE_EQUIP_WORN                STRING
+
+, WITNESS_1_FIRST_NAME                              STRING
+
+, WITNESS_1_JOB_TITLE                               STRING
+
+, WITNESS_1_LAST_NAME                               STRING
+
+, WITNESS_2_FIRST_NAME                              STRING
+
+, WITNESS_2_JOB_TITLE                               STRING
+
+, WITNESS_2_LAST_NAME                               STRING
+
+, WITNESS_3_FIRST_NAME                              STRING
+
+, WITNESS_3_JOB_TITLE                               STRING
+
+, WITNESS_3_LAST_NAME                               STRING
+
+, LOAD_TSTMP                                        TIMESTAMP
+
+ 
+
+ 
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/incident_management/incident_investigations_pre'
+
+ 
+
+;
+
+
+ 
+
+--DISTRIBUTE ON (CLAIM_NUMBER)
+
+ 
+
+ 
+
+
+
+
+ 
+
+ 
+
+ 
+
+--*****  Creating table:  "INCIDENT_CLAIMS" , ***** Creating table: "INCIDENT_CLAIMS"
+
+ 
+
+ 
+
+ 
+
+use legacy;
+
+ 
+
+CREATE TABLE  IF NOT EXISTS INCIDENT_CLAIMS
+
+ 
+
+( SRC_CD                                        STRING                 not null
+
+, CLAIM_NBR                                     STRING                not null
+
+, LOCATION_ID INT
+
+, INCIDENT_TSTMP                                TIMESTAMP
+
+, CLAIM_OPEN_DT DATE
+
+, REPORTED_TO_MANAGER_DT DATE
+
+, CLAIM_CLOSE_DT DATE
+
+, CLOSED_ISSUE_DT DATE
+
+, CASE_RECEIVED_TSTMP                           TIMESTAMP
+
+, ACTION_RESPONSE_DUE_TSTMP                     TIMESTAMP
+
+, ACTION_RESPONDED_TSTMP                        TIMESTAMP
+
+, INCIDENT_TYPE                                 STRING
+
+, CLAIM_TYPE_RAW                                STRING
+
+, CLAIM_STATUS                                  STRING
+
+, CLAIM_SUB_STATUS                              STRING
+
+, STORE_DC_AREA                                 STRING
+
+, SPECIFIC_STORE_AREA                           STRING
+
+, CLAIM_INCIDENT_DESC                           STRING
+
+, GENERAL_CAUSE                                 STRING
+
+, DETAIL_CAUSE                                  STRING
+
+, CAUSE_RAW                                     STRING
+
+, GENERAL_NATURE                                STRING
+
+, DETAIL_NATURE                                 STRING
+
+, GENERAL_PART                                  STRING
+
+, DETAIL_PART                                   STRING
+
+, DETAIL_PART_POSITION                          STRING
+
+, MAJOR_COVERAGE                                STRING
+
+, CLAIMANT_NAME                                 STRING
+
+, EMPLOYEE_ID INT
+
+, RESPONSIBLE_EMPLOYEE_ID                       STRING
+
+, RESPONSIBLE_EMPLOYEE_NAME                     STRING
+
+, EMPLOYEE_HIRED_DT DATE
+
+, EMPLOYEE_TENURE                               STRING
+
+, EMPLOYEE_SHIFT_START_TSTMP                    TIMESTAMP
+
+, EMPLOYEE_DEPT                                 STRING
+
+, EMPLOYEE_JOB_TITLE                            STRING
+
+, ACADEMY_TRAINED                               STRING
+
+, WORK_RELATED_ACCIDENT_FLAG                    TINYINT
+
+, CLAIMANT_ACTIVITY_AT_INCIDENT                 STRING
+
+, HUMAN_INJURY_ESCALATION                       STRING
+
+, LOST_TIME_FLAG                                TINYINT
+
+, SEEK_TREATMENT_FLAG                           TINYINT
+
+, CALLED_911_FLAG                               TINYINT
+
+, EMPLOYEE_GO_TO_HOSPITAL_FLAG                  TINYINT
+
+, EMPLOYEE_ADMITTED_TO_HOSPITAL_FLAG            TINYINT
+
+, EMPLOYEE_TRANSPORTED_BY_AMBULANCE_FLAG        TINYINT
+
+, REPORTED_TO_TPA_DT DATE
+
+, TPA_CARRIER                                   STRING
+
+, TPA_CLAIM_NBR                                 STRING
+
+, ANIMAL_INVOLVED_IN_THE_INCIDENT_FLAG          TINYINT
+
+, ANIMAL_INCIDENT_TYPE                          STRING
+
+, ANIMAL_CARE_CUSTODY                           STRING
+
+, ADOPTION_GROUP                                STRING
+
+, PET_BREED_TYPE                                STRING
+
+, PET_BREED                                     STRING
+
+, NET_INCURRED_AMT                              DECIMAL(12,2)
+
+, SCORECARD_EXCEPTION_FLAG                      TINYINT
+
+, PET_INCIDENT_TYPE                             STRING
+
+, PET_INCIDENT_TYPE_REPORTED                    STRING
+
+, PET_INCIDENT_REASON_GROUP                     STRING
+
+, PET_INCIDENT_REASON                           STRING
+
+, PET_INCIDENT_REASON_LEGACY_CD                 STRING
+
+, PET_INCIDENT_REASON_LEGACY                    STRING
+
+, PET_CAUSE_LEGACY                              STRING
+
+, PET_SYMPTOMS                                  STRING
+
+, NOTIFICATION_SOURCE                           STRING
+
+, BRAND_RISK_DEPT                               STRING
+
+, PET_ESCALATION_FACTORS                        STRING
+
+, DAY_CAMP_CAPACITY_CNT                         INT
+
+, PET_IN_PLAYTIME_CNT                           BIGINT
+
+, PET_IN_TRAINING_CLASS_CNT                     BIGINT
+
+, INCIDENT_DURING_PETSMART_ACADEMY_FLAG         TINYINT
+
+, PET_POLICY_VIOLATION                          STRING
+
+, OTHER_POLICY_VIOLATION                        STRING
+
+, PET_SERVICE_PERFORMED                         STRING
+
+, GROOM_SERVICE_DURING_PET_INCIDENT             STRING
+
+, HOTEL_SERVICE_DURING_PET_INCIDENT             STRING
+
+, PET_TAKEN_TO_VET                              STRING
+
+, INJURY_CONFIRMED_BY_VET_FLAG                  TINYINT
+
+, FULL_RECOVERY_EXPECTED_FLAG                   TINYINT
+
+, MATTED_PET_RELEASE_FLAG                       TINYINT
+
+, PET_SHAVE_AUTH_SIGNED_FLAG                    TINYINT
+
+, PET_SERVICE_CARD_SIGNED_FLAG                  TINYINT
+
+, HEALTH_CHART_COMPLETED_DURING_STAY_FLAG       TINYINT
+
+, SAFETY_CERTIFIED_DT DATE
+
+, PET_SAFETY_EQUIPMENT_USED                     STRING
+
+, PET_SAFETY_PRIORITY                           STRING
+
+, PET_SAFETY_GENERAL_CAUSE                      STRING
+
+, PET_SAFETY_DETAIL_CAUSE                       STRING
+
+, PET_SAFETY_GENERAL_NATURE                     STRING
+
+, PET_SAFETY_DETAIL_NATURE                      STRING
+
+, PET_SAFETY_GENERAL_PART                       STRING
+
+, PET_SAFETY_DETAIL_PART                        STRING
+
+, PET_GENDER                                    STRING
+
+, PET_AGE                                       STRING
+
+, PET_WEIGHT                                    STRING
+
+, PET_NEUTERED_SPAYED_FLAG                      TINYINT
+
+, PET_ORIGIN                                    STRING
+
+, PET_PRODUCT_UPC_ID BIGINT
+
+, PET_PRODUCT_UPC_LONG_CD                       STRING
+
+, PET_PRODUCT_LOT_CD                            STRING
+
+, PET_PRODUCT_SKU_SHORT_CD                      STRING
+
+, PET_PRODUCT_PURCH_DT DATE
+
+, PET_PRODUCT_BEST_BY_DT DATE
+
+, PET_EXPENSE_TYPE                              STRING
+
+, BANFIELD_AMT                                  DECIMAL(12,2)
+
+, P_CARD_AMT                                    DECIMAL(12,2)
+
+, CASH_AMT                                      DECIMAL(12,2)
+
+, CHECK_AMT                                     DECIMAL(12,2)
+
+, PET_PARENT_VET_EXP_AMT                        DECIMAL(12,2)
+
+, GIFT_CARD_AMT                                 DECIMAL(12,2)
+
+, FLOWERS_AMT                                   DECIMAL(12,2)
+
+, COMPED_PRODUCTS_AMT                           DECIMAL(12,2)
+
+, COMPED_SERVICES_AMT                           DECIMAL(12,2)
+
+, OTHER_SETTLEMENT_AMT                          DECIMAL(12,2)
+
+, PS_DEPT_CD                                    STRING
+
+, UPDATE_TSTMP                                  TIMESTAMP
+
+, LOAD_TSTMP                                    TIMESTAMP
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/incident_management/incident_claims'
+
+ 
+
+;
+
+
+ 
+
+--DISTRIBUTE ON (SRC_CD, CLAIM_NBR)
+
+ 
+
+ 
+
+--ORGANIZE   ON (INCIDENT_TSTMP)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+--*****  Creating table:  "INCIDENT_INVESTIGATIONS" , ***** Creating table: "INCIDENT_INVESTIGATIONS"
+
+ 
+
+ 
+
+ 
+
+use legacy;
+
+ 
+
+CREATE TABLE  IF NOT EXISTS INCIDENT_INVESTIGATIONS
+
+ 
+
+( SRC_CD        STRING                 not null
+
+, CLAIM_NBR     STRING                not null
+
+, PET_INCIDENT_CASE_NBR                             STRING
+
+, INVESTIGATION_INCIDENT_DESC                       STRING
+
+, EMPLOYEE_SHIFT_END_TSTMP                          TIMESTAMP
+
+, RESPONSIBLE_EMPLOYEE_ID                           STRING
+
+, EMPLOYEE_JOB_TITLE                                STRING
+
+, EMPLOYEE_TENURE_IN_CURRENT_ROLE                   STRING
+
+, LEADER_COMPLETING_INVESTIGATION                   STRING
+
+, LEADER_JOB_TITLE                                  STRING
+
+, SERVICES_LEADER_PRESENT_FLAG                      TINYINT
+
+, SERVICES_LEADER_NAME                              STRING
+
+, SERVICES_LEADER_SIGN_OFF_FLAG                     TINYINT
+
+, SERVICES_LEADER_SIGN_OFF_DT DATE
+
+, STORE_LEADER_SIGN_OFF_FLAG                        TINYINT
+
+, STORE_LEADER_SIGN_OFF_DT DATE
+
+, SIMILAR_INCIDENTS_LAST_12_MO_FLAG                 TINYINT
+
+, PRIOR_PET_INCIDENTS_FLAG                          TINYINT
+
+, EMPLOYEE_GO_TO_HOSPITAL_FLAG                      TINYINT
+
+, HOP_COMPLETED_BY                                  STRING
+
+, EMPLOYEE_RETRAINING_DT DATE
+
+, TEAM_RETRAINING_DT DATE
+
+, UNSAFE_CONDITION_ACT_PRIOR_TO_INCIDENT_FLAG       TINYINT
+
+, UNSAFE_CONDITION_CONTRIBUTED_FLAG                 TINYINT
+
+, UNSAFE_CONDITION_DESC                             STRING
+
+, UNSAFE_ACT_CONTRIBUTED_FLAG                       TINYINT
+
+, UNSAFE_ACT_DESC                                   STRING
+
+, DEVIATION_FROM_CURRENT_POLICY_PROCEDURE_FLAG      TINYINT
+
+, DEVIATION_DESC                                    STRING
+
+, PERSONAL_PROTECTIVE_EQUIP_REQUIRED_FLAG           TINYINT
+
+, PERSONAL_PROTECTIVE_EQUIP_WORN_FLAG               TINYINT
+
+, EQUIPMENT_DESC                                    STRING
+
+, EQUIPMENT_FUNCTIONING_PROPERLY_FLAG               TINYINT
+
+, EQUIPMENT_FUNCTIONING_IMPROPERLY_DESC             STRING
+
+, MACHINE_TOOL_SUBSTANCE_OBJECT_INVOLVED_FLAG       TINYINT
+
+, MACHINE_TOOL_SUBSTANCE_OBJECT_DESC                STRING
+
+, ADDITIONAL_CONTRIBUTING_CONDITIONS                STRING
+
+, PREVENTION_STRATEGY                               STRING
+
+, LEADERSHIP_SUPPORT_STRATEGY                       STRING
+
+, WITNESS_1_FIRST_NAME                              STRING
+
+, WITNESS_1_JOB_TITLE                               STRING
+
+, WITNESS_1_LAST_NAME                               STRING
+
+, WITNESS_2_FIRST_NAME                              STRING
+
+, WITNESS_2_JOB_TITLE                               STRING
+
+, WITNESS_2_LAST_NAME                               STRING
+
+, WITNESS_3_FIRST_NAME                              STRING
+
+, WITNESS_3_JOB_TITLE                               STRING
+
+, WITNESS_3_LAST_NAME                               STRING
+
+, ACTION_PLAN_1_DESC                                STRING
+
+, ACTION_PLAN_1_OWNER                               STRING
+
+, ACTION_PLAN_1_OWNER_JOB_TITLE                     STRING
+
+, ACTION_PLAN_1_OWNER_PHONE_NBR                     STRING
+
+, ACTION_PLAN_1_DEADLINE_DT DATE
+
+, ACTION_PLAN_1_COMPLETION_DT DATE
+
+, ACTION_PLAN_1_STATUS                              STRING
+
+, ACTION_PLAN_2_DESC                                STRING
+
+, ACTION_PLAN_2_OWNER                               STRING
+
+, ACTION_PLAN_2_OWNER_JOB_TITLE                     STRING
+
+, ACTION_PLAN_2_OWNER_PHONE_NBR                     STRING
+
+, ACTION_PLAN_2_DEADLINE_DT DATE
+
+, ACTION_PLAN_2_COMPLETION_DT DATE
+
+, ACTION_PLAN_2_STATUS                              STRING
+
+, ACTION_PLAN_3_DESC                                STRING
+
+, ACTION_PLAN_3_OWNER                               STRING
+
+, ACTION_PLAN_3_OWNER_JOB_TITLE                     STRING
+
+, ACTION_PLAN_3_OWNER_PHONE_NBR                     STRING
+
+, ACTION_PLAN_3_DEADLINE_DT DATE
+
+, ACTION_PLAN_3_COMPLETION_DT DATE
+
+, ACTION_PLAN_3_STATUS                              STRING
+
+, UPDATE_TSTMP                                      TIMESTAMP
+
+, LOAD_TSTMP                                        TIMESTAMP
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/incident_management/incident_investigations'
+
+ 
+
+;
+
+
+ 
+
+--DISTRIBUTE ON (SRC_CD, CLAIM_NBR)
+
+ 
+
+
+--*****  Creating table:  "EMPLOYEE_PROFILE_WK" , ***** Creating table: "EMPLOYEE_PROFILE_WK"
+
+ 
+
+ 
+
+ 
+
+use legacy;
+
+ 
+
+CREATE TABLE   IF NOT EXISTS EMPLOYEE_PROFILE_WK
+
+( WEEK_DT                                     TIMESTAMP                            not null
+
+, EMPLOYEE_ID INT not null
+
+, EMPL_FIRST_NAME                             STRING
+
+, EMPL_MIDDLE_NAME                            STRING
+
+, EMPL_LAST_NAME                              STRING
+
+, EMPL_BIRTH_DT                               TIMESTAMP
+
+, GENDER_CD                                   STRING
+
+, PS_MARITAL_STATUS_CD                        STRING
+
+, ETHNIC_GROUP_ID                             STRING
+
+, EMPL_ADDR_1                                 STRING
+
+, EMPL_ADDR_2                                 STRING
+
+, EMPL_CITY                                   STRING
+
+, EMPL_STATE                                  STRING
+
+, EMPL_PROVINCE                               STRING
+
+, EMPL_ZIPCODE                                STRING
+
+, COUNTRY_CD                                  STRING
+
+, EMPL_HOME_PHONE                             STRING
+
+, EMPL_EMAIL_ADDR                             STRING
+
+, EMPL_LOGIN_ID                               STRING
+
+, BADGE_NBR                                   STRING
+
+, EMPL_STATUS_CD                              STRING
+
+, STATUS_CHG_DT                               TIMESTAMP
+
+, FULLPT_FLAG                                 STRING
+
+, FULLPT_CHG_DT                               TIMESTAMP
+
+, EMPL_TYPE_CD                                STRING
+
+, PS_REG_TEMP_CD                              STRING
+
+, EMPL_CATEGORY_CD                            STRING
+
+, EMPL_GROUP_CD                               STRING
+
+, EMPL_SUBGROUP_CD                            STRING
+
+, EMPL_HIRE_DT                                TIMESTAMP
+
+, EMPL_REHIRE_DT                              TIMESTAMP
+
+, EMPL_TERM_DT                                TIMESTAMP
+
+, TERM_REASON_CD                              STRING
+
+, EMPL_SENORITY_DT                            TIMESTAMP
+
+, PS_ACTION_DT                                TIMESTAMP
+
+, PS_ACTION_CD                                STRING
+
+, PS_ACTION_REASON_CD                         STRING
+
+, LOCATION_ID INT
+
+, LOCATION_CHG_DT                             TIMESTAMP
+
+, STORE_NBR INT
+
+, STORE_DEPT_NBR                              STRING
+
+, COMPANY_ID INT
+
+, PS_PERSONNEL_AREA_ID                        STRING
+
+, PS_PERSONNEL_SUBAREA_ID                     STRING
+
+, PS_DEPT_CD                                  STRING
+
+, PS_DEPT_CHG_DT                              TIMESTAMP
+
+, PS_POSITION_ID INT
+
+, POSITION_CHG_DT                             TIMESTAMP
+
+, PS_SUPERVISOR_ID INT
+
+, JOB_CODE INT
+
+, JOB_CODE_CHG_DT                             TIMESTAMP
+
+, EMPL_JOB_ENTRY_DT                           TIMESTAMP
+
+, PS_GRADE_ID SMALLINT
+
+, EMPL_STD_BONUS_PCT                          DECIMAL(5,2)
+
+, EMPL_OVR_BONUS_PCT                          DECIMAL(5,2)
+
+, EMPL_RATING                                 DECIMAL(5,2)
+
+, PAY_RATE_CHG_DT                             TIMESTAMP
+
+, PS_PAYROLL_AREA_CD                          STRING
+
+, PS_TAX_COMPANY_CD                           STRING
+
+, PS_COMP_FREQ_CD                             STRING
+
+, COMP_RATE_AMT                               DECIMAL(15,2)
+
+, ANNUAL_RATE_LOC_AMT                         DECIMAL(15,2)
+
+, HOURLY_RATE_LOC_AMT                         DECIMAL(12,2)
+
+, CURRENCY_ID                                 STRING
+
+, EXCH_RATE_PCT                               DECIMAL(9,6)
+
+, LOAD_TSTMP                                  TIMESTAMP     
+
+ 
+
+ 
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/incident_management/employee_profile_wk'
+
+ 
+
+;
+
+ 
+
+ 
+
+--DISTRIBUTE ON (WEEK_DT, EMPLOYEE_ID)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+--*****  Creating table:  "INCIDENT_DATA_LOOKUP" , ***** Creating table: "INCIDENT_DATA_LOOKUP"
+
+ 
+
+ 
+
+ 
+
+use legacy;
+
+ 
+
+CREATE TABLE  IF NOT EXISTS INCIDENT_DATA_LOOKUP
+
+( INCIDENT_DATA_LOOKUP_TYPE_ID INT not null
+
+, INCIDENT_DATA_LOOKUP_CD                           STRING                not null
+
+, INCIDENT_DATA_LOOKUP_DESC                         STRING               not null
+
+, UPDATE_TSTMP                                      TIMESTAMP                            not null
+
+, LOAD_TSTMP                                        TIMESTAMP                      
+
+ 
+
+ 
+
+)
+
+ 
+
+USING delta
+
+ 
+
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/incident_management/incident_data_lookup'
+
+ 
+
+;
+
+ 
+
+--DISTRIBUTE ON RANDOM
+
+ 
+
+ 
+
+ 
