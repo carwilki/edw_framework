@@ -6,7 +6,7 @@ VALUES('NZ_Migration' --table_group
 , 'EDW_PRD' --source_db
 , 'PS2_ADJUSTED_LABOR_WK' --source_table
 , null --table_desc
-, 'YES' --is_pii
+, 'TRUE' --is_pii
 , 'employee_protected' --pii_type
 , 'FALSE' --has_hard_deletes
 , 'delta' --target_sink
