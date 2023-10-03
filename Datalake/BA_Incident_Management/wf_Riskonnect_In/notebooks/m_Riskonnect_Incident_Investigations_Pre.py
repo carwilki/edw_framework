@@ -64,7 +64,7 @@ def get_source_file(key, _bucket):
 source_file = get_source_file("Riskonnect_Incident_Investigation", source_bucket)
 
 SQ_Shortcut_to_RISKONNECT_INCIDENT_INVESTIGATION_FLAT = spark.read.csv(
-    source_file, sep="|", header=True, quote='"'
+    source_file, sep="|", header=True, quote='"', multiLine=True
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -321,5 +321,3 @@ Shortcut_to_INCIDENT_INVESTIGATIONS_PRE = EXP_LOAD_TSTMP.selectExpr(
 Shortcut_to_INCIDENT_INVESTIGATIONS_PRE.write.mode("overwrite").saveAsTable(
     f"{raw}.INCIDENT_INVESTIGATIONS_PRE"
 )
-
-# COMMAND ----------
