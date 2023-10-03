@@ -3,15 +3,15 @@ VALUES('NZ_Migration' --table_group
 , null --table_group_desc
 , 'NZ_Mako8' --source_type
 , 'EDW_PRD' --source_db
-, 'SERVICE_SMART' --source_table
+, 'BANFIELD_EMPLOYEE' --source_table
 , null --table_desc
-, 'FALSE' --is_pii
-, null --pii_type
+, 'TRUE' --is_pii
+, 'employee' --pii_type
 , 'FALSE' --has_hard_deletes
 , 'delta' --target_sink
 , 'refine' --target_db
 , 'NULL' --target_schema
-, 'SERVICE_SMART_history' --target_table_name
+, 'BANFIELD_EMPLOYEE_history' --target_table_name
 , 'full' --load_type
 , null --source_delta_column
 , null --primary_key
@@ -32,3 +32,5 @@ VALUES('NZ_Migration' --table_group
 , null --snowflake_post_sql
 , null --additional_config
 );
+banfield_employee
+BANFIELD_EMPLOYEE
