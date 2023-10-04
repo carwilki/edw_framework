@@ -1,9 +1,10 @@
-from pyspark.sql.session import SparkSession
-from logging import getLogger, INFO
-from Datalake.utils.mergeUtils import *
 import argparse
 import json
+from logging import INFO, getLogger
 
+from pyspark.sql.session import SparkSession
+
+from Datalake.utils.mergeUtils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str, help="Environment value")
@@ -13,6 +14,7 @@ parser.add_argument("primaryKeys", type=str, help="Primary Keys to the delta tab
 parser.add_argument("conditionCols", type=str, help="condition cols to merge on")
 parser.add_argument("sfSchema", type=str, help="snowflake table schema")
 parser.add_argument("refineOrLegacy", type=str, help="delta table schema")
+parser.add_argument("mode", type=str, help="overwrite/append/merge")
 
 
 args = parser.parse_args()
@@ -24,7 +26,9 @@ primaryKeys_list = json.dumps(primaryKeys)
 conditionCols_list = json.dumps(conditionCols)
 deltaTableSchema = args.deltaTablePIISchema
 SFSchema = args.sfSchema
+mode = args.mode
 refineOrLegacy = args.refineOrLegacy
+
 
 spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
@@ -32,10 +36,19 @@ logger.setLevel(INFO)
 
 
 try:
-    
     logger.info("Ingesting data to Snowflake tables for table - ", deltaTable)
-    mergeToSFPII(env, deltaTableSchema, deltaTable, primaryKeys_list, conditionCols_list,refineOrLegacy,SFSchema)
+    mergeToSFPII(
+        env,
+        deltaTableSchema,
+        deltaTable,
+        primaryKeys_list,
+        conditionCols_list,
+        refineOrLegacy,
+        mode,
+        SFSchema,
+    )
     logger.info("Data write to SF completed for table - ", deltaTable)
 
 except Exception as e:
     raise e
+
