@@ -1,7 +1,7 @@
 
 --*****  Creating table:  "PS2_ADJUSTED_LABOR_WK" , ***** Creating table: "PS2_ADJUSTED_LABOR_WK"
-use empl_protected;
- CREATE TABLE legacy_PS2_ADJUSTED_LABOR_WK 
+use legacy;
+ CREATE TABLE PS2_ADJUSTED_LABOR_WK 
 (
  WEEK_DT       TIMESTAMP                             not null
 , LOCATION_ID INT not null
@@ -19,13 +19,13 @@ use empl_protected;
 , LOAD_DT       TIMESTAMP 
 )
 USING delta 
-LOCATION 'gs://petm-bdpl-prod-empl-protected-nzlegacy-p1-gcs-gbl/hcm/ps2_adjusted_labor_wk' ;
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/hcm/ps2_adjusted_labor_wk' ;
 --DISTRIBUTE ON (LOCATION_ID)
 
 
 --*****  Creating table:  "PS2_ADJUSTED_LABOR_WK_PRE" , ***** Creating table: "PS2_ADJUSTED_LABOR_WK_PRE"
-use empl_protected;
- CREATE TABLE raw_PS2_ADJUSTED_LABOR_WK_PRE 
+use raw;
+ CREATE TABLE PS2_ADJUSTED_LABOR_WK_PRE 
 (
  WEEK_DT       TIMESTAMP                             not null
 , STORE_NBR INT not null
@@ -40,5 +40,5 @@ use empl_protected;
 , FORECAST_LOC_AMT                                  DECIMAL(9,4) 
 )
 USING delta 
-LOCATION 'gs://petm-bdpl-prod-empl-protected-raw-p1-gcs-gbl/hcm/ps2_adjusted_labor_wk_pre' ;
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/hcm/ps2_adjusted_labor_wk_pre' ;
 --DISTRIBUTE ON (STORE_NBR)
