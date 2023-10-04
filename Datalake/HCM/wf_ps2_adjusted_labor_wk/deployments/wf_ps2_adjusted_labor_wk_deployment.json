@@ -137,16 +137,12 @@
             ],
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
-                "python_file": "Datalake/utils/SF_Ingest_PII.py",
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
                 "parameters": [
                     "prod",
-                    "empl_protected",
                     "PS2_ADJUSTED_LABOR_WK",
                     "WEEK_DT,LOCATION_ID,EARN_ID,STORE_DEPT_NBR,JOB_CODE",
-                    "UPDATE_DT,LOAD_DT",
-                    "PUBLIC",
-                    "legacy",
-                    "merge"
+                    "UPDATE_DT,LOAD_DT"
                 ],
                 "source": "GIT"
             },
