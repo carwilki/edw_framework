@@ -86,7 +86,7 @@ def executeMergeByPrimaryKey(
         f"temp_target_{targetTable.replace('.','_')}_{str(uuid4()).replace('-','')}"
     )
     createTempTable = (
-        f"CREATE TEMP VIEW IF NOT EXISTS {tempTarget} AS SELECT * FROM {targetTable}"
+        f"CREATE TEMP VIEW {tempTarget} AS SELECT * FROM {targetTable}"
     )
     spark.sql(createTempTable).collect()
     executeMerge(sourceDataFrame, tempTarget, mergecondition)
