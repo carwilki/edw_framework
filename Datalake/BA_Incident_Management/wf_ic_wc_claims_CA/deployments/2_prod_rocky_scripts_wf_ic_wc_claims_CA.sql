@@ -40,9 +40,9 @@ VALUES('NZ_Migration' --table_group
 , 'NZ_Mako8' --source_type
 , 'EDW_PRD' --source_db
 , 'IC_WC_CLAIMS' --source_table
-, 'employee' --table_desc
+, null --table_desc
 , 'TRUE' --is_pii
-, null --pii_type
+, 'employee_protected' --pii_type
 , 'FALSE' --has_hard_deletes
 , 'delta' --target_sink
 , 'refine' --target_db

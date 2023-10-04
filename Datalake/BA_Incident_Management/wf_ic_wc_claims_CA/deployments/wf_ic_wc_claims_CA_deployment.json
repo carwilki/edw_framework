@@ -1,6 +1,6 @@
 {
     "run_as": {
-        "user_name": "gcpdatajobs-shared@petsmart.com""
+        "user_name": "gcpdatajobs-shared@petsmart.com"
     },
     "name": "wf_ic_wc_claims_CA",
     "email_notifications": {
@@ -120,7 +120,7 @@
                     "IC_WC_CLAIMS",
                     "CLAIM_NBR",
                     "LOAD_DT,UPDATE_DT",
-                    "empl_protected",
+                    "empl_sensitive",
                     "legacy",
                     "merge"
                 ],
@@ -143,7 +143,7 @@
                 "cluster_name": "",
                 "spark_version": "13.0.x-scala2.12",
                 "spark_conf": {
-                    "spark.databricks.dataLineage.enabled": "true",
+					"spark.driver.maxResultSize": "64g",
                     "spark.databricks.delta.preview.enabled": "true",
                     "spark.sql.hive.metastore.jars": "maven",
                     "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
@@ -171,7 +171,7 @@
     "git_source": {
         "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
         "git_provider": "gitHubEnterprise",
-        "git_branch": "feature/wf_ic_wc_clains_CA"
+        "git_branch": "main"
     },
     "tags": {
         "Department": "NZ-Migration"

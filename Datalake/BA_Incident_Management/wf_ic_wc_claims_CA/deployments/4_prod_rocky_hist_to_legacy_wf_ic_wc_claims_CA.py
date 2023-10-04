@@ -1,9 +1,7 @@
 # Databricks notebook source
 from pyspark.sql.functions import col
 
-tables = [
-    "IC_CA_CLAIMS"
-]
+tables = ["IC_CA_CLAIMS"]
 
 PII_tables = ["IC_WC_CLAIMS"]
 
