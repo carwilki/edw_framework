@@ -12,20 +12,6 @@ from Datalake.utils.logger import *
 
 # COMMAND ----------
 
-def fileExists (pfile):
-  try:
-    data = dbutils.fs.head(pfile,1)
-    if data == '':
-      return False
-  except:
-    print(f"{pfile} doesn't exist")
-    return False
-  else:
-    print(f'FILE {pfile} EXISTS  ')
-    return True
-
-# COMMAND ----------
-
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 dbutils.widgets.text(name = 'env', defaultValue = 'dev')
@@ -47,21 +33,16 @@ starttime = datetime.now() #start timestamp of the script
 source_bucket = getParameterValue(
     raw, "BA_HCM_Parameter.prm", "BA_HCM.WF:wf_Honorary_Designee", "source_bucket"
 )
-source_file = get_source_file(source_bucket)
+file_path = get_src_file('Honorary_Designee', source_bucket)
 
-print(source_file)
-
-# COMMAND ----------
-
-if not fileExists(f'{file_path}/Honorary_Designee_File.csv'):
-  dbutils.notebook.exit(f'{file_path}/Honorary_Designee_File.csv not available')
+print(file_path)
 
 # COMMAND ----------
 
 # Processing node SQ_Shortcut_to_Honorary_Designee_File, type SOURCE 
 # COLUMN COUNT: 16
 
-SQ_Shortcut_to_Honorary_Designee_File = spark.read.option('header',True).option('inferSchema',True).csv(f'{file_path}/Honorary_Designee_File.csv').withColumn("sys_row_id_fl", monotonically_increasing_id())
+SQ_Shortcut_to_Honorary_Designee_File = spark.read.option('header',True).option('inferSchema',True).csv(f'{file_path}').withColumn("sys_row_id_fl", monotonically_increasing_id())
 # Conforming fields names to the component layout
 SQ_Shortcut_to_Honorary_Designee_File = SQ_Shortcut_to_Honorary_Designee_File \
 	.withColumnRenamed(SQ_Shortcut_to_Honorary_Designee_File.columns[0],'HD_TYPE') \
