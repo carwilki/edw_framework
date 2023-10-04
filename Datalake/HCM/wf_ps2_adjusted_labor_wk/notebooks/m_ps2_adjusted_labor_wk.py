@@ -100,7 +100,7 @@ SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE = spark.sql(f"""SELECT pre.week_dt
 
                END exchange_rate
 
-          FROM {empl_protected}.raw_ps2_adjusted_labor_wk_pre ps_pre
+          FROM {raw}.ps2_adjusted_labor_wk_pre ps_pre
 
                LEFT OUTER JOIN
 
@@ -120,7 +120,7 @@ SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE = spark.sql(f"""SELECT pre.week_dt
 
        LEFT OUTER JOIN
 
-       {empl_protected}.legacy_ps2_adjusted_labor_wk palw
+       {legacy}.ps2_adjusted_labor_wk palw
 
        ON pre.week_dt = palw.week_dt
 
@@ -205,7 +205,7 @@ Shortcut_to_PS2_ADJUSTED_LABOR_ins_upd = UPD_ins_upd.selectExpr(
 
 try:
 	primary_key = """source.WEEK_DT = target.WEEK_DT AND source.LOCATION_ID = target.LOCATION_ID AND source.EARN_ID = target.EARN_ID AND source.STORE_DEPT_NBR = target.STORE_DEPT_NBR AND source.JOB_CODE = target.JOB_CODE"""
-	refined_perf_table = f"{empl_protected}.legacy_PS2_ADJUSTED_LABOR_WK"
+	refined_perf_table = f"{legacy}.PS2_ADJUSTED_LABOR_WK"
 	executeMerge(Shortcut_to_PS2_ADJUSTED_LABOR_ins_upd, refined_perf_table, primary_key)
 	logger.info(f"Merge with {refined_perf_table} completed]")
 	logPrevRunDt("PS2_ADJUSTED_LABOR_WK", "PS2_ADJUSTED_LABOR_WK", "Completed", "N/A", f"{raw}.log_run_details")
