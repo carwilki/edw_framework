@@ -41,15 +41,19 @@ sensitive = getEnvPrefix(env) + 'empl_sensitive'
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
 
-dbutils.widgets.text(name = 'file_path', defaultValue = 'gs://petm-bdpl-qa-empl-sensitive-raw-p1-gcs-gbl/nas/employee/lifetime_discount/')
-file_path = dbutils.widgets.get('file_path')
-  
+# dbutils.widgets.text(name = 'file_path', defaultValue = 'gs://petm-bdpl-qa-empl-sensitive-raw-p1-gcs-gbl/nas/employee/lifetime_discount/')
+# file_path = dbutils.widgets.get('file_path')
+
+source_bucket = getParameterValue(
+    raw, "BA_HCM_Parameter.prm", "BA_HCM.WF:wf_Honorary_Designee", "source_bucket"
+)
+source_file = get_source_file(source_bucket)
+
+print(source_file)
 
 # COMMAND ----------
 
 if not fileExists(f'{file_path}/Honorary_Designee_File.csv'):
-  # review what to do when  no file ?
-  #   spark.sql(f"TRUNCATE TABLE {refine}.HONORARY_DESIGNEE")
   dbutils.notebook.exit(f'{file_path}/Honorary_Designee_File.csv not available')
 
 # COMMAND ----------
