@@ -103,7 +103,7 @@ Shortcut_to_PS2_ADJUSTED_LABOR_WK_agg=Shortcut_to_PS2_ADJUSTED_LABOR_WK_cast.gro
 )
  
 
-Shortcut_to_PS2_ADJUSTED_LABOR_WK_agg.write.mode("overwrite").saveAsTable(f'{empl_protected}.raw_PS2_ADJUSTED_LABOR_WK_PRE')
+Shortcut_to_PS2_ADJUSTED_LABOR_WK_agg.write.mode("overwrite").saveAsTable(f'{raw}.PS2_ADJUSTED_LABOR_WK_PRE')
 
 # COMMAND ----------
 
