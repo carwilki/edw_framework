@@ -247,7 +247,11 @@ try:
         Shortcut_to_E_RES_SELECTED_ADD_ONS1,
         ["E_RES_SELECTED_ADD_ON_ID"],
     )
-    executeMerge(Shortcut_to_E_RES_SELECTED_ADD_ONS1, refined_perf_table, primary_key)
+    executeMergeByPrimaryKey(
+        Shortcut_to_E_RES_SELECTED_ADD_ONS1,
+        refined_perf_table,
+        ["E_RES_SELECTED_ADD_ON_ID"],
+    )
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
         "E_RES_SELECTED_ADD_ONS",

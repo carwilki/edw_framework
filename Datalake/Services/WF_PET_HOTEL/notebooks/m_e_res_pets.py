@@ -388,7 +388,9 @@ try:
     DuplicateChecker.check_for_duplicate_primary_keys(
         spark, refined_perf_table, Shortcut_to_E_RES_PETS_1, ["E_RES_PET_ID"]
     )
-    executeMerge(Shortcut_to_E_RES_PETS_1, refined_perf_table, primary_key)
+    executeMergeByPrimaryKey(
+        Shortcut_to_E_RES_PETS_1, refined_perf_table, ["E_RES_PET_ID"]
+    )
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
         "E_RES_PETS", "E_RES_PETS", "Completed", "N/A", f"{raw}.log_run_details"

@@ -276,8 +276,10 @@ try:
         Shortcut_to_E_RES_SELECTED_MEDICATIONS1,
         ["E_RES_SELECTED_MEDICATION_ID"],
     )
-    executeMerge(
-        Shortcut_to_E_RES_SELECTED_MEDICATIONS1, refined_perf_table, primary_key
+    executeMergeByPrimaryKey(
+        Shortcut_to_E_RES_SELECTED_MEDICATIONS1,
+        refined_perf_table,
+        ["E_RES_SELECTED_MEDICATION_ID"],
     )
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
