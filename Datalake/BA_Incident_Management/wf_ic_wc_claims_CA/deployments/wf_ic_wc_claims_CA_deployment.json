@@ -119,7 +119,7 @@
                     "empl_protected",
                     "IC_WC_CLAIMS",
                     "CLAIM_NBR",
-                    "LOAD_DT,UPDATE_DT",
+                    "",
                     "empl_sensitive",
                     "legacy",
                     "merge"
