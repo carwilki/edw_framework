@@ -175,7 +175,7 @@
                     "prod",
                     "INCIDENT_CLAIMS",
                     "SRC_CD,CLAIM_NBR",
-                    "LOAD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
@@ -205,7 +205,7 @@
                     "prod",
                     "INCIDENT_INVESTIGATIONS",
                     "SRC_CD,CLAIM_NBR",
-                    "LOAD_TSTMP"
+                    "UPDATE_TSTMP,LOAD_TSTMP"
                 ],
                 "source": "GIT"
             },
