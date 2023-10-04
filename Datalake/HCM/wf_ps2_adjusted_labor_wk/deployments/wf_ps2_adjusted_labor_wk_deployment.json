@@ -145,7 +145,8 @@
                     "WEEK_DT,LOCATION_ID,EARN_ID,STORE_DEPT_NBR,JOB_CODE",
                     "UPDATE_DT,LOAD_DT",
                     "PUBLIC",
-                    "legacy"
+                    "legacy",
+                    "merge"
                 ],
                 "source": "GIT"
             },
