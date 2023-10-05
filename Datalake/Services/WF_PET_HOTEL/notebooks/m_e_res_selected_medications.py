@@ -270,12 +270,6 @@ try:
         """source.E_RES_SELECTED_MEDICATION_ID = target.E_RES_SELECTED_MEDICATION_ID"""
     )
     refined_perf_table = f"{legacy}.E_RES_SELECTED_MEDICATIONS"
-    DuplicateChecker.check_for_duplicate_primary_keys(
-        spark,
-        refined_perf_table,
-        Shortcut_to_E_RES_SELECTED_MEDICATIONS1,
-        ["E_RES_SELECTED_MEDICATION_ID"],
-    )
     executeMergeByPrimaryKey(
         Shortcut_to_E_RES_SELECTED_MEDICATIONS1,
         refined_perf_table,

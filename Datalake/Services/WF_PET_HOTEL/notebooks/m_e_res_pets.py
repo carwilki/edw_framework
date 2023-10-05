@@ -385,9 +385,6 @@ Shortcut_to_E_RES_PETS_1 = UPD_E_RES_PETS.selectExpr(
 try:
     primary_key = """source.E_RES_PET_ID = target.E_RES_PET_ID"""
     refined_perf_table = f"{cust_sensitive}.legacy_e_res_pets"
-    DuplicateChecker.check_for_duplicate_primary_keys(
-        spark, refined_perf_table, Shortcut_to_E_RES_PETS_1, ["E_RES_PET_ID"]
-    )
     executeMergeByPrimaryKey(
         Shortcut_to_E_RES_PETS_1, refined_perf_table, ["E_RES_PET_ID"]
     )
