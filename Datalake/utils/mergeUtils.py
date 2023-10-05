@@ -41,12 +41,12 @@ def genMergeUpsertQuery(target_table, source_table, targetColList, primaryKeyStr
     return mergeQuery
 
 
-def executeMerge(sourceDataFrame, targetTable, primaryKeyString):
+def executeMerge(sourceDataFrame: str, targetTable: str, primaryKeyString: str):
     logger = getLogger()
 
     try:
         logger.info("executing executeMerge Function")
-        sourceTempView = "temp_source_" + targetTable.split(".")[1]
+        sourceTempView = "temp_source_" + targetTable.replace(".", "_")
         sourceDataFrame.createOrReplaceTempView(sourceTempView)
         sourceColList = sourceDataFrame.columns
         targetColList = spark.read.table(targetTable).columns
@@ -85,9 +85,7 @@ def executeMergeByPrimaryKey(
     tempTarget = (
         f"temp_target_{targetTable.replace('.','_')}_{str(uuid4()).replace('-','')}"
     )
-    createTempTable = (
-        f"CREATE TEMP VIEW {tempTarget} AS SELECT * FROM {targetTable}"
-    )
+    createTempTable = f"CREATE TEMP VIEW {tempTarget} AS SELECT * FROM {targetTable}"
     spark.sql(createTempTable).collect()
     executeMerge(sourceDataFrame, tempTarget, mergecondition)
     DuplicateChecker.check_for_duplicate_primary_keys(tempTarget, targetTable)
