@@ -288,7 +288,10 @@ try:
         """source.E_RES_ADD_ON_CATEGORY_ID = target.E_RES_ADD_ON_CATEGORY_ID"""
     )
     refined_perf_table = f"{legacy}.E_RES_ADD_ON_CATEGORY"
-    executeMergeByPrimaryKey(Shortcut_to_E_RES_ADD_ON_CATEGORY1, refined_perf_table, ["E_RES_ADD_ON_CATEGORY_ID"])
+    DuplicateChecker.check_for_duplicate_primary_keys(
+        Shortcut_to_E_RES_ADD_ON_CATEGORY1, ["E_RES_ADD_ON_CATEGORY_ID"]
+    )
+    executeMerge(Shortcut_to_E_RES_ADD_ON_CATEGORY1, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
         "E_RES_ADD_ON_CATEGORY",

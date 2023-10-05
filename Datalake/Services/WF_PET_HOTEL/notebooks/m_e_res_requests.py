@@ -486,9 +486,10 @@ Shortcut_to_E_RES_REQUESTS1 = UPD_E_RES_REQUESTS.selectExpr(
 try:
     primary_key = """source.E_RES_REQUEST_ID = target.E_RES_REQUEST_ID"""
     refined_perf_table = f"{cust_sensitive}.legacy_e_res_requests"
-    executeMergeByPrimaryKey(
-        Shortcut_to_E_RES_REQUESTS1, refined_perf_table, ["E_RES_REQUEST_ID"]
+    DuplicateChecker.check_for_duplicate_primary_keys(
+        Shortcut_to_E_RES_REQUESTS1, ["E_RES_REQUEST_ID"]
     )
+    executeMerge(Shortcut_to_E_RES_REQUESTS1, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
         "E_RES_REQUESTS", "E_RES_REQUESTS", "Completed", "N/A", f"{raw}.log_run_details"

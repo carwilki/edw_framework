@@ -356,7 +356,8 @@ Shortcut_to_E_RES_ADD_ONS1 = UPD_E_RES_ADD_ON.selectExpr(
 try:
     primary_key = """source.E_RES_ADD_ON_ID = target.E_RES_ADD_ON_ID"""
     refined_perf_table = f"{legacy}.E_RES_ADD_ONS"
-    executeMergeByPrimaryKey(Shortcut_to_E_RES_ADD_ONS1, refined_perf_table, ["E_RES_ADD_ON_ID"])
+    DuplicateChecker.check_for_duplicate_primary_keys(Shortcut_to_E_RES_ADD_ONS1, ['E_RES_ADD_ON_ID'])
+    executeMerge(Shortcut_to_E_RES_ADD_ONS1, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
         "E_RES_ADD_ONS", "E_RES_ADD_ONS", "Completed", "N/A", f"{raw}.log_run_details"

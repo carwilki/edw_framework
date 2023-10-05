@@ -241,10 +241,13 @@ try:
         """source.E_RES_SELECTED_ADD_ON_ID = target.E_RES_SELECTED_ADD_ON_ID"""
     )
     refined_perf_table = f"{legacy}.E_RES_SELECTED_ADD_ONS"
-    executeMergeByPrimaryKey(
+    DuplicateChecker.check_for_duplicate_primary_keys(
+        Shortcut_to_E_RES_SELECTED_ADD_ONS1, ["E_RES_SELECTED_ADD_ON"]
+    )
+    executeMerge(
         Shortcut_to_E_RES_SELECTED_ADD_ONS1,
         refined_perf_table,
-        ["E_RES_SELECTED_ADD_ON_ID"],
+        primary_key,
     )
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
