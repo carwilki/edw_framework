@@ -14,7 +14,7 @@
             "task_key": "m_service_smart",
             "run_if": "ALL_SUCCESS",
             "notebook_task": {
-                "notebook_path": "Datalake/BA_HCM/WF_SalonSmart/notebooks/m_service_smart",
+                "notebook_path": "Datalake/HCM/WF_SalonSmart/notebooks/m_service_smart",
                 "base_parameters": {
                     "env": "prod"
                 },
