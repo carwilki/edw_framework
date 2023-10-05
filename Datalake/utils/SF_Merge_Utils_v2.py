@@ -39,7 +39,7 @@ class SnowflakeWriter:
             table = self.table
         df.write.format("net.snowflake.spark.snowflake").options(
             **self.sfOptions
-        ).option("dbtable", table).mode("overwrite").save()
+        ).option("dbtable", table).mode("append").save()
 
     def get_clause(self, column_list, clause_type):
         clause_type = clause_type.lower()
@@ -82,10 +82,10 @@ class SnowflakeWriter:
     def push_data(self, df, write_mode="merge"):
         if write_mode.lower() == "merge":
             upsert_query = self.create_upsert_query(df.columns)
+            self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")            
             self.write_df_to_sf(df, f"TEMP_{self.table}")
             print("running upsert ", upsert_query)
             self.run_sf_query(upsert_query)
-            # self.run_sf_query(f"TRUNCATE TABLE TEMP_{self.table}")
         elif write_mode.lower() == "full":
             self.run_sf_query(f"TRUNCATE TABLE {self.table}")
             self.write_df_to_sf(df)

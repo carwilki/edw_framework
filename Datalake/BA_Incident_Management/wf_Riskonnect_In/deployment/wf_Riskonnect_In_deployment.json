@@ -1,0 +1,269 @@
+{
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    },
+    "name": "wf_Riskonnect_In",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 100,
+    "tasks": [
+        {
+            "task_key": "m_Riskonnect_Incident_Claims_Pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Incident_Management/wf_Riskonnect_In/notebooks/m_Riskonnect_Incident_Claims_Pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Riskonnect_Incident_Claims",
+            "depends_on": [
+                {
+                    "task_key": "m_Riskonnect_Incident_Claims_Pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Incident_Management/wf_Riskonnect_In/notebooks/m_Riskonnect_Incident_Claims",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Riskonnect_Incident_Investigations_Pre",
+            "depends_on": [
+                {
+                    "task_key": "m_Riskonnect_Incident_Claims"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Incident_Management/wf_Riskonnect_In/notebooks/m_Riskonnect_Incident_Investigations_Pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "m_Riskonnect_Incident_Investigation",
+            "depends_on": [
+                {
+                    "task_key": "m_Riskonnect_Incident_Investigations_Pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/BA_Incident_Management/wf_Riskonnect_In/notebooks/m_Riskonnect_Incident_Investigation",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_INCIDENT_CLAIMS",
+            "depends_on": [
+                {
+                    "task_key": "m_Riskonnect_Incident_Investigation"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "INCIDENT_CLAIMS",
+                    "SRC_CD,CLAIM_NBR",
+                    "UPDATE_TSTMP,LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_INCIDENT_INVESTIGATIONS",
+            "depends_on": [
+                {
+                    "task_key": "SF_INCIDENT_CLAIMS"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "INCIDENT_INVESTIGATIONS",
+                    "SRC_CD,CLAIM_NBR",
+                    "UPDATE_TSTMP,LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_Riskonnect_In",
+            "max_retries": 3,
+            "min_retry_interval_millis": 10000,
+            "retry_on_timeout": false,
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+	"job_clusters": [
+        {
+            "job_cluster_key": "wf_Riskonnect_In",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+					"spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+
+
+
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "NZ-Migration"
+    },
+    "format": "MULTI_TASK"
+}

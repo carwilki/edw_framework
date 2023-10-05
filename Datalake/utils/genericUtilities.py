@@ -503,3 +503,16 @@ def get_src_file(key, _bucket):
     lst = dbutils.fs.ls(_bucket + fldr)
     files = [x.path for x in lst if x.name.lower().startswith(key.lower())]
     return files[0] if files else None
+
+
+def fileExists(pfile):
+    try:
+        data = dbutils.fs.head(pfile, 1)
+        if data == "":
+            return False
+    except:
+        print(f"{pfile} doesn't exist")
+        return False
+    else:
+        print(f"FILE {pfile} EXISTS  ")
+        return True
