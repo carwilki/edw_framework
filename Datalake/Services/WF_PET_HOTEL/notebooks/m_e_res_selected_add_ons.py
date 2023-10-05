@@ -242,7 +242,7 @@ try:
     )
     refined_perf_table = f"{legacy}.E_RES_SELECTED_ADD_ONS"
     DuplicateChecker.check_for_duplicate_primary_keys(
-        Shortcut_to_E_RES_SELECTED_ADD_ONS1, ["E_RES_SELECTED_ADD_ON"]
+        Shortcut_to_E_RES_SELECTED_ADD_ONS1, ["E_RES_SELECTED_ADD_ON_ID"]
     )
     executeMerge(
         Shortcut_to_E_RES_SELECTED_ADD_ONS1,
