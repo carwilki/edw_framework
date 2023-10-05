@@ -88,7 +88,8 @@ def executeMergeByPrimaryKey(
     createTempTable = f"CREATE TEMP VIEW {tempTarget} AS SELECT * FROM {targetTable}"
     spark.sql(createTempTable).collect()
     executeMerge(sourceDataFrame, tempTarget, mergecondition)
-    DuplicateChecker.check_for_duplicate_primary_keys(tempTarget, targetTable)
+    new = spark.sql(f"select * from {tempTarget}")
+    DuplicateChecker.check_for_duplicate_primary_keys(new, primaryKeys)
     df = spark.sql(f"select * from {tempTarget}")
     df.write.mode("overwrite").saveAsTable(targetTable)
 
