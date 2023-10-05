@@ -37,6 +37,8 @@ file_path = get_src_file('Honorary_Designee', source_bucket)
 
 print(file_path)
 
+if not fileExists(file_path):
+    dbutils.notebook.exit('file not available or empty')
 # COMMAND ----------
 
 # Processing node SQ_Shortcut_to_Honorary_Designee_File, type SOURCE 
