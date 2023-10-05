@@ -35,7 +35,7 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 
 SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE = spark.sql(f"""SELECT week_dt
 
-FROM {empl_protected}.raw_PS2_ADJUSTED_LABOR_WK_PRE
+FROM {raw}.PS2_ADJUSTED_LABOR_WK_PRE
 
 WHERE WEEK_DT > DECODE(DATE_PART('DOW',CURRENT_DATE), 1, CURRENT_DATE, (CURRENT_DATE - (DATE_PART('DOW',CURRENT_DATE)-1) +7 ))""").withColumn("sys_row_id", monotonically_increasing_id())
 # Conforming fields names to the component layout
