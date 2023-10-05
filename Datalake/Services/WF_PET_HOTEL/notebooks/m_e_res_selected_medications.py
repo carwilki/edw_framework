@@ -276,7 +276,7 @@ try:
     executeMerge(
         Shortcut_to_E_RES_SELECTED_MEDICATIONS1,
         refined_perf_table,
-        ["E_RES_SELECTED_MEDICATION_ID"],
+        primary_key,
     )
     logger.info(f"Merge with {refined_perf_table} completed]")
     logPrevRunDt(
