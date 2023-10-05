@@ -18,7 +18,7 @@ for table in tables:
 
 for table in PII_tables:
     print(table)
-    rocky_table = f"refine.{table}_history"
+    rocky_table = f"empl_protected.refine_{table}_history"
     target_table = f"empl_protected.legacy_{table}"
     df = spark.sql(f"""select CLAIM_NBR
                         , a.DAY_DT

@@ -5,7 +5,7 @@ import csv
 tables = [
     "INCIDENT_CLAIMS",
     "INCIDENT_INVESTIGATIONS",
-    "EMPLOYEE_PROFILE_WK",
+    # "EMPLOYEE_PROFILE_WK",
     "INCIDENT_DATA_LOOKUP",
 ]
 
