@@ -78,6 +78,9 @@ source_bucket = getParameterValue(raw,'BA_HCM.prm','BA_HCM.WF:wf_SalonSmart','so
   
 source_file = get_src_file('salonsmart', source_bucket)
 
+if not fileExists(source_file):
+    dbutils.notebook.exit('file not available or empty')
+
 SQ_Shortcut_To_SALONSMART = spark.read.csv(source_file, sep=',', header=True, quote='"').withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
