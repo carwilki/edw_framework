@@ -55,6 +55,9 @@ source_file = get_source_file(source_bucket)
 
 print(source_file)
 
+if not fileExists(source_file):
+    dbutils.notebook.exit('file not available or empty')
+
 # COMMAND ----------
 
 # if not fileExists(f'{file_path}/tp_asc.dat'):
