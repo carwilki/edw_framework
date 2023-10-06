@@ -237,12 +237,12 @@ def mergeToSFPII(
         SFTable = f"{deltaTable}_lgcy"
 
     schemaForDeltaTable = getEnvPrefix(env) + deltaTableSchema
-    conditionCols: list[str] = list(filter(None, conditionCols))
+    conditionColsList: list[str] = list(filter(None, json.loads(conditionCols)))
 
     if mode.lower() == "merge":
         logger.info("Started merging data to Snowflake tables for table - ", deltaTable)
         
-        if len(conditionCols) == 0:
+        if len(conditionColsList) == 0:
             mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}`"""
         else:
             append_query = getAppendQuery(env, deltaTable, conditionCols)
