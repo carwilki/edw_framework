@@ -237,6 +237,7 @@ def mergeToSFPII(
         SFTable = f"{deltaTable}_lgcy"
 
     schemaForDeltaTable = getEnvPrefix(env) + deltaTableSchema
+    conditionCols: list[str] = list(filter(None, conditionCols))
 
     if mode.lower() == "merge":
         logger.info("Started merging data to Snowflake tables for table - ", deltaTable)
