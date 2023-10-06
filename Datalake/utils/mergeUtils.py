@@ -1,8 +1,12 @@
+from uuid import uuid4
+from pyspark.sql import SparkSession, DataFrame
 from logging import getLogger
+from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
+from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
+import deepdiff
 
-from pyspark.sql import SparkSession
+from Datalake.utils.pk.pk import DuplicateChecker
 
-from Datalake.utils.genericUtilities import getSfCredentials
 
 logger = getLogger()
 
@@ -37,16 +41,12 @@ def genMergeUpsertQuery(target_table, source_table, targetColList, primaryKeyStr
     return mergeQuery
 
 
-def executeMerge(sourceDataFrame, targetTable, primaryKeyString):
-    from logging import INFO, getLogger
-
-    import deepdiff
-
+def executeMerge(sourceDataFrame: str, targetTable: str, primaryKeyString: str):
     logger = getLogger()
 
     try:
         logger.info("executing executeMerge Function")
-        sourceTempView = "temp_source_" + targetTable.split(".")[1]
+        sourceTempView = "temp_source_" + targetTable.replace(".", "_")
         sourceDataFrame.createOrReplaceTempView(sourceTempView)
         sourceColList = sourceDataFrame.columns
         targetColList = spark.read.table(targetTable).columns
@@ -75,37 +75,34 @@ def executeMerge(sourceDataFrame, targetTable, primaryKeyString):
         raise e
 
 
-def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
-    import datetime as dt
+def executeMergeByPrimaryKey(
+    sourceDataFrame: DataFrame, targetTable: str, primaryKeys: list[str]
+):
+    keystatments: list[str] = []
+    for key in primaryKeys:
+        keystatments.append("target." + key + "=source." + key)
+    mergecondition = " AND ".join(keystatments)
+    tempTarget = (
+        f"temp_target_{targetTable.replace('.','_')}_{str(uuid4()).replace('-','')}"
+    )
+    createTempTable = f"CREATE TEMP VIEW {tempTarget} AS SELECT * FROM {targetTable}"
+    spark.sql(createTempTable).collect()
+    executeMerge(sourceDataFrame, tempTarget, mergecondition)
+    new = spark.sql(f"select * from {tempTarget}")
+    DuplicateChecker.check_for_duplicate_primary_keys(new, primaryKeys)
+    df = spark.sql(f"select * from {tempTarget}")
+    df.write.mode("overwrite").saveAsTable(targetTable)
 
+
+def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
     print("Merge_To_SF function")
     import json
     from logging import getLogger
-
-    from Datalake.utils.genericUtilities import getEnvPrefix, getSfCredentials
-    from Datalake.utils.SF_Merge_Utils import SnowflakeWriter, getAppendQuery
 
     logger = getLogger()
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
-
-    # conditionColList=json.loads(conditionCols)
-
-    # if len(conditionColList)==1 and conditionColList[0]=="None":
-    #     refineDF=spark.sql(f"""show columns in `{schemaForDeltaTable}`.`{deltaTable}`""")
-    #     refineColList=[row.col_name.upper() for row in refineDF.collect()]
-    #     if "LOAD_TSTMP" in refineColList:
-    #         dateValue = dt.datetime.today() - dt.timedelta(days=2)
-    #         mergeDatasetSql = (
-    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where to_date(LOAD_TSTMP ,'yyyy-MM-dd') > current_date() -2 """)
-    #     else:
-    #         mergeDatasetSql = (
-    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` """)
-
-    # else:
-    #     mergeDatasetSql = (
-    #     f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}""" )
 
     mergeDatasetSql = (
         f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""

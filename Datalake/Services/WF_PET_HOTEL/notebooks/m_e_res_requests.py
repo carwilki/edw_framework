@@ -487,7 +487,7 @@ try:
     primary_key = """source.E_RES_REQUEST_ID = target.E_RES_REQUEST_ID"""
     refined_perf_table = f"{cust_sensitive}.legacy_e_res_requests"
     DuplicateChecker.check_for_duplicate_primary_keys(
-        spark, refined_perf_table, Shortcut_to_E_RES_REQUESTS1, ["E_RES_REQUEST_ID"]
+        Shortcut_to_E_RES_REQUESTS1, ["E_RES_REQUEST_ID"]
     )
     executeMerge(Shortcut_to_E_RES_REQUESTS1, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")

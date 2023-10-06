@@ -36,9 +36,7 @@ class DuplicateChecker(object):
     @classmethod
     def check_for_duplicate_primary_keys(
         cls,
-        spark: SparkSession,
-        exiting_table_fqn: str,
-        new_values: DataFrame,
+        values: DataFrame,
         primary_keys: list[str],
     ) -> None:
         """check_for_duplicate_primary_keys unions the given values against the values in
@@ -52,11 +50,8 @@ class DuplicateChecker(object):
         Raises:
             DuplicateKeyException: thrown if there are duplicate primary keys. will have a max of 10 example keys
         """
-        sql_keys = ",".join(primary_keys)
-        current = spark.sql(f"""select {sql_keys} from {exiting_table_fqn}""")
         ret = (
-            new_values.select(*primary_keys)
-            .unionByName(current)
+            values.select(*primary_keys)
             .groupby(*primary_keys)
             .count().filter(col("count") > 1).collect()
         )
