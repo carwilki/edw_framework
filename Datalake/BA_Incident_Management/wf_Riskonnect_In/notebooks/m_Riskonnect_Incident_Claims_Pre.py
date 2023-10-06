@@ -44,11 +44,10 @@ legacy = getEnvPrefix(env) + "legacy"
 _bucket = getParameterValue(
     raw,
     "BA_Incident_Management_Parameter.prm",
-    "BA_Incident_Management.WF:wf_Riskonnect_In",
+    "BA_Incident_Management.WF:wf_Riskonnect_In:incident_claim",
     "source_bucket",
 )
-source_bucket = _bucket + "riskonnect_in/"
-
+source_bucket = _bucket
 
 def get_source_file(key, _bucket):
     import builtins
@@ -326,5 +325,3 @@ Shortcut_to_INCIDENT_CLAIMS_PRE = EXP_LOAD_TSTMP.selectExpr(
 Shortcut_to_INCIDENT_CLAIMS_PRE.write.mode("overwrite").saveAsTable(
     f"{raw}.INCIDENT_CLAIMS_PRE"
 )
-
-# COMMAND ----------
