@@ -240,11 +240,11 @@ def mergeToSFPII(
 
     if mode.lower() == "merge":
         logger.info("Started merging data to Snowflake tables for table - ", deltaTable)
-        append_query = getAppendQuery(env, deltaTable, conditionCols)
-
+        
         if len(conditionCols) == 0:
             mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}`"""
         else:
+            append_query = getAppendQuery(env, deltaTable, conditionCols)
             mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}` where {append_query}"""
 
         print(mergeDatasetSql)
