@@ -20,7 +20,7 @@ dbutils = DBUtils(spark)
 parser.add_argument('env', type=str, help='Env Variable')
 args = parser.parse_args()
 env = args.env
-# env = 'dev'
+#env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -469,6 +469,45 @@ UPD_DELETE = RTR_INS_UPD_DEL_DELETE_temp.selectExpr( \
 	"RTR_INS_UPD_DEL_DELETE___UPDATE_TSTMP3 as UPDATE_TSTMP3") \
 	.withColumn('pyspark_data_action', lit(1))
 
+
+# COMMAND ----------
+# Processing node Shortcut_to_WM_E_LABOR_TYPE_CODE11, type TARGET 
+# COLUMN COUNT: 18
+
+
+Shortcut_to_WM_E_LABOR_TYPE_CODE11 = UPD_DELETE.selectExpr( \
+	"CAST(i_LOCATION_ID13 AS BIGINT) as LOCATION_ID", \
+	"CAST(i_WM_LABOR_TYPE_ID3 AS BIGINT) as WM_LABOR_TYPE_ID", \
+	"CAST(NULL AS STRING) as WM_LABOR_TYPE_CD", \
+	"CAST(NULL AS STRING) as WM_LABOR_TYPE_DESC", \
+	"CAST(NULL AS BIGINT) as SPVSR_AUTH_REQUIRED_FLAG", \
+	"CAST(NULL AS STRING) as MISC_TXT_1", \
+	"CAST(NULL AS STRING) as MISC_TXT_2", \
+	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
+	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
+	"CAST(NULL AS STRING) as WM_USER_ID", \
+	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
+	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
+	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
+	"CAST(NULL AS TIMESTAMP) as WM_CREATED_TSTMP", \
+	"CAST(NULL AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+	"CAST(DELETE_FLAG3 AS TINYINT) as DELETE_FLAG", \
+	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
+)
+# Shortcut_to_WM_E_LABOR_TYPE_CODE11.write.saveAsTable(f'{raw}.WM_E_LABOR_TYPE_CODE')
+
+Shortcut_to_WM_E_LABOR_TYPE_CODE11.createOrReplaceTempView('WM_E_LABOR_TYPE_CODE_DEL')
+
+spark.sql(f"""
+          MERGE INTO {refined_perf_table} trg
+          USING WM_E_LABOR_TYPE_CODE_DEL src
+          ON (src.LOCATION_ID = trg.LOCATION_ID AND src.WM_LABOR_TYPE_ID = trg.WM_LABOR_TYPE_ID )
+          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = src.UPDATE_TSTMP
+          """)
+
+
+
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_LABOR_TYPE_CODE1, type TARGET 
 # COLUMN COUNT: 18
@@ -506,29 +545,3 @@ except Exception as e:
   raise e
 	
 
-# COMMAND ----------
-# Processing node Shortcut_to_WM_E_LABOR_TYPE_CODE11, type TARGET 
-# COLUMN COUNT: 18
-
-
-# Shortcut_to_WM_E_LABOR_TYPE_CODE11 = UPD_DELETE.selectExpr( \
-# 	"CAST(i_LOCATION_ID13 AS BIGINT) as LOCATION_ID", \
-# 	"CAST(i_WM_LABOR_TYPE_ID3 AS BIGINT) as WM_LABOR_TYPE_ID", \
-# 	"CAST(NULL AS STRING) as WM_LABOR_TYPE_CD", \
-# 	"CAST(NULL AS STRING) as WM_LABOR_TYPE_DESC", \
-# 	"CAST(NULL AS BIGINT) as SPVSR_AUTH_REQUIRED_FLAG", \
-# 	"CAST(NULL AS STRING) as MISC_TXT_1", \
-# 	"CAST(NULL AS STRING) as MISC_TXT_2", \
-# 	"CAST(NULL AS BIGINT) as MISC_NUM_1", \
-# 	"CAST(NULL AS BIGINT) as MISC_NUM_2", \
-# 	"CAST(NULL AS STRING) as WM_USER_ID", \
-# 	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
-# 	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
-# 	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
-# 	"CAST(NULL AS TIMESTAMP) as WM_CREATED_TSTMP", \
-# 	"CAST(NULL AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-# 	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
-# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-# 	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
-# )
-# Shortcut_to_WM_E_LABOR_TYPE_CODE11.write.saveAsTable(f'{raw}.WM_E_LABOR_TYPE_CODE')

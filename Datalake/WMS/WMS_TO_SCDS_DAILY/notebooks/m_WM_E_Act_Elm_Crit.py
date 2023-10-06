@@ -361,7 +361,7 @@ UPD_DEL = RTR_INS_UP_DEL_DEL_temp.selectExpr( \
 	"RTR_INS_UP_DEL_DEL___LOAD_TSTMP4 as LOAD_TSTMP4", \
 	"RTR_INS_UP_DEL_DEL___UPDATE_TSTMP3 as UPDATE_TSTMP3", \
 	"RTR_INS_UP_DEL_DEL___LOAD_FLAG3 as LOAD_FLAG3") \
-	.withColumn('pyspark_data_action', lit(2))
+	.withColumn('pyspark_data_action', lit(1))
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_E_ACT_ELM_CRIT2, type TARGET 

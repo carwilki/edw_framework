@@ -710,33 +710,44 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 # COLUMN COUNT: 27
 
 
-# Shortcut_to_WM_E_SHIFT2 = UPD_DELETE.selectExpr( \
-# 	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
-# 	"CAST(WM_SHIFT_ID3 AS BIGINT) as WM_SHIFT_ID", \
-# 	"CAST(null AS STRING) as WM_SHIFT_CD", \
-# 	"CAST(null AS STRING) as WM_SHIFT_DESC", \
-# 	"CAST(null AS STRING) as WM_WHSE", \
-# 	"CAST(null AS DATE) as WM_SHIFT_EFF_DT", \
-# 	"CAST(null AS BIGINT) as OT_FLAG", \
-# 	"CAST(null AS BIGINT) as OT_PAY_FCT", \
-# 	"CAST(null AS BIGINT) as WEEK_MIN_OT_HRS", \
-# 	"CAST(null AS STRING) as SCHED_SHIFT", \
-# 	"CAST(null AS STRING) as REPORT_SHIFT", \
-# 	"CAST(null AS BIGINT) as ROT_SHIFT_FLAG", \
-# 	"CAST(null AS BIGINT) as ROT_SHIFT_NUM_DAYS", \
-# 	"CAST(null AS TIMESTAMP) as ROT_SHIFT_START_TSTMP", \
-# 	"CAST(null AS STRING) as MISC_TXT_1", \
-# 	"CAST(null AS STRING) as MISC_TXT_2", \
-# 	"CAST(null AS BIGINT) as MISC_NUM_1", \
-# 	"CAST(null AS BIGINT) as MISC_NUM_2", \
-# 	"CAST(null AS STRING) as WM_USER_ID", \
-# 	"CAST(null AS BIGINT) as WM_VERSION_ID", \
-# 	"CAST(null AS TIMESTAMP) as WM_CREATE_TSTMP", \
-# 	"CAST(null AS TIMESTAMP) as WM_MOD_TSTMP", \
-# 	"CAST(null AS TIMESTAMP) as WM_CREATED_TSTMP", \
-# 	"CAST(null AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-# 	"CAST(DELETE_FLAG_EXP3 AS BIGINT) as DELETE_FLAG", \
-# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-# 	"CAST(null AS TIMESTAMP) as LOAD_TSTMP" \
-# )
+Shortcut_to_WM_E_SHIFT2 = UPD_DELETE.selectExpr( \
+	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
+	"CAST(WM_SHIFT_ID3 AS BIGINT) as WM_SHIFT_ID", \
+	"CAST(null AS STRING) as WM_SHIFT_CD", \
+	"CAST(null AS STRING) as WM_SHIFT_DESC", \
+	"CAST(null AS STRING) as WM_WHSE", \
+	"CAST(null AS DATE) as WM_SHIFT_EFF_DT", \
+	"CAST(null AS BIGINT) as OT_FLAG", \
+	"CAST(null AS BIGINT) as OT_PAY_FCT", \
+	"CAST(null AS BIGINT) as WEEK_MIN_OT_HRS", \
+	"CAST(null AS STRING) as SCHED_SHIFT", \
+	"CAST(null AS STRING) as REPORT_SHIFT", \
+	"CAST(null AS BIGINT) as ROT_SHIFT_FLAG", \
+	"CAST(null AS BIGINT) as ROT_SHIFT_NUM_DAYS", \
+	"CAST(null AS TIMESTAMP) as ROT_SHIFT_START_TSTMP", \
+	"CAST(null AS STRING) as MISC_TXT_1", \
+	"CAST(null AS STRING) as MISC_TXT_2", \
+	"CAST(null AS BIGINT) as MISC_NUM_1", \
+	"CAST(null AS BIGINT) as MISC_NUM_2", \
+	"CAST(null AS STRING) as WM_USER_ID", \
+	"CAST(null AS BIGINT) as WM_VERSION_ID", \
+	"CAST(null AS TIMESTAMP) as WM_CREATE_TSTMP", \
+	"CAST(null AS TIMESTAMP) as WM_MOD_TSTMP", \
+	"CAST(null AS TIMESTAMP) as WM_CREATED_TSTMP", \
+	"CAST(null AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
+	"CAST(DELETE_FLAG_EXP3 AS TINYINT) as DELETE_FLAG", \
+	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
+	"CAST(null AS TIMESTAMP) as LOAD_TSTMP" \
+)
 # Shortcut_to_WM_E_SHIFT2.write.saveAsTable(f'{raw}.WM_E_SHIFT', mode = 'append')
+
+Shortcut_to_WM_E_SHIFT2.createOrReplaceTempView('WM_E_SHIFT_DEL')
+
+spark.sql(f"""
+          MERGE INTO {refined_perf_table} trg
+          USING WM_E_SHIFT_DEL src
+          ON (src.LOCATION_ID = trg.LOCATION_ID AND src.WM_SHIFT_ID = trg.WM_SHIFT_ID )
+          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = src.UPDATE_TSTMP
+          """)
+
+
