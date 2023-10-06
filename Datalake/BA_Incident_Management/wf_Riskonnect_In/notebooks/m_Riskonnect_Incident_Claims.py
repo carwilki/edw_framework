@@ -32,6 +32,7 @@ refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 empl_protected = getEnvPrefix(env) + 'empl_protected'
+enterprise = getEnvPrefix(env) + 'enterprise'
 
 
 # COMMAND ----------
@@ -50,7 +51,7 @@ FROM (SELECT EMPLOYEE_ID
             ) EMP
 LEFT JOIN 
 (SELECT WEEK_DT,MIN(DAY_DT) AS START_DT 
- FROM {legacy}.DAYS
+ FROM {enterprise}.DAYS
  GROUP BY WEEK_DT) D
 ON D.WEEK_DT=EMP.START_WK 
 ORDER BY EMPLOYEE_ID,START_DT,END_DT
