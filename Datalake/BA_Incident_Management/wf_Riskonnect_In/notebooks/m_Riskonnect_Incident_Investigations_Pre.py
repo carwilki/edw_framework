@@ -44,11 +44,10 @@ legacy = getEnvPrefix(env) + "legacy"
 _bucket = getParameterValue(
     raw,
     "BA_Incident_Management_Parameter.prm",
-    "BA_Incident_Management.WF:wf_Riskonnect_In",
+    "BA_Incident_Management.WF:wf_Riskonnect_In:incident_investigation",
     "source_bucket",
 )
-source_bucket = _bucket + "riskonnect_in/"
-
+source_bucket = _bucket
 
 def get_source_file(key, _bucket):
     import builtins
