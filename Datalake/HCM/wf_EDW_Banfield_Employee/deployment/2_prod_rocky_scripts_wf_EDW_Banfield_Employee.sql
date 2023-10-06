@@ -32,5 +32,5 @@ VALUES('NZ_Migration' --table_group
 , null --snowflake_post_sql
 , null --additional_config
 );
-banfield_employee
-BANFIELD_EMPLOYEE
+-- banfield_employee
+-- BANFIELD_EMPLOYEE

@@ -1,0 +1,3 @@
+-- Databricks notebook source
+-- MAGIC %sql
+-- MAGIC update work.rocky_ingestion_metadata set source_type='NZ_Export_Mako8' where rocky_id=958

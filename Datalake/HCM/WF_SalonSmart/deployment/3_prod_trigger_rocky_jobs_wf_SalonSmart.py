@@ -30,12 +30,19 @@ def trigger_rocky_job(payload):
 import csv
 import time
 
-tables = ["SERVICE_SMART"]
-for table in tables:
-    print(table)
-    query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
-    print(query)
-    job_id = spark.sql(query).collect()[0][0]
+# tables = ["SERVICE_SMART"]
+for job_id in [25100094099254
+,105537293916165
+,819998022560636
+,779517350115908
+,874671157514378
+,437886171911291
+,356661053272306
+,132136279773496]:
+    # print(table)
+    # query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
+    # print(query)
+    # job_id = spark.sql(query).collect()[0][0]
     print(job_id)
     try:
         run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))

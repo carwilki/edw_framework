@@ -9,7 +9,7 @@ PII_tables = ["HONORARY_DESIGNEE"]
 
 for table in PII_tables:
     print(table)
-    rocky_table = f"refine.{table}_history"
+    rocky_table = f"empl_sensitive.refine_{table}_history"
     target_table = f"empl_sensitive.refine_{table}"
     df = spark.sql(f"select * from {rocky_table}")
     df = df.drop(
