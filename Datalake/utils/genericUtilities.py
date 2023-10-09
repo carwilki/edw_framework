@@ -47,6 +47,7 @@ def getSfCredentials(env):
         "sfWarehouse": warehouse,
         "autopushdown": "on",
         "truncate_table" :"ON",
+        "truncate_columns" :"on",
         "sfRole": sfRole,
     }
 
