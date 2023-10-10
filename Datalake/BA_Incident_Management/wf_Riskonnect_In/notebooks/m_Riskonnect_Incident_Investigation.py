@@ -38,7 +38,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 # Processing node SQ_Shortcut_to_INCIDENT_INVESTIGATIONS_PRE, type SOURCE 
 # COLUMN COUNT: 69
 
-SQ_Shortcut_to_INCIDENT_INVESTIGATIONS_PRE = spark.sql(f"""SELECT
+SQ_Shortcut_to_INCIDENT_INVESTIGATIONS_PRE = spark.sql(f"""SELECT 
 CLAIM_NUMBER,
 ACTION_PLAN_DEADLINE_1,
 ACTION_PLAN_DEADLINE_2,
@@ -108,7 +108,13 @@ WITNESS_3_FIRST_NAME,
 WITNESS_3_JOB_TITLE,
 WITNESS_3_LAST_NAME,
 LOAD_TSTMP
-FROM {raw}.INCIDENT_INVESTIGATIONS_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM
+(SELECT
+*,
+row_number() over (partition by claim_number order by ACTION_PLAN_DEADLINE_1 DESC, ACTION_PLAN_DEADLINE_2 DESC, ACTION_PLAN_DEADLINE_3 DESC) as rn
+FROM {raw}.INCIDENT_INVESTIGATIONS_PRE
+) a
+WHERE rn=1""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
