@@ -48,8 +48,6 @@ def getSfCredentials(env):
         "autopushdown": "on",
         "truncate_table" :"ON",
         "truncate_columns" :"on",
-        "column_mapping": "name",
-        "column_mismatch_behavior": "ignore",
         "sfRole": sfRole,
     }
 
