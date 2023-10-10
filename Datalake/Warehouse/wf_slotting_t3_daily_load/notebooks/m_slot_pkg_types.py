@@ -84,6 +84,7 @@ Shortcut_to_SLOT_PKG_TYPES1 = UPDTRANS.selectExpr(
 	"pyspark_data_action as pyspark_data_action"
 )
 
+
 try:
 	primary_key = """source.SL_PKG_TYPE_CD = target.SL_PKG_TYPE_CD"""
 	refined_perf_table = f"{legacy}.SLOT_PKG_TYPES"
