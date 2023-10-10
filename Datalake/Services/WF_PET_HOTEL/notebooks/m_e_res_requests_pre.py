@@ -187,5 +187,5 @@ Shortcut_to_E_RES_REQUESTS_PRE = EXP_E_RES_REQUESTS_PRE.selectExpr(
 )
 
 Shortcut_to_E_RES_REQUESTS_PRE.write.mode("overwrite").saveAsTable(
-    f"{cust_sensitive}.legacy_e_res_requests_pre"
+    f"{cust_sensitive}.raw_e_res_requests_pre"
 )
