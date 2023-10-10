@@ -10,20 +10,6 @@ class SnowflakeWriter:
         self.primary_keys = primary_keys
         self.env = sfOptions["env"]
         self.sfOptions = sfOptions
-        # print(env)
-        # envSuffix = getSFEnvSuffix(self.env)
-        """  self.sfOptions = {
-            "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
-            "sfUser": secrets.get("databricks_service_account", "username"),
-            "sfPassword": secrets.get("databricks_service_account", "password"),
-            "sfDatabase": database,
-            "sfSchema": schema,
-            "sfWarehouse": "IT_WH",
-            "authenticator": "https://petsmart.okta.com",
-            "autopushdown": "on",
-            "sfRole": f"edw{envSuffix}_owner",
-        }
-        """
 
     def run_sf_query(self, query):
         from pyspark.sql import SparkSession
@@ -81,14 +67,21 @@ class SnowflakeWriter:
 
     def push_data(self, df, write_mode="merge"):
         if write_mode.lower() == "merge":
+            # Drop temp table if it exists and create one matching the target SF table            
             upsert_query = self.create_upsert_query(df.columns)
             self.run_sf_query(f"DROP TABLE IF EXISTS TEMP_{self.table}")
             create_temp_tbl_query = f'create table if not exists TEMP_{self.table} like {self.table}'
-            self.run_sf_query(create_temp_tbl_query)            
+            self.run_sf_query(create_temp_tbl_query)
+            
+            #Drop default NOT NULL columns from the temp table and write to temp table
+            run_sf_query(f"ALTER TABLE TEMP_{self.table} DROP COLUMN SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP")
             self.write_df_to_sf(df, f"TEMP_{self.table}")
+            
+            #Run final merge from temp to target SF table and cleanup the temp table
             print("running upsert ", upsert_query)
             self.run_sf_query(upsert_query)
             self.run_sf_query(f"DROP TABLE TEMP_{self.table}")
+            
         elif write_mode.lower() == "full":
             self.run_sf_query(f"TRUNCATE TABLE {self.table}")
             self.write_df_to_sf(df)
