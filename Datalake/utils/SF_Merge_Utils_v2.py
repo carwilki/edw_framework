@@ -82,7 +82,9 @@ class SnowflakeWriter:
     def push_data(self, df, write_mode="merge"):
         if write_mode.lower() == "merge":
             upsert_query = self.create_upsert_query(df.columns)
-            self.run_sf_query(f"TRUNCATE TABLE IF EXISTS TEMP_{self.table}")
+            self.run_sf_query(f"DROP TABLE IF EXISTS TEMP_{self.table}")
+            create_temp_tbl_query = f'create table if not exists TEMP_{self.table} like {self.table}'
+            self.run_sf_query(create_temp_tbl_query)            
             self.write_df_to_sf(df, f"TEMP_{self.table}")
             print("running upsert ", upsert_query)
             self.run_sf_query(upsert_query)
