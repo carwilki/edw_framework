@@ -77,12 +77,13 @@ UPDTRANS = SQ_Shortcut_to_SLOT_PKG_TYPES_PRE_temp.selectExpr(
 
 
 Shortcut_to_SLOT_PKG_TYPES1 = UPDTRANS.selectExpr(
-	"CAST(SL_PKG_TYPE_CD AS STRING) as SL_PKG_TYPE_CD",
+	"CAST(TRIM(SL_PKG_TYPE_CD) AS STRING) as SL_PKG_TYPE_CD",
 	"CAST(SL_PKG_TYPE_DESC AS STRING) as SL_PKG_TYPE_DESC",
 	"CAST(UPDATE_DT AS DATE) as UPDATE_DT",
 	"CAST(LOAD_DT AS DATE) as LOAD_DT",
 	"pyspark_data_action as pyspark_data_action"
 )
+
 
 try:
 	primary_key = """source.SL_PKG_TYPE_CD = target.SL_PKG_TYPE_CD"""
