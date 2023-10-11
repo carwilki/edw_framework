@@ -18,9 +18,9 @@ spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 parser.add_argument('env', type=str, help='Env Variable')
-args = parser.parse_args()
-env = args.env
-# env = 'dev'
+# args = parser.parse_args()
+# env = args.env
+env = 'dev'
 
 if env is None or env == '':
     raise ValueError('env is not set')
@@ -333,19 +333,7 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 Shortcut_to_WM_LOCN_GRP1 = UPD_DELETE.selectExpr( \
 	"CAST(i_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
 	"CAST(i_WM_LOCN_GRP_ID3 AS BIGINT) as WM_LOCN_GRP_ID", \
-	"CAST(NULL AS BIGINT) as WM_GRP_TYPE", \
-	"CAST(NULL AS STRING) as WM_LOCN_ID", \
-	"CAST(NULL AS STRING) as WM_GRP_ATTR", \
-	"CAST(NULL AS BIGINT) as WM_LOCN_HDR_ID", \
-	"CAST(NULL AS STRING) as WM_USER_ID", \
-	"CAST(NULL AS BIGINT) as WM_VERSION_ID", \
-	"CAST(NULL AS TIMESTAMP) as WM_CREATED_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as WM_CREATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as WM_MOD_TSTMP", \
-	"CAST(DELETE_FLAG_EXP AS TINYINT) as DELETE_FLAG", \
-	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-	"CAST(NULL AS TIMESTAMP) as LOAD_TSTMP" \
+	"CAST(DELETE_FLAG_EXP AS TINYINT) as DELETE_FLAG" \
 )
 # Shortcut_to_WM_LOCN_GRP1.write.saveAsTable(f'{raw}.WM_LOCN_GRP')
 
@@ -355,7 +343,7 @@ spark.sql(f"""
           MERGE INTO {refined_perf_table} trg
           USING WM_LOCN_GRP_DEL src
           ON (src.LOCATION_ID = trg.LOCATION_ID AND src.WM_LOCN_GRP_ID = trg.WM_LOCN_GRP_ID )
-          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = src.UPDATE_TSTMP
+          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = CURRENT_TIMESTAMP()
           """)
 
 # COMMAND ----------
