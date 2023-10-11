@@ -74,7 +74,7 @@ class SnowflakeWriter:
             self.run_sf_query(create_temp_tbl_query)
             
             #Drop default NOT NULL columns from the temp table and write to temp table
-            run_sf_query(f"ALTER TABLE TEMP_{self.table} DROP COLUMN SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP")
+            self.run_sf_query(f"ALTER TABLE TEMP_{self.table} DROP COLUMN SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP")
             self.write_df_to_sf(df, f"TEMP_{self.table}")
             
             #Run final merge from temp to target SF table and cleanup the temp table
