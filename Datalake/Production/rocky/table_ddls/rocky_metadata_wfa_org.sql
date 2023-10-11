@@ -12,6 +12,6 @@ VALUES (
 null, false, null, false, "delta",
 "legacy", null, "wfa_org", "full", null, 
 null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
-null, array("dbodake@petsmart.com", "sjaiswal@petsmart.com"), 3, null, false,
+null, array("dbodake@petsmart.com", "sjaiswal@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
 null, null ,"ALL_MUST_BE_MET" ,false ,null , null, null
 );
