@@ -4238,7 +4238,7 @@
                     "prod",
                     "WM_STOP",
                     "LOCATION_ID,WM_SHIPMENT_ID,WM_STOP_SEQ",
-                    "LOAD_TSTMP"
+                    "LOAD_TSTMP,UPDATE_TSTMP"
                 ],
                 "source": "GIT"
             },

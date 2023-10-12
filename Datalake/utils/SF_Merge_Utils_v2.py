@@ -1,8 +1,11 @@
+import json
+from datetime import datetime, timedelta
+from pyspark.sql import SparkSession
+from Datalake.utils.genericUtilities import getEnvPrefix
+
+
 class SnowflakeWriter:
     def __init__(self, sfOptions, table, primary_keys=None, update_excl_columns=[]):
-        import Datalake.utils.secrets as secrets
-        from Datalake.utils.genericUtilities import getSFEnvSuffix
-
         print("initiating SF Writer class")
 
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
@@ -67,21 +70,25 @@ class SnowflakeWriter:
 
     def push_data(self, df, write_mode="merge"):
         if write_mode.lower() == "merge":
-            # Drop temp table if it exists and create one matching the target SF table            
+            # Drop temp table if it exists and create one matching the target SF table
             upsert_query = self.create_upsert_query(df.columns)
             self.run_sf_query(f"DROP TABLE IF EXISTS TEMP_{self.table}")
-            create_temp_tbl_query = f'create table if not exists TEMP_{self.table} like {self.table}'
+            create_temp_tbl_query = (
+                f"create table if not exists TEMP_{self.table} like {self.table}"
+            )
             self.run_sf_query(create_temp_tbl_query)
-            
-            #Drop default NOT NULL columns from the temp table and write to temp table
-            self.run_sf_query(f"ALTER TABLE TEMP_{self.table} DROP COLUMN SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP")
+
+            # Drop default NOT NULL columns from the temp table and write to temp table
+            self.run_sf_query(
+                f"ALTER TABLE TEMP_{self.table} DROP COLUMN SNF_LOAD_TSTMP, SNF_UPDATE_TSTMP"
+            )
             self.write_df_to_sf(df, f"TEMP_{self.table}")
-            
-            #Run final merge from temp to target SF table and cleanup the temp table
+
+            # Run final merge from temp to target SF table and cleanup the temp table
             print("running upsert ", upsert_query)
             self.run_sf_query(upsert_query)
             self.run_sf_query(f"DROP TABLE TEMP_{self.table}")
-            
+
         elif write_mode.lower() == "full":
             self.run_sf_query(f"TRUNCATE TABLE {self.table}")
             self.write_df_to_sf(df)
@@ -91,32 +98,53 @@ class SnowflakeWriter:
             raise Exception(f"{write_mode} not supported. Try : merge, full or append")
 
 
-def getAppendQuery(env, deltaTable, conditionCols):
+def getAppendQuery(
+    env: str,
+    deltaTable: str,
+    conditionCols: list[str],
+    lb: datetime | None = None,
+    ub: datetime | None = None,
+):
     print("get Append query")
-    from pyspark.sql import SparkSession
+    lb_dt, ub_dt = _get_upper_lower_bound_dt_string(deltaTable, env, lb, ub)
 
-    from Datalake.utils.genericUtilities import getEnvPrefix
+    append_query = ""
+    for i in json.loads(conditionCols):
+        if json.loads(conditionCols).index(i) == 0:
+            append_query.join
+            append_query = append_query + f"""'{lb_dt}'<= {i} <='{ub_dt}'"""
+        else:
+            append_query = append_query + f""" or '{lb_dt}'<= {i} <='{ub_dt}'"""
 
-    spark: SparkSession = SparkSession.getActiveSession()
-    import json
-    from datetime import datetime, timedelta
+    return append_query
 
+
+def _get_upper_lower_bound_dt_string(
+    deltaTable: str, env: str, lb: datetime | None, ub: datetime | None
+) -> (str, str):
+    if lb is not None and ub is not None and lb > ub:
+        raise ValueError(f"upper bound {ub} cannot be less than lower bound {lb}")
+    if lb is None:
+        spark: SparkSession = SparkSession.getActiveSession()
+        lb_dt = _get_prev_run_dt(deltaTable, env, spark)
+        ub_dt = lb + timedelta(days=3)
+    else:
+        lb_dt = lb.strftime("%Y-%m-%d")
+        if ub is None:
+            ub_dt = lb + timedelta(days=2)
+        else:
+            ub_dt = ub.strftime("%Y-%m-%d")
+    return lb_dt, ub_dt
+
+
+def _get_prev_run_dt(deltaTable: str, env: str, spark: SparkSession) -> datetime:
     raw = getEnvPrefix(env) + "raw"
-
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date)  from {raw}.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'"""
     ).collect()[0][0]
     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt - timedelta(days=2)
-    prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
-    append_query = ""
-    for i in json.loads(conditionCols):
-        if json.loads(conditionCols).index(i) == 0:
-            append_query = append_query + f"""{i} >= '{prev_run_dt}'"""
-        else:
-            append_query = append_query + f""" or {i} >= '{prev_run_dt}'"""
-
-    return append_query
+    return prev_run_dt
 
 
 def getAppendQuery_tstm(env, deltaTable, conditionCols):
@@ -133,10 +161,10 @@ def getAppendQuery_tstm(env, deltaTable, conditionCols):
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date)  from {raw}.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'"""
     ).collect()[0][0]
-    
+
     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt - timedelta(days=1)
-    
+
     append_query = ""
     for i in json.loads(conditionCols):
         if json.loads(conditionCols).index(i) == 0:
@@ -145,4 +173,3 @@ def getAppendQuery_tstm(env, deltaTable, conditionCols):
             append_query = append_query + f""" or {i} > '{prev_run_dt}'"""
 
     return append_query
-
