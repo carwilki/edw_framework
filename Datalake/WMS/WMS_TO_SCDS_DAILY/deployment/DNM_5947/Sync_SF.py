@@ -1,13 +1,15 @@
 import json
 from Datalake.utils.mergeUtils import mergeToSFv2
+from pyspark.sql import SparkSession
+from datetime import datetime
 
-
-# env = env
-# deltaTable = deltaTable
-# primaryKeys = primaryKeys
-# conditionCols =
-# primaryKeys_list = json.dumps(primaryKeys)
-# conditionCols_list = json.dumps(conditionCols)
-
+primaryKeys = "LOCATION_ID,WM_SHIPMENT_ID,WM_STOP_SEQ"
+primaryKeys = [pKey for pKey in primaryKeys.split(",")]
+conditionCols = "LOAD_TSTMP,UPDATE_TSTMP"
+conditionCols = [conditionCol for conditionCol in conditionCols.split(",")]
+primaryKeys = json.dumps(primaryKeys)
+conditionCols = json.dumps(conditionCols)
 spark: SparkSession = SparkSession.getActiveSession()
-mergeToSFv2("qa", "test", ["id1", "id2"], ["created_at", "updated_at"])
+
+mergeToSFv2("qa", "WM_STOP", primaryKeys, conditionCols, datetime(2023, 9, 26))
+mergeToSFv2("qa", "WM_STOP", primaryKeys, conditionCols, datetime(2023, 9, 18))
