@@ -34,6 +34,7 @@ legacy = getEnvPrefix(env) + "legacy"
 
 
 # COMMAND ----------
+
 # Processing node LKP_SITE_PROFILE_SRC, type SOURCE Cached data from connected lookup object
 # COLUMN COUNT: 7
 
@@ -60,6 +61,7 @@ LKP_SITE_PROFILE_SRC = (
 )
 
 # COMMAND ----------
+
 # Processing node SQ_SITE_HOURS_DAY, type SOURCE
 # COLUMN COUNT: 10
 
@@ -79,6 +81,7 @@ FROM {legacy}.SITE_HOURS_DAY"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node SQ_SITE_HOURS_DAY_PRE, type SOURCE
 # COLUMN COUNT: 7
 
@@ -91,10 +94,11 @@ SITE_HOURS_DAY_PRE.BUSINESS_AREA,
 SITE_HOURS_DAY_PRE.OPEN_TSTMP,
 SITE_HOURS_DAY_PRE.CLOSE_TSTMP,
 SITE_HOURS_DAY_PRE.IS_CLOSED
-FROM {legacy}.SITE_HOURS_DAY_PRE"""
+FROM {raw}.SITE_HOURS_DAY_PRE"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node Fil_Site_Hours_Day_1, type FILTER
 # COLUMN COUNT: 10
 
@@ -121,6 +125,7 @@ Fil_Site_Hours_Day_1 = (
 )
 
 # COMMAND ----------
+
 # Processing node Exp_Site_Hours_Day, type EXPRESSION
 # COLUMN COUNT: 11
 
@@ -146,6 +151,7 @@ Exp_Site_Hours_Day = Fil_Site_Hours_Day_1_temp.selectExpr(
 
 
 # COMMAND ----------
+
 # Processing node LKP_SITE_PROFILE, type LOOKUP_FROM_PRECACHED_DATASET . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 7
 
@@ -160,7 +166,7 @@ LKP_SITE_PROFILE_lookup_result = (
         LKP_SITE_PROFILE_SRC,
         (col("LOCATION_NBR1") == col("LOCATION_NBR2"))
         & (col("LOCATION_TYPE_ID1") == col("LOCATION_TYPE_ID2")),
-        "left",
+        "inner",
     )
     .withColumn(
         "row_num_LOCATION_ID",
@@ -178,6 +184,7 @@ LKP_SITE_PROFILE = LKP_SITE_PROFILE_lookup_result.filter(
 )
 
 # COMMAND ----------
+
 # Processing node Exp_Site_Hours_Day_Pre, type EXPRESSION
 # COLUMN COUNT: 10
 
@@ -209,7 +216,9 @@ Exp_Site_Hours_Day_Pre = Exp_Site_Hours_Day_Pre_joined.selectExpr(
     "LKP_SITE_PROFILE___STORE_NBR as STORE_NBR",
     "MD5 (concat_ws( cast(SQ_SITE_HOURS_DAY_PRE___LOCATION_TYPE_ID as string) , LKP_SITE_PROFILE___TIME_ZONE , date_format(SQ_SITE_HOURS_DAY_PRE___OPEN_TSTMP, 'YYYY-MM-DD hh:MM:SS') , date_format(SQ_SITE_HOURS_DAY_PRE___CLOSE_TSTMP, 'YYYY-MM-DD hh:MM:SS') , cast(SQ_SITE_HOURS_DAY_PRE___IS_CLOSED as string) , cast(LKP_SITE_PROFILE___STORE_NBR as string) )) as _md5PRE",
 )
+
 # COMMAND ----------
+
 # Processing node Jnr_Site_Hours_Day, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 21
 
@@ -257,6 +266,7 @@ Jnr_Site_Hours_Day = Exp_Site_Hours_Day_temp.join(
 )
 
 # COMMAND ----------
+
 # Processing node Fil_Site_Hours_Day, type FILTER
 # COLUMN COUNT: 21
 
@@ -296,6 +306,7 @@ Fil_Site_Hours_Day = (
 )
 
 # COMMAND ----------
+
 # Processing node Exp_StoreHours, type EXPRESSION . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 12
 
@@ -342,6 +353,7 @@ Exp_StoreHours = Fil_Site_Hours_Day_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node Upd_Site_Hours_Day, type UPDATE_STRATEGY . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 12
 
@@ -366,6 +378,7 @@ Upd_Site_Hours_Day = Exp_StoreHours_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node Shortcut_to_SITE_HOURS_DAY_1, type TARGET
 # COLUMN COUNT: 11
 

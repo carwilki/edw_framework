@@ -76,7 +76,6 @@ WHERE SITE_PROFILE.STORE_NBR=store_nbr"""
 # COLUMN COUNT: 6
 
 api_url=getParameterValue(raw,'BA_Dimension_Parameter.prm','BA_Dimension.WF:wf_site_hours_day','source_url')
-
 #api_url = "https://petm-qa-facility-svc.cloudhub.io/facility-svc/v1/store/all/hours"
 
 headers = CaseInsensitiveDict()
@@ -112,7 +111,7 @@ df = (
 df2 = df.select("StoreNumber","StoreHours.StoreHoursForDateViewModel")\
   .withColumnRenamed("StoreHoursForDateViewModel","StoreHours")\
     .select(col("StoreNumber"),explode("StoreHours").alias('Daily_Hours'))\
-    .select("StoreNumber","Daily_Hours.*") 
+    .select("StoreNumber","Daily_Hours.CloseTime","Daily_Hours.DayOfWeek","Daily_Hours.ForDate","Daily_Hours.IsClosed","Daily_Hours.OpenTime") 
     
 df3 = df2.selectExpr(
       "StoreNumber",
@@ -132,10 +131,9 @@ df4 = df.select("StoreNumber","StoreServices.StoreServiceHoursForDateServiceView
 df5 = df4.select("StoreNumber","Name","StoreServiceHoursForDateList.StoreServiceHoursForDateViewModel")\
   .withColumnRenamed("StoreServiceHoursForDateViewModel","StoreServiceHoursForDateList")\
     .select(col("StoreNumber"),col("Name"),explode("StoreServiceHoursForDateList").alias('ServiceList'))\
-    .select("StoreNumber","Name","ServiceList.*")
+    .select("StoreNumber","Name","ServiceList.CloseTime","ServiceList.DayOfWeek","ServiceList.ForDate","ServiceList.IsClosed","ServiceList.OpenTime")
 
 Store_ServiceHours = df3.union(df5)
-
 
 
 # COMMAND ----------
@@ -144,18 +142,18 @@ Store_ServiceHours = df3.union(df5)
 # COLUMN COUNT: 6
 
 # # for each involved DataFrame, append the dataframe name to each column
-Unn_Store_ServiceHours_temp = Unn_Store_ServiceHours.toDF(
-    *["Unn_Store_ServiceHours___" + col for col in Unn_Store_ServiceHours.columns]
+Unn_Store_ServiceHours_temp = Store_ServiceHours.toDF(
+    *["Unn_Store_ServiceHours___" + col for col in Store_ServiceHours.columns]
 )
 
 Fil_StoreHours = (
     Unn_Store_ServiceHours_temp.selectExpr(
-        "Unn_Store_ServiceHours___n3_StoreNumber0 as n3_StoreNumber0",
-        "Unn_Store_ServiceHours___name as name",
-        "Unn_Store_ServiceHours___d2p1_ForDate as d2p1_ForDate",
-        "Unn_Store_ServiceHours___d2p1_CloseTime as d2p1_CloseTime",
-        "Unn_Store_ServiceHours___d2p1_OpenTime as d2p1_OpenTime",
-        "Unn_Store_ServiceHours___d2p1_IsClosed as d2p1_IsClosed",
+        "Unn_Store_ServiceHours___StoreNumber as n3_StoreNumber0",
+        "Unn_Store_ServiceHours___Name as name",
+        "Unn_Store_ServiceHours___ForDate as d2p1_ForDate",
+        "Unn_Store_ServiceHours___CloseTime as d2p1_CloseTime",
+        "Unn_Store_ServiceHours___OpenTime as d2p1_OpenTime",
+        "Unn_Store_ServiceHours___IsClosed as d2p1_IsClosed",
     )
     .filter("n3_StoreNumber0 is not null AND d2p1_ForDate is not null")
     .withColumn("sys_row_id", monotonically_increasing_id())
