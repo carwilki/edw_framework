@@ -112,9 +112,11 @@ def getAppendQuery(
     for i in json.loads(conditionCols):
         if json.loads(conditionCols).index(i) == 0:
             append_query.join
-            append_query = append_query + f"""'{lb_dt}'<= {i} <='{ub_dt}'"""
+            append_query = append_query + f"""({i}>='{lb_dt}' and {i} <='{ub_dt}')"""
         else:
-            append_query = append_query + f""" or '{lb_dt}'<= {i} <='{ub_dt}'"""
+            append_query = (
+                append_query + f""" or ({i}>='{lb_dt}' and {i} <='{ub_dt}')"""
+            )
 
     return append_query
 
