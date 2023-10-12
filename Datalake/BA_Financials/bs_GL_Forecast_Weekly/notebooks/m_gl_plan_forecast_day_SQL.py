@@ -31,7 +31,7 @@ if env is None or env == '':
 refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
-
+enterprise='enterprise'
 
 # COMMAND ----------
 
@@ -107,7 +107,7 @@ SELECT DAY.day_dt
                 ,fiscal_mo
                 ,COUNT (*) OVER (PARTITION BY fiscal_mo) day_in_month
                 ,MAX(DAY_DT) OVER (PARTITION BY fiscal_mo) LAST_DAY_OF_FMON
-           FROM {legacy}.days
+           FROM {enterprise}.days
         --WHERE TO_TIMESTAMP(fiscal_mo, 'YYYYMM') > ADD_MONTHS(DATE_TRUNC('MONTH',CURRENT_DATE), -27) 
         WHERE CONCAT(SUBSTR(fiscal_mo, 1, 4), SUBSTR(fiscal_mo, 5, 2)) > date_format(ADD_MONTHS(DATE_TRUNC('MONTH',CURRENT_DATE), -27), 'yyyyMMdd')
         ) DAY
