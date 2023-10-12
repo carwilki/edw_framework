@@ -20,7 +20,7 @@
                 },
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wf_PS2_Earned_Hrs",
             "libraries": [
                 {
                     "pypi": {
@@ -61,7 +61,7 @@
                 },
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wf_PS2_Earned_Hrs",
             "libraries": [
                 {
                     "pypi": {
@@ -100,7 +100,7 @@
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": "0612-210702-eqrpgtlc",
+            "job_cluster_key": "wf_PS2_Earned_Hrs",
             "libraries": [
                 {
                     "pypi": {
