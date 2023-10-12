@@ -146,5 +146,3 @@ def getAppendQuery_tstm(env, deltaTable, conditionCols):
 
     return append_query
 
-
-SF_merge_uitils_v2
