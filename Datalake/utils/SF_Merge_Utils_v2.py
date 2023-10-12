@@ -120,12 +120,14 @@ def getAppendQuery(
 
 
 def _get_upper_lower_bound_dt_string(
-    deltaTable: str, env: str, lb: datetime, ub: datetime
+    deltaTable: str, env: str, lb: datetime | None, ub: datetime | None
 ) -> (str, str):
+    if lb is not None and ub is not None and lb > ub:
+        raise ValueError(f"upper bound {ub} cannot be less than lower bound {lb}")
     if lb is None:
         spark: SparkSession = SparkSession.getActiveSession()
-        lb_dt = get_prev_run_dt(deltaTable, env, spark)
-        ub_dt = lb + timedelta(days=2)
+        lb_dt = _get_prev_run_dt(deltaTable, env, spark)
+        ub_dt = lb + timedelta(days=3)
     else:
         lb_dt = lb.strftime("%Y-%m-%d")
         if ub is None:
@@ -135,14 +137,13 @@ def _get_upper_lower_bound_dt_string(
     return lb_dt, ub_dt
 
 
-def get_prev_run_dt(deltaTable: str, env: str, spark: SparkSession) -> datetime:
+def _get_prev_run_dt(deltaTable: str, env: str, spark: SparkSession) -> datetime:
     raw = getEnvPrefix(env) + "raw"
     prev_run_dt = spark.sql(
         f"""select max(prev_run_date)  from {raw}.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'"""
     ).collect()[0][0]
     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
     prev_run_dt = prev_run_dt - timedelta(days=2)
-    prev_run_dt = prev_run_dt.strftime("%Y-%m-%d")
     return prev_run_dt
 
 
