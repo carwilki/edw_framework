@@ -31,11 +31,11 @@ if env is None or env == '':
 refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
-
+enterprise='enterprise'
 
 
 
 # COMMAND ----------
 
 #Processing Pre-SQL for node Shortcut_To_GL_PLAN_FORECAST_MONTH
-spark.sql(f'''DELETE FROM {legacy}.GL_PLAN_FORECAST_MONTH WHERE SUBSTR(FISCAL_MO,1,4) IN (SELECT FISCAL_YR FROM {legacy}.DAYS WHERE DAY_DT = CURRENT_DATE)''')
+spark.sql(f'''DELETE FROM {legacy}.GL_PLAN_FORECAST_MONTH WHERE SUBSTR(FISCAL_MO,1,4) IN (SELECT FISCAL_YR FROM {enterprise}.DAYS WHERE DAY_DT = CURRENT_DATE)''')
