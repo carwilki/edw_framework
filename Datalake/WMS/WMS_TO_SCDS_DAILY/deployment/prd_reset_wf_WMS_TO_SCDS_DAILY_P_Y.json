@@ -3800,7 +3800,7 @@
                         "prod",
                         "WM_PURCHASE_ORDERS_STATUS",
                         "WM_PURCHASE_ORDERS_STATUS",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4108,7 +4108,7 @@
                         "prod",
                         "WM_SHIPMENT_STATUS",
                         "LOCATION_ID,WM_SHIPMENT_STATUS",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4240,7 +4240,7 @@
                         "prod",
                         "WM_STOP",
                         "LOCATION_ID,WM_SHIPMENT_ID,WM_STOP_SEQ",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4284,7 +4284,7 @@
                         "prod",
                         "WM_STOP_STATUS",
                         "LOCATION_ID,WM_STOP_STATUS",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
