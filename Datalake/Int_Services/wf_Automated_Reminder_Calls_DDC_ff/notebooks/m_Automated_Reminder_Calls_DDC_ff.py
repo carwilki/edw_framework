@@ -331,7 +331,7 @@ print("v_HolidayAppt", v_HolidayAppt)
 EXP_AutomatedCalls = EXP_AutomatedCalls.join(
     LKP_HOLIDAYS_SRC,
     (LKP_HOLIDAYS_SRC.SERVICE_NAME == lit("DDC"))
-    & (LKP_HOLIDAYS_SRC.COUNTRY_CD == EXP_AutomatedCalls.COUNTRY_CD)
+    & (trim(LKP_HOLIDAYS_SRC.COUNTRY_CD) == trim(EXP_AutomatedCalls.COUNTRY_CD))
     & (
         LKP_HOLIDAYS_SRC.HOLIDAY_DATE
         == date_add(EXP_AutomatedCalls.NextRunDate, lit(1))
@@ -352,7 +352,7 @@ EXP_AutomatedCalls = EXP_AutomatedCalls.withColumn(
 EXP_AutomatedCalls = EXP_AutomatedCalls.join(
     LKP_HOLIDAYS_SRC,
     (LKP_HOLIDAYS_SRC.SERVICE_NAME == lit("DDC"))
-    & (LKP_HOLIDAYS_SRC.COUNTRY_CD == EXP_AutomatedCalls.COUNTRY_CD)
+    & (trim(LKP_HOLIDAYS_SRC.COUNTRY_CD) == trim(EXP_AutomatedCalls.COUNTRY_CD))
     & (LKP_HOLIDAYS_SRC.HOLIDAY_DATE == EXP_AutomatedCalls.NextRunDate),
     "left",
 ).select(EXP_AutomatedCalls["*"], LKP_HOLIDAYS_SRC["IS_CLOSED"].alias("ULKP_RETURN_2"))
