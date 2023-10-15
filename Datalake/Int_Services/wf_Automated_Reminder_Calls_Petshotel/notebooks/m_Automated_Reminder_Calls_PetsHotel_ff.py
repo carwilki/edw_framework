@@ -169,7 +169,7 @@ SERVICE_NAME,
 RULE_NAME,
 PEAK_START_DATE,
 PEAK_END_DATE,
-COUNTRY_CD,
+substr(trim(COUNTRY_CD),0,2) as COUNTRY_CD,
 DAY_OFFSET,
 LOAD_TSTMP
 FROM {legacy}.AUTOMATED_CALL_RULES"""
@@ -426,7 +426,7 @@ EXP_AutomatedCalls = exp.join(
     (
         (lkp["SERVICE_NAME"] == exp["v_RuleServiceName"])
         & (lkp["RULE_NAME"] == exp["v_RuleName"])
-        & (lkp["COUNTRY_CD"] == exp["COUNTRY_CD"])
+        & (trim(lkp["COUNTRY_CD"]) == trim(exp["COUNTRY_CD"]))
         & (lkp["PEAK_START_DATE"] <= date_trunc("day", exp["APPT_START_TSTMP"]))
         & (lkp["PEAK_END_DATE"] >= date_trunc("day", exp["APPT_START_TSTMP"]))
     ),
