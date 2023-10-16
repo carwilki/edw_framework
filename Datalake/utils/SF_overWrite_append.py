@@ -24,8 +24,12 @@ SFTable = f"{deltaTable}"
 df = spark.table(f"{schemaForDeltaTable}.{deltaTable}")
 
 try:
+    from Datalake.utils.SF_Merge_Utils_v2 import SnowflakeWriter
     logger.info("Ingesting data to Snowflake tables for table - ", deltaTable)
-    sfWriter(df, sfOptions, SFTable, mode)
+    if mode == "overwrite":
+        SnowflakeWriter(sfOptions, SFTable).push_data(df, write_mode="full")
+    elif mode == "append":
+        SnowflakeWriter(sfOptions, SFTable).push_data(df, write_mode="append")
     logger.info("Data write to SF completed for table - ", deltaTable)
 except Exception as e:
     raise e
