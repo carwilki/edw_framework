@@ -30,6 +30,18 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 
 # COMMAND ----------
 
+from datetime import datetime, timezone
+dt=datetime.now(timezone.utc)
+hr=dt.hour
+
+if not (hr >= 7 and hr<=20):
+    dbutils.jobs.taskValues.set(key = "isvalidhour", value = 'true')
+    dbutils.notebook.exit('The UTC Hour is not in the range 7 AM and 20 PM, so the execution is stopped')
+else:
+    print('The decision allows to proceed further with execution because the Hour is within the expected range')
+
+# COMMAND ----------
+
 #dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-qa-raw-p1-gcs-gbl/nas/employee/ps2adjlbr/')
 source_bucket = getParameterValue(
     raw,
@@ -107,4 +119,5 @@ Shortcut_to_PS2_ADJUSTED_LABOR_WK_agg.write.mode("overwrite").saveAsTable(f'{raw
 
 # COMMAND ----------
 
-
+if spark.table(f'{raw}.PS2_ADJUSTED_LABOR_WK_PRE').count() == 0:
+    dbutils.jobs.taskValues.set(key = "tgtsuccessrows", value = 'true')

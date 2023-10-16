@@ -31,6 +31,18 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 
 # COMMAND ----------
 
+isvalidhour=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "isvalidhour", default = 'false', debugValue = 'false')
+tgtsuccessrows=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "tgtsuccessrows", default = 'false', debugValue = 'false')
+tgtsuccessrowsdummy=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre_FUTURE_DT_CHK", key = "tgtsuccessrowsdummy", default = 'false', debugValue = 'false')
+
+
+# COMMAND ----------
+
+if (isvalidhour =='true' or tgtsuccessrows=='true' or tgtsuccessrowsdummy=='true'):
+    dbutils.notebook.exit('Decision condition not satisfied, exiting the notebook process')
+
+# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE, type SOURCE 
 # COLUMN COUNT: 15
 

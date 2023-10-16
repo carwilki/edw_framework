@@ -30,6 +30,17 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 
 # COMMAND ----------
 
+isvalidhour=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "isvalidhour", default = 'false', debugValue = 'false')
+tgtsuccessrows=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "tgtsuccessrows", default = 'false', debugValue = 'false')
+
+
+# COMMAND ----------
+
+if (isvalidhour =='true' or tgtsuccessrows=='true'):
+    dbutils.notebook.exit('Decision condition not satisfied, exiting the notebook process')
+
+# COMMAND ----------
+
 # Processing node SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE, type SOURCE 
 # COLUMN COUNT: 2
 
@@ -45,15 +56,16 @@ SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE = SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_
 
 # COMMAND ----------
 
-# Processing node Shortcut_to_DUMMY_TARGET, type TARGET 
-# COLUMN COUNT: 1
+# # Processing node Shortcut_to_DUMMY_TARGET, type TARGET 
+# # COLUMN COUNT: 1
 
 
-Shortcut_to_DUMMY_TARGET = SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE.selectExpr(
-	"CAST(WEEK_DT AS STRING) as COMMENT"
-)
-Shortcut_to_DUMMY_TARGET.write.mode("append").saveAsTable(f'{legacy}.DUMMY_TARGET')
+# Shortcut_to_DUMMY_TARGET = SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE.selectExpr(
+# 	"CAST(WEEK_DT AS STRING) as COMMENT"
+# )
+# Shortcut_to_DUMMY_TARGET.write.mode("append").saveAsTable(f'{legacy}.DUMMY_TARGET')
 
 # COMMAND ----------
 
-
+if SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE.count() > 0:
+    dbutils.jobs.taskValues.set(key = "tgtsuccessrowsdummy", value = 'true')
