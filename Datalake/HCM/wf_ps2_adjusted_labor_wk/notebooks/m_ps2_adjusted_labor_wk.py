@@ -33,7 +33,7 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 
 isvalidhour=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "isvalidhour", default = 'false', debugValue = 'false')
 tgtsuccessrows=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre", key = "tgtsuccessrows", default = 'false', debugValue = 'false')
-tgtsuccessrowsdummy=dbutils.jobs.taskValues.get(taskKey = "m_ps2_adjusted_labor_wk_pre_FUTURE_DT_CHK", key = "tgtsuccessrowsdummy", default = 'false', debugValue = 'false')
+tgtsuccessrowsdummy=dbutils.jobs.taskValues.get(taskKey = "s_ps2_adjusted_labor_wk_pre_FUTURE_DT_CHK", key = "tgtsuccessrowsdummy", default = 'false', debugValue = 'false')
 
 
 # COMMAND ----------
