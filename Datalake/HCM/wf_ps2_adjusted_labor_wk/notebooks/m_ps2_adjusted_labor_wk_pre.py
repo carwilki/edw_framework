@@ -120,7 +120,6 @@ Shortcut_to_PS2_ADJUSTED_LABOR_WK_agg.write.mode("overwrite").saveAsTable(f'{raw
 # COMMAND ----------
 
 count=spark.table(f'{raw}.PS2_ADJUSTED_LABOR_WK_PRE').count()
-count=0
 print('The count of the pre table is ' + str(count))
 if (count== 0):
     dbutils.jobs.taskValues.set(key = "tgtsuccessrows", value = 'true')
