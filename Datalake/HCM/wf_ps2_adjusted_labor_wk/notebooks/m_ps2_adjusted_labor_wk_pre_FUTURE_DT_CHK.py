@@ -69,6 +69,5 @@ SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE = SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_
 
 count=SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE.count()
 print('The count of SQ_Shortcut_to_PS2_ADJUSTED_LABOR_WK_PRE is ' + str(count))
-count=1
 if (count > 0):
     dbutils.jobs.taskValues.set(key = "tgtsuccessrowsdummy", value = 'true')
