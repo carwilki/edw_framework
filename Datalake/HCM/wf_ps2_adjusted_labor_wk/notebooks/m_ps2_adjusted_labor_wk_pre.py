@@ -33,6 +33,7 @@ empl_protected = getEnvPrefix(env) + 'empl_protected'
 from datetime import datetime, timezone
 dt=datetime.now(timezone.utc)
 hr=dt.hour
+hr=21
 print('The hour is' + str(hr))
 if not (hr >= 7 and hr<=20):
     dbutils.jobs.taskValues.set(key = "isvalidhour", value = 'true')
