@@ -179,9 +179,11 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
-    conditionCols: list[str] = list(filter(None, conditionCols))
-
-    if len(conditionCols) == 0:
+    #conditionCols: list[str] = list(filter(None, conditionCols))
+    conditionCols_list = json.loads(conditionCols)
+    
+    #if len(conditionCols) == 0:
+    if len(conditionCols_list) == 1 and  conditionCols_list[0]=="" :
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
