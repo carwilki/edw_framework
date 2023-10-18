@@ -16,11 +16,6 @@ from Datalake.utils.mergeUtils import *
 
 # COMMAND ----------
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
@@ -40,20 +35,6 @@ legacy = getEnvPrefix(env) + "legacy"
 # Processing node LKP_MARA_PRE_SRC, type SOURCE Cached data from connected lookup object
 # COLUMN COUNT: 1
 
-# dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-qa-raw-p1-gcs-gbl/sap/inventory/marc/')
-# source_bucket = dbutils.widgets.get('source_bucket')
-
-# def get_source_file(key, _bucket):
-#   import builtins
-
-#   lst = dbutils.fs.ls(_bucket)
-#   fldr = builtins.max(lst, key=lambda x: x.name).name
-#   lst = dbutils.fs.ls(_bucket + fldr)
-#   print(lst)
-#   files = [x.path for x in lst if x.name.startswith(key)]
-#   return files[0] if files else None
-
-# source_file = get_source_file('MARC', source_bucket)
 _bucket = getParameterValue(
     raw,
     "BA_Inventory_Parameter.prm",

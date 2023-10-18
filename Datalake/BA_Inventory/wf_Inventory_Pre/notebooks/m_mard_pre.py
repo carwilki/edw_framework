@@ -16,11 +16,6 @@ from Datalake.utils.mergeUtils import *
 
 # COMMAND ----------
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('env', type=str, help='Env Variable')
-# args = parser.parse_args()
-# env = args.env
-
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
@@ -34,27 +29,6 @@ refine = getEnvPrefix(env) + "refine"
 raw = getEnvPrefix(env) + "raw"
 legacy = getEnvPrefix(env) + "legacy"
 
-
-# COMMAND ----------
-
-# # Processing node SQ_Shortcut_to_MARD, type SOURCE
-# # COLUMN COUNT: 7
-
-# dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/inventory/mard/')
-# source_bucket = dbutils.widgets.get('source_bucket')
-
-# def get_source_file(key, _bucket):
-#   import builtins
-
-#   lst = dbutils.fs.ls(_bucket)
-#   fldr = builtins.max(lst, key=lambda x: x.name).name
-#   lst = dbutils.fs.ls(_bucket + fldr)
-#   files = [x.path for x in lst if x.name.startswith(key)]
-#   return files[0] if files else None
-
-# source_file = get_source_file('MARD', source_bucket)
-
-# SQ_Shortcut_to_MARD = spark.read.csv(source_file, sep='|', header=True)
 
 # COMMAND ----------
 

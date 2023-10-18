@@ -37,28 +37,6 @@ legacy = getEnvPrefix(env) + "legacy"
 
 # COMMAND ----------
 
-# Processing node SQ_Shortcut_to_MARA, type SOURCE
-# COLUMN COUNT: 2
-
-# dbutils.widgets.text(name='source_bucket', defaultValue='gs://petm-bdpl-prod-raw-p1-gcs-gbl/sap/inventory/mara/')
-# source_bucket = dbutils.widgets.get('source_bucket')
-
-# def get_source_file(key, _bucket):
-#   import builtins
-
-#   lst = dbutils.fs.ls(_bucket)
-#   fldr = builtins.max(lst, key=lambda x: x.name).name
-#   lst = dbutils.fs.ls(_bucket + fldr)
-#   files = [x.path for x in lst if x.name.startswith(key)]
-#   return files[0] if files else None
-
-# source_file = get_source_file('MARA', source_bucket)
-
-# SQ_Shortcut_to_MARA = spark.read.csv(source_file, sep='|', header=True)
-
-
-# COMMAND ----------
-
 _bucket = getParameterValue(
     raw,
     "BA_Inventory_Parameter.prm",
