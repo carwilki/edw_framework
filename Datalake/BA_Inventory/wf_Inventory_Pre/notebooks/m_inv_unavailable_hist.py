@@ -162,7 +162,7 @@ Shortcut_to_INV_UNAVAILABLE_HIST = EXP_DATES.selectExpr(
     "CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP",
 )
 DuplicateChecker.check_for_duplicate_primary_keys(
-    Shortcut_to_INV_UNAVAILABLE_HIST, ["DAY_DT", "LOCATION_ID", ""]
+    Shortcut_to_INV_UNAVAILABLE_HIST, ["DAY_DT", "LOCATION_ID", "PRODUCT_ID"]
 )
 Shortcut_to_INV_UNAVAILABLE_HIST.write.mode("append").saveAsTable(
     f"{legacy}.INV_UNAVAILABLE_HIST"
