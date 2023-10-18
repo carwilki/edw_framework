@@ -1,6 +1,7 @@
 # Databricks notebook source
-import requests
 import json
+
+import requests
 
 token = dbutils.secrets.get(scope="db-token-jobsapi", key="password")
 google_service_account = (

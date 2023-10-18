@@ -1,5 +1,6 @@
 # Databricks notebook source
 import json
+
 import requests
 
 env = "prod"
