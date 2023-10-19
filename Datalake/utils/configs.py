@@ -566,8 +566,8 @@ def evdh_prd_sqlServer(env):
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = secrets.get(scope="SVC_BD_SQL_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_READ", key="esdh_password")
+        username = secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="evdh_password")
         hostname = "172.20.89.138"
         portnumber = "1840"
         db = "EnterpriseVendorDataHub"
