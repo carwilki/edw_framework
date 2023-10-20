@@ -289,10 +289,7 @@ try:
     )
     refined_perf_table = f"{legacy}.E_RES_ADD_ON_CATEGORY"
     DuplicateChecker.check_for_duplicate_primary_keys(
-        spark,
-        refined_perf_table,
-        Shortcut_to_E_RES_ADD_ON_CATEGORY1,
-        ["E_RES_ADD_ON_CATEGORY_ID"],
+        Shortcut_to_E_RES_ADD_ON_CATEGORY1, ["E_RES_ADD_ON_CATEGORY_ID"]
     )
     executeMerge(Shortcut_to_E_RES_ADD_ON_CATEGORY1, refined_perf_table, primary_key)
     logger.info(f"Merge with {refined_perf_table} completed]")

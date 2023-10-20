@@ -1,0 +1,793 @@
+{
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    },
+    "name": "wf_Relex_to_EDW_Daily",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "s_relex_daily_demand_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_daily_demand_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_demand_day",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_daily_demand_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_demand_day",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_demand_day",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_demand_day"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "DP_DEMAND_DAY",
+                    "DAY_DT,LOCATION_ID,PRODUCT_ID,FROM_LOCATION_ID",
+                    "LOAD_TSTMP"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_daily_order_projection_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_daily_order_projection_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_order_projection_day_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_daily_order_projection_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_order_projection_day_hist",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_order_projection_day_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_order_projection_day_hist"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_append_legacy_v2.py",
+                "parameters": [
+                    "prod",
+                    "DP_ORDER_PROJECTION_DAY_HIST",
+                    "LOAD_TSTMP",
+                    "XXL"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_future_forecast_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_future_forecast_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_forecast_week_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_future_forecast_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_forecast_week_hist",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_forecast_week_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_forecast_week_hist"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_append_legacy_v2.py",
+                "parameters": [
+                    "prod",
+                    "DP_FORECAST_WEEK_HIST",
+                    "LOAD_TSTMP",
+                    "XXXXXL"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_forecast_week_hist_cluster",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_inventory_layer_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_inventory_layer_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_past_accuracy_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_past_accuracy_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_accuracy_day",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_past_accuracy_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_accuracy_day",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_accuracy_day",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_accuracy_day"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_append_legacy_v2.py",
+                "parameters": [
+                    "prod",
+                    "DP_ACCURACY_DAY",
+                    "LOAD_TSTMP",
+                    "XXL"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_product_location_settings_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_product_location_settings_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_product_location_settings_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_inventory_layer_pre"
+                },
+                {
+                    "task_key": "s_relex_product_location_settings_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_product_location_settings_hist",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_product_location_settings_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_product_location_settings_hist"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_append_legacy_v2.py",
+                "parameters": [
+                    "prod",
+                    "DP_PRODUCT_LOCATION_SETTINGS_HIST",
+                    "LOAD_TSTMP",
+                    "XXL"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_relex_weekly_order_projection_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_relex_weekly_order_projection_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "s_dp_order_projection_week_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_relex_weekly_order_projection_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/wf_relex_to_EDW_Daily/notebooks/m_dp_order_projection_week_hist",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        },
+        {
+            "task_key": "SF_dp_order_projection_week_hist",
+            "depends_on": [
+                {
+                    "task_key": "s_dp_order_projection_week_hist"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_append_legacy_v2.py",
+                "parameters": [
+                    "prod",
+                    "DP_ORDER_PROJECTION_WEEK_HIST",
+                    "LOAD_TSTMP",
+                    "XXL"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {},
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            }
+        }
+    ],
+    "job_clusters": [
+        {
+            "job_cluster_key": "wf_relex_to_EDW_Daily",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.databricks.dataLineage.enabled": "true",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.task.cpus": "3",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "HA"
+                },
+                "node_type_id": "n2-highmem-16",
+				"custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": true,
+                "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+                "runtime_engine": "STANDARD",
+                "autoscale": {
+                    "min_workers": 2,
+                    "max_workers": 8
+                }
+            }
+        },
+        {
+            "job_cluster_key": "SF_dp_product_location_settings_hist",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.databricks.dataLineage.enabled": "true",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.task.cpus": "3",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "HA"
+                },
+                "node_type_id": "n1-highmem-32",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+                "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+                "runtime_engine": "STANDARD",
+                "num_workers": 8
+            }
+        },
+        {
+            "job_cluster_key": "SF_dp_forecast_week_hist_cluster",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.databricks.dataLineage.enabled": "true",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "HA"
+                },
+                "node_type_id": "n2-highmem-64",
+				"custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+                "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+                "runtime_engine": "STANDARD",
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "NZ-Migration"
+    },
+    "format": "MULTI_TASK"
+}
