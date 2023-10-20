@@ -120,7 +120,7 @@ Fil_Site_Hours_Day_1 = (
         "date_format(SQ_SITE_HOURS_DAY___CLOSE_TSTMP, 'yyyy-MM-dd hh:MM:SS') as CLOSE_TSTMP",
         "SQ_SITE_HOURS_DAY___LOAD_TSTMP as LOAD_TSTMP",
     )
-    .filter("DAY_DT >= date_add( current_date() ,- 15)")
+    .filter("DAY_DT >= date_add(current_date() ,- 15)")
     .withColumn("sys_row_id", monotonically_increasing_id())
 )
 
@@ -152,35 +152,54 @@ Exp_Site_Hours_Day = Fil_Site_Hours_Day_1_temp.selectExpr(
 
 # COMMAND ----------
 
+# # Processing node LKP_SITE_PROFILE, type LOOKUP_FROM_PRECACHED_DATASET . Note: using additional SELECT to rename incoming columns
+# # COLUMN COUNT: 7
+
+
+# LKP_SITE_PROFILE_lookup_result = (
+#     SQ_SITE_HOURS_DAY_PRE.selectExpr(
+#         "LOCATION_TYPE_ID as LOCATION_TYPE_ID1",
+#         "LOCATION_NBR as LOCATION_NBR1",
+#         "sys_row_id",
+#     )
+#     .join(
+#         LKP_SITE_PROFILE_SRC,
+#         (col("LOCATION_NBR1") == col("LOCATION_NBR2"))
+#         & (col("LOCATION_TYPE_ID1") == col("LOCATION_TYPE_ID2")),
+#         "inner",
+#     )
+#     .withColumn(
+#         "row_num_LOCATION_ID",
+#         row_number().over(Window.partitionBy("sys_row_id").orderBy("LOCATION_ID")),
+#     )
+# )
+
+# LKP_SITE_PROFILE = LKP_SITE_PROFILE_lookup_result.filter(
+#     col("row_num_LOCATION_ID") == 1
+# ).select(
+#     LKP_SITE_PROFILE_lookup_result.sys_row_id,
+#     col("LOCATION_ID"),
+#     col("TIME_ZONE"),
+#     col("STORE_NBR"),
+# )
+
+# COMMAND ----------
+
 # Processing node LKP_SITE_PROFILE, type LOOKUP_FROM_PRECACHED_DATASET . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 7
 
 
 LKP_SITE_PROFILE_lookup_result = (
-    SQ_SITE_HOURS_DAY_PRE.selectExpr(
-        "LOCATION_TYPE_ID as LOCATION_TYPE_ID1",
-        "LOCATION_NBR as LOCATION_NBR1",
-        "sys_row_id",
-    )
-    .join(
+    SQ_SITE_HOURS_DAY_PRE.join(
         LKP_SITE_PROFILE_SRC,
-        (col("LOCATION_NBR1") == col("LOCATION_NBR2"))
-        & (col("LOCATION_TYPE_ID1") == col("LOCATION_TYPE_ID2")),
+        (col("LOCATION_NBR") == col("LOCATION_NBR2"))
+        & (col("LOCATION_TYPE_ID") == col("LOCATION_TYPE_ID2")),
         "inner",
     )
-    .withColumn(
-        "row_num_LOCATION_ID",
-        row_number().over(Window.partitionBy("sys_row_id").orderBy("LOCATION_ID")),
-    )
+    
 )
-
-LKP_SITE_PROFILE = LKP_SITE_PROFILE_lookup_result.filter(
-    col("row_num_LOCATION_ID") == 1
-).select(
-    LKP_SITE_PROFILE_lookup_result.sys_row_id,
-    col("LOCATION_ID"),
-    col("TIME_ZONE"),
-    col("STORE_NBR"),
+LKP_SITE_PROFILE_temp = LKP_SITE_PROFILE_lookup_result.toDF(
+    *["LKP_SITE_PROFILE___" + col for col in LKP_SITE_PROFILE_lookup_result.columns]
 )
 
 # COMMAND ----------
@@ -188,34 +207,53 @@ LKP_SITE_PROFILE = LKP_SITE_PROFILE_lookup_result.filter(
 # Processing node Exp_Site_Hours_Day_Pre, type EXPRESSION
 # COLUMN COUNT: 10
 
-# for each involved DataFrame, append the dataframe name to each column
-LKP_SITE_PROFILE_temp = LKP_SITE_PROFILE.toDF(
-    *["LKP_SITE_PROFILE___" + col for col in LKP_SITE_PROFILE.columns]
-)
-SQ_SITE_HOURS_DAY_PRE_temp = SQ_SITE_HOURS_DAY_PRE.toDF(
-    *["SQ_SITE_HOURS_DAY_PRE___" + col for col in SQ_SITE_HOURS_DAY_PRE.columns]
+Exp_Site_Hours_Day_Pre = LKP_SITE_PROFILE_temp.selectExpr(
+   
+    "LKP_SITE_PROFILE___DAY_DT as DAY_DT",
+    "LKP_SITE_PROFILE___LOCATION_ID as LOCATION_ID",
+    "LKP_SITE_PROFILE___BUSINESS_AREA as BUSINESS_AREA",
+    "LKP_SITE_PROFILE___LOCATION_TYPE_ID as LOCATION_TYPE_ID",
+    "LKP_SITE_PROFILE___TIME_ZONE as TIME_ZONE",
+    "LKP_SITE_PROFILE___OPEN_TSTMP as OPEN_TSTMP",
+    "LKP_SITE_PROFILE___CLOSE_TSTMP as CLOSE_TSTMP",
+    "LKP_SITE_PROFILE___IS_CLOSED as IS_CLOSED",
+    "LKP_SITE_PROFILE___STORE_NBR as STORE_NBR",
+    "MD5 (concat_ws( cast(LKP_SITE_PROFILE___LOCATION_TYPE_ID as string) , LKP_SITE_PROFILE___TIME_ZONE , date_format(LKP_SITE_PROFILE___OPEN_TSTMP, 'YYYY-MM-DD hh:MM:SS') , date_format(LKP_SITE_PROFILE___CLOSE_TSTMP, 'YYYY-MM-DD hh:MM:SS') , cast(LKP_SITE_PROFILE___IS_CLOSED as string) , cast(LKP_SITE_PROFILE___STORE_NBR as string) )) as _md5PRE",
 )
 
-# Joining dataframes SQ_SITE_HOURS_DAY_PRE, LKP_SITE_PROFILE to form Exp_Site_Hours_Day_Pre
-Exp_Site_Hours_Day_Pre_joined = SQ_SITE_HOURS_DAY_PRE_temp.join(
-    LKP_SITE_PROFILE_temp,
-    SQ_SITE_HOURS_DAY_PRE_temp.SQ_SITE_HOURS_DAY_PRE___sys_row_id
-    == LKP_SITE_PROFILE_temp.LKP_SITE_PROFILE___sys_row_id,
-    "inner",
-)
-Exp_Site_Hours_Day_Pre = Exp_Site_Hours_Day_Pre_joined.selectExpr(
-    "SQ_SITE_HOURS_DAY_PRE___sys_row_id as sys_row_id",
-    "SQ_SITE_HOURS_DAY_PRE___DAY_DT as DAY_DT",
-    "LKP_SITE_PROFILE___LOCATION_ID as LOCATION_ID",
-    "SQ_SITE_HOURS_DAY_PRE___BUSINESS_AREA as BUSINESS_AREA",
-    "SQ_SITE_HOURS_DAY_PRE___LOCATION_TYPE_ID as LOCATION_TYPE_ID",
-    "LKP_SITE_PROFILE___TIME_ZONE as TIME_ZONE",
-    "SQ_SITE_HOURS_DAY_PRE___OPEN_TSTMP as OPEN_TSTMP",
-    "SQ_SITE_HOURS_DAY_PRE___CLOSE_TSTMP as CLOSE_TSTMP",
-    "SQ_SITE_HOURS_DAY_PRE___IS_CLOSED as IS_CLOSED",
-    "LKP_SITE_PROFILE___STORE_NBR as STORE_NBR",
-    "MD5 (concat_ws( cast(SQ_SITE_HOURS_DAY_PRE___LOCATION_TYPE_ID as string) , LKP_SITE_PROFILE___TIME_ZONE , date_format(SQ_SITE_HOURS_DAY_PRE___OPEN_TSTMP, 'YYYY-MM-DD hh:MM:SS') , date_format(SQ_SITE_HOURS_DAY_PRE___CLOSE_TSTMP, 'YYYY-MM-DD hh:MM:SS') , cast(SQ_SITE_HOURS_DAY_PRE___IS_CLOSED as string) , cast(LKP_SITE_PROFILE___STORE_NBR as string) )) as _md5PRE",
-)
+# COMMAND ----------
+
+# # Processing node Exp_Site_Hours_Day_Pre, type EXPRESSION
+# # COLUMN COUNT: 10
+
+# # for each involved DataFrame, append the dataframe name to each column
+# LKP_SITE_PROFILE_temp = LKP_SITE_PROFILE.toDF(
+#     *["LKP_SITE_PROFILE___" + col for col in LKP_SITE_PROFILE.columns]
+# )
+# SQ_SITE_HOURS_DAY_PRE_temp = SQ_SITE_HOURS_DAY_PRE.toDF(
+#     *["SQ_SITE_HOURS_DAY_PRE___" + col for col in SQ_SITE_HOURS_DAY_PRE.columns]
+# )
+
+# # Joining dataframes SQ_SITE_HOURS_DAY_PRE, LKP_SITE_PROFILE to form Exp_Site_Hours_Day_Pre
+# Exp_Site_Hours_Day_Pre_joined = SQ_SITE_HOURS_DAY_PRE_temp.join(
+#     LKP_SITE_PROFILE_temp,
+#     SQ_SITE_HOURS_DAY_PRE_temp.SQ_SITE_HOURS_DAY_PRE___sys_row_id
+#     == LKP_SITE_PROFILE_temp.LKP_SITE_PROFILE___sys_row_id,
+#     "inner",
+# )
+# Exp_Site_Hours_Day_Pre = Exp_Site_Hours_Day_Pre_joined.selectExpr(
+#     "SQ_SITE_HOURS_DAY_PRE___sys_row_id as sys_row_id",
+#     "SQ_SITE_HOURS_DAY_PRE___DAY_DT as DAY_DT",
+#     "LKP_SITE_PROFILE___LOCATION_ID as LOCATION_ID",
+#     "SQ_SITE_HOURS_DAY_PRE___BUSINESS_AREA as BUSINESS_AREA",
+#     "SQ_SITE_HOURS_DAY_PRE___LOCATION_TYPE_ID as LOCATION_TYPE_ID",
+#     "LKP_SITE_PROFILE___TIME_ZONE as TIME_ZONE",
+#     "SQ_SITE_HOURS_DAY_PRE___OPEN_TSTMP as OPEN_TSTMP",
+#     "SQ_SITE_HOURS_DAY_PRE___CLOSE_TSTMP as CLOSE_TSTMP",
+#     "SQ_SITE_HOURS_DAY_PRE___IS_CLOSED as IS_CLOSED",
+#     "LKP_SITE_PROFILE___STORE_NBR as STORE_NBR",
+#     "MD5 (concat_ws( cast(SQ_SITE_HOURS_DAY_PRE___LOCATION_TYPE_ID as string) , LKP_SITE_PROFILE___TIME_ZONE , date_format(SQ_SITE_HOURS_DAY_PRE___OPEN_TSTMP, 'YYYY-MM-DD hh:MM:SS') , date_format(SQ_SITE_HOURS_DAY_PRE___CLOSE_TSTMP, 'YYYY-MM-DD hh:MM:SS') , cast(SQ_SITE_HOURS_DAY_PRE___IS_CLOSED as string) , cast(LKP_SITE_PROFILE___STORE_NBR as string) )) as _md5PRE",
+# )
 
 # COMMAND ----------
 
@@ -300,7 +338,7 @@ Fil_Site_Hours_Day = (
         "Jnr_Site_Hours_Day___LOAD_TSTMP as LOAD_TSTMP",
     )
     .filter(
-        "( DAY_DT1 is not null AND DAY_DT is null ) OR ( DAY_DT1 is not null AND NOT DAY_DT is null AND _md5FINAL != _md5PRE ) OR ( DAY_DT1 is null AND DAY_DT is not null AND DAY_DT >= trunc ( current_date()- interval 19 day, 'day' ) )"
+        "( DAY_DT1 is not null AND DAY_DT is null ) OR ( DAY_DT1 is not null AND NOT DAY_DT is null AND _md5FINAL != _md5PRE ) OR ( DAY_DT1 is null AND DAY_DT is not null AND DAY_DT >= trunc (current_date()- interval 19 day, 'day' ) )"
     )
     .withColumn("sys_row_id", monotonically_increasing_id())
 )
