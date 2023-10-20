@@ -3712,7 +3712,7 @@
                         "prod",
                         "WM_ORDERS",
                         "LOCATION_ID,WM_ORDER_ID",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4064,7 +4064,7 @@
                         "prod",
                         "WM_ITEM_PACKAGE_CBO",
                         "LOCATION_ID,WM_ITEM_PACKAGE_ID",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4548,7 +4548,7 @@
                         "prod",
                         "WM_LPN_FACILITY_STATUS",
                         "LOCATION_ID,WM_LPN_FACILITY_STATUS,INBOUND_OUTBOUND_IND",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4680,7 +4680,7 @@
                         "prod",
                         "WM_LPN_STATUS",
                         "LOCATION_ID,WM_LPN_STATUS",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
@@ -4724,7 +4724,7 @@
                         "prod",
                         "WM_LPN_TYPE",
                         "LOCATION_ID,WM_LPN_TYPE",
-                        "LOAD_TSTMP"
+                        "LOAD_TSTMP,UPDATE_TSTMP"
                     ],
                     "source": "GIT"
                 },
