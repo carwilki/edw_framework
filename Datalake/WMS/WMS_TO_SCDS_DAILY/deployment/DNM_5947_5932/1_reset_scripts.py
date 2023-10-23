@@ -66,8 +66,4 @@ for job in job_json:
         payload = json.dumps(job_payload)
 
     response = reset_job(payload)
-    job_id = getJobId(response)
-    print(response)
-    payload = json.dumps(permission_json)
-    response = set_permission(payload, job_id)
     print(response)
