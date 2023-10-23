@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 from pyspark.sql import SparkSession, DataFrame
 from logging import getLogger
@@ -127,9 +128,14 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
         ).push_data(df_table, write_mode="merge")
 
 
-def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
-    import datetime as dt
-
+def mergeToSFv2(
+    env,
+    deltaTable,
+    primaryKeys,
+    conditionCols,
+    lb: datetime | None = None,
+    ub: datetime | None = None,
+):
     print("Merge_To_SF function")
     import json
     from logging import getLogger
@@ -139,7 +145,7 @@ def mergeToSFv2(env, deltaTable, primaryKeys, conditionCols):
 
     logger = getLogger()
     sfOptions = getSfCredentials(env)
-    append_query = getAppendQuery(env, deltaTable, conditionCols)
+    append_query = getAppendQuery(env, deltaTable, conditionCols, lb,ub)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
     conditionCols: list[str] = list(filter(None, conditionCols))
 
@@ -179,11 +185,11 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
-    #conditionCols: list[str] = list(filter(None, conditionCols))
+    # conditionCols: list[str] = list(filter(None, conditionCols))
     conditionCols_list = json.loads(conditionCols)
-    
-    #if len(conditionCols) == 0:
-    if len(conditionCols_list) == 1 and  conditionCols_list[0]=="" :
+
+    # if len(conditionCols) == 0:
+    if len(conditionCols_list) == 1 and conditionCols_list[0] == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""
@@ -243,9 +249,11 @@ def mergeToSFPII(
 
     if mode.lower() == "merge":
         logger.info("Started merging data to Snowflake tables for table - ", deltaTable)
-        
+
         if len(conditionColsList) == 0:
-            mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}`"""
+            mergeDatasetSql = (
+                f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}`"""
+            )
         else:
             append_query = getAppendQuery(env, deltaTable, conditionCols)
             mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTableName}` where {append_query}"""

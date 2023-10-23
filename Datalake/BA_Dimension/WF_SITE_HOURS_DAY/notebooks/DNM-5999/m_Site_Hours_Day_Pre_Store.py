@@ -26,7 +26,7 @@ import Datalake.utils.secrets as secrets
 # parser.add_argument("env", type=str, help="Env Variable")
 
 # args = parser.parse_args()
-# env = args.env
+# env = args.env#
 
 spark = SparkSession.getActiveSession()
 dbutils.widgets.text(name="env", defaultValue="dev")
@@ -108,15 +108,18 @@ df = (
     .load("dbfs:/FileStore/shared_uploads/text_xml.xml")
 )
 
-df2 = df.select("StoreNumber","StoreHours.StoreHoursForDateViewModel")\
-  .withColumnRenamed("StoreHoursForDateViewModel","StoreHours")\
+
+# COMMAND ----------
+
+df2 = df.select("StoreNumber","StoreHours.d2p1:StoreHoursForDateViewModel")\
+  .withColumnRenamed("d2p1:StoreHoursForDateViewModel","StoreHours")\
     .select(col("StoreNumber"),explode("StoreHours").alias('Daily_Hours'))\
-    .select("StoreNumber","Daily_Hours.CloseTime","Daily_Hours.DayOfWeek","Daily_Hours.ForDate","Daily_Hours.IsClosed","Daily_Hours.OpenTime") 
-    
+    .select("StoreNumber",col('Daily_Hours.d2p1:CloseTime').alias('CloseTime'),col('Daily_Hours.d2p1:DayOfWeek').alias('DayOfWeek'),col('Daily_Hours.d2p1:ForDate').alias('ForDate'),col('Daily_Hours.d2p1:IsClosed').alias('IsClosed'),col('Daily_Hours.d2p1:OpenTime').alias('OpenTime')) 
+
 df3 = df2.selectExpr(
       "StoreNumber",
       "null as Name",
-      "CloseTime",
+      "CloseTime" ,
       "DayOfWeek",
       "ForDate",
       "IsClosed",
@@ -134,6 +137,36 @@ df5 = df4.select("StoreNumber","Name","StoreServiceHoursForDateList.StoreService
     .select("StoreNumber","Name","ServiceList.CloseTime","ServiceList.DayOfWeek","ServiceList.ForDate","ServiceList.IsClosed","ServiceList.OpenTime")
 
 Store_ServiceHours = df3.union(df5)
+
+# COMMAND ----------
+
+
+# df2 = df.select("StoreNumber","StoreHours.StoreHoursForDateViewModel")\
+#   .withColumnRenamed("StoreHoursForDateViewModel","StoreHours")\
+#     .select(col("StoreNumber"),explode("StoreHours").alias('Daily_Hours'))\
+#     .select("StoreNumber","Daily_Hours.CloseTime","Daily_Hours.DayOfWeek","Daily_Hours.ForDate","Daily_Hours.IsClosed","Daily_Hours.OpenTime") 
+    
+# df3 = df2.selectExpr(
+#       "StoreNumber",
+#       "null as Name",
+#       "CloseTime",
+#       "DayOfWeek",
+#       "ForDate",
+#       "IsClosed",
+#       "OpenTime"
+#     )
+
+# df4 = df.select("StoreNumber","StoreServices.StoreServiceHoursForDateServiceViewModel")\
+#   .withColumnRenamed("StoreServiceHoursForDateServiceViewModel","StoreServices")\
+#     .select(col("StoreNumber"),explode("StoreServices").alias('Services'))\
+#     .select("StoreNumber","Services.*") 
+
+# df5 = df4.select("StoreNumber","Name","StoreServiceHoursForDateList.StoreServiceHoursForDateViewModel")\
+#   .withColumnRenamed("StoreServiceHoursForDateViewModel","StoreServiceHoursForDateList")\
+#     .select(col("StoreNumber"),col("Name"),explode("StoreServiceHoursForDateList").alias('ServiceList'))\
+#     .select("StoreNumber","Name","ServiceList.CloseTime","ServiceList.DayOfWeek","ServiceList.ForDate","ServiceList.IsClosed","ServiceList.OpenTime")
+
+# Store_ServiceHours = df3.union(df5)
 
 
 # COMMAND ----------
