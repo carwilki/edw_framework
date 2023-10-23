@@ -129,7 +129,12 @@ def MergeToSF(env, deltaTable, primaryKeys, conditionCols):
 
 
 def mergeToSFv2(
-    env, deltaTable, primaryKeys, conditionCols, asOf: datetime | None = None
+    env,
+    deltaTable,
+    primaryKeys,
+    conditionCols,
+    lb: datetime | None = None,
+    ub: datetime | None = None,
 ):
     print("Merge_To_SF function")
     import json
@@ -140,7 +145,7 @@ def mergeToSFv2(
 
     logger = getLogger()
     sfOptions = getSfCredentials(env)
-    append_query = getAppendQuery(env, deltaTable, conditionCols, asOf)
+    append_query = getAppendQuery(env, deltaTable, conditionCols, lb,ub)
     schemaForDeltaTable = getEnvPrefix(env) + "refine"
     conditionCols: list[str] = list(filter(None, conditionCols))
 
@@ -180,11 +185,11 @@ def mergeToSFLegacy(env, deltaTable, primaryKeys, conditionCols):
     sfOptions = getSfCredentials(env)
     append_query = getAppendQuery(env, deltaTable, conditionCols)
     schemaForDeltaTable = getEnvPrefix(env) + "legacy"
-    #conditionCols: list[str] = list(filter(None, conditionCols))
+    # conditionCols: list[str] = list(filter(None, conditionCols))
     conditionCols_list = json.loads(conditionCols)
-    
-    #if len(conditionCols) == 0:
-    if len(conditionCols_list) == 1 and  conditionCols_list[0]=="" :
+
+    # if len(conditionCols) == 0:
+    if len(conditionCols_list) == 1 and conditionCols_list[0] == "":
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}`"""
     else:
         mergeDatasetSql = f"""select * from `{schemaForDeltaTable}`.`{deltaTable}` where {append_query}"""

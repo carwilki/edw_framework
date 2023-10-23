@@ -11,5 +11,11 @@ primaryKeys = json.dumps(primaryKeys)
 conditionCols = json.dumps(conditionCols)
 spark: SparkSession = SparkSession.getActiveSession()
 
-mergeToSFv2("qa", "WM_STOP", primaryKeys, conditionCols, datetime(2023, 9, 26))
-mergeToSFv2("qa", "WM_STOP", primaryKeys, conditionCols, datetime(2023, 9, 18))
+mergeToSFv2(
+    "prod",
+    "WM_STOP",
+    primaryKeys,
+    conditionCols,
+    lb=datetime(2023, 8, 1),
+    ub=datetime.now(),
+)
