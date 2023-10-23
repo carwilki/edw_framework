@@ -1,4 +1,4 @@
-
+# Databricks notebook source
 import json
 from Datalake.utils.mergeUtils import mergeToSFv2
 from pyspark.sql import SparkSession
