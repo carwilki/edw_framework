@@ -484,27 +484,21 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 # COLUMN COUNT: 18
 
 
-# Shortcut_to_WM_LABOR_CRITERIA2 = UPD_DELETE.selectExpr( \
-# 	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
-# 	"CAST(WM_CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
-# 	"CAST(lit(None) AS STRING) as WM_CRIT_CD", \
-# 	"CAST(lit(None) AS STRING) as WM_CRIT_DESC", \
-# 	"CAST(lit(None) AS BIGINT) as RULE_FILTER_FLAG", \
-# 	"CAST(lit(None) AS STRING) as DATA_TYPE", \
-# 	"CAST(lit(None) AS BIGINT) as DATA_SIZE", \
-# 	"CAST(lit(None) AS BIGINT) as WM_COMPANY_ID", \
-# 	"CAST(lit(None) AS BIGINT) as WM_HIBERNATE_VERSION", \
-# 	"CAST(lit(None) AS BIGINT) as WM_CREATED_SOURCE_TYPE", \
-# 	"CAST(lit(None) AS STRING) as WM_CREATED_SOURCE", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_CREATED_TSTMP", \
-# 	"CAST(lit(None) AS BIGINT) as WM_LAST_UPDATED_SOURCE_TYPE", \
-# 	"CAST(lit(None) AS STRING) as WM_LAST_UPDATED_SOURCE", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-# 	"CAST(DELETE_FLAG3 AS BIGINT) as DELETE_FLAG", \
-# 	"CAST(UPDATE_TSTMP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-# 	"CAST(LOAD_TSTMP3 AS TIMESTAMP) as LOAD_TSTMP" \
-# )
+Shortcut_to_WM_LABOR_CRITERIA2 = UPD_DELETE.selectExpr( \
+	"CAST(in_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
+	"CAST(WM_CRIT_ID3 AS BIGINT) as WM_CRIT_ID", \
+	"CAST(DELETE_FLAG3 AS TINYINT) as DELETE_FLAG" \
+)
 # Shortcut_to_WM_LABOR_CRITERIA2.write.saveAsTable(f'{raw}.WM_LABOR_CRITERIA')
+
+Shortcut_to_WM_LABOR_CRITERIA2.createOrReplaceTempView('WM_LABOR_CRITERIA_DEL')
+
+spark.sql(f"""
+          MERGE INTO {refined_perf_table} trg
+          USING WM_LABOR_CRITERIA_DEL src
+          ON (src.LOCATION_ID = trg.LOCATION_ID AND src.WM_CRIT_ID = trg.WM_CRIT_ID )
+          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = CURRENT_TIMESTAMP()
+          """)
 
 # COMMAND ----------
 # Processing node Shortcut_to_WM_LABOR_CRITERIA1, type TARGET 

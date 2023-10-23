@@ -786,43 +786,22 @@ UPD_DELETE = RTR_DELETE_DELETE_temp.selectExpr( \
 # COLUMN COUNT: 34
 
 
-# Shortcut_to_WM_PICK_LOCN_HDR2 = UPD_DELETE.selectExpr( \
-# 	"CAST(i_WM_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
-# 	"CAST(WM_PICK_LOCN_HDR_ID3 AS BIGINT) as WM_PICK_LOCN_HDR_ID", \
-# 	"CAST(lit(None) AS STRING) as WM_LOCN_ID", \
-# 	"CAST(lit(None) AS BIGINT) as WM_LOCN_HDR_ID", \
-# 	"CAST(lit(None) AS STRING) as WM_PICK_LOCN_ASSIGN_TYPE", \
-# 	"CAST(lit(None) AS STRING) as WM_LOCN_PUTAWAY_LOCK", \
-# 	"CAST(lit(None) AS STRING) as WM_INVN_LOCK_CD", \
-# 	"CAST(lit(None) AS BIGINT) as WM_XCESS_WAVE_NEED_PROC_TYPE", \
-# 	"CAST(lit(None) AS STRING) as WM_PUTWY_TYPE", \
-# 	"CAST(lit(None) AS STRING) as WM_PICK_LOCN_ASSIGN_ZONE", \
-# 	"CAST(lit(None) AS BIGINT) as PICK_TO_LIGHT_FLAG", \
-# 	"CAST(lit(None) AS BIGINT) as PICK_TO_LIGHT_REPL_FLAG", \
-# 	"CAST(lit(None) AS BIGINT) as WM_REPL_FLAG", \
-# 	"CAST(lit(None) AS STRING) as WM_REPL_LOCN_BRCD", \
-# 	"CAST(lit(None) AS STRING) as WM_REPL_TRAVEL_AISLE", \
-# 	"CAST(lit(None) AS STRING) as WM_REPL_TRAVEL_ZONE", \
-# 	"CAST(lit(None) AS BIGINT) as WM_SUPPR_PR40_REPL", \
-# 	"CAST(lit(None) AS BIGINT) as WM_COMB_4050_REPL", \
-# 	"CAST(lit(None) AS STRING) as WM_REPL_CHECK_DIGIT", \
-# 	"CAST(lit(None) AS BIGINT) as REPL_X_COORD", \
-# 	"CAST(lit(None) AS BIGINT) as REPL_Y_COORD", \
-# 	"CAST(lit(None) AS BIGINT) as REPL_Z_COORD", \
-# 	"CAST(lit(None) AS BIGINT) as MAX_NBR_OF_SKU", \
-# 	"CAST(lit(None) AS BIGINT) as MAX_VOL", \
-# 	"CAST(lit(None) AS BIGINT) as MAX_WT", \
-# 	"CAST(lit(None) AS STRING) as WM_USER_ID", \
-# 	"CAST(lit(None) AS BIGINT) as WM_VERSION_ID", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_CREATED_TSTMP", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_LAST_UPDATED_TSTMP", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_CREATE_TSTMP", \
-# 	"CAST(lit(None) AS TIMESTAMP) as WM_MOD_TSTMP", \
-# 	"CAST(DELETE_FLAG_EXP3 AS BIGINT) as DELETE_FLAG", \
-# 	"CAST(UPDATE_TSTMP_EXP3 AS TIMESTAMP) as UPDATE_TSTMP", \
-# 	"CAST(lit(None) AS TIMESTAMP) as LOAD_TSTMP" \
-# )
+Shortcut_to_WM_PICK_LOCN_HDR2 = UPD_DELETE.selectExpr( \
+	"CAST(i_WM_LOCATION_ID3 AS BIGINT) as LOCATION_ID", \
+	"CAST(WM_PICK_LOCN_HDR_ID3 AS BIGINT) as WM_PICK_LOCN_HDR_ID", \
+	"CAST(DELETE_FLAG_EXP3 AS TINYINT) as DELETE_FLAG" \
+)
 # Shortcut_to_WM_PICK_LOCN_HDR2.write.saveAsTable(f'{raw}.WM_PICK_LOCN_HDR')
+Shortcut_to_WM_PICK_LOCN_HDR2.createOrReplaceTempView('WM_PICK_LOCN_HDR_DEL')
+
+spark.sql(f"""
+          MERGE INTO {refined_perf_table} trg
+          USING WM_PICK_LOCN_HDR_DEL src
+          ON (src.LOCATION_ID = trg.LOCATION_ID AND src.WM_PICK_LOCN_HDR_ID = trg.WM_PICK_LOCN_HDR_ID )
+          WHEN MATCHED THEN UPDATE SET trg.DELETE_FLAG = src.DELETE_FLAG , trg.UPDATE_TSTMP = CURRENT_TIMESTAMP()
+          """)
+
+
 
 # COMMAND ----------
 # Processing node UPD_INSERT_UPDATE, type UPDATE_STRATEGY . Note: using additional SELECT to rename incoming columns
