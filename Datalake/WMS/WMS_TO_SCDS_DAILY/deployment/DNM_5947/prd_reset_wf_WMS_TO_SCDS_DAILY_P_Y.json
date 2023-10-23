@@ -1,5 +1,5 @@
 {
-    "job_id":<paste job id to reset>,
+    "job_id":182576057205935,
     "new_settings": {
         "run_as": {
             "user_name": "gcpdatajobs-shared@petsmart.com"
