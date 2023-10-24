@@ -126,16 +126,21 @@ def _get_upper_lower_bound_dt_string(
 ) -> (str, str):
     if lb is not None and ub is not None and lb > ub:
         raise ValueError(f"upper bound {ub} cannot be less than lower bound {lb}")
-    if lb is None:
+    elif lb is None and ub is not None:
+        raise ValueError(
+            f"upper bound {ub} can not be used if lower bound is not provided"
+        )
+    elif lb is not None and ub is not None:
+        lb_dt = lb.strftime("%Y-%m-%d")
+        ub_dt = ub.strftime("%Y-%m-%d")
+    if lb is None and ub is None:
         spark: SparkSession = SparkSession.getActiveSession()
         lb_dt = _get_prev_run_dt(deltaTable, env, spark)
-        ub_dt = lb + timedelta(days=3)
-    else:
+        ub_dt = lb_dt + timedelta(days=3)
+    elif lb is not None and ub is None:
         lb_dt = lb.strftime("%Y-%m-%d")
-        if ub is None:
-            ub_dt = lb + timedelta(days=2)
-        else:
-            ub_dt = ub.strftime("%Y-%m-%d")
+        ub_dt = lb + timedelta(days=2)
+
     return lb_dt, ub_dt
 
 
@@ -145,7 +150,11 @@ def _get_prev_run_dt(deltaTable: str, env: str, spark: SparkSession) -> datetime
         f"""select max(prev_run_date)  from {raw}.log_run_details where table_name='{deltaTable}' and lower(status)= 'completed'"""
     ).collect()[0][0]
     prev_run_dt = datetime.strptime(str(prev_run_dt), "%Y-%m-%d %H:%M:%S")
+    
+    if prev_run_dt is None:
+        prev_run_dt = datetime.now()
     prev_run_dt = prev_run_dt - timedelta(days=2)
+    
     return prev_run_dt
 
 

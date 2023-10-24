@@ -85,7 +85,7 @@ headers["client_id"] = mPar_ClientId
 headers["client_secret"] = mPar_ClientSecret
 
 response = requests.get(api_url, headers=headers)
-with open("/dbfs/FileStore/shared_uploads/text_xml.xml", "w") as f:
+with open("/dbfs/FileStore/shared_uploads/text_xml.xml", "w+") as f:
     f.write(response.text)
 
 schema = StructType(
