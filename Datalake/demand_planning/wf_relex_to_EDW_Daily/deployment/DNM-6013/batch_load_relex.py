@@ -87,31 +87,45 @@ def _load_nz(dates: list[pandas.Timestamp]):
         lb = dates[loop].date().strftime("%Y-%m-%d")
         ub = (dates[loop] + timedelta(days=1)).date().strftime("%Y-%m-%d")
         _load_to_datalake(
-            "EDW_PRD", "dp_accuracy_day", f"DAY_DT between '{lb}' and '{ub}'"
+            "EDW_PRD",
+            "dp_accuracy_day",
+            f"DAY_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_accuracy_day",
         )
         _load_to_datalake(
-            "EDW_PRD", "dp_forecast_week_hist", f"SNAPSHOT_DT between '{lb}' and '{ub}'"
+            "EDW_PRD",
+            "dp_forecast_week_hist",
+            f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_forecast_week_hist",
         )
         _load_to_datalake(
             "EDW_PRD",
             "dp_order_projection_day_hist",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_order_projection_day_hist",
         )
         _load_to_datalake(
             "EDW_PRD",
             "dp_order_projection_week_hist",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_order_projection_week_hist",
         )
         _load_to_datalake(
             "EDW_PRD",
             "dp_product_location_settings_hist",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_accuracy_day",
         )
 
 
 def _load_snow(dates: list[pandas.Timestamp]):
     def _load_to_datalake(ss: str, st: str, filter: str, ts: str, tt: str):
-        query = _get_snowflake_query(ss, ts, filter)
+        query = _get_snowflake_query(ss, st, filter)
         df = _read_from_snowflake(query)
         _write_to_datalake(ts, tt, df)
 
@@ -120,27 +134,40 @@ def _load_snow(dates: list[pandas.Timestamp]):
         ub = (ts.date() + timedelta(days=1)).strftime("%Y-%m-%d")
 
         _load_to_datalake(
-            "PUBLIC", "dp_accuracy_day_nz", f"DAY_DT between '{lb}' and '{ub}'"
+            "PUBLIC",
+            "dp_accuracy_day_nz",
+            f"DAY_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_accuracy_day",
         )
+
         _load_to_datalake(
             "PUBLIC",
             "dp_forecast_week_hist_nz",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_forecast_week_hist",
         )
         _load_to_datalake(
             "PUBLIC",
             "dp_order_projection_day_hist_nz",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_order_projection_day",
         )
         _load_to_datalake(
             "PUBLIC",
             "dp_order_projection_week_hist_nz",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_order_projection_week_hist",
         )
         _load_to_datalake(
             "PUBLIC",
             "dp_product_location_settings_hist_nz",
             f"SNAPSHOT_DT between '{lb}' and '{ub}'",
+            "qa_refine",
+            "dp_product_location_settings_hist",
         )
 
 
