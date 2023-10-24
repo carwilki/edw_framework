@@ -118,7 +118,7 @@ def _load_snow(dates: list[pandas.Timestamp]):
     for ts in dates:
         lb = ts.date().strftime("%Y-%m-%d")
         ub = (ts.date() + timedelta(days=1)).strftime("%Y-%m-%d")
-        
+
         _load_to_datalake(
             "PUBLIC", "dp_accuracy_day_nz", f"DAY_DT between '{lb}' and '{ub}'"
         )
