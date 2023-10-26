@@ -77,20 +77,20 @@ def _get_snowflake_query(schema: str, table: str, filter: str) -> str:
     return SQL
 
 
-def _load_nz(dates: list[pandas.Timestamp]):
+def _load_nz(dates: list[pandas.Timestamp], ss, st, ts, tt, date_feild: str) -> None:
     def _load_to_datalake(ss: str, st: str, filter: str, ts: str, tt: str):
         query = _get_nz_query(ss, ts, filter)
         df = _read_from_netezza(query)
         _write_to_datalake(ts, tt, df)
 
-    for loop in range(0, len(dates)):
-        lb = dates[loop].date().strftime("%Y-%m-%d")
-        ub = (dates[loop] + timedelta(days=1)).date().strftime("%Y-%m-%d")
+    for ts in dates:
+        lb = ts.strftime("%Y-%m-%d")
+        ub = (ts + timedelta(days=1)).date().strftime("%Y-%m-%d")
         _load_to_datalake(
-            "EDW_PRD",
-            "dp_accuracy_day",
-            f"DAY_DT between '{lb}' and '{ub}'",
-            "qa_refine",
+            f"{ss}",
+            f"{st}",
+            f"{date_feild} between '{lb}' and '{ub}'",
+            "{ts}",
             "dp_accuracy_day",
         )
         _load_to_datalake(
