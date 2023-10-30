@@ -10,13 +10,13 @@ The script uses the BatchReaderSourceType enum to specify the type of source sys
 The script uses the BatchConfig dataclass to store the configuration information for the script.
 The script uses the BatchReaderManagerException class to handle any exceptions that may occur during the execution of the script.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from pyspark.sql import SparkSession, DataFrame
 from Datalake.utils import secrets
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.readers.AbstractBatchReader import AbstractBatchReader
-from Datalake.utils.readers.BatchReaderManager import (
-    BatchReaderConfig,
+from Datalake.utils.BatchTransferManager import (
+    DateRangeBatchConfig,
     BatchReaderSourceType,
 )
 
@@ -36,12 +36,13 @@ class SnowflakeBatchReader(AbstractBatchReader):
     The class uses the BatchReaderManagerException class to handle any exceptions that may occur during the execution of the script.
     """
 
-    def __init__(self, config: BatchReaderConfig, spark: SparkSession):
+    def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
+        super.__init__(self, config)
         self._validate_sf_config(config)
         self._setup_reader(config, spark)
         self._bootstrap_reader(config, spark)
 
-    def _setup_reader(self, config: BatchReaderConfig, spark: SparkSession):
+    def _setup_reader(self, config: DateRangeBatchConfig, spark: SparkSession):
         self.spark = spark
         self.env = config.env.strip()
         self.exclude_columns = [x.lower() for x in config.excluded_columns]
@@ -77,7 +78,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
                 "sfRole": "role_databricks_nonprd",
             }
 
-    def _validate_sf_config(self, config):
+    def _validate_sf_config(self, config: DateRangeBatchConfig):
         if config.source_type != BatchReaderSourceType.SNOWFLAKE:
             raise ValueError(
                 "source_type must be set to Snowflake for use with the SnowflakeBatchReader"
@@ -100,11 +101,38 @@ class SnowflakeBatchReader(AbstractBatchReader):
                 """source_table must be set for use with the SnowflakeBatchReader.
                     This maps to sfTable and is required"""
             )
+
     def _generate_query(self, dt: datetime) -> str:
-        query = f"""SELECT * FROM {self.sf_table}""" 
-        where  = ""
+        query = f"""select * from {self.sf_table}"""
+        where = ""
+        s_dt = dt.strftime("%Y-%m-%d")
+        e_dt = (dt + timedelta(1, "day")).strftime("%Y-%m-%d")
         for col in self.date_columns:
-            if len(where)==0
-                where = f" WHERE {col} = '{dt.strftime('%Y-%m-%d')}' "
-    def next(dt: datetime) -> DataFrame:
-        pass
+            if len(where) == 0:
+                where = f""" where {col} between '{s_dt}' and '{e_dt}'"""
+            else:
+                where = (
+                    where
+                    + f" and {col} between '{s_dt}' and '{(dt + timedelta(1,'day')).strftime('%Y-%m-%d')}'"
+                )
+        return query + where
+
+    def _execute_query(self, query: str) -> DataFrame:
+        self.spark.read()
+
+    def _strip_colunms(self, df: DataFrame) -> DataFrame:
+        df = df.drop(*self.exclude_columns)
+        return df
+
+    def next(self, dt: datetime) -> DataFrame:
+        df = (
+            self.spark.read.format("net.snowflake.spark.snowflake")
+            .options(**self.sfOptions)
+            .option("query", self._generate_query(dt))
+            .load()
+        )
+        df = self._strip_colunms(df)
+
+        df = self._convert_decimal_to_int_types(df)
+
+        return df

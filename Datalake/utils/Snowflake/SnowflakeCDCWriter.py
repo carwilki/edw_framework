@@ -424,3 +424,4 @@ class SnowflakeCDCWriter:
                   No changes found for {table}"""
             )
             return None
+        

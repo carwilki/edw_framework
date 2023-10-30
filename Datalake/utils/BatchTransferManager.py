@@ -17,6 +17,7 @@ from Datalake.utils.Snowflake.vars import (
     cdc_metadata_table,
 )
 from Datalake.utils.netezza.NetezzaBatchReader import NetezzaBatchReaderLogger
+from Datalake.utils.readers.AbstractBatchReader import AbstractBatchReader
 
 
 class BatchReaderSourceType(Enum):
@@ -38,7 +39,7 @@ class BatchReaderManagerException(Exception):
 
 
 @dataclass
-class BatchReaderMemento(object):
+class BatchMemento(object):
     batch_id: str
     env: str
     source_table: str
@@ -62,10 +63,9 @@ class BatchReaderMemento(object):
         self.__dict__ = d
 
     def to_config(self):
-        return BatchReaderConfig(
+        return DateRangeBatchConfig(
             batch_id=self.batch_id,
             env=self.env,
-            source_type=self.source_type.value,
             source_table=self.source_table,
             source_schema=self.source_schema,
             target_schema=self.target_schema,
@@ -81,8 +81,8 @@ class BatchReaderMemento(object):
         )
 
 
-@dataclass
-class BatchReaderConfig(object):
+@dataclass(keyword_only=True)
+class DateRangeBatchConfig(object):
     """
     This dataclass is used to store the configuration information for the script.
     The configuration information includes the name of the table to be read from the source system,
@@ -104,7 +104,7 @@ class BatchReaderConfig(object):
     start_dt: datetime
     end_dt: datetime
 
-    def to_memento_for_dt(self, current: datetime) -> BatchReaderMemento:
+    def to_memento_for_dt(self, current: datetime) -> BatchMemento:
         """turns this config into a BatchReaderMemento wich can be used to create a BatchReaderManager
 
         Args:
@@ -114,7 +114,7 @@ class BatchReaderConfig(object):
         Returns:
             BatchReaderMemento: BatchReaderMemento that can be used to create a BatchReaderManager
         """
-        return BatchReaderMemento(
+        return BatchMemento(
             batch_id=self.batch_id,
             env=self.env,
             source_table=self.source_table,
@@ -151,7 +151,7 @@ class BatchReaderManager(object):
     :param update_excl_columns: Colunms that should be excluded from the update.
     """
 
-    def __init__(self, env: str, spark: SparkSession, batchConfig: BatchReaderConfig):
+    def __init__(self, env: str, spark: SparkSession, batchConfig: DateRangeBatchConfig):
         """Initializes the BatchReaderManager class. This class will create the table to store the metadata in if it
         does not already exist"""
         self.env = env
@@ -172,7 +172,7 @@ class BatchReaderManager(object):
     def _loadMemento(
         self,
         batch_id: str,
-    ) -> BatchReaderMemento | None:
+    ) -> BatchMemento | None:
         df = self.spark.sql(
             f"select value from {self.log_table} where lower(batch_id) = '{batch_id.lower()}'"
         )
@@ -184,7 +184,7 @@ class BatchReaderManager(object):
 
         return pickle.loads(s)
 
-    def _saveMemento(self, memento: BatchReaderMemento) -> None:
+    def _saveMemento(self, memento: BatchMemento) -> None:
         self.spark.sql(
             f"""insert into {self._get_metadata_table()}
                 (batch_id, value) values ('{memento.batch_id}', '{pickle.dumps(memento)}')"""
@@ -198,8 +198,14 @@ class BatchReaderManager(object):
                 value string)"""
         ).collect()
 
-    def _build_source(self) -> SnowflakeBatchReader | NetezzaBatchReaderLogger:
+    def _build_source(self) -> AbstractBatchReader:
         if self.state.source_type == BatchReaderSourceType.SNOWFLAKE:
             return SnowflakeBatchReader(self.state.to_config(), self.spark)
         elif self.state.source_type == BatchReaderSourceType.NETEZZA:
             return NetezzaBatchReaderLogger(self.state.to_config(), self.spark)
+    
+    def _build_target(self) -> AbstractBatchReader:
+
+    def process_batch(self):
+        source = self._build_source()
+        target = 
