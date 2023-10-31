@@ -226,8 +226,8 @@ def store_loc_prd_sqlServer(env):
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = secrets.get(scope="SVC_BD_SQL_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_READ", key="esdh_password")
+        username = secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="store_locator_password")
         hostname = "10.116.133.31"
         portnumber = "1433"
         db = "StoreLocator"
