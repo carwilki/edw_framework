@@ -107,7 +107,7 @@ table_group
 VALUES (
 "NZ_Migration"
 , null
-, 'NZ_Mako8_raw'
+, 'NZ_Mako8'
 , "EDW_PRD"
 , "OPEN_PO_PRE"
 , null
@@ -178,7 +178,7 @@ table_group
 VALUES (
 "NZ_Migration"
 , null
-, 'NZ_Mako8_raw'
+, 'NZ_Mako8'
 , "EDW_PRD"
 , "OPEN_STO_PRE"
 , null
@@ -746,7 +746,7 @@ table_group
 VALUES (
 "NZ_Migration"
 , null
-, 'NZ_Mako8_raw'
+, 'NZ_Mako8'
 , "EDW_PRD"
 , "SKU_STORE_PRICE_COSTS_PRE"
 , null
