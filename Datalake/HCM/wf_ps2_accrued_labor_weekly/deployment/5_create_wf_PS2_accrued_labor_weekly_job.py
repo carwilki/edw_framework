@@ -34,7 +34,7 @@ def getJobId(json_response):
 
 import json
 
-job_json = "5_ps2_accrued_labor_weekly.json"
+job_json = "ps2_accrued_labor_weekly.json"
 
 with open(job_json) as json_file:
     job_payload = json.load(json_file)
