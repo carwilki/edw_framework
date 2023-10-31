@@ -33,7 +33,7 @@ raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
 # Read in relation source variables
-(username, password, connection_string) = esdh_prd_sqlServer(env)
+(username, password, connection_string) = store_loc_prd_sqlServer(env)
 
 # COMMAND ----------
 
