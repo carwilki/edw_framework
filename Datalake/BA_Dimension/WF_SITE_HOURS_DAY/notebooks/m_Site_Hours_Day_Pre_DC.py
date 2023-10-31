@@ -35,6 +35,7 @@ legacy = getEnvPrefix(env) + "legacy"
 enterprise = getEnvPrefix(env) + "enterprise"
 
 # COMMAND ----------
+
 # Processing node SQ_Shortcut_to_DAYS, type SOURCE
 # COLUMN COUNT: 3
 
@@ -47,6 +48,7 @@ FROM {enterprise}.DAYS"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node Fil_Day_Dt, type FILTER
 # COLUMN COUNT: 3
 
@@ -64,7 +66,9 @@ Fil_Day_Dt = (
     .filter("DAY_DT >= current_date()  AND DAY_DT < DATE_ADD (current_date() , 15 )")
     .withColumn("sys_row_id", monotonically_increasing_id())
 )
+
 # COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE_RPT, type SOURCE
 # COLUMN COUNT: 4
 
@@ -78,6 +82,7 @@ FROM {legacy}.SITE_PROFILE_RPT"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node EXPTRANS, type EXPRESSION
 # COLUMN COUNT: 4
 
@@ -95,6 +100,7 @@ EXPTRANS = Fil_Day_Dt_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node Fil_Store_NBr, type FILTER
 # COLUMN COUNT: 4
 
@@ -118,6 +124,7 @@ Fil_Store_NBr = (
 )
 
 # COMMAND ----------
+
 # Processing node EXPTRANS1, type EXPRESSION
 # COLUMN COUNT: 5
 
@@ -136,6 +143,7 @@ EXPTRANS1 = Fil_Store_NBr_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node JNRTRANS, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 9
 
@@ -161,6 +169,7 @@ JNRTRANS = EXPTRANS_temp.join(
 )
 
 # COMMAND ----------
+
 # Processing node EXPTRANS2, type EXPRESSION
 # COLUMN COUNT: 9
 
@@ -176,11 +185,12 @@ EXPTRANS2 = JNRTRANS_temp.selectExpr(
     "JNRTRANS___LOCATION_TYPE_ID as LOCATION_TYPE_ID",
     "IF (JNRTRANS___DAY_OF_WK_NBR IN ( 6,7 ) OR JNRTRANS___HOLIDAY_FLAG = 'Y', '1', '0') as IS_CLOSE_FLAG",
     "JNRTRANS___DAY_DT as OPEN_TSTMP",
-    "DATE_ADD(DATE_ADD(JNRTRANS___DAY_DT, 1), -1) as CLOSE_TSTMP",
+    "(DATE_ADD(JNRTRANS___DAY_DT, 1)) - INTERVAL 1 MILLISECOND as CLOSE_TSTMP",
     "CURRENT_TIMESTAMP as LOAD_TSTMP",
 )
 
 # COMMAND ----------
+
 # Processing node Shortcut_to_SITE_HOURS_DAY_PRE, type TARGET
 # COLUMN COUNT: 8
 
