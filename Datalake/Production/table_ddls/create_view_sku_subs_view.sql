@@ -1,0 +1,115 @@
+-- Databricks notebook source
+--Create View "SKU_SUBS_VIEW"
+
+USE legacy;
+
+CREATE
+	OR replace VIEW SKU_SUBS_VIEW (
+	PRODUCT_ID
+	,SKU_NBR
+	,SUBS_PRODUCT_ID
+	,SUBS_SKU_NBR
+	,SOURCE_CD
+	,SUBS_IND
+	) AS
+
+SELECT SSL.PRODUCT_ID
+	,SP1.SKU_NBR
+	,SSL.SUBS_PRODUCT_ID
+	,SP2.SKU_NBR AS SUBS_SKU_NBR
+	,CASE 
+		WHEN (
+				(MAX(SSL.SS_CD) = 'S')
+				AND (MAX(SSL.SL_CD) = 'D')
+				)
+			THEN 'B'
+		WHEN (
+				(MAX(SSL.SS_CD) = 'S')
+				AND (MAX(SSL.SL_CD) = ' ')
+				)
+			THEN 'S'
+		WHEN (
+				(MAX(SSL.SS_CD) = ' ')
+				AND (MAX(SSL.SL_CD) = 'D')
+				)
+			THEN 'D'
+		ELSE NULL
+		END AS SOURCE_CD
+	,CASE 
+		WHEN (
+				(now() >= MAX(SSL.SUBS_EFF_DT))
+				AND (now() <= MAX(SSL.SUBS_END_DT))
+				)
+			THEN 1
+		ELSE 0
+		END AS SUBS_IND
+FROM (
+	(
+		(
+			(
+				SELECT SS.PRODUCT_ID
+					,SS.SUBS_PRODUCT_ID
+					,('S') AS SS_CD
+					,(' ') AS SL_CD
+					,SS.SUBS_EFF_DT
+					,SS.SUBS_END_DT
+				FROM legacy.SKU_SUBSTITUTION SS
+				)
+			
+			UNION ALL
+			
+			(
+				SELECT SL.PRODUCT_ID
+					,SL.LINK_PRODUCT_ID
+					,(' ') AS SS_CD
+					,('D') AS SL_CD
+					,SL.SKU_LINK_EFF_DT
+					,SL.SKU_LINK_END_DT
+				FROM legacy.DP_SKU_LINK SL
+				GROUP BY SL.PRODUCT_ID
+					,SL.LINK_PRODUCT_ID
+					,SL.SKU_LINK_EFF_DT
+					,SL.SKU_LINK_END_DT
+				)
+			)
+		
+		UNION ALL
+		
+		(
+			SELECT SS.SUBS_PRODUCT_ID
+				,SS.PRODUCT_ID
+				,('S') AS SS_CD
+				,(' ') AS SL_CD
+				,SS.SUBS_EFF_DT
+				,SS.SUBS_END_DT
+			FROM legacy.SKU_SUBSTITUTION SS
+			)
+		)
+	
+	UNION ALL
+	
+	(
+		SELECT SL.LINK_PRODUCT_ID
+			,SL.PRODUCT_ID
+			,(' ') AS SS_CD
+			,('D') AS SL_CD
+			,SL.SKU_LINK_EFF_DT
+			,SL.SKU_LINK_END_DT
+		FROM legacy.DP_SKU_LINK SL
+		GROUP BY SL.LINK_PRODUCT_ID
+			,SL.PRODUCT_ID
+			,SL.SKU_LINK_EFF_DT
+			,SL.SKU_LINK_END_DT
+		)
+	) SSL
+	,legacy.SKU_PROFILE SP1
+	,legacy.SKU_PROFILE SP2
+WHERE (
+		(SSL.PRODUCT_ID = SP1.PRODUCT_ID)
+		AND (SSL.SUBS_PRODUCT_ID = SP2.PRODUCT_ID)
+		)
+GROUP BY SSL.PRODUCT_ID
+	,SP1.SKU_NBR
+	,SSL.SUBS_PRODUCT_ID
+	,SP2.SKU_NBR;
+    
