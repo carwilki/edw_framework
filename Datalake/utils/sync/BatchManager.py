@@ -25,7 +25,7 @@ class BatchReaderSourceType(Enum):
     NETEZZA = "netezza"
 
 
-class BatchReaderManagerException(Exception):
+class BatchManagerException(Exception):
     """
     This exception is used to handle any exceptions that may occur during the execution of the script.
     """
@@ -91,14 +91,10 @@ class DateRangeBatchConfig(object):
 
     batch_id: str
     env: str
-    source_table: str
-    source_schema: str
-    target_schema: str
-    target_table: str
     source_type: BatchReaderSourceType
+    source_table_fqn: str
+    target_table_fqn: str
     source_filter: str | None = None
-    source_catalog: str | None = None
-    target_catalog: str | None = None
     keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)

@@ -8,7 +8,7 @@ from pyspark.sql.session import SparkSession
 from Datalake.utils.mergeUtils import mergeToSFv2
 from Datalake.utils.sync.BatchManager import (
     BatchManager,
-    BatchReaderManagerException,
+    BatchManagerException,
     BatchReaderSourceType,
     DateRangeBatchConfig,
 )
@@ -17,7 +17,7 @@ from utils import parse_delta
 parser = argparse.ArgumentParser()
 
 parser.add_argument("env", type=str, help="Environment value")
-parser.add_argument("batch_id", type=str, help="id of the batch job", required=True)
+parser.add_argument(, type=str, help="id of the batch job", required=True)
 parser.add_argument("source_table", type=str, help="Source Table", required=True)
 parser.add_argument("source_schema", type=str, help="Source Schema", required=True)
 parser.add_argument(
@@ -80,13 +80,8 @@ batchConfig: DateRangeBatchConfig = DateRangeBatchConfig()
 batchConfig.env = args.env
 batchConfig.batch_id = args.batch_id
 batchConfig.source_table = args.source_table
-batchConfig.source_schema = args.source_schema
-batchConfig.target_schema = args.target_schema
-batchConfig.target_table = args.target_table
 batchConfig.source_type = BatchReaderSourceType(args.source_type)
 batchConfig.source_filter = args.source_filter
-batchConfig.source_catalog = args.source_catalog
-batchConfig.target_catalog = args.target_catalog
 batchConfig.keys = json.dumps([key for key in args.keys.split(",")])
 batchConfig.excluded_columns = json.dumps(
     [col for col in args.excluded_columns.split(",")]
