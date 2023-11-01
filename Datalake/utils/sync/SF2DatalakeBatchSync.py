@@ -16,61 +16,59 @@ from utils import parse_delta
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("env", type=str, help="Environment value")
-parser.add_argument(, type=str, help="id of the batch job", required=True)
-parser.add_argument("source_table", type=str, help="Source Table", required=True)
-parser.add_argument("source_schema", type=str, help="Source Schema", required=True)
+parser.add_argument("-e", "--env", type=str, help="Environment value")
+parser.add_argument("-id", "--id", type=str, help="id of the batch job", required=True)
 parser.add_argument(
-    "target_schema", type=str, help="Target schema in the data lake", required=True
+    "-st", "--source_table", type=str, help="Source Snowflake Table FQN", required=True
 )
 parser.add_argument(
-    "target_table", type=str, help="Target table in the data lake", required=True
+    "-tt", "--target_table", type=str, help="Target Data Lake Table FQN", required=True
 )
 parser.add_argument(
-    "source_type",
-    type=str,
+    "-t",
+    "--source_type",
+    type=lambda x: BatchReaderSourceType[x.upper()],
     help="the source type. either snowflake or netezza",
+    choices=["netezza", "snowflake"],
     required=True,
 )
 parser.add_argument(
-    "source_filter",
+    "-sf",
+    "--source_filter",
     type=str,
     help="A fliter for the source table to limit the data",
     default=None,
 )
 parser.add_argument(
-    "source_catalog",
+    "-k", "--keys", type=str, help="primary Keys for the delta table", required=True
+)
+parser.add_argument(
+    "-ec",
+    "--excluded_columns",
     type=str,
-    help="Optional source catalog for 3 level namespace",
+    help="exlcuded columns in the delta table",
     default=None,
 )
 parser.add_argument(
-    "target_catalog",
-    type=str,
-    help="Optional target data lake catalog for 3 level namespace",
-    default=None,
-)
-parser.add_argument(
-    "keys", type=str, help="primary Keys for the delta table", required=True
-)
-parser.add_argument(
-    "excluded_columns", type=str, help="exlcuded columns in the delta table", default=[]
-)
-parser.add_argument(
-    "date_columns",
+    "-dc" "--date_columns",
     type=str,
     help="colunms that are dates to be used as the iterator to get new data",
     required=True,
 )
 parser.add_argument(
-    "start_dt", type=datetime, help="the start date for the batch", required=True
+    "-sd",
+    "--start_dt",
+    type=datetime,
+    help="the start date for the batch",
+    required=True,
 )
 parser.add_argument(
-    "end_dt", type=datetime, help="the end date for the batch", required=True
+    "-ed", "--end_dt", type=datetime, help="the end date for the batch", required=True
 )
 parser.add_argument(
-    "interval",
-    type=str,
+    "-in",
+    "--interval",
+    type=lambda x: parse_delta(x),
     help="the interval for the batch",
     default=None,
 )
@@ -79,14 +77,13 @@ args = parser.parse_args()
 batchConfig: DateRangeBatchConfig = DateRangeBatchConfig()
 batchConfig.env = args.env
 batchConfig.batch_id = args.batch_id
-batchConfig.source_table = args.source_table
+batchConfig.target_table_fqn = args.target_table
+batchConfig.source_table_fqn = args.source_table
 batchConfig.source_type = BatchReaderSourceType(args.source_type)
 batchConfig.source_filter = args.source_filter
-batchConfig.keys = json.dumps([key for key in args.keys.split(",")])
-batchConfig.excluded_columns = json.dumps(
-    [col for col in args.excluded_columns.split(",")]
-)
-batchConfig.date_columns = json.dumps([date for date in args.date_columns.split(",")])
+batchConfig.keys = [key for key in args.keys.split(",")]
+batchConfig.excluded_columns = [col for col in args.excluded_columns.split(",")]
+batchConfig.date_columns = [date for date in args.date_columns.split(",")]
 batchConfig.start_dt = args.start_dt.strftime("%Y-%m-%")
 batchConfig.end_dt = args.end_dt.strftime("%Y-%m-%")
 batchConfig.current_dt = None
