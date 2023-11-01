@@ -36,8 +36,8 @@ cust_sensitive = getEnvPrefix(env) + "cust_sensitive"
 (username, password, connection_string) = salon_call_log_daily_prd_sqlServer(env)
 sqlTable = "staging.DB_SALON_BUNDLES_LAPSED_CUST_CALL_LOG_PRE"
 
-Prev_Run_Dt=genPrevRunDt("SALON_BUNDLES_LAPSED_CUST_CALL_LOG", refine, raw)
-print("The prev run date is " + Prev_Run_Dt)
+#Prev_Run_Dt=genPrevRunDt("SALON_BUNDLES_LAPSED_CUST_CALL_LOG", refine, raw)
+#print("The prev run date is " + Prev_Run_Dt)
 
 # COMMAND ----------
 
@@ -75,7 +75,7 @@ SVCS_APPT_STATUS_GID,
 SVCS_ORDER_STATUS_GID,
 APPT_SERVICE_CANCEL_FLAG
 FROM {cust_sensitive}.legacy_sds_order_item_rpt
-WHERE COALESCE(APPT_TSTMP,date('1900-01-01'))> to_date('{Prev_Run_Dt}') - 1"""
+WHERE COALESCE(APPT_TSTMP,date('1900-01-01'))> CURRENT_DATE - 1"""
 )  # .withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -83,6 +83,7 @@ WHERE COALESCE(APPT_TSTMP,date('1900-01-01'))> to_date('{Prev_Run_Dt}') - 1"""
 # Processing node SQ_SALON_BUNDLES_LAPSED_CUST_CALL_LOG, type SOURCE
 # COLUMN COUNT: 28
 
+#This is set to point to the table in Databricks schema for parallel run. After cutover, this should change to dbo
 _sql = f"""
 SELECT
     SALON_BUNDLES_LAPSED_CUST_CALL_LOG.SALON_BUNDLES_LAPSED_CUST_CALL_LOG_ID,
@@ -113,7 +114,7 @@ SELECT
     SALON_BUNDLES_LAPSED_CUST_CALL_LOG.LOAD_TSTMP,
     SALON_BUNDLES_LAPSED_CUST_CALL_LOG.SysStartTime,
     SALON_BUNDLES_LAPSED_CUST_CALL_LOG.SysEndTime
-FROM SALON_BUNDLES_LAPSED_CUST_CALL_LOG
+FROM Databricks.SALON_BUNDLES_LAPSED_CUST_CALL_LOG
 """
 
 SQ_SALON_BUNDLES_LAPSED_CUST_CALL_LOG = jdbcSqlServerConnection(
