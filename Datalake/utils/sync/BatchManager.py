@@ -112,14 +112,9 @@ class DateRangeBatchConfig(object):
         return BatchMemento(
             batch_id=self.batch_id,
             env=self.env,
-            source_table=self.source_table,
-            source_schema=self.source_schema,
-            target_schema=self.target_schema,
-            target_table=self.target_table,
+            
             source_type=self.source_type,
             source_filter=self.source_filter,
-            source_catalog=self.source_catalog,
-            target_catalog=self.target_catalog,
             excluded_columns=self.excluded_columns,
             date_columns=self.date_columns,
             start_dt=self.start_dt,

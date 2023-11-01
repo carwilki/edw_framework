@@ -86,6 +86,7 @@ batchConfig.excluded_columns = [col for col in args.excluded_columns.split(",")]
 batchConfig.date_columns = [date for date in args.date_columns.split(",")]
 batchConfig.start_dt = args.start_dt.strftime("%Y-%m-%")
 batchConfig.end_dt = args.end_dt.strftime("%Y-%m-%")
+batchConfig.interval = args.interval
 batchConfig.current_dt = None
 
 if args.interval is not None:
