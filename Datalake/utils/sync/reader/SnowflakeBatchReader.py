@@ -1,46 +1,35 @@
-"""
-This script is used to read data from a Snowflake database.
-It uses the PySpark API to read data from the Snowflake database and the PySpark API to write data to the target system.
-
-The script takes in a configuration file that contains the necessary information to connect to the Snowflake database. 
-
-The script uses the SnowflakeBatchReader class to read data from the Snowflake database.
-The SnowflakeBatchReader class uses the PySpark API to read data from the Snowflake database.
-The script uses the BatchReaderSourceType enum to specify the type of source system being read from.
-The script uses the BatchConfig dataclass to store the configuration information for the script.
-The script uses the BatchReaderManagerException class to handle any exceptions that may occur during the execution of the script.
-"""
 from datetime import datetime, timedelta
-from pyspark.sql import SparkSession, DataFrame
+
+from pyspark.sql import DataFrame, SparkSession
+
 from Datalake.utils import secrets
 from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.readers.AbstractBatchReader import AbstractBatchReader
-from Datalake.utils.BatchTransferManager import (
-    DateRangeBatchConfig,
-    BatchReaderSourceType,
-)
+from Datalake.utils.sync.BatchManager import BatchReaderSourceType, DateRangeBatchConfig
+from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
 
 
 class SnowflakeBatchReader(AbstractBatchReader):
     """
     This class is used to read data from a Snowflake database and load it into a target system.
-    It uses the PySpark API to read data from the Snowflake database and the PySpark API to write data to the target system.
+    It uses the PySpark API to read data from the Snowflake database and the PySpark API to
+    write data to the target system.
 
     The class takes in a BatchConfig, and a SparkSession.
 
-    The class uses the PySpark API to read data from the Snowflake database and the PySpark API to write data to the target system.
+    The class uses the PySpark API to read data from the Snowflake database and the PySpark API
+    to write data to the target system.
 
     The class uses the BatchReaderSourceType enum to specify the type of source system being read from.
     The class uses the BatchConfig dataclass to store the configuration information for the script.
 
-    The class uses the BatchReaderManagerException class to handle any exceptions that may occur during the execution of the script.
+    The class uses the BatchReaderManagerException class to handle any exceptions that may
+    occur during the execution of the script.
     """
 
     def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
         super.__init__(self, config)
         self._validate_sf_config(config)
         self._setup_reader(config, spark)
-        self._bootstrap_reader(config, spark)
 
     def _setup_reader(self, config: DateRangeBatchConfig, spark: SparkSession):
         self.spark = spark
@@ -124,11 +113,14 @@ class SnowflakeBatchReader(AbstractBatchReader):
         df = df.drop(*self.exclude_columns)
         return df
 
-    def next(self, dt: datetime) -> DataFrame:
+    def next(self) -> DataFrame:
         df = (
             self.spark.read.format("net.snowflake.spark.snowflake")
             .options(**self.sfOptions)
-            .option("query", self._generate_query(dt))
+            .option(
+                "query",
+                self._generate_query(self.config.current_dt) + self.config.interval,
+            )
             .load()
         )
         df = self._strip_colunms(df)

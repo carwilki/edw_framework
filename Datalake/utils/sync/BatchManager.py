@@ -1,23 +1,19 @@
-from datetime import datetime
-from enum import Enum
-import json
-from typing import Optional
-from dataclasses import dataclass, field
-from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.functions import col, desc, row_number, when
-from pyspark.sql.window import Window
 import pickle
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
 
-from Datalake.utils import secrets
-from Datalake.utils.Snowflake.SnowflakeBatchReader import SnowflakeBatchReader
+from pyspark.sql import DataFrame, SparkSession
+
+from Datalake.utils.DeltaLakeWriter import SparkDeltaLakeWriter
 from Datalake.utils.genericUtilities import getEnvPrefix, getLogger
-from Datalake.utils.Snowflake.vars import (
-    cdc_metadata_catalog,
-    cdc_metadata_schema,
-    cdc_metadata_table,
+from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
+from Datalake.utils.sync.reader.NetezzaBatchReader import NetezzaBatchReaderLogger
+from Datalake.utils.sync.reader.SnowflakeBatchReader import SnowflakeBatchReader
+from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
+from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
+    SparkDeltaLakeBatchWriter,
 )
-from Datalake.utils.netezza.NetezzaBatchReader import NetezzaBatchReaderLogger
-from Datalake.utils.readers.AbstractBatchReader import AbstractBatchReader
 
 
 class BatchReaderSourceType(Enum):
@@ -50,11 +46,13 @@ class BatchMemento(object):
     source_filter: str | None = None
     source_catalog: str | None = None
     target_catalog: str | None = None
+    keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
     start_dt: datetime
     end_dt: datetime
     current_dt: datetime
+    interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
 
     def __getstate__(self):
         return self.__dict__
@@ -78,6 +76,8 @@ class BatchMemento(object):
             date_columns=self.date_columns,
             start_dt=self.start_dt,
             end_dt=self.end_dt,
+            current_dt=self.current_dt,
+            interval=self.interval,
         )
 
 
@@ -99,20 +99,19 @@ class DateRangeBatchConfig(object):
     source_filter: str | None = None
     source_catalog: str | None = None
     target_catalog: str | None = None
+    keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
     start_dt: datetime
     end_dt: datetime
+    current_dt: datetime
+    interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
 
-    def to_memento_for_dt(self, current: datetime) -> BatchMemento:
-        """turns this config into a BatchReaderMemento wich can be used to create a BatchReaderManager
-
-        Args:
-            current (datetime): that date time that should be between the start_dt and the end_dt
-            that indicates what day is currently being processed
+    def to_memento(self) -> BatchMemento:
+        """turns this config into a BatchMemento wich can be used to create a BatchReaderManager
 
         Returns:
-            BatchReaderMemento: BatchReaderMemento that can be used to create a BatchReaderManager
+            BatchMemento: BatchReaderMemento that can be used to create a BatchReaderManager
         """
         return BatchMemento(
             batch_id=self.batch_id,
@@ -129,11 +128,12 @@ class DateRangeBatchConfig(object):
             date_columns=self.date_columns,
             start_dt=self.start_dt,
             end_dt=self.end_dt,
-            current_dt=current,
+            current_dt=self.current_dt,
+            interval=self.interval,
         )
 
 
-class BatchReaderManager(object):
+class BatchManager(object):
     """Snowflake CDC Logger class. This class is used to write the metadata about successfull execution
     cdc to the snowflake database. This class will create the table to store the metadata in if it does
     not already exist.
@@ -151,61 +151,77 @@ class BatchReaderManager(object):
     :param update_excl_columns: Colunms that should be excluded from the update.
     """
 
-    def __init__(self, env: str, spark: SparkSession, batchConfig: DateRangeBatchConfig):
+    def __init__(self, spark: SparkSession, batchConfig: DateRangeBatchConfig):
         """Initializes the BatchReaderManager class. This class will create the table to store the metadata in if it
         does not already exist"""
-        self.env = env
+        self.env = batchConfig.env
         self.spark = spark
-        self.log_table = f"{getEnvPrefix(env)}raw.batch_reader_state"
+        self.log_table = f"{getEnvPrefix(self.env)}raw.batch_reader_state"
         self._createLogTable()
         m = self._loadMemento(batchConfig.batch_id)
         if m is not None:
-            getLogger().info(f"found mememento for batch_id:{batchConfig.batch_id}")
+            print(
+                f"BatchManager::__init__::found mememento for batch_id:{batchConfig.batch_id}"
+            )
             self.state = m
         else:
-            getLogger().info(
-                f"""memento not found for batch_id:{batchConfig.batch_id}.
+            print(
+                f"""BatchManager::__init__::memento not found for batch_id:{batchConfig.batch_id}.
                     creating new memento"""
             )
-            self.state = batchConfig.to_memento_for_dt(batchConfig.start_dt)
+            self.state = batchConfig.to_memento()
 
     def _loadMemento(
         self,
         batch_id: str,
     ) -> BatchMemento | None:
-        df = self.spark.sql(
-            f"select value from {self.log_table} where lower(batch_id) = '{batch_id.lower()}'"
-        )
+        sql = f"select value from {self.log_table} where lower(batch_id) = '{batch_id.lower()}'"
+        df = self.spark.sql(sql)
+        print("BatchManager::_loadMemento::Loading batch state")
+        print(f"BatchManager::_load::SQL::{sql}")
+
         try:
             s = str(df.collect()[0][0])
         except IndexError:
-            getLogger().warning(f"""no memento found for batch_id:{batch_id}""")
+            print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
             return None
 
         return pickle.loads(s)
 
     def _saveMemento(self, memento: BatchMemento) -> None:
-        self.spark.sql(
-            f"""insert into {self._get_metadata_table()}
+        sql = f"""insert into {self._get_metadata_table()}
                 (batch_id, value) values ('{memento.batch_id}', '{pickle.dumps(memento)}')"""
-        ).collect()
+        print("BatchManager::_saveMemento::Saving batch state")
+        print(f"BatchManager::_saveMemento::SQL::{sql}")
+        self.spark.sql(sql).collect()
 
     def _createLogTable(self):
         """Creates the metadata table for the batch reader if it does not exist"""
-        self.spark.sql(
-            f"""create table if not exists {self.log_table}(
+        sql = f"""create table if not exists {self.log_table}(
                 batch_id string,
                 value string)"""
-        ).collect()
+
+        print("BatchManager::_createLogTable::creating metadata table")
+        print(f"BatchManager::_createLogTable::SQL::{sql}")
+        self.spark.sql(sql).collect()
 
     def _build_source(self) -> AbstractBatchReader:
         if self.state.source_type == BatchReaderSourceType.SNOWFLAKE:
+            print("BatchManager::_build_source::creating Snowflake source")
             return SnowflakeBatchReader(self.state.to_config(), self.spark)
         elif self.state.source_type == BatchReaderSourceType.NETEZZA:
+            print("BatchManager::_build_source::creating Netezza source")
             return NetezzaBatchReaderLogger(self.state.to_config(), self.spark)
-    
-    def _build_target(self) -> AbstractBatchReader:
 
-    def process_batch(self):
+    def _build_target(self) -> AbstractBatchWriter:
+        print("BatchManager::_build_target::creating spark delta writer")
+        return SparkDeltaLakeBatchWriter(self.state.to_config(), self.spark)
+
+    def next(self):
+        print("BatchManager::process_batch::processing batch")
         source = self._build_source()
-        target = 
+        target = self._build_target()
+        print("BatchManager::process_batch::batch processed")
+        # target.write(df)
+        self.state.current_dt = self.state.current_dt + self.state.interval
+        self._saveMemento(self.state)

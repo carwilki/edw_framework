@@ -1,12 +1,18 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
-from pyspark.sql.types import DecimalType, ByteType, ShortType, IntegerType, LongType
+from pyspark.sql.types import ByteType, DecimalType, IntegerType, LongType, ShortType
+
+from Datalake.utils.sync.BatchManager import DateRangeBatchConfig
 
 
 class AbstractBatchReader(ABC):
-    def _convert_decimal_to_int_types(df) -> DataFrame:
+    def __init__(self, config: DateRangeBatchConfig):
+        self.config = config
+
+    def _convert_decimal_to_int_types(df: DataFrame) -> DataFrame:
         for field in df.schema.fields:
             if isinstance(field.dataType, DecimalType):
                 if field.dataType.scale == 0:
@@ -25,5 +31,5 @@ class AbstractBatchReader(ABC):
             return df
 
     @abstractmethod
-    def next(self, dt: datetime) -> DataFrame:
+    def next(self) -> DataFrame:
         pass
