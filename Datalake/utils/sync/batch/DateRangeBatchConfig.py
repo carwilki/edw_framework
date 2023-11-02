@@ -45,3 +45,16 @@ class DateRangeBatchConfig(object):
                 interval:           {self.interval}
             ********************************"""
         )
+    
+    @classmethod
+    def empty(cls) -> "DateRangeBatchConfig":
+        return cls(
+            batch_id="",
+            env="",
+            source_type=BatchReaderSourceType.SNOWFLAKE,
+            source_table_fqn="",
+            target_table_fqn="",
+            start_dt=datetime.now(),
+            end_dt=datetime.now(),
+            current_dt=datetime.now(),
+        )

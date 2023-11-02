@@ -74,7 +74,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-batchConfig: DateRangeBatchConfig = DateRangeBatchConfig()
+batchConfig: DateRangeBatchConfig = DateRangeBatchConfig.empty()
 batchConfig.env = args.env
 batchConfig.batch_id = args.batch_id
 batchConfig.target_table_fqn = args.target_table
