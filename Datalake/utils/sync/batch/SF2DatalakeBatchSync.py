@@ -22,7 +22,7 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     "--source_type",
-    type=lambda x: BatchReaderSourceType[x.lower()],
+    type=lambda x: BatchReaderSourceType[x.upper()],
     help="the source type. either snowflake or netezza",
     choices=["netezza", "snowflake"],
     required=True,
