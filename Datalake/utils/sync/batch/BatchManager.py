@@ -12,6 +12,7 @@ from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
     SparkDeltaLakeBatchWriter,
 )
+from utils.mapper import toDateRangeBatchConfig, toBatchMemento
 
 
 class BatchManager(object):
@@ -37,7 +38,7 @@ class BatchManager(object):
                 f"""BatchManager::__init__::memento not found for batch_id:{batchConfig.batch_id}.
                     creating new memento"""
             )
-            self.state = batchConfig.to_memento()
+            self.state = toBatchMemento(batchConfig)
 
     def _loadMemento(
         self,
@@ -57,7 +58,7 @@ class BatchManager(object):
         return pickle.loads(s)
 
     def _saveMemento(self, memento: BatchMemento) -> None:
-        sql = f"""insert into {self._get_metadata_table()}
+        sql = f"""insert into {self.log_table}
                 (batch_id, value) values ('{memento.batch_id}', '{pickle.dumps(memento)}')"""
         print("BatchManager::_saveMemento::Saving batch state")
         print(f"BatchManager::_saveMemento::SQL::{sql}")
@@ -76,14 +77,16 @@ class BatchManager(object):
     def _build_source(self) -> AbstractBatchReader:
         if self.state.source_type == BatchReaderSourceType.SNOWFLAKE:
             print("BatchManager::_build_source::creating Snowflake source")
-            return SnowflakeBatchReader(self.state.to_config(), self.spark)
+            return SnowflakeBatchReader(toDateRangeBatchConfig(self.state), self.spark)
         elif self.state.source_type == BatchReaderSourceType.NETEZZA:
             print("BatchManager::_build_source::creating Netezza source")
-            return NetezzaBatchReaderLogger(self.state.to_config(), self.spark)
+            return NetezzaBatchReaderLogger(
+                toDateRangeBatchConfig(self.state), self.spark
+            )
 
     def _build_target(self) -> AbstractBatchWriter:
         print("BatchManager::_build_target::creating spark delta writer")
-        return SparkDeltaLakeBatchWriter(self.state.to_config(), self.spark)
+        return SparkDeltaLakeBatchWriter(toDateRangeBatchConfig(self.state), self.spark)
 
     def next(self):
         print("BatchManager::process_batch::processing batch")

@@ -1048,6 +1048,17 @@ files = [
 tests = ["pytest"]
 
 [[package]]
+name = "py-automapper"
+version = "1.2.3"
+description = "Library for automatically mapping one object to another"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "py-automapper-1.2.3.tar.gz", hash = "sha256:ae1f6f270c3bb42cd52bfc124630841019b278258c001a8ed3032cffa03327b4"},
+    {file = "py_automapper-1.2.3-py3-none-any.whl", hash = "sha256:bcc5236fa0caeffa10416e31dd379fb6ddd15f18e6c2d7a1d49fb3d341f07653"},
+]
+
+[[package]]
 name = "py4j"
 version = "0.10.9.7"
 description = "Enables Python programs to dynamically access arbitrary Java objects"
@@ -1484,4 +1495,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.*"
-content-hash = "fa6cb0d163e2ee3c476b2c8a830f68ad8d2ca086b5d1fd67e808bc87c76c4b93"
+content-hash = "798a229ffaa54c9adb2ca3791c208c980f0a7de970ba63bb4328c6b37d4ff120"

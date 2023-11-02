@@ -48,24 +48,3 @@ class DateRangeBatchConfig(object):
                 interval:           {self.interval}
             ********************************"""
         )
-
-    def to_memento(self) -> BatchMemento:
-        """turns this config into a BatchMemento wich can be used to create a BatchReaderManager
-
-        Returns:
-            BatchMemento: BatchReaderMemento that can be used to create a BatchReaderManager
-        """
-        return BatchMemento(
-            batch_id=self.batch_id,
-            env=self.env,
-            source_type=self.source_type,
-            source_table_fqn=self.source_table_fqn,
-            target_table_fqn=self.target_table_fqn,
-            source_filter=self.source_filter,
-            excluded_columns=self.excluded_columns,
-            date_columns=self.date_columns,
-            start_dt=self.start_dt,
-            end_dt=self.end_dt,
-            current_dt=self.current_dt,
-            interval=self.interval,
-        )

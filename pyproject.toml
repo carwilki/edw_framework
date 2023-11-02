@@ -2,7 +2,7 @@
 name = "nz-databricks-migration"
 version = "0.1.0"
 description = "Petsmart migration of Netezza to Databricks PySpark"
-authors = ["Carson Wilkins <carson.wilkins@databricks.com>"]
+authors = ["Databricks"]
 readme = "README.md"
 packages = [{include = "nz_databricks_migration"}]
 
@@ -13,6 +13,7 @@ databricks-connect = "^13.1.0"
 databricks-cli = "^0.17.7"
 deepdiff = "^6.3.0"
 databricks-sdk = "^0.11.0"
+py-automapper = "^1.2.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

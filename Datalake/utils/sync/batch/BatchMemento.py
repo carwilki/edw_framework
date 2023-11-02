@@ -47,19 +47,3 @@ class BatchMemento(object):
 
     def __setstate__(self, d):
         self.__dict__ = d
-
-    def to_config(self):
-        return DateRangeBatchConfig(
-            batch_id=self.batch_id,
-            env=self.env,
-            source_type=self.source_type,
-            source_table_fqn=self.source_table_fqn,
-            target_table_fqn=self.target_table_fqn,
-            source_filter=self.source_filter,
-            excluded_columns=self.excluded_columns,
-            date_columns=self.date_columns,
-            start_dt=self.start_dt,
-            end_dt=self.end_dt,
-            current_dt=self.current_dt,
-            interval=self.interval,
-        )
