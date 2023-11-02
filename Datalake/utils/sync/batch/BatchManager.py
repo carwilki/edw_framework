@@ -1,9 +1,9 @@
 import pickle
-from enum import Enum
 
 from pyspark.sql import SparkSession
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
+from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
 from Datalake.utils.sync.reader.NetezzaBatchReader import NetezzaBatchReaderLogger
@@ -12,24 +12,6 @@ from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
     SparkDeltaLakeBatchWriter,
 )
-
-
-class BatchReaderSourceType(Enum):
-    """
-    This enum defines the different types of source systems that can be read from by the script.
-    """
-
-    SNOWFLAKE = "snowflake"
-    NETEZZA = "netezza"
-
-
-class BatchManagerException(Exception):
-    """
-    This exception is used to handle any exceptions that may occur during the execution of the script.
-    """
-
-    def __init__(self, message: str):
-        super().__init__(message)
 
 
 class BatchManager(object):

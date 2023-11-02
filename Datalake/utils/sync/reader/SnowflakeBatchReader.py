@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from pyspark.sql import DataFrame, SparkSession
 
 from Datalake.utils import secrets
-from Datalake.utils.sync.batch.BatchManager import BatchReaderSourceType
+from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader

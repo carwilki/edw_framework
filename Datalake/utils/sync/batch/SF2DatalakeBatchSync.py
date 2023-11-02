@@ -4,7 +4,8 @@ from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
 
-from Datalake.utils.sync.batch.BatchManager import BatchManager, BatchReaderSourceType
+from Datalake.utils.sync.batch.BatchManager import BatchManager
+from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 from utils import parse_delta

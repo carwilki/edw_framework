@@ -1,4 +1,4 @@
-from Datalake.utils.sync.batch.BatchManager import BatchReaderSourceType
+from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 
 
 from dataclasses import dataclass, field
