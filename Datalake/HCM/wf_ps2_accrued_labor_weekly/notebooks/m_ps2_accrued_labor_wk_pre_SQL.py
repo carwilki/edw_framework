@@ -39,7 +39,7 @@ SQ_Shortcut_to_EMPLOYEE_PROFILE_WK = spark.sql(f"""SELECT CURRENT_TIMESTAMP AS S
 
        COUNT(*) AS BEGIN_ROW_CNT
 
-  FROM {raw}.PS2_ACCRUED_LABOR_WK_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+  FROM {empl_protected}.raw_PS2_ACCRUED_LABOR_WK_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
 # Conforming fields names to the component layout
 SQ_Shortcut_to_EMPLOYEE_PROFILE_WK = SQ_Shortcut_to_EMPLOYEE_PROFILE_WK \
 	.withColumnRenamed(SQ_Shortcut_to_EMPLOYEE_PROFILE_WK.columns[0],'START_TSTMP') \
@@ -51,7 +51,7 @@ SQ_Shortcut_to_EMPLOYEE_PROFILE_WK = SQ_Shortcut_to_EMPLOYEE_PROFILE_WK \
 # Processing node SQL_INS_and_DUPS_CHECK, type SQL_TRANSFORM 
 # COLUMN COUNT: 9
 
-SQL_INS_and_DUPS_CHECK2 = spark.sql(f"""INSERT INTO {raw}.PS2_ACCRUED_LABOR_WK_PRE
+SQL_INS_and_DUPS_CHECK2 = spark.sql(f"""INSERT INTO {empl_protected}.raw_PS2_ACCRUED_LABOR_WK_PRE
 SELECT
  ps2.week_dt
 ,ps2.location_id
@@ -81,7 +81,7 @@ FROM
   ,(ps_pre.earnings_loc_amt * -1) EARNINGS_LOC_AMT
   ,ps_pre.currency_nbr
   FROM
-   {raw}.ps2_accrued_labor_wk_pre PS_PRE
+   {empl_protected}.raw_ps2_accrued_labor_wk_pre PS_PRE
   LEFT OUTER JOIN {empl_protected}.raw_ps2_empl_empl_loc_wk_pre PRE
     ON date_add(ps_pre.week_dt,7)    = pre.week_dt
    AND ps_pre.location_id    = pre.location_id
@@ -118,7 +118,7 @@ FROM
   ,pre.currency_nbr
   FROM
    {empl_protected}.raw_ps2_empl_empl_loc_wk_pre PRE
-  LEFT OUTER JOIN {raw}.ps2_accrued_labor_wk_pre PS_PRE
+  LEFT OUTER JOIN {empl_protected}.raw_ps2_accrued_labor_wk_pre PS_PRE
     ON pre.week_dt        = date_add(ps_pre.week_dt,7)
    AND pre.location_id    = ps_pre.location_id
    AND pre.employee_id    = ps_pre.employee_id
@@ -140,7 +140,7 @@ SQL_INS_and_DUPS_CHECK = spark.sql(f"""SELECT COUNT(*) AS DUPLICATE_ROWS
                FULLPT_FLAG,
                PAY_FREQ_CD,
                COUNT(*) AS CNT
-          FROM {raw}.ps2_accrued_labor_wk_pre
+          FROM {empl_protected}.raw_ps2_accrued_labor_wk_pre
          GROUP BY WEEK_DT,
                   LOCATION_ID,
                   EMPLOYEE_ID,

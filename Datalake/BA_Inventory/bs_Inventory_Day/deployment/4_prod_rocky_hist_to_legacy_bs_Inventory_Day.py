@@ -2,7 +2,7 @@
 from pyspark.sql.functions import col
 import csv
 
-tables = ["PS2_ACCRUED_LABOR_WK"]
+tables = ["INV_SKU_STORE","INV_INSTOCK_PRICE_DAY","INV_HOLES_COUNT"]
 
 
 for table in tables:

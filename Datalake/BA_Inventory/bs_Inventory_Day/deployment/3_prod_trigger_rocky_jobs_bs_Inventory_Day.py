@@ -30,7 +30,7 @@ def trigger_rocky_job(payload):
 import csv
 import time
 
-tables = ["PS2_ACCRUED_LABOR_WK"]
+tables = ["INV_SKU_STORE","INV_INSTOCK_PRICE_DAY","INV_HOLES_COUNT"]
 for table in tables:    
   print(table)
   query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
