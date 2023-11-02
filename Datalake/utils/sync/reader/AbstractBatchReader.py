@@ -5,7 +5,8 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 from pyspark.sql.types import ByteType, DecimalType, IntegerType, LongType, ShortType
 
-from Datalake.utils.sync.BatchManager import DateRangeBatchConfig
+from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
+
 
 
 class AbstractBatchReader(ABC):
