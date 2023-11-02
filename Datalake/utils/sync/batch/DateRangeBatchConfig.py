@@ -18,13 +18,13 @@ class DateRangeBatchConfig(object):
     source_type: BatchReaderSourceType
     source_table_fqn: str
     target_table_fqn: str
+    start_dt: datetime
+    end_dt: datetime
+    current_dt: datetime
     source_filter: str | None = None
     keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
-    start_dt: datetime
-    end_dt: datetime
-    current_dt: datetime
     interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
 
     def __str__(self) -> str:
