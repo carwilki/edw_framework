@@ -61,7 +61,7 @@ class BatchManager(object):
             s = str(df.collect()[0][0])
         except IndexError:
             print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
-            return self.c
+            return None
 
         return pickle.loads(s)
 
