@@ -12,7 +12,9 @@ from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-e", "--env", type=str, help="Environment value", required=True)
-parser.add_argument("-id", "--batch_id", type=str, help="id of the batch job", required=True)
+parser.add_argument(
+    "-id", "--batch_id", type=str, help="id of the batch job", required=True
+)
 parser.add_argument(
     "-st", "--source_table", type=str, help="Source Snowflake Table FQN", required=True
 )

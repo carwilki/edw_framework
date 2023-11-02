@@ -45,7 +45,7 @@ class DateRangeBatchConfig(object):
                 interval:           {self.interval}
             ********************************"""
         )
-    
+
     @classmethod
     def empty(cls) -> "DateRangeBatchConfig":
         return cls(
