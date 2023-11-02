@@ -169,7 +169,7 @@ Shortcut_to_PS2_ACCRUED_LABOR_WK_PRE = SQ_Shortcut_to_EMPLOYEE_PROFILE_WK.select
 	"CAST(EARNINGS_LOC_AMT AS DECIMAL(11,2)) as EARNINGS_LOC_AMT",
 	"CAST(CURRENCY_NBR AS SMALLINT) as CURRENCY_NBR"
 )
-Shortcut_to_PS2_ACCRUED_LABOR_WK_PRE.write.mode("overwrite").saveAsTable(f'{raw}.PS2_ACCRUED_LABOR_WK_PRE')
+Shortcut_to_PS2_ACCRUED_LABOR_WK_PRE.write.mode("overwrite").saveAsTable(f'{empl_protected}.raw_PS2_ACCRUED_LABOR_WK_PRE')
 
 
 

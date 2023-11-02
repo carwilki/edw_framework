@@ -66,7 +66,7 @@ SELECT
 ,SUM(palw.earnings_amt)
 ,SUM(palw.earnings_loc_amt)
 ,MAX(palw.currency_nbr)
-FROM {raw}.ps2_accrued_labor_wk_pre PALW
+FROM {empl_protected}.raw_ps2_accrued_labor_wk_pre PALW
 GROUP BY palw.week_dt
         ,palw.location_id
         ,palw.store_dept_nbr
