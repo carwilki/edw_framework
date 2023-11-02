@@ -1,7 +1,7 @@
 
 --*****  Creating table:  "PS2_ACCRUED_LABOR_WK_PRE" , ***** Creating table: "PS2_ACCRUED_LABOR_WK_PRE"
-use raw;
- CREATE TABLE PS2_ACCRUED_LABOR_WK_PRE 
+use empl_protected;
+ CREATE TABLE raw_PS2_ACCRUED_LABOR_WK_PRE 
 (
  WEEK_DT       TIMESTAMP                             not null
 , LOCATION_ID INT not null
@@ -17,7 +17,7 @@ use raw;
 , CURRENCY_NBR SMALLINT
 )
 USING delta 
-LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/hcm/ps2_accrued_labor_wk_pre';
+LOCATION 'gs://petm-bdpl-prod-empl-protected-raw-p1-gcs-gbl/hcm/ps2_accrued_labor_wk_pre';
 --DISTRIBUTE ON (EMPLOYEE_ID)
 
 --*****  Creating table:  "PS2_EMPL_EMPL_LOC_WK_PRE" , ***** Creating table: "PS2_EMPL_EMPL_LOC_WK_PRE"
