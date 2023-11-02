@@ -72,25 +72,11 @@ class SnowflakeBatchReader(AbstractBatchReader):
             raise ValueError(
                 "source_type must be set to Snowflake for use with the SnowflakeBatchReader"
             )
-
-        if config.source_catalog is None:
+        if config.source_table_fqn is None:
             raise ValueError(
-                """source_catalog must be set for use with the SnowflakeBatchReader.
-                    This maps to sfDatabase and is required"""
+                "source_table_fqn must be set for use with the SnowflakeBatchReader"
             )
-
-        if config.source_schema is None or config.source_schema == "":
-            raise ValueError(
-                """source_schema must be set for use with the SnowflakeBatchReader.
-                    This maps to sfSchema and is required"""
-            )
-
-        if config.source_table is None or config.source_table == "":
-            raise ValueError(
-                """source_table must be set for use with the SnowflakeBatchReader.
-                    This maps to sfTable and is required"""
-            )
-
+        
     def _generate_query(self, dt: datetime) -> str:
         query = f"""select * from {self.sf_table}"""
         where = ""
