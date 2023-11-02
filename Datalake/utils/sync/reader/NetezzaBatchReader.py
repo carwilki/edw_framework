@@ -5,4 +5,5 @@ from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
 
 
 class NetezzaBatchReaderLogger(AbstractBatchReader):
-  def __init__(self,batch_config: DateRangeBatchConfig, sparkSession: SparkSession):
+    def __init__(self, batch_config: DateRangeBatchConfig, sparkSession: SparkSession):
+        pass
