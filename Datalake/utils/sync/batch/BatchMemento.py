@@ -1,8 +1,7 @@
-from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
-
-
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+
+from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 
 
 @dataclass()

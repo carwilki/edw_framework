@@ -1,7 +1,7 @@
 from delta.tables import DataFrame, DeltaTable
 from pyspark.sql import DataFrame, SparkSession
 
-from Datalake.utils.sync.BatchManager import DateRangeBatchConfig
+from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 
 

@@ -1,6 +1,8 @@
 import pickle
 
 from pyspark.sql import SparkSession
+from utils.mapper import toBatchMemento, toDateRangeBatchConfig
+
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
@@ -12,7 +14,6 @@ from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
     SparkDeltaLakeBatchWriter,
 )
-from utils.mapper import toDateRangeBatchConfig, toBatchMemento
 
 
 class BatchManager(object):

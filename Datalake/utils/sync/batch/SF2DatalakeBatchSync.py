@@ -3,12 +3,11 @@ from datetime import datetime, timedelta
 from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
+from utils import parse_delta
 
 from Datalake.utils.sync.batch.BatchManager import BatchManager
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
-
-from utils import parse_delta
 
 parser = argparse.ArgumentParser()
 

@@ -1,6 +1,6 @@
 from automapper import mapper
-from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 
+from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 
