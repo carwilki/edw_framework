@@ -11,7 +11,7 @@ from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-e", "--env", type=str, help="Environment value")
+parser.add_argument("-e", "--env", type=str, help="Environment value", required=True)
 parser.add_argument("-id", "--id", type=str, help="id of the batch job", required=True)
 parser.add_argument(
     "-st", "--source_table", type=str, help="Source Snowflake Table FQN", required=True
@@ -22,7 +22,7 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     "--source_type",
-    type=lambda x: BatchReaderSourceType[x.upper()],
+    type=lambda x: BatchReaderSourceType[x.lower()],
     help="the source type. either snowflake or netezza",
     choices=["netezza", "snowflake"],
     required=True,
