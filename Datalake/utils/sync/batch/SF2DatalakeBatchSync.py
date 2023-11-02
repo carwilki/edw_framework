@@ -72,7 +72,7 @@ parser.add_argument(
     "--interval",
     type=lambda x: parse_delta(x),
     help="the interval for the batch",
-    default=None,
+    default=timedelta(weeks=1),
 )
 
 args = parser.parse_args()
@@ -105,16 +105,11 @@ if batchConfig.date_columns is None:
     raise ValueError(
         "--date_columns must be specified as a list of column names that dates used to sequenc the data"
     )
-    
+
 batchConfig.start_dt = args.start_dt
 batchConfig.end_dt = args
 batchConfig.interval = args.interval
 batchConfig.current_dt = None
-
-if args.interval is not None:
-    batchConfig.interval = parse_delta(args.interval)
-else:
-    batchConfig.interval = timedelta(weeks=1)
 spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
 logger.setLevel(INFO)
