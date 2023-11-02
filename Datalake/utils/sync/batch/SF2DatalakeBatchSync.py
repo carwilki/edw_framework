@@ -1,17 +1,12 @@
 import argparse
-import json
 from datetime import datetime, timedelta
 from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
 
-from Datalake.utils.mergeUtils import mergeToSFv2
-from Datalake.utils.sync.BatchManager import (
-    BatchManager,
-    BatchManagerException,
-    BatchReaderSourceType,
-    DateRangeBatchConfig,
-)
+from Datalake.utils.sync.batch.BatchManager import BatchManager, BatchReaderSourceType
+from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
+
 from utils import parse_delta
 
 parser = argparse.ArgumentParser()
