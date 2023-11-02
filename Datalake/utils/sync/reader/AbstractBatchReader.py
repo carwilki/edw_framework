@@ -8,7 +8,6 @@ from pyspark.sql.types import ByteType, DecimalType, IntegerType, LongType, Shor
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 
-
 class AbstractBatchReader(ABC):
     def __init__(self, config: DateRangeBatchConfig):
         self.config = config
