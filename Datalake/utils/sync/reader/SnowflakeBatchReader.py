@@ -27,7 +27,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
     """
 
     def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
-        super.__init__(config)
+        super().__init__(config)
         self._validate_sf_config(config)
         self._setup_reader(config, spark)
 
