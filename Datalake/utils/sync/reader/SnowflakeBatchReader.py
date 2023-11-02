@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pyspark.sql import DataFrame, SparkSession
 
 from Datalake.utils import secrets
+from Datalake.utils.genericUtilities import getSFEnvSuffix
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
@@ -34,15 +35,15 @@ class SnowflakeBatchReader(AbstractBatchReader):
     def _setup_reader(self, config: DateRangeBatchConfig, spark: SparkSession):
         self.spark = spark
         self.env = config.env.strip()
-        self.exclude_columns = [x.lower() for x in config.excluded_columns]
-        self.date_columns = [x.lower() for x in config.date_columns]
-        self.sf_database = (
-            config.source_catalog.strip()
-            if config.source_catalog is not None
-            else "IT_WH"
-        )
-        self.sf_schema = config.source_schema.strip()
-        self.sf_table = config.source_table.strip()
+        parts = config.source_table_fqn.strip().split(".")
+        if len(parts) != 3:
+            raise ValueError(f"Invalid source table FQN: {config.source_table_fqn}")
+
+        self.sf_database = parts[0].strip()
+        self.sf_database = self.sf_database + getSFEnvSuffix(self.env)
+        self.sf_schema = parts[1].strip()
+        self.sf_table = parts[2].strip()
+
         if self.env == "prod":
             self.sfOptions = {
                 "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
@@ -76,7 +77,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
             raise ValueError(
                 "source_table_fqn must be set for use with the SnowflakeBatchReader"
             )
-        
+
     def _generate_query(self, dt: datetime) -> str:
         query = f"""select * from {self.sf_table}"""
         where = ""
