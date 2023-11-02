@@ -40,6 +40,13 @@ class BatchManager(object):
                     creating new memento"""
             )
             self.state = toBatchMemento(batchConfig)
+            self.state.current_dt = self.state.start_dt
+            self._saveMemento(self.state)
+            print(
+                f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
+            )
+
+        print(self.state)
 
     def _loadMemento(
         self,
@@ -54,7 +61,7 @@ class BatchManager(object):
             s = str(df.collect()[0][0])
         except IndexError:
             print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
-            return None
+            return self.c
 
         return pickle.loads(s)
 
@@ -67,6 +74,7 @@ class BatchManager(object):
 
     def _createLogTable(self):
         """Creates the metadata table for the batch reader if it does not exist"""
+
         sql = f"""create table if not exists {self.log_table}(
                 batch_id string,
                 value string)"""
@@ -81,9 +89,7 @@ class BatchManager(object):
             return SnowflakeBatchReader(toDateRangeBatchConfig(self.state), self.spark)
         elif self.state.source_type == BatchReaderSourceType.NETEZZA:
             print("BatchManager::_build_source::creating Netezza source")
-            return NetezzaBatchReader(
-                toDateRangeBatchConfig(self.state), self.spark
-            )
+            return NetezzaBatchReader(toDateRangeBatchConfig(self.state), self.spark)
 
     def _build_target(self) -> AbstractBatchWriter:
         print("BatchManager::_build_target::creating spark delta writer")
