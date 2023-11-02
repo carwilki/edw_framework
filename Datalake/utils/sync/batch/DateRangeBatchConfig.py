@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
 
-@dataclass(keyword_only=True)
+@dataclass()
 class DateRangeBatchConfig(object):
     """
     This dataclass is used to store the configuration information for the script.
