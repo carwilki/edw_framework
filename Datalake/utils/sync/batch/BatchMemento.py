@@ -1,5 +1,4 @@
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
-from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 
 from dataclasses import dataclass, field

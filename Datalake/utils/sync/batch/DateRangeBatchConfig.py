@@ -4,8 +4,6 @@ from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceTyp
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from Datalake.utils.sync.batch.BatchMemento import BatchMemento
-
 
 @dataclass(keyword_only=True)
 class DateRangeBatchConfig(object):
