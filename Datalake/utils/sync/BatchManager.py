@@ -36,14 +36,10 @@ class BatchManagerException(Exception):
 class BatchMemento(object):
     batch_id: str
     env: str
-    source_table: str
-    source_schema: str
-    target_schema: str
-    target_table: str
+    source_table_fqn: str
+    target_table_fqn: str
     source_type: BatchReaderSourceType
     source_filter: str | None = None
-    source_catalog: str | None = None
-    target_catalog: str | None = None
     keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
@@ -62,14 +58,10 @@ class BatchMemento(object):
         return DateRangeBatchConfig(
             batch_id=self.batch_id,
             env=self.env,
-            source_table=self.source_table,
-            source_schema=self.source_schema,
-            target_schema=self.target_schema,
-            target_table=self.target_table,
             source_type=self.source_type,
+            source_table_fqn=self.source_table_fqn,
+            target_table_fqn=self.target_table_fqn,
             source_filter=self.source_filter,
-            source_catalog=self.source_catalog,
-            target_catalog=self.target_catalog,
             excluded_columns=self.excluded_columns,
             date_columns=self.date_columns,
             start_dt=self.start_dt,
@@ -110,8 +102,9 @@ class DateRangeBatchConfig(object):
         return BatchMemento(
             batch_id=self.batch_id,
             env=self.env,
-            
             source_type=self.source_type,
+            source_table_fqn=self.source_table_fqn,
+            target_table_fqn=self.target_table_fqn,
             source_filter=self.source_filter,
             excluded_columns=self.excluded_columns,
             date_columns=self.date_columns,
@@ -123,23 +116,9 @@ class DateRangeBatchConfig(object):
 
 
 class BatchManager(object):
-    """Snowflake CDC Logger class. This class is used to write the metadata about successfull execution
-    cdc to the snowflake database. This class will create the table to store the metadata in if it does
-    not already exist.
-    dl_catalog, dl_schema, dl_table, sf_database, sf_schema, sf_table are used to identity the table
-    that will be logged.
-    :param env: The environment variable used to identify the environment.
-    :param spark: The spark session.
-    :param dl_schema: The schema of the datalake table.
-    :param dl_table: The table of the datalake table.
-    :param sf_database: The snowflake database.
-    :param sf_schema: The snowflake schema.
-    :param sf_table: The snowflake table.
-    :param dl_catalog: The datalake catalog. Optional.
-    :param primary_keys: The primary keys of the table.
-    :param update_excl_columns: Colunms that should be excluded from the update.
+    """Batch manager provides an iteratore like interface for tranfering data from one table into another
+    using 'batches'. Batches can only be used if the data has some sort of ordering for the records
     """
-
     def __init__(self, spark: SparkSession, batchConfig: DateRangeBatchConfig):
         """Initializes the BatchReaderManager class. This class will create the table to store the metadata in if it
         does not already exist"""
