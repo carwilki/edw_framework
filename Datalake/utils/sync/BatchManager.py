@@ -3,10 +3,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 
-from pyspark.sql import DataFrame, SparkSession
-
-from Datalake.utils.DeltaLakeWriter import SparkDeltaLakeWriter
-from Datalake.utils.genericUtilities import getEnvPrefix, getLogger
+from pyspark.sql import SparkSession
+from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
 from Datalake.utils.sync.reader.NetezzaBatchReader import NetezzaBatchReaderLogger
 from Datalake.utils.sync.reader.SnowflakeBatchReader import SnowflakeBatchReader
