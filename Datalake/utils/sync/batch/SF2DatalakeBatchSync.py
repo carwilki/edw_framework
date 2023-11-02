@@ -83,9 +83,29 @@ batchConfig.target_table_fqn = args.target_table
 batchConfig.source_table_fqn = args.source_table
 batchConfig.source_type = BatchReaderSourceType(args.source_type)
 batchConfig.source_filter = args.source_filter
-batchConfig.keys = [key for key in args.keys.split(",")]
-batchConfig.excluded_columns = [col for col in args.excluded_columns.split(",")]
-batchConfig.date_columns = [date for date in args.date_columns.split(",")]
+batchConfig.keys = (
+    [key for key in args.keys.split(",")] if args.keys is not None else None
+)
+batchConfig.excluded_columns = (
+    [col for col in args.excluded_columns.split(",")]
+    if args.excluded_columns is not None
+    else None
+)
+batchConfig.date_columns = (
+    [date for date in args.date_columns.split(",")]
+    if args.date_columns is not None
+    else None
+)
+if batchConfig.keys is None:
+    raise ValueError(
+        "--keys must be specified as a list of column names that are primary keys"
+    )
+
+if batchConfig.date_columns is None:
+    raise ValueError(
+        "--date_columns must be specified as a list of column names that dates used to sequenc the data"
+    )
+    
 batchConfig.start_dt = args.start_dt
 batchConfig.end_dt = args
 batchConfig.interval = args.interval
