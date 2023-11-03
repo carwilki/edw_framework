@@ -1,11 +1,12 @@
-from dataclasses import dataclass, field
+
 from datetime import datetime, timedelta
+
+from pydantic import BaseModel
 
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 
 
-@dataclass()
-class BatchMemento(object):
+class BatchMemento(BaseModel):
     batch_id: str
     env: str
     source_table_fqn: str
@@ -15,10 +16,10 @@ class BatchMemento(object):
     end_dt: datetime
     current_dt: datetime
     source_filter: str | None = None
-    keys: list[str] = field(default_factory=list)
-    excluded_columns: list[str] = field(default_factory=list)
-    date_columns: list[str] = field(default_factory=list)
-    interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
+    keys: list[str] = []
+    excluded_columns: list[str] = []
+    date_columns: list[str] = []
+    interval: timedelta = timedelta(weeks=1)
 
     def __str__(self) -> str:
         return f"""********************************

@@ -63,11 +63,12 @@ class BatchManager(object):
             print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
             return None
 
-        return pickle.loads(s.encode("utf-8"))
+        return pickle.loads(s)
 
     def _saveMemento(self, memento: BatchMemento) -> None:
+        s = memento.json()
         sql = f"""insert into {self.log_table}
-                (batch_id, value) values ('{memento.batch_id}', {str(pickle.dumps(memento)).removeprefix('b')})"""
+                (batch_id, value) values ('{memento.batch_id}', {s})"""
         print("BatchManager::_saveMemento::Saving batch state")
         print(f"BatchManager::_saveMemento::SQL::{sql}")
         self.spark.sql(sql).collect()
