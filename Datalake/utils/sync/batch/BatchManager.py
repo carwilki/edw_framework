@@ -72,7 +72,7 @@ class BatchManager(object):
     def _saveMemento(self, memento: BatchMemento) -> None:
         s = memento.json()
         sql = f"""insert into {self.log_table}
-                (batch_id, value) values ('{memento.batch_id}', {s})"""
+                (batch_id, value) values ('{memento.batch_id}', '{s}')"""
         print("BatchManager::_saveMemento::Saving batch state")
         print(f"BatchManager::_saveMemento::SQL::{sql}")
         self.spark.sql(sql).collect()
