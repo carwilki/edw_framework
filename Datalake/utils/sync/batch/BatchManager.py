@@ -39,13 +39,17 @@ class BatchManager(object):
                 f"""BatchManager::__init__::memento not found for batch_id:{batchConfig.batch_id}.
                     creating new memento"""
             )
+            print(
+                f"""BatchManager::__init__::batchConfig
+                  {batchConfig}"""
+            )
+
             self.state = toBatchMemento(batchConfig)
             self.state.current_dt = self.state.start_dt
             self._saveMemento(self.state)
             print(
                 f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
             )
-
         print(self.state)
 
     def _loadMemento(
