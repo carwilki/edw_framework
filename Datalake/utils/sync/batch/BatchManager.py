@@ -55,7 +55,7 @@ class BatchManager(object):
         sql = f"select value from {self.log_table} where lower(batch_id) = '{batch_id.lower()}'"
         df = self.spark.sql(sql)
         print("BatchManager::_loadMemento::Loading batch state")
-        print(f"BatchManager::_load::SQL::{sql}")
+        print(f"BatchManager::_loadMemento::SQL::{sql}")
 
         try:
             s = str(df.collect()[0][0])
@@ -63,7 +63,7 @@ class BatchManager(object):
             print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
             return None
 
-        return pickle.loads(s)
+        return pickle.loads(s.encode("utf-8"))
 
     def _saveMemento(self, memento: BatchMemento) -> None:
         sql = f"""insert into {self.log_table}
