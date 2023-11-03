@@ -43,10 +43,10 @@ class BatchManager(object):
                 f"""BatchManager::__init__::batchConfig
                   {batchConfig}"""
             )
-
+            batchConfig.current_dt = batchConfig.start_dt
             self.state = toBatchMemento(batchConfig)
-            self.state.current_dt = self.state.start_dt
             self._saveMemento(self.state)
+            
             print(
                 f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
             )

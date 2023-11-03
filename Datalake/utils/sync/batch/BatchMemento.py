@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -16,7 +17,7 @@ class BatchMemento(BaseModel):
     current_dt: datetime
     source_filter: str | None = None
     keys: list[str] = []
-    excluded_columns: list[str] = Field(default=[])
+    excluded_columns: Optional[list[str]] = None
     date_columns: list[str]
     interval: timedelta = timedelta(weeks=1)
 
