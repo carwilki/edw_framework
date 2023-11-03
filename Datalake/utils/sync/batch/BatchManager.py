@@ -1,8 +1,5 @@
-import pickle
-
 from pyspark.sql import SparkSession
 from utils.mapper import toBatchMemento, toDateRangeBatchConfig
-
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
@@ -67,7 +64,7 @@ class BatchManager(object):
             print(f"BatchManager::_loadMemento::No memento found for {batch_id}")
             return None
 
-        return pickle.loads(s)
+        return BatchMemento.parse_raw(s)
 
     def _saveMemento(self, memento: BatchMemento) -> None:
         s = memento.json()
@@ -77,6 +74,20 @@ class BatchManager(object):
         print(f"BatchManager::_saveMemento::SQL::{sql}")
         self.spark.sql(sql).collect()
 
+    def _updateMemento(self, memento: BatchMemento) -> None:
+        print("BatchManager::_updateMemento::batch state")
+        print("BatchManager::_updateMemento::update to")
+        print(memento)
+        
+        s = memento.json()
+        sql = f"""update {self.log_table}
+                set value = '{s}'
+                where batch_id = '{memento.batch_id}'"""
+        
+        print(f"BatchManager::_updateMemento::SQL::{sql}")
+        self.spark.sql(sql).collect()
+        print(f"BatchManager::_updateMemento::updated successfully")
+        
     def _createLogTable(self):
         """Creates the metadata table for the batch reader if it does not exist"""
 
@@ -107,4 +118,4 @@ class BatchManager(object):
         print("BatchManager::process_batch::batch processed")
         # target.write(df)
         self.state.current_dt = self.state.current_dt + self.state.interval
-        self._saveMemento(self.state)
+        self._updateMemento(self.state)
