@@ -107,7 +107,7 @@ if batchConfig.date_columns is None:
     )
 
 batchConfig.start_dt = args.start_dt
-batchConfig.end_dt = args
+batchConfig.end_dt = args.end_dt
 batchConfig.interval = args.interval
 batchConfig.current_dt = None
 spark: SparkSession = SparkSession.getActiveSession()

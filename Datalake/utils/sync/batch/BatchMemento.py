@@ -21,8 +21,7 @@ class BatchMemento(object):
     interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
 
     def __str__(self) -> str:
-        print(
-            f"""********************************
+        return f"""********************************
             BatchMemento:
                 batch_id:           {self.batch_id}
                 env:                {self.env}
@@ -38,7 +37,6 @@ class BatchMemento(object):
                 current_dt:         {self.current_dt}
                 interval:           {self.interval}
             ********************************"""
-        )
 
     def __getstate__(self):
         return self.__dict__

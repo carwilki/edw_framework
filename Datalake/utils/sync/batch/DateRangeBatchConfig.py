@@ -27,8 +27,7 @@ class DateRangeBatchConfig(object):
     interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
 
     def __str__(self) -> str:
-        print(
-            f"""********************************
+        return f"""********************************
             DateRangeBatchConfig:
                 batch_id:           {self.batch_id}
                 env:                {self.env}
@@ -44,7 +43,6 @@ class DateRangeBatchConfig(object):
                 current_dt:         {self.current_dt}
                 interval:           {self.interval}
             ********************************"""
-        )
 
     @classmethod
     def empty(cls) -> "DateRangeBatchConfig":
