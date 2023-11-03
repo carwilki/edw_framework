@@ -11,28 +11,19 @@ from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
 
 class SnowflakeBatchReader(AbstractBatchReader):
     """
-    This class is used to read data from a Snowflake database and load it into a target system.
-    It uses the PySpark API to read data from the Snowflake database and the PySpark API to
-    write data to the target system.
 
-    The class takes in a BatchConfig, and a SparkSession.
-
-    The class uses the PySpark API to read data from the Snowflake database and the PySpark API
-    to write data to the target system.
-
-    The class uses the BatchReaderSourceType enum to specify the type of source system being read from.
-    The class uses the BatchConfig dataclass to store the configuration information for the script.
-
-    The class uses the BatchReaderManagerException class to handle any exceptions that may
-    occur during the execution of the script.
+    Args:
+        AbstractBatchReader (object): The abstract ba
     """
 
     def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
+        print("SnowflakeBatchReader::__init__")
         super().__init__(config)
         self._validate_sf_config(config)
         self._setup_reader(config, spark)
 
     def _setup_reader(self, config: DateRangeBatchConfig, spark: SparkSession):
+        print("SnowflakeBatchReader::_setup_reader::setting up reader")
         self.spark = spark
         self.env = config.env.strip()
         parts = config.source_table_fqn.strip().split(".")
@@ -43,7 +34,11 @@ class SnowflakeBatchReader(AbstractBatchReader):
         self.sf_database = self.sf_database + getSFEnvSuffix(self.env)
         self.sf_schema = parts[1].strip()
         self.sf_table = parts[2].strip()
+        print(f"SnowflakeBatchReader::_setup_reader::sf_database: {self.sf_database}")
+        print(f"SnowflakeBatchReader::_setup_reader::sf_schema: {self.sf_schema}")
+        print(f"SnowflakeBatchReader::_setup_reader::sf_table {self.sf_table}")
 
+        print(f"SnowflakeBatchReader::_setup_reader::env: {self.env}")
         if self.env == "prod":
             self.sfOptions = {
                 "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
@@ -68,7 +63,10 @@ class SnowflakeBatchReader(AbstractBatchReader):
                 "sfRole": "role_databricks_nonprd",
             }
 
+        print(f"SnowflakeBatchReader::_setup_reader::sfOptions: {self.sfOptions}")
+
     def _validate_sf_config(self, config: DateRangeBatchConfig):
+        print("SnowflakeBatchReader::_validate_sf_config::validating sf config")
         if config.source_type != BatchReaderSourceType.SNOWFLAKE:
             raise ValueError(
                 "source_type must be set to Snowflake for use with the SnowflakeBatchReader"
@@ -79,6 +77,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
             )
 
     def _generate_query(self, dt: datetime) -> str:
+        print("SnowflakeBatchReader::_generate_query::generating query")
         query = f"""select * from {self.sf_table}"""
         where = ""
         s_dt = dt.strftime("%Y-%m-%d")
@@ -91,16 +90,26 @@ class SnowflakeBatchReader(AbstractBatchReader):
                     where
                     + f" and {col} between '{s_dt}' and '{(dt + timedelta(1,'day')).strftime('%Y-%m-%d')}'"
                 )
+        print(
+            f"""SnowflakeBatchReader::_generate_query::query generated:
+                {query}"""
+        )
         return query + where
 
     def _execute_query(self, query: str) -> DataFrame:
         self.spark.read()
 
     def _strip_colunms(self, df: DataFrame) -> DataFrame:
+        print("SnowflakeBatchReader::_strip_colunms::stripping excluded columns")
         df = df.drop(*self.exclude_columns)
         return df
 
     def next(self) -> DataFrame:
+        print(
+            f"""SnowflakeBatchReader::next::reading batch for
+            table:      {self.config.source_table_fqn}
+            on range:   {self.config.current_dt} to {self.config.current_dt + self.config.interval}"""
+        )
         df = (
             self.spark.read.format("net.snowflake.spark.snowflake")
             .options(**self.sfOptions)

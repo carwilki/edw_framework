@@ -43,7 +43,7 @@ class BatchManager(object):
             batchConfig.current_dt = batchConfig.start_dt
             self.state = toBatchMemento(batchConfig)
             self._saveMemento(self.state)
-            
+
             print(
                 f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
             )
@@ -78,16 +78,16 @@ class BatchManager(object):
         print("BatchManager::_updateMemento::batch state")
         print("BatchManager::_updateMemento::update to")
         print(memento)
-        
+
         s = memento.json()
         sql = f"""update {self.log_table}
                 set value = '{s}'
                 where batch_id = '{memento.batch_id}'"""
-        
+
         print(f"BatchManager::_updateMemento::SQL::{sql}")
         self.spark.sql(sql).collect()
-        print(f"BatchManager::_updateMemento::updated successfully")
-        
+        print("BatchManager::_updateMemento::updated successfully")
+
     def _createLogTable(self):
         """Creates the metadata table for the batch reader if it does not exist"""
 
