@@ -82,7 +82,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
         where = ""
         s_dt = dt.strftime("%Y-%m-%d")
         e_dt = (dt + self.config.interval).strftime("%Y-%m-%d")
-        for col in self.date_columns:
+        for col in self.config.date_columns:
             if len(where) == 0:
                 where = f""" where {col} between '{s_dt}' and '{e_dt}'"""
             else:
