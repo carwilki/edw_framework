@@ -81,15 +81,12 @@ class SnowflakeBatchReader(AbstractBatchReader):
         query = f"""select * from {self.sf_table}"""
         where = ""
         s_dt = dt.strftime("%Y-%m-%d")
-        e_dt = (dt + timedelta(1, "day")).strftime("%Y-%m-%d")
+        e_dt = (dt + self.config.interval).strftime("%Y-%m-%d")
         for col in self.date_columns:
             if len(where) == 0:
                 where = f""" where {col} between '{s_dt}' and '{e_dt}'"""
             else:
-                where = (
-                    where
-                    + f" and {col} between '{s_dt}' and '{(dt + timedelta(1,'day')).strftime('%Y-%m-%d')}'"
-                )
+                where = where + f""" and {col} between '{s_dt}' and '{e_dt}'"""
         print(
             f"""SnowflakeBatchReader::_generate_query::query generated:
                 {query}"""
