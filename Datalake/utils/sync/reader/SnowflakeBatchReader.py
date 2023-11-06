@@ -110,10 +110,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
         df = (
             self.spark.read.format("net.snowflake.spark.snowflake")
             .options(**self.sfOptions)
-            .option(
-                "query",
-                self._generate_query(self.config.current_dt) + self.config.interval,
-            )
+            .option("query", self._generate_query(self.config.current_dt))
             .load()
         )
         df = self._strip_colunms(df)
