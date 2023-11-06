@@ -20,7 +20,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
                 "SparkDeltaLakeBatchWriter::_setup_writer::schema.table format detected"
             )
             dl_schema = parts[0].strip()
-            dl_schema = dl_schema + getEnvPrefix(self.config.env)
+            dl_schema = getEnvPrefix(self.config.env) + dl_schema
             dl_table = parts[1].strip()
             dl_catalog = None
 
@@ -30,8 +30,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
             )
             dl_catalog = parts[0].strip()
             dl_schema = parts[1].strip()
-            dl_schema = getEnvPrefix(self.env) + dl_schema
-
+            dl_schema = getEnvPrefix(self.config.env) + dl_schema
             dl_table = parts[2].strip()
         else:
             raise ValueError(
