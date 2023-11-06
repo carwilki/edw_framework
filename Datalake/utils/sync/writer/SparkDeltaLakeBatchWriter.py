@@ -17,7 +17,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
                 key += f"{source}.{col}={target}.{col} "
             else:
                 key += f" and {source}.{col}={target}.{col}"
-
+        print(f"SparkDeltaLakeBatchWriter::_build_merge_key::key={key}")
         return key
 
     def write(self, source: DataFrame) -> None:
