@@ -14,7 +14,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
         self._setup_writer()
 
     def _setup_writer(self):
-        parts = self.config.source_table_fqn.strip().split(".")
+        parts = self.config.target_table_fqn.strip().split(".")
         if len(parts) == 2:
             print(
                 "SparkDeltaLakeBatchWriter::_setup_writer::schema.table format detected"
