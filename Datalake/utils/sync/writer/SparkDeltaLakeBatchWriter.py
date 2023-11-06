@@ -1,5 +1,6 @@
 from delta.tables import DeltaTable
 from pyspark.sql import DataFrame, SparkSession
+from Datalake.utils.genericUtilities import getEnvPrefix
 
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
@@ -9,6 +10,43 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
     def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
         super().__init__(config=config)
         self.spark = spark
+
+        self._setup_writer(config)
+
+    def _setup_writer(self):
+        parts = self.config.source_table_fqn.strip().split(".")
+        if len(parts) == 2:
+            print(
+                "SparkDeltaLakeBatchWriter::_setup_writer::schema.table format detected"
+            )
+            dl_schema = parts[0].strip()
+            dl_schema = dl_schema + getEnvPrefix(self.env)
+            dl_table = parts[1].strip()
+            dl_catalog = None
+
+        elif len(parts) == 3:
+            print(
+                "SparkDeltaLakeBatchWriter::_setup_writer::catalog.schema.table format detected"
+            )
+            dl_catalog = parts[0].strip()
+            dl_schema = parts[1].strip()
+            dl_schema = getEnvPrefix(self.env) + dl_schema
+
+            dl_table = parts[2].strip()
+        else:
+            raise ValueError(
+                f"""Invalid target table FQN: {self.config.target_table_fqn}
+                table must follow one of the following formats:
+                schema.table or catalog.schema.table"""
+            )
+        if dl_catalog is not None:
+            self.config.target_table_fqn = f"{dl_catalog}.{dl_schema}.{dl_table}"
+        else:
+            self.config.target_table_fqn = f"{dl_schema}.{dl_table}"
+
+        print(
+            f"SparkDeltaLakeBatchWriter::_setup_writer::target_table_fqn: {self.config.target_table_fqn}"
+        )
 
     def _build_merge_key(self, source: str, target: str) -> str:
         key = ""

@@ -29,7 +29,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
         parts = config.source_table_fqn.strip().split(".")
         if len(parts) != 3:
             raise ValueError(f"Invalid source table FQN: {config.source_table_fqn}")
-
+    
         self.sf_database = parts[0].strip()
         self.sf_database = self.sf_database + getSFEnvSuffix(self.env)
         self.sf_schema = parts[1].strip()
