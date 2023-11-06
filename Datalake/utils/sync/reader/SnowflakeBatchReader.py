@@ -86,12 +86,15 @@ class SnowflakeBatchReader(AbstractBatchReader):
             if len(where) == 0:
                 where = f""" where {col} between '{s_dt}' and '{e_dt}'"""
             else:
-                where = where + f""" and {col} between '{s_dt}' and '{e_dt}'"""
+                where = where + f""" or {col} between '{s_dt}' and '{e_dt}'"""
+        
+        query = query + where
+        
         print(
             f"""SnowflakeBatchReader::_generate_query::query generated:
                 {query}"""
         )
-        return query + where
+        return query
 
     def _execute_query(self, query: str) -> DataFrame:
         self.spark.read()
