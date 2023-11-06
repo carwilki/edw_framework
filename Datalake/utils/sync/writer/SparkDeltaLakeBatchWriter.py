@@ -11,7 +11,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
         super().__init__(config=config)
         self.spark = spark
 
-        self._setup_writer(config)
+        self._setup_writer()
 
     def _setup_writer(self):
         parts = self.config.source_table_fqn.strip().split(".")
