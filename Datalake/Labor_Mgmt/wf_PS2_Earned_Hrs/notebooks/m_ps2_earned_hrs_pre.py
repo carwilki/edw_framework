@@ -30,17 +30,6 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 # COMMAND ----------
 
-def or_kro_read(env):
-    if env.lower() == "dev" or env.lower() == "qa":
-        username = "SVC_BD_ORA_NP_READ"
-        hostname = "172.17.89.238"
-        portnumber = "1800"
-        db = "krop1"
-        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_krop1_password")
-        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
-
-        return (username, password, connection_string)
-
 (username, password, connection_string) = or_kro_read(env)
 
 # COMMAND ----------

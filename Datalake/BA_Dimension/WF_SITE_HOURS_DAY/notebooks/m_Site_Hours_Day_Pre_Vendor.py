@@ -35,6 +35,7 @@ enterprise = getEnvPrefix(env) + "enterprise"
 
 
 # COMMAND ----------
+
 # Processing node SQ_Shortcut_to_DAYS, type SOURCE
 # COLUMN COUNT: 3
 
@@ -47,6 +48,7 @@ FROM {enterprise}.DAYS"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node Fil_Day_Dt, type FILTER
 # COLUMN COUNT: 3
 
@@ -66,6 +68,7 @@ Fil_Day_Dt = (
 )
 
 # COMMAND ----------
+
 # Processing node SQ_Shortcut_to_SITE_PROFILE_RPT, type SOURCE
 # COLUMN COUNT: 2
 
@@ -77,6 +80,7 @@ FROM {legacy}.SITE_PROFILE_RPT"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
+
 # Processing node EXPTRANS, type EXPRESSION
 # COLUMN COUNT: 4
 
@@ -94,6 +98,7 @@ EXPTRANS = Fil_Day_Dt_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node Fil_Location_Type, type FILTER
 # COLUMN COUNT: 2
 
@@ -115,6 +120,7 @@ Fil_Location_Type = (
 )
 
 # COMMAND ----------
+
 # Processing node EXPTRANS1, type EXPRESSION
 # COLUMN COUNT: 3
 
@@ -131,6 +137,7 @@ EXPTRANS1 = Fil_Location_Type_temp.selectExpr(
 )
 
 # COMMAND ----------
+
 # Processing node JNRTRANS, type JOINER . Note: using additional SELECT to rename incoming columns
 # COLUMN COUNT: 7
 
@@ -154,6 +161,7 @@ JNRTRANS = EXPTRANS_temp.join(
 )
 
 # COMMAND ----------
+
 # Processing node EXPTRANS2, type EXPRESSION
 # COLUMN COUNT: 8
 
@@ -168,11 +176,12 @@ EXPTRANS2 = JNRTRANS_temp.selectExpr(
     "JNRTRANS___LOCATION_TYPE_ID as LOCATION_TYPE_ID",
     "0 as IS_CLOSE_FLAG",
     "JNRTRANS___DAY_DT as OPEN_TSTMP",
-    "DATE_ADD(DATE_ADD(JNRTRANS___DAY_DT, 1),-1) as CLOSE_TSTMP",
+    "(DATE_ADD(JNRTRANS___DAY_DT, 1)) - INTERVAL 1 MILLISECOND as CLOSE_TSTMP",
     "CURRENT_TIMESTAMP as LOAD_TSTMP",
 )
 
 # COMMAND ----------
+
 # Processing node Shortcut_to_SITE_HOURS_DAY_PRE, type TARGET
 # COLUMN COUNT: 8
 

@@ -1,0 +1,268 @@
+{
+  "name": "WF_PS2_Accrued_Labor_Weekly",
+  "email_notifications": {
+    "on_failure": [
+      "dl_big_data_operations@petsmart.com"
+    ],
+    "no_alert_for_skipped_runs": false
+  },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "s_ps2_empl_empl_loc_wk_pre_INS_SQL",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/HCM/wf_ps2_accrued_labor_weekly/notebooks/m_ps2_empl_empl_loc_wk_pre_INS_SQL",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_ps2_accrued_labor_wk_pre_WEEK1",
+      "depends_on": [
+        {
+          "task_key": "s_ps2_empl_empl_loc_wk_pre_INS_SQL"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/HCM/wf_ps2_accrued_labor_weekly/notebooks/m_ps2_accrued_labor_wk_pre_WEEK1",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_ps2_accrued_labor_wk_pre_SQL",
+      "depends_on": [
+        {
+          "task_key": "s_ps2_accrued_labor_wk_pre_WEEK1"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/HCM/wf_ps2_accrued_labor_weekly/notebooks/m_ps2_accrued_labor_wk_pre_SQL",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_ps2_accrued_labor_wk_INS_SQL",
+      "depends_on": [
+        {
+          "task_key": "s_ps2_accrued_labor_wk_pre_SQL"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/HCM/wf_ps2_accrued_labor_weekly/notebooks/m_ps2_accrued_labor_wk_INS_SQL",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+      "libraries": [
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_PS2_Accrued_Labor_Wk",
+      "depends_on": [
+        {
+          "task_key": "s_ps2_accrued_labor_wk_INS_SQL"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "PS2_ACCRUED_LABOR_WK",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    }
+  ],
+  "job_clusters": [
+    {
+            "job_cluster_key": "WF_PS2_Accrued_Labor_Weekly",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+          "spark.driver.maxResultSize": "64g",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+                                   
+                                         
+                       
+                "num_workers": 8
+            }
+        }
+  ],
+  "git_source": {
+    "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+    "git_provider": "gitHubEnterprise",
+    "git_branch": "main"
+  },
+  "run_as": {
+    "user_name": "gcpdatajobs-shared@petsmart.com"
+  },
+  "tags": {
+        "Department": "NZ-Migration"
+    },
+  "format": "MULTI_TASK"
+}

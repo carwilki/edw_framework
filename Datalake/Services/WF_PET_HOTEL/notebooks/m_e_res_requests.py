@@ -115,7 +115,7 @@ UPDATED_BY,
 UPDATED_DT,
 IS_DELETED,
 SOURCE
-FROM {cust_sensitive}.legacy_e_res_requests_pre"""
+FROM {cust_sensitive}.raw_e_res_requests_pre"""
 ).withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
