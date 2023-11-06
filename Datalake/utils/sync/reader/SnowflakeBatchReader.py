@@ -7,6 +7,7 @@ from Datalake.utils.genericUtilities import getSFEnvSuffix
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
+from Datalake.utils.sync import sf_vars
 
 
 class SnowflakeBatchReader(AbstractBatchReader):
@@ -44,26 +45,26 @@ class SnowflakeBatchReader(AbstractBatchReader):
         print(f"SnowflakeBatchReader::_setup_reader::env: {self.env}")
         if self.env == "prod":
             self.sfOptions = {
-                "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
-                "sfUser": secrets.get("databricks_service_account", "username"),
-                "sfPassword": secrets.get("databricks_service_account", "password"),
+                "sfUrl": sf_vars.sf_url,
+                "sfUser": sf_vars.sf_username,
+                "sfPassword": sf_vars.sf_password,
                 "sfDatabase": self.sf_database,
                 "sfSchema": self.sf_schema,
-                "sfWarehouse": "IT_WH",
+                "sfWarehouse": sf_vars.sf_warehouse,
                 "authenticator": "https://petsmart.okta.com",
                 "autopushdown": "on",
-                "sfRole": "ROLE_BIGDATA",
+                "sfRole": sf_vars.sf_prod_role,
             }
         else:
             self.sfOptions = {
-                "sfUrl": "petsmart.us-central1.gcp.snowflakecomputing.com",
-                "sfUser": secrets.get("SVC_BD_SNOWFLAKE_NP", "username"),
-                "pem_private_key": secrets.get("SVC_BD_SNOWFLAKE_NP", "pkey"),
+                "sfUrl": sf_vars.sf_url,
+                "sfUser": sf_vars.sf_username,
+                "sfPassword": sf_vars.sf_password,
                 "sfDatabase": self.sf_database,
                 "sfSchema": self.sf_schema,
-                "sfWarehouse": "IT_WH",
+                "sfWarehouse": sf_vars.sf_warehouse,
                 "autopushdown": "on",
-                "sfRole": "role_databricks_nonprd",
+                "sfRole": sf_vars.sf_dev_role,
             }
 
         print(f"SnowflakeBatchReader::_setup_reader::sfOptions: {self.sfOptions}")
