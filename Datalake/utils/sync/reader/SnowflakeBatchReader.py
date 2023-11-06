@@ -29,11 +29,14 @@ class SnowflakeBatchReader(AbstractBatchReader):
         parts = config.source_table_fqn.strip().split(".")
         if len(parts) != 3:
             raise ValueError(f"Invalid source table FQN: {config.source_table_fqn}")
-    
+
         self.sf_database = parts[0].strip()
         self.sf_database = self.sf_database + getSFEnvSuffix(self.env)
         self.sf_schema = parts[1].strip()
         self.sf_table = parts[2].strip()
+        self.config.source_table_fqn = (
+            f"{self.sf_database}.{self.sf_schema}.{self.sf_table}"
+        )
         print(f"SnowflakeBatchReader::_setup_reader::sf_database: {self.sf_database}")
         print(f"SnowflakeBatchReader::_setup_reader::sf_schema: {self.sf_schema}")
         print(f"SnowflakeBatchReader::_setup_reader::sf_table {self.sf_table}")
@@ -87,9 +90,9 @@ class SnowflakeBatchReader(AbstractBatchReader):
                 where = f""" where {col} between '{s_dt}' and '{e_dt}'"""
             else:
                 where = where + f""" or {col} between '{s_dt}' and '{e_dt}'"""
-        
+
         query = query + where
-        
+
         print(
             f"""SnowflakeBatchReader::_generate_query::query generated:
                 {query}"""
