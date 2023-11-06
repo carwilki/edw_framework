@@ -101,7 +101,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
 
     def _strip_colunms(self, df: DataFrame) -> DataFrame:
         print("SnowflakeBatchReader::_strip_colunms::stripping excluded columns")
-        df = df.drop(*self.exclude_columns)
+        df = df.drop(*self.config.excluded_columns)
         return df
 
     def next(self) -> DataFrame:
