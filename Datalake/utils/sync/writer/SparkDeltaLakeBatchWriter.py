@@ -24,7 +24,9 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
         print(
             f"SparkDeltaLakeBatchWriter::write::merging to {self.config.target_table_fqn}"
         )
-        target: DeltaTable = DeltaTable.forName(self.config.target_table_fqn)
+        target: DeltaTable = DeltaTable.forName(
+            self.spark, self.config.target_table_fqn
+        )
         target.merge(
             source, self._build_merge_key("source", "target")
         ).whenMatchedUpdateAll().whenNotMatchedInsert().execute()
