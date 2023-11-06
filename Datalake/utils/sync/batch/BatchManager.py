@@ -115,7 +115,8 @@ class BatchManager(object):
         print("BatchManager::process_batch::processing batch")
         source = self._build_source()
         target = self._build_target()
+        data = source.next()
+        target.write(data)
         print("BatchManager::process_batch::batch processed")
-        # target.write(df)
         self.state.current_dt = self.state.current_dt + self.state.interval
         self._updateMemento(self.state)
