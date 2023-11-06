@@ -12,7 +12,7 @@ class AbstractBatchReader(ABC):
     def __init__(self, config: DateRangeBatchConfig):
         self.config = config
 
-    def _convert_decimal_to_int_types(df: DataFrame) -> DataFrame:
+    def _convert_decimal_to_int_types(self, df: DataFrame) -> DataFrame:
         print(
             "AbstractBatchReader::_convert_decimal_to_int_types::converting decimal types"
         )
