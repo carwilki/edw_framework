@@ -12,7 +12,7 @@ class SparkDeltaLakeBatchWriter(AbstractBatchWriter):
 
     def _build_merge_key(self, source: str, target: str) -> str:
         key = ""
-        for col in self.config.keys():
+        for col in self.config.keys:
             if len(key) == 0:
                 key += f"{source}.{col}={target}.{col} "
             else:
