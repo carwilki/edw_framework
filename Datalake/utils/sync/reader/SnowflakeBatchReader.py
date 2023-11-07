@@ -59,7 +59,7 @@ class SnowflakeBatchReader(AbstractBatchReader):
             self.sfOptions = {
                 "sfUrl": sf_vars.sf_url,
                 "sfUser": sf_vars.sf_other_user,
-                "sfPassword": sf_vars.sf_other_key,
+                "pem_private_key": sf_vars.sf_other_key,
                 "sfDatabase": self.sf_database,
                 "sfSchema": self.sf_schema,
                 "sfWarehouse": sf_vars.sf_warehouse,
