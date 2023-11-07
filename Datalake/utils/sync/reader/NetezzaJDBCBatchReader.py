@@ -95,3 +95,4 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
         df = self.spark.read.format("jdbc").options(**self.nzOptions).load()
         df = self._convert_decimal_to_int_types(df)
         df = self._strip_colunms(df)
+        return df
