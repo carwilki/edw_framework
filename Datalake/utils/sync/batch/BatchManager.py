@@ -5,7 +5,7 @@ from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
-from Datalake.utils.sync.reader.NetezzaBatchReader import NetezzaBatchReader
+from Datalake.utils.sync.reader.NetezzaJDBCBatchReader import NetezzaJDBCBatchReader
 from Datalake.utils.sync.reader.SnowflakeBatchReader import SnowflakeBatchReader
 from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
@@ -105,7 +105,9 @@ class BatchManager(object):
             return SnowflakeBatchReader(toDateRangeBatchConfig(self.state), self.spark)
         elif self.state.source_type == BatchReaderSourceType.NETEZZA:
             print("BatchManager::_build_source::creating Netezza source")
-            return NetezzaBatchReader(toDateRangeBatchConfig(self.state), self.spark)
+            return NetezzaJDBCBatchReader(
+                toDateRangeBatchConfig(self.state), self.spark
+            )
 
     def _build_target(self) -> AbstractBatchWriter:
         print("BatchManager::_build_target::creating spark delta writer")
