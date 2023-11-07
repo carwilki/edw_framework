@@ -43,7 +43,7 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
         print(f"NetezzaJDBCBatchReader::_setup_reader::env: {self.env}")
         self.nzOptions: dict = {
             "driver": nz_vars.nz_jdbc_driver,
-            "url": f"""{nz_vars.nz_jdbc_url}{self.nz_schema};""",
+            "url": f"""{nz_vars.nz_jdbc_url}{self.nz_database};""",
             "fetchsize": nz_vars.nz_fetch_size,
             "user": nz_vars.nz_username,
             "password": nz_vars.nz_password,
