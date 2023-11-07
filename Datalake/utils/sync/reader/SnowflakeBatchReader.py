@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from pyspark.sql import DataFrame, SparkSession
-
-from Datalake.utils import secrets
 from Datalake.utils.genericUtilities import getSFEnvSuffix
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
@@ -99,9 +97,6 @@ class SnowflakeBatchReader(AbstractBatchReader):
                 {query}"""
         )
         return query
-
-    def _execute_query(self, query: str) -> DataFrame:
-        self.spark.read()
 
     def _strip_colunms(self, df: DataFrame) -> DataFrame:
         print("SnowflakeBatchReader::_strip_colunms::stripping excluded columns")

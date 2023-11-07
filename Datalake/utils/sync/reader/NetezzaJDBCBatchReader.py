@@ -31,7 +31,6 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
             raise ValueError(f"Invalid source table FQN: {config.source_table_fqn}")
 
         self.nz_database = parts[0].strip()
-        self.nz_database = self.nz_database + getSFEnvSuffix(self.env)
         self.nz_schema = parts[1].strip()
         self.nz_table = parts[2].strip()
         self.config.source_table_fqn = (
