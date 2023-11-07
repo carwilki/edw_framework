@@ -12,6 +12,12 @@ class AbstractBatchReader(ABC):
     def __init__(self, config: DateRangeBatchConfig):
         self.config = config
 
+    def _strip_colunms(self, df: DataFrame) -> DataFrame:
+        print("NetezzaJDBCBatchReader::_strip_colunms::stripping excluded columns")
+        if self.config.excluded_columns is not None:
+            df = df.drop(*self.config.excluded_columns)
+        return df
+
     def _convert_decimal_to_int_types(self, df: DataFrame) -> DataFrame:
         print(
             "AbstractBatchReader::_convert_decimal_to_int_types::converting decimal types"

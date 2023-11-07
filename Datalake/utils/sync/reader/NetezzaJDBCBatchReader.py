@@ -83,11 +83,6 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
         )
         return query
 
-    def _strip_colunms(self, df: DataFrame) -> DataFrame:
-        print("NetezzaJDBCBatchReader::_strip_colunms::stripping excluded columns")
-        df = df.drop(*self.config.excluded_columns)
-        return df
-
     def next(self) -> DataFrame:
         print(
             f"""NetezzaJDBCBatchReader::next::reading batch for
