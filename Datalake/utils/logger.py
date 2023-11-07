@@ -15,7 +15,9 @@ def logPrevRunDt(process, table_name, status, error, logTableName):
 
     logger = getLogger()
     from datetime import datetime as dt
-
+    escape_charlist = str.maketrans({"-": r"\-", "]": r"\]", "\\": r"\\", "^": r"\^", "$": r"\$", "*": r"\*", ".": r"\.","'": r"\'"})
+    error = error.translate(escape_charlist)
+    
     # Getting current date and time
     now = dt.now()
 
