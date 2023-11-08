@@ -20,7 +20,7 @@
                 "python_file": "Datalake/utils/sync/batch/SF2DatalakeBatchSync.py",
                 "parameters": [
                     "-e",
-                    "qa",
+                    "prod",
                     "-id",
                     "load_dp_accuracy_day_nz",
                     "-st",
