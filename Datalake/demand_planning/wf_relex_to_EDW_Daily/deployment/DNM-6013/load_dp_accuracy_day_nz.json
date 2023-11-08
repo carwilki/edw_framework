@@ -44,7 +44,7 @@
                 ],
                 "source": "GIT"
             },
-            "job_cluster_key": "load_dp_accuracy_day_nz_to_datalake_from_sf_job_cluster",
+            "job_cluster_key": "load_dp_accuracy_day_nz_job_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -57,7 +57,7 @@
     ],
     "job_clusters": [
         {
-            "job_cluster_key": "load_dp_accuracy_day_nz_to_datalake_from_sf_job_cluster",
+            "job_cluster_key": "load_dp_accuracy_day_nz_job_cluster",
             "new_cluster": {
                 "cluster_name": "",
                 "spark_version": "13.3.x-scala2.12",

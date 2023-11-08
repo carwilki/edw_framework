@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "gcpdatajobs-shared@petsmart.com"
     },
-    "name": "dp_order_projection_day_hist_nz",
+    "name": "inv_instock_price_day_nz",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
@@ -14,7 +14,7 @@
     "max_concurrent_runs": 1,
     "tasks": [
         {
-            "task_key": "dp_order_projection_day_hist_nz",
+            "task_key": "inv_instock_price_day_nz",
             "run_if": "ALL_SUCCESS",
             "spark_python_task": {
                 "python_file": "Datalake/utils/sync/batch/SF2DatalakeBatchSync.py",
@@ -22,19 +22,19 @@
                     "-e",
                     "prod",
                     "-id",
-                    "dp_order_projection_day_hist",
+                    "inv_instock_price_day_nz",
                     "-st",
-                    "edw.public.dp_order_projection_day_hist_nz",
+                    "edw.public.inv_instock_price_day",
                     "-tt",
-                    "legacy.dp_order_projection_day_hist",
+                    "legacy.inv_instock_price_day",
                     "-t",
                     "snowflake",
                     "-k",
-                    "SNAPSHOT_DT,DAY_DT,LOCATION_ID,PRODUCT_ID,FROM_LOCATION_ID",
+                    "DAY_DT,LOCATION_ID,PRODUCT_ID",
                     "-dc",
-                    "DAY_DT,LOAD_TSTMP",
+                    "DAY_DT,LOAD_DT",
                     "-sd",
-                    "2022-01-31",
+                    "2018-12-31",
                     "-ed",
                     "2024-01-31",
                     "-in",
@@ -44,7 +44,7 @@
                 ],
                 "source": "GIT"
             },
-            "job_cluster_key": "dp_order_projection_day_hist_nz_job_cluster",
+            "job_cluster_key": "inv_instock_price_day_nz_job_cluster",
             "timeout_seconds": 0,
             "email_notifications": {},
             "notification_settings": {
@@ -57,7 +57,7 @@
     ],
     "job_clusters": [
         {
-            "job_cluster_key": "dp_order_projection_day_hist_nz_job_cluster",
+            "job_cluster_key": "load_dp_accuracy_day_nz_to_datalake_from_sf_job_cluster",
             "new_cluster": {
                 "cluster_name": "",
                 "spark_version": "13.3.x-scala2.12",
