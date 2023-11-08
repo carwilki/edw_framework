@@ -31,7 +31,9 @@ def getJobId(json_response):
     id = json_response.split(":")[1]
     return re.findall(r"\d+", id)[0]
 
+
 # COMMAND ----------
+
 
 def set_permission(payload, job_id):
     api_version = "/api/2.0"
@@ -60,16 +62,22 @@ permission_json = {
 
 # COMMAND ----------
 
-job_json = "wf_Relex_to_EDW_Daily_deployment.json"
+job_json = [
+    "load_dp_accuracy_day_nz.json",
+    "load_dp_forecast_week_hist_nz.json",
+    "load_dp_order_projection_day_hist_nz.json",
+    "load_dp_order_projection_week_hist_nz.json",
+    "load_dp_product_location_settings_hist_nz.json",
+]
+for job_file in job_json:
+    with open(job_file) as json_file:
+        job_payload = json.load(json_file)
 
-with open(job_json) as json_file:
-    job_payload = json.load(json_file)
+        payload = json.dumps(job_payload)
 
-    payload = json.dumps(job_payload)
-
-    response = create_job(payload)
-    job_id = getJobId(response)
-    print(response)
-    payload = json.dumps(permission_json)
-    response = set_permission(payload, job_id)
-    print(response)
+        response = create_job(payload)
+        job_id = getJobId(response)
+        print(response)
+        payload = json.dumps(permission_json)
+        response = set_permission(payload, job_id)
+        print(response)

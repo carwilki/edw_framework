@@ -11,7 +11,7 @@ from Datalake.utils.sync.writer.AbstractBatchWriter import AbstractBatchWriter
 from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
     SparkDeltaLakeBatchWriter,
 )
-
+from Datalake.utils.sync import dl_vars
 
 class BatchManager(object):
     """Batch manager provides an iteratore like interface for tranfering data from one table into another
@@ -23,7 +23,7 @@ class BatchManager(object):
         does not already exist"""
         self.env = batchConfig.env
         self.spark = spark
-        self.log_table = f"{getEnvPrefix(self.env)}raw.batch_reader_state"
+        self.log_table = f"{getEnvPrefix(self.env)}{dl_vars.dl_metadata_table}"
         self._createLogTable()
         m = self._loadMemento(batchConfig.batch_id)
         if m is not None:
