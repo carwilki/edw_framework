@@ -113,12 +113,18 @@ class BatchManager(object):
         print("BatchManager::_build_target::creating spark delta writer")
         return SparkDeltaLakeBatchWriter(toDateRangeBatchConfig(self.state), self.spark)
 
+    # TODO: implement a gap check to make sure that we do not miss records due to intervals
+    # passing them by
     def next(self):
-        print("BatchManager::process_batch::processing batch")
-        source = self._build_source()
-        target = self._build_target()
-        data = source.next()
-        target.write(data)
-        print("BatchManager::process_batch::batch processed")
-        self.state.current_dt = self.state.current_dt + self.state.interval
-        self._updateMemento(self.state)
+        if self.state.current_dt <= self.state.end_dt:
+            print("BatchManager::process_batch::processing batch")
+            source = self._build_source()
+            target = self._build_target()
+            data = source.next()
+            target.write(data)
+            print("BatchManager::process_batch::batch processed")
+            self.state.current_dt = self.state.current_dt + self.state.interval
+            self._updateMemento(self.state)
+        else:
+            print("BatchManager::process_batch::no more batches to process")
+            return None
