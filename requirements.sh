@@ -28,3 +28,4 @@ pip install six==1.16.0
 pip install tabulate==0.9.0 
 pip install tzdata==2023.3
 pip install urllib3==1.26.16 
+pip install retry==0.9.2
