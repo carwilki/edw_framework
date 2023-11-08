@@ -2,7 +2,7 @@
     "run_as": {
         "user_name": "gcpdatajobs-shared@petsmart.com"
     },
-    "name": "load_dp_accuracy_day_nz_to_datalake_from_sf",
+    "name": "dp_order_projection_day_hist_nz",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },
