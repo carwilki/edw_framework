@@ -1,0 +1,387 @@
+{
+  "name": "bs_Replenishment_Profile",
+  "email_notifications": {
+      "on_failure": [
+        "dl_big_data_operations@petsmart.com"
+      ],
+      "no_alert_for_skipped_runs": false
+   },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "s_replenishment_pre",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_replenishment_pre",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_replenishment_day",
+      "depends_on": [
+        {
+          "task_key": "s_replenishment_pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_replenishment_day",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_site_group_pre",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_site_group_pre",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_site_group_day",
+      "depends_on": [
+        {
+          "task_key": "s_site_group_pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_site_group_day",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_ZTB_ART_LOC_SITE_PRE",
+      "depends_on": [
+        {
+          "task_key": "s_site_group_day"
+        },
+        {
+          "task_key": "s_replenishment_day"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_ZTB_ART_LOC_SITE_PRE",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_POG_SKU_STORE",
+      "depends_on": [
+        {
+          "task_key": "s_ZTB_ART_LOC_SITE_PRE"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_POG_SKU_STORE",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_POG_SKU_STORE_UPD",
+      "depends_on": [
+        {
+          "task_key": "s_POG_SKU_STORE"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_POG_SKU_STORE_UPD",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "s_replenishment_profile_SQL",
+      "depends_on": [
+        {
+          "task_key": "s_POG_SKU_STORE_UPD"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/BA_Dimension/bs_Replenishment_Profile/notebooks/m_replenishment_profile_SQL",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_replenishment_profile",
+      "depends_on": [
+        {
+          "task_key": "s_replenishment_profile_SQL"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "replenishment_profile",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    }
+  ],
+  "job_clusters": [
+    {
+      "job_cluster_key": "Replenishment_Profile_Cluster",
+      "new_cluster": {
+          "cluster_name": "",
+          "spark_version": "13.0.x-scala2.12",
+          "spark_conf": {
+            "spark.databricks.dataLineage.enabled": "true",
+            "spark.databricks.delta.preview.enabled": "true",
+            "spark.sql.hive.metastore.jars": "maven",
+            "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+            "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+            "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+            "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+            "spark.sql.hive.metastore.version": "3.1.0"
+          },
+          "gcp_attributes": {
+            "use_preemptible_executors": false,
+            "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+            "availability": "ON_DEMAND_GCP",
+            "zone_id": "auto"
+          },
+          "node_type_id": "n2-highmem-4",
+          "custom_tags": {
+            "Department": "NZ-Migration"
+          },
+          "enable_elastic_disk": false,
+          "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+          "runtime_engine": "STANDARD",
+          "num_workers": 8
+        }
+    }
+  ],
+  "git_source": {
+    "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+    "git_provider": "gitHub",
+    "git_branch": "main"
+  },
+  "tags": {
+    "Department": "NZ-Migration"
+  },
+  "run_as": {
+    "user_name": "gcpdatajobs-shared@petsmart.com"
+  },
+  "format": "MULTI_TASK"
+}

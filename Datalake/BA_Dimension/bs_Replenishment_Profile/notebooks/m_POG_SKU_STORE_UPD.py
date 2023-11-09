@@ -1,0 +1,465 @@
+# Databricks notebook source
+#Code converted on 2023-09-27 16:52:14
+import os
+import argparse
+from pyspark.sql import *
+from pyspark.sql.functions import *
+from datetime import datetime
+from Datalake.utils.genericUtilities import *
+from Datalake.utils.configs import *
+from Datalake.utils.mergeUtils import *
+from Datalake.utils.logger import *
+
+# COMMAND ----------
+
+spark = SparkSession.getActiveSession()
+dbutils = DBUtils(spark)
+dbutils.widgets.text(name = 'env', defaultValue = 'dev')
+env = dbutils.widgets.get('env')
+
+if env is None or env == '':
+    raise ValueError('env is not set')
+
+raw = getEnvPrefix(env) + 'raw'
+legacy = getEnvPrefix(env) + 'legacy'
+refine = getEnvPrefix(env) + 'refine'
+
+# Set global variables
+starttime = datetime.now() #start timestamp of the script
+
+# COMMAND ----------
+
+# Processing node SQ_Shortcut_to_POG_SKU_STORE, type SOURCE 
+# COLUMN COUNT: 8
+
+SQ_Shortcut_to_POG_SKU_STORE = spark.sql(f"""/*  UPDATE STATUS FOR POG THAT HAS BECOME HISTORICAL RECORDS */
+	SELECT PRODUCT_ID
+
+		,LOCATION_ID
+
+		,POG_NBR
+
+		,POG_DBKEY
+
+		,LISTING_START_DT,
+
+              MIN(POG_SKU_POSITION_STATUS_ID) POG_SKU_POSITION_STATUS_ID,
+
+              MAX(DELETE_FLAG) DELETE_FLAG,
+
+              MAX(UPDATE_TSTMP) UPDATE_TSTMP
+
+         FROM 
+
+              (SELECT PRODUCT_ID
+
+		,LOCATION_ID
+
+		,POG_NBR
+
+		,POG_DBKEY
+
+		,LISTING_START_DT
+
+		,4 AS POG_SKU_POSITION_STATUS_ID
+
+		,DELETE_FLAG
+
+		,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+	FROM {legacy}.POG_SKU_STORE
+
+	WHERE (
+
+			POG_SKU_STORE.POG_SKU_POSITION_STATUS_ID = 1
+
+			AND POG_SKU_STORE.LISTING_END_DT < CURRENT_DATE
+
+			AND POG_SKU_STORE.DELETE_FLAG = 0
+
+			)
+
+	
+
+	UNION
+
+	
+
+/*  SOFT DELETE DUPLICATE RECORDS BASED ON STORE, SKU AND POG DBKEY */
+	SELECT PRODUCT_ID
+
+		,LOCATION_ID
+
+		,POG_NBR
+
+		,POG_DBKEY
+
+		,LISTING_START_DT
+
+		,3 AS POG_SKU_POSITION_STATUS_ID
+
+		,1 AS DELETE_FLAG
+
+		,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+	FROM (
+
+		SELECT P.PRODUCT_ID
+
+			,P.LOCATION_ID
+
+			,P.POG_NBR
+
+			,P.POG_DBKEY
+
+			,P.LISTING_START_DT
+
+			,ROW_NUMBER() OVER (
+
+				PARTITION BY PRODUCT_ID
+
+				,LOCATION_ID
+
+				,POG_DBKEY ORDER BY SAP_LAST_CHANGE_TSTMP DESC
+
+				) AS RK
+
+		FROM {legacy}.POG_SKU_STORE P
+
+		WHERE DELETE_FLAG = 0
+
+		) A
+
+	WHERE RK <> 1
+
+	
+
+	UNION
+
+	
+
+/*  SOFT DELETE RECORDS THAT ARE STILL IN PENDING STATUS WITH LISTING START DATE IN THE PAST */
+	SELECT PRODUCT_ID
+
+		,LOCATION_ID
+
+		,POG_NBR
+
+		,POG_DBKEY
+
+		,LISTING_START_DT
+
+		,3 AS POG_SKU_POSITION_STATUS_ID
+
+		,1 AS DELETE_FLAG
+
+		,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+	FROM {legacy}.POG_SKU_STORE
+
+	WHERE (
+
+			POG_SKU_STORE.POG_SKU_POSITION_STATUS_ID = 2
+
+			AND POG_SKU_STORE.LISTING_START_DT <= CURRENT_DATE
+
+			AND POG_SKU_STORE.DELETE_FLAG = 0
+
+			)
+
+	
+
+	UNION
+
+	
+
+/*  SOFT DELETE RECORDS THAT HAS BEEN DELETED IN CKB AND SAP */
+	(
+
+		SELECT P.PRODUCT_ID
+
+			,P.LOCATION_ID
+
+			,P.POG_NBR
+
+			,P.POG_DBKEY
+
+			,P.LISTING_START_DT
+
+			,3 AS POG_SKU_POSITION_STATUS_ID
+
+			,1 AS DELETE_FLAG
+
+			,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+		FROM {legacy}.POG_SKU_STORE P
+
+			,(
+
+				SELECT SP.CKB_DB_PLANOGRAM_KEY
+
+					,PRD.PRODUCT_ID
+
+					,PLN.DB_DATE_EFFECTIVE_FROM
+
+				FROM {legacy}.CKB_SPC_PERFORMANCE SP
+
+				JOIN {legacy}.CKB_SPC_PRODUCT PRD ON SP.CKB_DB_PRODUCT_KEY = PRD.CKB_DB_PRODUCT_KEY
+
+				JOIN {legacy}.CKB_SPC_PLANOGRAM PLN ON PLN.CKB_DB_PLANOGRAM_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+				LEFT OUTER JOIN (
+
+					SELECT DISTINCT SP.CKB_DB_PLANOGRAM_KEY AS ACTIVE_KEY
+
+						,PRD.SKU_NBR AS ACTIVE_SKU
+
+						,PLN.DB_DATE_EFFECTIVE_FROM AS ACTIVE_DB_DATE_EFFECTIVE_FROM
+
+					FROM {legacy}.CKB_SPC_PERFORMANCE SP
+
+					JOIN {legacy}.CKB_SPC_PRODUCT PRD ON SP.CKB_DB_PRODUCT_KEY = PRD.CKB_DB_PRODUCT_KEY
+
+					JOIN {legacy}.CKB_SPC_PLANOGRAM PLN ON PLN.CKB_DB_PLANOGRAM_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+					WHERE PLN.DB_STATUS IN (1,2,4)
+
+						AND SP.DEL_FLAG = 0
+
+					) LV ON LV.ACTIVE_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+					AND LV.ACTIVE_SKU = PRD.SKU_NBR
+
+					AND LV.ACTIVE_DB_DATE_EFFECTIVE_FROM = PLN.DB_DATE_EFFECTIVE_FROM
+
+				WHERE PLN.DB_STATUS IN (1,2,4)
+
+					AND SP.DEL_FLAG = 1
+
+					AND LV.ACTIVE_KEY IS NULL
+
+				) X
+
+		WHERE P.POG_DBKEY = X.CKB_DB_PLANOGRAM_KEY
+
+			AND P.PRODUCT_ID = X.PRODUCT_ID
+
+			AND P.LISTING_START_DT = X.DB_DATE_EFFECTIVE_FROM
+
+			AND P.DELETE_FLAG = 0
+
+		
+
+		UNION
+
+		
+
+/* SKU WAS DELETED FROM {legacy}.PLANOGRAM WHEN DEL_FLAG FOR CKB_SPC_PERFORMANCE = 1 */
+		SELECT P.PRODUCT_ID
+
+			,P.LOCATION_ID
+
+			,P.POG_NBR
+
+			,P.POG_DBKEY
+
+			,P.LISTING_START_DT
+
+			,3 AS POG_SKU_POSITION_STATUS_ID
+
+			,1 AS DELETE_FLAG
+
+			,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+		FROM {legacy}.POG_SKU_STORE P
+
+			,(
+
+				SELECT SP.CKB_DB_PLANOGRAM_KEY
+
+					,PLN.DB_DATE_EFFECTIVE_FROM
+
+					,PRD.SKU_NBR
+
+					,PRD.PRODUCT_ID
+
+					,SP.DEL_FLAG
+
+					,SP.LOAD_DT
+
+					,SP.UPDATE_DT
+
+					,CASE 
+
+						WHEN LV.ACTIVE_KEY IS NULL
+
+							THEN 'Y'
+
+						ELSE 'N'
+
+						END AS FULL_DEL_FLAG
+
+				FROM {legacy}.CKB_SPC_PERFORMANCE SP
+
+				JOIN {legacy}.CKB_SPC_PRODUCT PRD ON SP.CKB_DB_PRODUCT_KEY = PRD.CKB_DB_PRODUCT_KEY
+
+				JOIN {legacy}.CKB_SPC_PLANOGRAM PLN ON PLN.CKB_DB_PLANOGRAM_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+				LEFT OUTER JOIN (
+
+					SELECT DISTINCT SP.CKB_DB_PLANOGRAM_KEY AS ACTIVE_KEY
+
+						,PRD.SKU_NBR AS ACTIVE_SKU
+
+					FROM {legacy}.CKB_SPC_PERFORMANCE SP
+
+					JOIN {legacy}.CKB_SPC_PRODUCT PRD ON SP.CKB_DB_PRODUCT_KEY = PRD.CKB_DB_PRODUCT_KEY
+
+					JOIN {legacy}.CKB_SPC_PLANOGRAM PLN ON PLN.CKB_DB_PLANOGRAM_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+					WHERE PLN.DB_STATUS IN (1,2,4)
+
+						AND SP.DEL_FLAG = 0
+
+					) LV ON LV.ACTIVE_KEY = SP.CKB_DB_PLANOGRAM_KEY
+
+					AND LV.ACTIVE_SKU = PRD.SKU_NBR
+
+				WHERE PLN.DB_STATUS IN (1,2,4)
+
+					AND SP.DEL_FLAG = 1
+
+				) X
+
+		WHERE P.POG_DBKEY = X.CKB_DB_PLANOGRAM_KEY
+
+			AND P.PRODUCT_ID = X.PRODUCT_ID
+
+			AND P.DELETE_FLAG = 0
+
+			AND X.FULL_DEL_FLAG = 'Y'
+
+		
+
+		UNION
+
+		
+
+		SELECT P.PRODUCT_ID
+
+			,P.LOCATION_ID
+
+			,P.POG_NBR
+
+			,P.POG_DBKEY
+
+			,P.LISTING_START_DT
+
+			,3 AS POG_SKU_POSITION_STATUS_ID
+
+			,1 AS DELETE_FLAG
+
+			,CURRENT_TIMESTAMP AS UPDATE_TSTMP
+
+		FROM {legacy}.POG_SKU_STORE P
+
+			,(
+
+				 SELECT * FROM (SELECT 
+
+					FF.LOCATION_ID
+
+					,FP.CKB_DB_PLANOGRAM_KEY
+
+					,PLN.DB_DATE_EFFECTIVE_FROM
+
+                                   ,MIN(FP.DEL_FLAG) DEL_FLAG
+
+				FROM {legacy}.CKB_FLR_PERFORMANCE FP
+
+				JOIN {legacy}.CKB_FLR_FLOORPLAN FF ON FP.CKB_DB_FLOOR_PLAN_KEY = FF.CKB_DB_FLOOR_PLAN_KEY
+
+				JOIN {legacy}.CKB_SPC_PLANOGRAM PLN ON PLN.CKB_DB_PLANOGRAM_KEY = FP.CKB_DB_PLANOGRAM_KEY
+
+				JOIN {legacy}.CKB_FLR_FLOORPLAN FLR ON (
+
+						FLR.CKB_DB_FLOOR_PLAN_KEY = FP.CKB_DB_FLOOR_PLAN_KEY
+
+						OR FLR.DB_VERSION_KEY = FP.CKB_DB_FLOOR_PLAN_KEY
+
+						)
+
+				WHERE PLN.DB_STATUS IN (2)
+
+					AND FLR.DB_STATUS IN (2)
+
+                            GROUP BY FF.LOCATION_ID,FP.CKB_DB_PLANOGRAM_KEY,PLN.DB_DATE_EFFECTIVE_FROM) A
+
+                            WHERE A.DEL_FLAG=1
+
+				) X
+
+		WHERE P.POG_DBKEY = X.CKB_DB_PLANOGRAM_KEY
+
+			AND P.LOCATION_ID = X.LOCATION_ID
+
+			AND P.LISTING_START_DT = X.DB_DATE_EFFECTIVE_FROM
+
+			AND P.DELETE_FLAG = 0
+
+		)
+
+              ) A
+
+              GROUP BY PRODUCT_ID
+
+		,LOCATION_ID
+
+		,POG_NBR
+
+		,POG_DBKEY
+
+		,LISTING_START_DT""").withColumn("sys_row_id", monotonically_increasing_id())
+# Conforming fields names to the component layout
+SQ_Shortcut_to_POG_SKU_STORE = SQ_Shortcut_to_POG_SKU_STORE \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[0],'PRODUCT_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[1],'LOCATION_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[2],'POG_NBR') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[3],'POG_DBKEY') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[4],'LISTING_START_DT') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[5],'POG_SKU_POSITION_STATUS_ID') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[6],'DELETE_FLAG') \
+	.withColumnRenamed(SQ_Shortcut_to_POG_SKU_STORE.columns[7],'UPDATE_TSTMP')
+
+# COMMAND ----------
+
+# Processing node Shortcut_to_POG_SKU_STORE1, type TARGET 
+# COLUMN COUNT: 16
+
+#  TODO convert to update merge
+Shortcut_to_POG_SKU_STORE1 = SQ_Shortcut_to_POG_SKU_STORE.selectExpr(
+	"CAST(PRODUCT_ID AS INT) as PRODUCT_ID",
+	"CAST(LOCATION_ID AS INT) as LOCATION_ID",
+	"CAST(POG_NBR AS STRING) as POG_NBR",
+	"CAST(POG_DBKEY AS INT) as POG_DBKEY",
+	"CAST(LISTING_START_DT AS DATE) as LISTING_START_DT",
+	"CAST(POG_SKU_POSITION_STATUS_ID AS TINYINT) as POG_SKU_POSITION_STATUS_ID",
+	"CAST(DELETE_FLAG AS TINYINT) as DELETE_FLAG",
+	"CAST(UPDATE_TSTMP AS TIMESTAMP) as UPDATE_TSTMP"
+)
+# Shortcut_to_POG_SKU_STORE1.write.saveAsTable(f'{refine}.POG_SKU_STORE', mode = 'overwrite')
+Shortcut_to_POG_SKU_STORE1.createOrReplaceTempView('POG_SKU_STORE_UPD')
+
+spark.sql(f"""
+	MERGE INTO {legacy}.POG_SKU_STORE tgt
+	USING POG_SKU_STORE_UPD src
+	ON (src.PRODUCT_ID = tgt.PRODUCT_ID AND src.LOCATION_ID = tgt.LOCATION_ID AND src.POG_NBR = tgt.POG_NBR AND src.POG_DBKEY = tgt.POG_DBKEY AND src.LISTING_START_DT = tgt.LISTING_START_DT  )
+	WHEN MATCHED THEN UPDATE SET tgt.POG_SKU_POSITION_STATUS_ID = src.POG_SKU_POSITION_STATUS_ID,
+															tgt.DELETE_FLAG = src.DELETE_FLAG,
+															tgt.UPDATE_TSTMP = src.UPDATE_TSTMP
+""")
+
+
+# COMMAND ----------
+
+
