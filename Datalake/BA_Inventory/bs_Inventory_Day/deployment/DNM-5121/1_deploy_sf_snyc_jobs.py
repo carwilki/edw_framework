@@ -63,11 +63,7 @@ permission_json = {
 # COMMAND ----------
 
 job_json = [
-    "load_dp_accuracy_day_nz.json",
-    "load_dp_forecast_week_hist_nz.json",
-    "load_dp_order_projection_day_hist_nz.json",
-    "load_dp_order_projection_week_hist_nz.json",
-    "load_dp_product_location_settings_hist_nz.json",
+    "load_inv_instock_price_day_nz.json",
 ]
 for job_file in job_json:
     with open(job_file) as json_file:
