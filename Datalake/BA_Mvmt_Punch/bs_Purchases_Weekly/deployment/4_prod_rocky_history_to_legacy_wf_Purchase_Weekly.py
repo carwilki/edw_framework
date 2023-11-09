@@ -4,7 +4,6 @@ import csv
 
 tables = [
     "PURCHASES",
-    "DAYS",
     "PURCH_PERF",
 ]
 

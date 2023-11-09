@@ -32,7 +32,6 @@ import time
 
 tables = [
     "PURCHASES",
-    "DAYS",
     "PURCH_PERF",
 ]
 for table in tables:
