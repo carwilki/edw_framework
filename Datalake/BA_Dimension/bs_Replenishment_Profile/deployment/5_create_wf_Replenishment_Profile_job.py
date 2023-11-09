@@ -2,13 +2,11 @@
 import requests
 import json
 
-from Datalake.utils import secrets
-
-token = secrets.get(scope="db-token-jobsapi", key="password")
+token = dbutils.secrets.get(scope="db-token-jobsapi", key="password")
 google_service_account = (
     "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com"
 )
-instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
+instance_id = dbutils.secrets.get(scope="db-token-jobsapi", key="instance_id")
 
 # COMMAND ----------
 
@@ -31,6 +29,24 @@ def getJobId(json_response):
     id = json_response.split(":")[1]
     return re.findall(r"\d+", id)[0]
 
+
+# COMMAND ----------
+
+import json
+
+job_json = "bs_replenishment_profile.json"
+
+with open(job_json) as json_file:
+    job_payload = json.load(json_file)
+
+payload = json.dumps(job_payload)
+
+
+# COMMAND ----------
+
+response = create_job(payload)
+job_id = getJobId(response)
+print(response)
 
 # COMMAND ----------
 
@@ -62,18 +78,8 @@ permission_json = {
 
 # COMMAND ----------
 
-job_json = [
-    "load_inv_instock_price_day_nz.json",
-]
-for job_file in job_json:
-    with open(job_file) as json_file:
-        job_payload = json.load(json_file)
 
-        payload = json.dumps(job_payload)
+payload = json.dumps(permission_json)
 
-        response = create_job(payload)
-        job_id = getJobId(response)
-        print(response)
-        payload = json.dumps(permission_json)
-        response = set_permission(payload, job_id)
-        print(response)
+response = set_permission(payload, job_id)
+print(response)

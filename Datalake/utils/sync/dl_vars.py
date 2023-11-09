@@ -1,1 +1,1 @@
-dl_metadata_table = "strangerthings.sf_batch_transfer_metadata"
+dl_metadata_table = "stranger_things.sf_batch_transfer_metadata"
