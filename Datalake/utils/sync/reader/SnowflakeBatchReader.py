@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pyspark.sql import DataFrame, SparkSession
+from Datalake.utils import secrets
 from Datalake.utils.genericUtilities import getSFEnvSuffix
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
@@ -41,11 +42,12 @@ class SnowflakeBatchReader(AbstractBatchReader):
         print(f"SnowflakeBatchReader::_setup_reader::sf_table {self.sf_table}")
 
         print(f"SnowflakeBatchReader::_setup_reader::env: {self.env}")
+
         if self.env == "prod":
             self.sfOptions = {
                 "sfUrl": sf_vars.sf_url,
-                "sfUser": sf_vars.sf_prod_user,
-                "sfPassword": sf_vars.sf_prod_password,
+                "sfUser": secrets.get("databricks_service_account", "username"),
+                "sfPassword": secrets.get("databricks_service_account", "password"),
                 "sfDatabase": self.sf_database,
                 "sfSchema": self.sf_schema,
                 "sfWarehouse": sf_vars.sf_warehouse,
@@ -56,8 +58,8 @@ class SnowflakeBatchReader(AbstractBatchReader):
         else:
             self.sfOptions = {
                 "sfUrl": sf_vars.sf_url,
-                "sfUser": sf_vars.sf_other_user,
-                "pem_private_key": sf_vars.sf_other_key,
+                "sfUser": secrets.get("SVC_BD_SNOWFLAKE_NP", "username"),
+                "pem_private_key": secrets.get("SVC_BD_SNOWFLAKE_NP", "pkey"),
                 "sfDatabase": self.sf_database,
                 "sfSchema": self.sf_schema,
                 "sfWarehouse": sf_vars.sf_warehouse,
