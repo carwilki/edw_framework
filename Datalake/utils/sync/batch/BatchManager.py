@@ -13,6 +13,7 @@ from Datalake.utils.sync.writer.SparkDeltaLakeBatchWriter import (
 )
 from Datalake.utils.sync import dl_vars
 
+
 class BatchManager(object):
     """Batch manager provides an iteratore like interface for tranfering data from one table into another
     using 'batches'. Batches can only be used if the data has some sort of ordering for the records
@@ -127,4 +128,4 @@ class BatchManager(object):
             self._updateMemento(self.state)
         else:
             print("BatchManager::process_batch::no more batches to process")
-            return None
+            raise ValueError("No more batches to process. Disable Job in scheduler")
