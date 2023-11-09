@@ -1,6 +1,6 @@
 import argparse
 
-from Datalake.utils.DeltaLakeWriter import DeltaLakeWriter
+from Datalake.utils.DeltaLakeWriter import SparkDeltaLakeWriter
 from Datalake.utils.genericUtilities import getSfCredentials
 
 parser = argparse.ArgumentParser()
@@ -20,4 +20,4 @@ for table in table_list:
     print(table)
     delta_schema = table.split(".")[0]
     tableName = table.split(".")[1]
-    DeltaLakeWriter(sfOptions, tableName, delta_schema).pull_data()
+    SparkDeltaLakeWriter(sfOptions, tableName, delta_schema).pull_data()

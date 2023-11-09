@@ -1,0 +1,1 @@
+dl_metadata_table = "strangerthings.sf_batch_transfer_metadata"
