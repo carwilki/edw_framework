@@ -7,6 +7,7 @@ Once the jobs have loaded all of the data then we need to disable them
 ## Details
 
 **Installation Script**
+- Ensure that the nzmigration repo is deployed to the prod workspace. 
 - 1_deploy_sf_snyc_jobs.py
 
 **Jobs that are being deployed**
