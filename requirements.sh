@@ -1,2 +1,3 @@
 #!/bin/bash
-pip install -r requirements.txt
+sleep 10
+pip install -r /dbfs/FileStore/nz_migration/sf-sync/requirements.txt
