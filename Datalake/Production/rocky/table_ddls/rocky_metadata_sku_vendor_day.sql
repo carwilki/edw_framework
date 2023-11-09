@@ -12,6 +12,6 @@ VALUES (
 null, false, null, false, "delta",
 "legacy", null, "sku_vendor_day", "upsert", "LOAD_DT", 
 "SKU_NBR,VENDOR_ID", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
-null, array("dbodake@petsmart.com,pkulkarni@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
+null, array("dbodake@petsmart.com","pkulkarni@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
 null, null ,"ALL_MUST_BE_MET" ,true ,null, null, null
 );
