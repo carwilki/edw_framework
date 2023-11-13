@@ -1,9 +1,9 @@
 #!/bin/bash
 sleep 10
 pip install click==8.1.7 
-pip install charset-normalizer==3.3.2 
-pip install certifi==2023.7.22 
-pip install colorama==0.4.6
+pip install charset-normalizer==3.3.2  
+pip install certifi==2023.7.22  
+pip install colorama==0.4.6 
 pip install databricks-cli==0.17.8 
 pip install databricks-connect==13.3.3 
 pip install databricks-sdk==0.11.0 
