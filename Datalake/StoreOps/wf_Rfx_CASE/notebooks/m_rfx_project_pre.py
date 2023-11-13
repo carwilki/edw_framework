@@ -54,7 +54,9 @@ csv_options = {
 # Read the CSV file into a DataFrame
 
 SQ_Shortcut_to_RFX_PROJECT = spark.read.csv(source_file, **csv_options)
-
+if SQ_Shortcut_to_RFX_PROJECT.head() is None:
+    df = spark.sql(f'TRUNCATE TABLE {raw}.RFX_PROJECT_PRE')
+    sys.exit()
 
 # COMMAND ----------
 
