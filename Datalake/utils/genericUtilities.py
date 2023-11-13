@@ -511,7 +511,7 @@ def fileExists(pfile):
         data = dbutils.fs.head(pfile, 1)
         if data == "":
             return False
-    except:
+    except Exception:
         print(f"{pfile} doesn't exist")
         return False
     else:
