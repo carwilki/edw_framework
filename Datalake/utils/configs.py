@@ -616,10 +616,10 @@ def Get_Smart_Training_prd_sqlServer(env):
     if env.lower() == "prod":
         # username, password, hostname
         username = secrets.get(scope="svc_bd_sql_p_read", key="username")
-        password = secrets.get(scope="svc_bd_sql_p_read", key="getsmart_password")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="getsmarttrn_password")
         hostname = "172.20.89.187"
         portnumber = "1840"
-        db = "Get_Smart_Training_V1"
+        db = "GetSmartTraining_V1"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
@@ -684,11 +684,11 @@ def ckb_prd_sqlServer(env):
 
     if env.lower() == "prod":
         # username, password, hostname
-        username = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="username")
-        password = dbutils.secrets.get(scope="SVC_BD_SQL_READ", key="ckb_password")
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="ckb_password")
         hostname = "172.20.89.153"
         portnumber = "1840"
-        db = "EnterpriseSiteDataHub"
+        db = "CKB_PRD"
         connection_string = (
             f"jdbc:sqlserver://"
             + hostname
