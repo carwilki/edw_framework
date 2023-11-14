@@ -31,6 +31,13 @@ class BatchManager(object):
             print(
                 f"BatchManager::__init__::found mememento for batch_id:{batchConfig.batch_id}"
             )
+            if m != toBatchMemento(batchConfig):
+                print(
+                    f"""BatchManager::__init__::memento found for batch_id:{batchConfig.batch_id}
+                    but it is not the same as the one in the config file.
+                    Overwriting memento"""
+                )
+                self._saveMemento(toBatchMemento(batchConfig))
             self.state = m
         else:
             print(
