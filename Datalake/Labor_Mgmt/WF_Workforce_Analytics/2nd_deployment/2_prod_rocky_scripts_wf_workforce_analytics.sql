@@ -21,7 +21,7 @@ VALUES('NZ_Migration' --table_group
 , array('NULL') --tidal_dependencies
 , null --tidal_trigger_condition
 , null --expected_start_time
-, array("rrajamani@petsmart.com", "pshekhar@petsmart.com", "APipewala@PetSmart.com") --job_watchers
+, array("rrajamani@petsmart.com", "APipewala@PetSmart.com") --job_watchers
 , 0 --max_retry
 , 'TRUE' --disable_no_record_failure
 ,'{"Department":"Netezza-Migration"}' --job_tag
@@ -56,7 +56,7 @@ VALUES('NZ_Migration' --table_group
 , array('NULL') --tidal_dependencies
 , null --tidal_trigger_condition
 , null --expected_start_time
-, array("rrajamani@petsmart.com", "pshekhar@petsmart.com", "APipewala@PetSmart.com") --job_watchers
+, array("rrajamani@petsmart.com", "APipewala@PetSmart.com") --job_watchers
 , 0 --max_retry
 , 'TRUE' --disable_no_record_failure
 ,'{"Department":"Netezza-Migration"}' --job_tag
@@ -92,7 +92,7 @@ VALUES('NZ_Migration' --table_group
 , array('NULL') --tidal_dependencies
 , null --tidal_trigger_condition
 , null --expected_start_time
-, array("rrajamani@petsmart.com", "pshekhar@petsmart.com", "APipewala@PetSmart.com") --job_watchers
+, array("rrajamani@petsmart.com", "APipewala@PetSmart.com") --job_watchers
 , 0 --max_retry
 , 'TRUE' --disable_no_record_failure
 ,'{"Department":"Netezza-Migration"}' --job_tag
