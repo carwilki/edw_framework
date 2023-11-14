@@ -35,7 +35,7 @@ tables = [
     "GS_TRAVEL",
     "GS_POSITION",
     "GS_TRAINING_TYPE",
-    "GS_TRAINING_STATUS"
+    "GS_TRAINING_STATUS",
 ]
 
 for table in tables:

@@ -1,7 +1,7 @@
 # Databricks notebook source
 from pyspark.sql.functions import col
 
-tables = ["GS_TRAINING","GS_POSITION","GS_TRAINING_TYPE","GS_TRAINING_STATUS"]
+tables = ["GS_TRAINING", "GS_POSITION", "GS_TRAINING_TYPE", "GS_TRAINING_STATUS"]
 
 PII_tables = ["GS_TRAVEL"]
 
@@ -20,7 +20,8 @@ for table in PII_tables:
     print(table)
     rocky_table = f"empl_sensitive.refine_{table}_history"
     target_table = f"empl_sensitive.legacy_{table}"
-    df = spark.sql(f"""select CLAIM_NBR
+    df = spark.sql(
+        f"""select CLAIM_NBR
                         , a.DAY_DT
                         , a.LOCATION_ID
                         , a.SOURCE_TYPE_ID
@@ -38,8 +39,9 @@ for table in PII_tables:
                         (select *
                         , row_number() OVER (PARTITION BY CLAIM_NBR ORDER BY LOAD_DT desc) rnk 
                         from {rocky_table}) a
-                        where a.rnk=1""")
-#     df = df.drop(
-#         col("bd_create_dt_tm"), col("bd_update_dt_tm"), col("source_file_name")
-#     )
+                        where a.rnk=1"""
+    )
+    #     df = df.drop(
+    #         col("bd_create_dt_tm"), col("bd_update_dt_tm"), col("source_file_name")
+    #     )
     df.write.insertInto(f"{target_table}", overwrite=True)
