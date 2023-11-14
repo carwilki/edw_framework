@@ -154,7 +154,13 @@ _sql = f"""INSERT INTO {legacy}.inv_instock_price_day
                    OR iip.pog_listed_ind = 1
                   )) iid
 """
-spark.sql(_sql)
+try:
+  df = spark.sql(_sql)
+  _rows_affected = df.collect()[0][0]
+  logPrevRunDt("INV_INSTOCK_PRICE_DAY", "INV_INSTOCK_PRICE_DAY", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+  logPrevRunDt("INV_INSTOCK_PRICE_DAY", "INV_INSTOCK_PRICE_DAY","Failed",str(e), f"{raw}.log_run_details", )
+  raise e
 
 # COMMAND ----------
 
