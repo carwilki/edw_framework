@@ -1,0 +1,354 @@
+{
+  "name": "wf_IKB_Catalogs",
+  "email_notifications": {
+      "on_failure": [
+        "dl_big_data_operations@petsmart.com"
+      ],
+      "no_alert_for_skipped_runs": false
+    },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "m_IKB_Pog_Group",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/Merchandising/wf_IKB_Catalogs/notebooks/m_IKB_Pog_Group",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_IKB_POG_Version",
+      "depends_on": [
+        {
+          "task_key": "m_IKB_Pog_Group"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/Merchandising/wf_IKB_Catalogs/notebooks/m_IKB_POG_Version",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_IKB_Pog_Sku_Version",
+      "depends_on": [
+        {
+          "task_key": "m_IKB_POG_Version"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/Merchandising/wf_IKB_Catalogs/notebooks/m_IKB_Pog_Sku_Version",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_IKB_SKU_Attr_Pre",
+      "depends_on": [
+        {
+          "task_key": "m_IKB_Pog_Sku_Version"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/Merchandising/wf_IKB_Catalogs/notebooks/m_IKB_SKU_Attr_Pre",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_IKB_Pog_Sku_Version_SUBS",
+      "depends_on": [
+        {
+          "task_key": "m_IKB_SKU_Attr_Pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/Merchandising/wf_IKB_Catalogs/notebooks/m_IKB_Pog_Sku_Version_SUBS",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_POG_GROUP",
+      "depends_on": [
+        {
+          "task_key": "m_IKB_Pog_Sku_Version_SUBS"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+        "parameters": [
+          "prod",
+          "POG_GROUP",
+          "POG_GROUP_ID",
+          "UPDATE_DT,LOAD_DT"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_POG_VERSION",
+      "depends_on": [
+        {
+          "task_key": "SF_POG_GROUP"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+        "parameters": [
+          "prod",
+          "POG_VERSION",
+          "POG_DBKEY",
+          "LOAD_DT,UPDATE_DT"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    }
+  ],
+  "job_clusters": [
+    {
+      "job_cluster_key": "wf_IKB_Catalogs",
+      "new_cluster": {
+          "cluster_name": "",
+          "spark_version": "13.0.x-scala2.12",
+          "spark_conf": {
+            "spark.databricks.dataLineage.enabled": "true",
+            "spark.databricks.delta.preview.enabled": "true",
+            "spark.sql.hive.metastore.jars": "maven",
+            "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+            "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+            "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+            "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+            "spark.sql.hive.metastore.version": "3.1.0"
+          },
+          "gcp_attributes": {
+            "use_preemptible_executors": false,
+            "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+            "availability": "ON_DEMAND_GCP",
+            "zone_id": "auto"
+          },
+          "node_type_id": "n2-highmem-4",
+          "custom_tags": {
+            "Department": "NZ-Migration"
+          },
+          "enable_elastic_disk": false,
+          "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+          "runtime_engine": "STANDARD",
+          "num_workers": 8
+        }
+    }
+  ],
+  "git_source": {
+    "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+    "git_provider": "gitHubEnterprise",
+    "git_branch": "main"
+  },
+  "tags": {
+    "Department": "NZ-Migration"
+  },
+  "run_as": {
+    "user_name": "gcpdatajobs-shared@petsmart.com"
+  },
+  "format": "MULTI_TASK"
+}

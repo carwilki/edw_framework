@@ -88,7 +88,7 @@ SELECT inv.day_dt, prd.product_id, loc.location_id, inv.map_amt,
              ELSE 'N'
           END AS on_order_cd,
           CURRENT_DATE AS load_dt
-     FROM {legacy}.inventory_pre inv LEFT OUTER JOIN {raw}.sku_store_price_costs_pre pcp
+     FROM {raw}.inventory_pre inv LEFT OUTER JOIN {raw}.sku_store_price_costs_pre pcp
           ON inv.sku_nbr = pcp.sku_nbr AND inv.store_nbr = pcp.store_nbr
           LEFT OUTER JOIN
           (SELECT   pp.sku_nbr, lp.store_nbr, SUM (opp.order_qty) order_qty,

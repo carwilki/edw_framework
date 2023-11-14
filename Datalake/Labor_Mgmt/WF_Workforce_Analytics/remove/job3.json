@@ -1,0 +1,458 @@
+{
+  "name": "SF_Workforce_Analytics",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "SF_WFA_BUSINESS_AREA",
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "qa",
+          "WFA_BUSINESS_AREA",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_DEPARTMENT",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_BUSINESS_AREA"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "qa",
+          "WFA_DEPARTMENT",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_FCST_SLS_DEPT",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_DEPARTMENT"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_CDC.py",
+        "parameters": [
+          "qa",
+          "None",
+          "legacy",
+          "WFA_FCST_SLS_DEPT",
+          "EDW_QA",
+          "public",
+          "wfa_fcst_sls_dept_lgcy",
+          "DAY_DT,ORG_ID",
+          ""
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_FCST_SLS_TASK",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_FCST_SLS_DEPT"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_CDC.py",
+        "parameters": [
+          "qa",
+          "None",
+          "legacy",
+          "WFA_FCST_SLS_TASK",
+          "EDW_QA",
+          "public",
+          "wfa_fcst_sls_task_lgcy",
+          "DAY_DT,ORG_ID",
+          ""
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_LBRACCT",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_FCST_SLS_TASK"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+        "parameters": [
+          "qa",
+          "WFA_LBRACCT",
+          "LBRACCT_ID",
+          "LOAD_DT"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_PAYCD",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_LBRACCT"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+        "parameters": [
+          "qa",
+          "WFA_PAYCD",
+          "PAYCD_ID",
+          "LOAD_DT"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF__WFA_TASK",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_PAYCD"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "qa",
+          "WFA_TASK",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_TDTL",
+      "depends_on": [
+        {
+          "task_key": "SF__WFA_TASK"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_CDC.py",
+        "parameters": [
+          "qa",
+          "None",
+          "empl_protected",
+          "legacy_WFA_TDTL",
+          "EDW_QA",
+          "public",
+          "wfa_tdtl_lgcy",
+          "DAY_DT,TDTL_ID",
+          ""
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WFA_TDTL_TSCHD_cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "SF_WFA_TSCHD",
+      "depends_on": [
+        {
+          "task_key": "SF_WFA_TDTL"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_CDC.py",
+        "parameters": [
+          "qa",
+          "None",
+          "empl_protected",
+          "legacy_WFA_TSCHD",
+          "EDW_QA",
+          "public",
+          "wfa_tschd_lgcy",
+          "DAY_DT,TSCHD_ID",
+          ""
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "WFA_TDTL_TSCHD_cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    }
+  ],
+  "job_clusters": [
+    {
+      "job_cluster_key": "WF_Workforce_Analytics",
+      "new_cluster": {
+        "cluster_name": "",
+        "spark_version": "13.0.x-scala2.12",
+        "spark_conf": {
+          "spark.databricks.dataLineage.enabled": "true",
+          "spark.databricks.delta.preview.enabled": "true",
+          "spark.sql.hive.metastore.jars": "maven",
+          "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+          "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/dev-password}}",
+          "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+          "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/dev-userid}}",
+          "spark.sql.hive.metastore.version": "3.1.0"
+        },
+        "gcp_attributes": {
+          "use_preemptible_executors": false,
+          "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+          "availability": "ON_DEMAND_GCP",
+          "zone_id": "HA"
+        },
+        "node_type_id": "n2-highmem-4",
+        "custom_tags": {
+          "department": "NZ-Migration"
+        },
+        "spark_env_vars": {
+          "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+        },
+        "enable_elastic_disk": false,
+        "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+        "runtime_engine": "STANDARD",
+        "num_workers": 8
+      }
+    },
+    {
+      "job_cluster_key": "WFA_TDTL_TSCHD_cluster",
+      "new_cluster": {
+        "cluster_name": "",
+        "spark_version": "13.0.x-scala2.12",
+        "spark_conf": {
+          "spark.databricks.dataLineage.enabled": "true",
+          "spark.databricks.delta.preview.enabled": "true",
+          "spark.sql.hive.metastore.jars": "maven",
+          "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+          "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/dev-password}}",
+          "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+          "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/dev-userid}}",
+          "spark.sql.hive.metastore.version": "3.1.0"
+        },
+        "gcp_attributes": {
+          "use_preemptible_executors": false,
+          "google_service_account": "petm-dbricksdev-rw-p-sa-datala@petm-prj-databricksdev-p-4aiq.iam.gserviceaccount.com",
+          "availability": "ON_DEMAND_GCP",
+          "zone_id": "HA"
+        },
+        "node_type_id": "n2-highmem-16",
+        "spark_env_vars": {
+          "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+        },
+        "enable_elastic_disk": false,
+        "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+        "runtime_engine": "STANDARD",
+        "num_workers": 8
+      }
+    }
+  ],
+  "git_source": {
+    "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+    "git_provider": "gitHubEnterprise",
+    "git_branch": "wf_workforce_analytics_stg"
+  },
+  "run_as": {
+    "user_name": "rsingha@petsmart.com"
+  }
+}
