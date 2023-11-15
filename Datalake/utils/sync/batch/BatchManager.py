@@ -41,6 +41,8 @@ class BatchManager(object):
                     but it is not the same as the one in the config file.
                     Overwriting memento"""
                 )
+                m = toBatchMemento(batchConfig)
+                m.current_dt = batchConfig.start_dt
                 self._saveMemento(toBatchMemento(batchConfig))
             self.state = m
         else:
