@@ -173,7 +173,7 @@ class BatchManager(object):
         settings = client.jobs.get(self.job_id).settings
         # pause the job so that it does not continue to run
         settings.continuous.pause_status = PauseStatus.PAUSED
-        client.jobs.update(job_id=self.job_id, settings=settings)
+        client.jobs.update(job_id=self.job_id, new_settings=settings)
 
     # TODO: implement a gap check to make sure that we do not miss records due to intervals
     # passing them by
