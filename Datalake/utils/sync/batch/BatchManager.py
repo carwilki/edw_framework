@@ -113,6 +113,8 @@ class BatchManager(object):
 
     def _updateMemento(self, memento: BatchMemento) -> None:
         print("BatchManager::_mergeMemento::Saving batch state")
+        print("BatchManager::_updateMemento::current state")
+        print(self.state)
         mj = memento.json()
         value = [(self.state.batch_id, mj)]
         t = DeltaTable.forName(self.spark, self.log_table).alias("target")
