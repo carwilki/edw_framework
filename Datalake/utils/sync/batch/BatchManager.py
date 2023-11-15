@@ -1,8 +1,11 @@
 import json
-from pyspark.sql import SparkSession
+from databricks.sdk import WorkspaceClient
+from databricks.sdk.service.jobs import PauseStatus
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.dbutils import DBUtils
 from delta import DeltaTable
+from Datalake.utils import secrets
 from utils.mapper import toBatchMemento, toDateRangeBatchConfig
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
@@ -42,7 +45,7 @@ class BatchManager(object):
             print(
                 f"BatchManager::__init__::found mememento for batch_id:{batchConfig.batch_id}"
             )
-            
+
             if toDateRangeBatchConfig(m) != batchConfig:
                 print(
                     f"""BatchManager::__init__::memento found for batch_id:{batchConfig.batch_id}
@@ -112,8 +115,8 @@ class BatchManager(object):
         print("BatchManager::_mergeMemento::Saving batch state")
         mj = memento.json()
         value = [(self.state.batch_id, mj)]
-        t = DeltaTable.forName(self.spark, self.log_table).alias('target')
-        s = self.spark.createDataFrame(value, self.log_table_schema).alias('source')
+        t = DeltaTable.forName(self.spark, self.log_table).alias("target")
+        s = self.spark.createDataFrame(value, self.log_table_schema).alias("source")
         t.merge(
             s, "source.batch_id = target.batch_id"
         ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
@@ -145,6 +148,28 @@ class BatchManager(object):
         print("BatchManager::_build_target::creating spark delta writer")
         return SparkDeltaLakeBatchWriter(toDateRangeBatchConfig(self.state), self.spark)
 
+    def _check_completed(self, df: DataFrame) -> bool:
+        print("BatchManager::_check_completed::Checking if batch is completed")
+        if df.isEmpty():
+            token = secrets.get(scope="db-token-jobsapi", key="password")
+            instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
+            url = f"https://{instance_id}"
+            client = WorkspaceClient(host=url, token=token)
+            settings = client.jobs.get(self.job_id).settings
+            # pause the job so that it does not continue to run
+            settings.continuous.pause_status = PauseStatus.PAUSED
+            client.jobs.update(job_id=self.job_id, settings=settings)
+            # since the df was empty we need to move the itereator back one interval unit.
+            # this will ensure that if we restart the job that it will continue from the last
+            # completed batch
+            self.state.current_dt = self.state.current_dt - self.state.interval
+            self._updateMemento(self.state)
+            print("BatchManager::_check_completed::batch is completed, pausing job")
+            return True
+        else:
+            print("BatchManager::_check_completed::batch is not completed")
+            return False
+
     # TODO: implement a gap check to make sure that we do not miss records due to intervals
     # passing them by
     def next(self):
@@ -153,10 +178,11 @@ class BatchManager(object):
             source = self._build_source()
             target = self._build_target()
             data = source.next()
-            target.write(data)
-            print("BatchManager::process_batch::batch processed")
-            self.state.current_dt = self.state.current_dt + self.state.interval
-            self._updateMemento(self.state)
+            if not self._check_completed(data):
+                target.write(data)
+                print("BatchManager::process_batch::batch processed")
+                self.state.current_dt = self.state.current_dt + self.state.interval
+                self._updateMemento(self.state)
         else:
             print("BatchManager::process_batch::no more batches to process")
             raise ValueError("No more batches to process. Disable Job in scheduler")
