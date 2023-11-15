@@ -17,10 +17,10 @@ parser = argparse.ArgumentParser()
 spark = SparkSession.getActiveSession()
 parser.add_argument("env", type=str, help="Env Variable")
 
-# args = parser.parse_args()
-# env = args.env
-env='qa'
-if env is None or env == "":
+args = parser.parse_args()
+env = args.env
+
+if env is None or env == "":    
     raise ValueError("env is not set")
 
 refine = getEnvPrefix(env) + "refine"
