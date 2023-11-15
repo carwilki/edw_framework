@@ -3,6 +3,7 @@ from datetime import datetime
 from pyspark.sql import DataFrame, SparkSession
 
 from Datalake.utils.genericUtilities import getSFEnvSuffix
+from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 from Datalake.utils.sync.reader.AbstractBatchReader import AbstractBatchReader
@@ -16,7 +17,7 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
         AbstractBatchReader (object): The abstract ba
     """
 
-    def __init__(self, config: DateRangeBatchConfig, spark: SparkSession):
+    def __init__(self, config: BatchMemento, spark: SparkSession):
         print("NetezzaJDBCBatchReader::__init__")
         super().__init__(config)
         self._validate_sf_config(config)

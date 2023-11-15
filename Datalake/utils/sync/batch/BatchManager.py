@@ -42,6 +42,7 @@ class BatchManager(object):
             print(
                 f"BatchManager::__init__::found mememento for batch_id:{batchConfig.batch_id}"
             )
+            
             if toDateRangeBatchConfig(m) != batchConfig:
                 print(
                     f"""BatchManager::__init__::memento found for batch_id:{batchConfig.batch_id}
