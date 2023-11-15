@@ -48,8 +48,16 @@ class NetezzaJDBCBatchReader(AbstractBatchReader):
             "fetchsize": nz_vars.nz_fetch_size,
             "user": nz_vars.nz_username,
             "password": nz_vars.nz_password,
-            "numPartitions": nz_vars.nz_jdbc_num_part,
         }
+
+        if self.config.partition_colunm is not None:
+            parops = {
+                "partitionColumn": self.config.partition_colunm,
+                "lowerBound": self.config.current_dt,
+                "upperBound": self.config.current_dt + self.config.interval,
+                "numPartitions": nz_vars.nz_jdbc_num_part,
+            }
+            self.nzOptions = self.nzOptions | parops
 
         print(f"NetezzaJDBCBatchReader::_setup_reader::sfOptions: {self.nzOptions}")
 

@@ -20,6 +20,7 @@ class BatchMemento(BaseModel):
     excluded_columns: Optional[list[str]] = None
     date_columns: list[str]
     interval: timedelta = timedelta(weeks=1)
+    partition_colunm: str | None = None
 
     def __str__(self) -> str:
         return f"""********************************

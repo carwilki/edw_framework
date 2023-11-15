@@ -25,7 +25,8 @@ class DateRangeBatchConfig(object):
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
     interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
-
+    partition_colunm: str | None = None
+    
     def __str__(self) -> str:
         return f"""********************************
             DateRangeBatchConfig:

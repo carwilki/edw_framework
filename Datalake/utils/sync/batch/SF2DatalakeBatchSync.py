@@ -52,6 +52,13 @@ parser.add_argument(
     default=None,
 )
 parser.add_argument(
+    "-pc",
+    "--partition_colunm",
+    type=str,
+    help="the column used to partition the delta table",
+    default=None,
+)
+parser.add_argument(
     "-dc",
     "--date_columns",
     type=str,
@@ -114,6 +121,7 @@ if batchConfig.date_columns is None:
 batchConfig.start_dt = args.start_dt
 batchConfig.end_dt = args.end_dt
 batchConfig.interval = args.interval
+batchConfig.partition_colunm = args.partition_colunm
 batchConfig.current_dt = None
 logger = getLogger()
 logger.setLevel(INFO)
