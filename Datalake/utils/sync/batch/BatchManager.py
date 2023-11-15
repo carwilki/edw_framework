@@ -44,8 +44,10 @@ class BatchManager(object):
                 )
                 m = toBatchMemento(batchConfig)
                 m.current_dt = batchConfig.start_dt
+                self.state = m
                 self._updateMemento(toBatchMemento(batchConfig))
-            self.state = m
+            else:
+                self.state = m
         else:
             print(
                 f"""BatchManager::__init__::memento not found for batch_id:{batchConfig.batch_id}.
