@@ -111,10 +111,10 @@ class BatchManager(object):
         print("BatchManager::_mergeMemento::Saving batch state")
         mj = memento.json()
         value = [(self.state.batch_id, mj)]
-        t = DeltaTable.forName(self.spark, self.log_table)
-        s = self.spark.createDataFrame(value, self.log_table_schema)
+        t = DeltaTable.forName(self.spark, self.log_table).alias('target')
+        s = self.spark.createDataFrame(value, self.log_table_schema).alias('source')
         t.merge(
-            s, "batch_id = batch_id"
+            s, "source.batch_id = target.batch_id"
         ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
         t.optimize()
         print("BatchManager::_mergeMemento::Merge Complete")
