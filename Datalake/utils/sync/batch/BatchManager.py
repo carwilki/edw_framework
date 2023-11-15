@@ -190,5 +190,6 @@ class BatchManager(object):
                 self._updateMemento(self.state)
             else:
                 print("BatchManager::process_batch::no more batches to process")
-        self._pause_job()
-        print("BatchManager::process_batch::no more batches to process")
+        else:
+            self._pause_job()
+            print("BatchManager::process_batch::no more batches to process")
