@@ -10,7 +10,7 @@ from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 
 class AbstractBatchReader(ABC):
-    def __init__(self, config: BatchMemento)
+    def __init__(self, config: BatchMemento):
         self.config = config
 
     def _strip_colunms(self, df: DataFrame) -> DataFrame:
