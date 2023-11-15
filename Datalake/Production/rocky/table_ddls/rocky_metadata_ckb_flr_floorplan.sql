@@ -1,4 +1,9 @@
 -- Databricks notebook source
+-- MAGIC %md
+-- MAGIC ####rocky table CKB_FLR_FLOORPLAN, as it is required source for bs_replenishment_profile
+
+-- COMMAND ----------
+
 INSERT INTO work.rocky_ingestion_metadata (
 table_group, table_group_desc, source_type, source_db, source_table, 
 table_desc, is_pii, pii_type, has_hard_deletes, target_sink, 
@@ -12,6 +17,6 @@ VALUES (
 null, false, null, false, "delta",
 "legacy", null, "ckb_flr_floorplan", "upsert", "UPDATE_DT", 
 "CKB_DB_FLOOR_PLAN_KEY", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
-null, array("dbodake@petsmart.com","pkulkarni@petsmart.com","rjalan@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
+null, array("dbodake@petsmart.com","pkulkarni@petsmart.com","sjaiswal@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
 null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null
 );
