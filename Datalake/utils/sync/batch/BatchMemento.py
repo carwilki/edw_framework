@@ -23,7 +23,8 @@ class BatchMemento(BaseModel):
     partition_colunm: str | None = None
 
     def __str__(self) -> str:
-        return f"""********************************
+        return f"""
+                    ********************************
                     BatchMemento:
                         batch_id:           {self.batch_id}
                         env:                {self.env}
