@@ -108,10 +108,9 @@ class BatchManager(object):
     def _updateMemento(self, memento: BatchMemento) -> None:
         print("BatchManager::_mergeMemento::Saving batch state")
         mj = memento.json()
-        schema = ["batch_id", "value"]
         value = [self.state.batch_id, mj]
         t = DeltaTable.forName(self.spark, self.log_table)
-        s = self.spark.createDataFrame(value, schema)
+        s = self.spark.createDataFrame(value, self.log_table_schema)
         t.merge(
             s, "batch_id = batch_id"
         ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
