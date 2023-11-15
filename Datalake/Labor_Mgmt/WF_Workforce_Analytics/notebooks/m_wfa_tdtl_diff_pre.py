@@ -78,7 +78,7 @@ AND A.DRTN_HRS=B.DRTN_HRS
 AND A.CORE_HRS=B.CORE_HRS
 AND A.NON_CORE_HRS=B.NON_CORE_HRS
 AND A.GRP_SCHD_SKEY=B.GRP_SCHD_SKEY
-where B.TDTL_SKEY is null""")
+where B.TDTL_SKEY is null""").drop("UPDT_DTM")
  
 WFA_TDTL_DIFF_PRE.write.mode("overwrite").saveAsTable(
     f"{empl_protected}.raw_WFA_TDTL_DIFF_PRE"
