@@ -1,6 +1,7 @@
 import json
 from pyspark.sql import SparkSession
 from pyspark.dbutils import DBUtils
+from delta import DeltaTable
 from utils.mapper import toBatchMemento, toDateRangeBatchConfig
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
@@ -29,7 +30,7 @@ class BatchManager(object):
         self.log_table = f"{getEnvPrefix(self.env)}{dl_vars.dl_metadata_table}"
         self._createLogTable()
         self._setup_job_params()
-        
+
         m = self._loadMemento(batchConfig.batch_id)
         if m is not None:
             print(
@@ -43,7 +44,7 @@ class BatchManager(object):
                 )
                 m = toBatchMemento(batchConfig)
                 m.current_dt = batchConfig.start_dt
-                self._saveMemento(toBatchMemento(batchConfig))
+                self._updateMemento(toBatchMemento(batchConfig))
             self.state = m
         else:
             print(
@@ -56,7 +57,7 @@ class BatchManager(object):
             )
             batchConfig.current_dt = batchConfig.start_dt
             self.state = toBatchMemento(batchConfig)
-            self._saveMemento(self.state)
+            self._updateMemento(self.state)
 
             print(
                 f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
@@ -64,6 +65,7 @@ class BatchManager(object):
         print(self.state)
 
     def _setup_job_params(self):
+        print("BatchManager::_setup_job_params::Setting up job params")
         self.dbutils = DBUtils(self.spark)
         context_str = (
             self.dbutils.notebook.entry_point.getDbutils()
@@ -76,6 +78,9 @@ class BatchManager(object):
         self.job_id = context.get("tags", {}).get("jobId", None)
         run_id_obj = context.get("currentRunId", {})
         self.run_id = run_id_obj.get("id", None) if run_id_obj else None
+        print(f"""BatchManager::_setup_job_params::task_name:{self.task_name}""")
+        print(f"""BatchManager::_setup_job_params::job_id:{self.job_id}""")
+        print(f"""BatchManager::_setup_job_params::run_id:{self.run_id}""")
 
     def _loadMemento(
         self,
@@ -94,27 +99,18 @@ class BatchManager(object):
 
         return BatchMemento.parse_raw(s)
 
-    def _saveMemento(self, memento: BatchMemento) -> None:
-        s = memento.json()
-        sql = f"""insert into {self.log_table}
-                (batch_id, value) values ('{memento.batch_id}', '{s}')"""
-        print("BatchManager::_saveMemento::Saving batch state")
-        print(f"BatchManager::_saveMemento::SQL::{sql}")
-        self.spark.sql(sql).collect()
-
     def _updateMemento(self, memento: BatchMemento) -> None:
-        print("BatchManager::_updateMemento::batch state")
-        print("BatchManager::_updateMemento::update to")
-        print(memento)
-
-        s = memento.json()
-        sql = f"""update {self.log_table}
-                set value = '{s}'
-                where batch_id = '{memento.batch_id}'"""
-
-        print(f"BatchManager::_updateMemento::SQL::{sql}")
-        self.spark.sql(sql).collect()
-        print("BatchManager::_updateMemento::updated successfully")
+        print("BatchManager::_mergeMemento::Saving batch state")
+        mj = memento.json()
+        schema = ["batch_id", "value"]
+        value = [self.state.batch_id, mj]
+        t = DeltaTable.forName(self.spark, self.log_table)
+        s = self.spark.createDataFrame(value, schema)
+        t.merge(
+            s, "batch_id = batch_id"
+        ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+        t.optimize()
+        print("BatchManager::_mergeMemento::Merge Complete")
 
     def _createLogTable(self):
         """Creates the metadata table for the batch reader if it does not exist"""
