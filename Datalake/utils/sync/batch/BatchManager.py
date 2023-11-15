@@ -1,6 +1,6 @@
 import json
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.dbutils import DBUtils
 from delta import DeltaTable
 from utils.mapper import toBatchMemento, toDateRangeBatchConfig
@@ -31,10 +31,12 @@ class BatchManager(object):
         self.log_table = f"{getEnvPrefix(self.env)}{dl_vars.dl_metadata_table}"
         self._createLogTable()
         self._setup_job_params()
-        self.log_table_schema = StructType([
-            StructField("batch_id", StringType(), False),
-            StructField("value", StringType(), False)
-        ])
+        self.log_table_schema = StructType(
+            [
+                StructField("batch_id", StringType(), False),
+                StructField("value", StringType(), False),
+            ]
+        )
         m = self._loadMemento(batchConfig.batch_id)
         if m is not None:
             print(
@@ -108,7 +110,7 @@ class BatchManager(object):
     def _updateMemento(self, memento: BatchMemento) -> None:
         print("BatchManager::_mergeMemento::Saving batch state")
         mj = memento.json()
-        value = [self.state.batch_id, mj]
+        value = [(self.state.batch_id, mj)]
         t = DeltaTable.forName(self.spark, self.log_table)
         s = self.spark.createDataFrame(value, self.log_table_schema)
         t.merge(
