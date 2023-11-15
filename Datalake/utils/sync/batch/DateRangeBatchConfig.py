@@ -19,7 +19,7 @@ class DateRangeBatchConfig(object):
     target_table_fqn: str
     start_dt: datetime
     end_dt: datetime
-    current_dt: datetime
+    current_dt: datetime | None = None
     source_filter: str | None = None
     keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)

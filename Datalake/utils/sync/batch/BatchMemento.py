@@ -14,7 +14,7 @@ class BatchMemento(BaseModel):
     source_type: BatchReaderSourceType
     start_dt: datetime
     end_dt: datetime
-    current_dt: datetime
+    current_dt: datetime | None = None
     source_filter: str | None = None
     keys: list[str] = []
     excluded_columns: Optional[list[str]] = None
