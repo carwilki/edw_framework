@@ -1,7 +1,8 @@
 import argparse
 from datetime import datetime, timedelta
+import json
 from logging import INFO, getLogger
-
+import os
 from pyspark.sql.session import SparkSession
 from Datalake.utils.sync.utils import parse_delta
 
@@ -9,7 +10,11 @@ from Datalake.utils.sync.batch.BatchManager import BatchManager
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
+spark: SparkSession = SparkSession.getActiveSession()
 parser = argparse.ArgumentParser()
+
+job_id = os.environ.get("DATABRICKS_JOB_ID")
+run_id = os.environ.get("DATABRICKS_RUN_ID")
 
 parser.add_argument("-e", "--env", type=str, help="Environment value", required=True)
 parser.add_argument(
@@ -110,7 +115,6 @@ batchConfig.start_dt = args.start_dt
 batchConfig.end_dt = args.end_dt
 batchConfig.interval = args.interval
 batchConfig.current_dt = None
-spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
 logger.setLevel(INFO)
 

@@ -1,4 +1,6 @@
+import json
 from pyspark.sql import SparkSession
+from pyspark.dbutils import DBUtils
 from utils.mapper import toBatchMemento, toDateRangeBatchConfig
 from Datalake.utils.genericUtilities import getEnvPrefix
 from Datalake.utils.sync.batch.BatchMemento import BatchMemento
@@ -26,12 +28,14 @@ class BatchManager(object):
         self.spark = spark
         self.log_table = f"{getEnvPrefix(self.env)}{dl_vars.dl_metadata_table}"
         self._createLogTable()
+        self._setup_job_params()
+        
         m = self._loadMemento(batchConfig.batch_id)
         if m is not None:
             print(
                 f"BatchManager::__init__::found mememento for batch_id:{batchConfig.batch_id}"
             )
-            if m != toBatchMemento(batchConfig):
+            if toDateRangeBatchConfig(m) != batchConfig:
                 print(
                     f"""BatchManager::__init__::memento found for batch_id:{batchConfig.batch_id}
                     but it is not the same as the one in the config file.
@@ -56,6 +60,20 @@ class BatchManager(object):
                 f"""BatchManager::__init__::memento created for batch_id:{batchConfig.batch_id}"""
             )
         print(self.state)
+
+    def _setup_job_params(self):
+        self.dbutils = DBUtils(self.spark)
+        context_str = (
+            self.dbutils.notebook.entry_point.getDbutils()
+            .notebook()
+            .getContext()
+            .toJson()
+        )
+        context = json.loads(context_str)
+        self.task_name = context.get("tags", {}).get("taskKey", None)
+        self.job_id = context.get("tags", {}).get("jobId", None)
+        run_id_obj = context.get("currentRunId", {})
+        self.run_id = run_id_obj.get("id", None) if run_id_obj else None
 
     def _loadMemento(
         self,
