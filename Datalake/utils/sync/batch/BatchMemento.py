@@ -24,18 +24,19 @@ class BatchMemento(BaseModel):
 
     def __str__(self) -> str:
         return f"""********************************
-            BatchMemento:
-                batch_id:           {self.batch_id}
-                env:                {self.env}
-                source_table_fqn:   {self.source_table_fqn}
-                target_table_fqn:   {self.target_table_fqn}
-                source_type:        {self.source_type}
-                source_filter:      {self.source_filter}
-                keys:               {self.keys}
-                excluded_columns:   {self.excluded_columns}
-                date_columns:       {self.date_columns}
-                start_dt:           {self.start_dt}
-                end_dt:             {self.end_dt}
-                current_dt:         {self.current_dt}
-                interval:           {self.interval}
-            ********************************"""
+                    BatchMemento:
+                        batch_id:           {self.batch_id}
+                        env:                {self.env}
+                        source_table_fqn:   {self.source_table_fqn}
+                        target_table_fqn:   {self.target_table_fqn}
+                        source_type:        {self.source_type}
+                        source_filter:      {self.source_filter}
+                        keys:               {self.keys}
+                        parition_colunm:    {self.partition_colunm}
+                        excluded_columns:   {self.excluded_columns}
+                        date_columns:       {self.date_columns}
+                        start_dt:           {self.start_dt}
+                        end_dt:             {self.end_dt}
+                        current_dt:         {self.current_dt}
+                        interval:           {self.interval}
+                    ********************************"""

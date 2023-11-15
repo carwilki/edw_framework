@@ -151,14 +151,7 @@ class BatchManager(object):
     def _check_completed(self, df: DataFrame) -> bool:
         print("BatchManager::_check_completed::Checking if batch is completed")
         if df.isEmpty():
-            token = secrets.get(scope="db-token-jobsapi", key="password")
-            instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
-            url = f"https://{instance_id}"
-            client = WorkspaceClient(host=url, token=token)
-            settings = client.jobs.get(self.job_id).settings
-            # pause the job so that it does not continue to run
-            settings.continuous.pause_status = PauseStatus.PAUSED
-            client.jobs.update(job_id=self.job_id, settings=settings)
+            self._pause_job()
             # since the df was empty we need to move the itereator back one interval unit.
             # this will ensure that if we restart the job that it will continue from the last
             # completed batch
@@ -169,6 +162,16 @@ class BatchManager(object):
         else:
             print("BatchManager::_check_completed::batch is not completed")
             return False
+
+    def _pause_job(self):
+        token = secrets.get(scope="db-token-jobsapi", key="password")
+        instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
+        url = f"https://{instance_id}"
+        client = WorkspaceClient(host=url, token=token)
+        settings = client.jobs.get(self.job_id).settings
+        # pause the job so that it does not continue to run
+        settings.continuous.pause_status = PauseStatus.PAUSED
+        client.jobs.update(job_id=self.job_id, settings=settings)
 
     # TODO: implement a gap check to make sure that we do not miss records due to intervals
     # passing them by
@@ -183,6 +186,7 @@ class BatchManager(object):
                 print("BatchManager::process_batch::batch processed")
                 self.state.current_dt = self.state.current_dt + self.state.interval
                 self._updateMemento(self.state)
-        else:
-            print("BatchManager::process_batch::no more batches to process")
-            raise ValueError("No more batches to process. Disable Job in scheduler")
+            else:
+                print("BatchManager::process_batch::no more batches to process")
+        self._pause_job()
+        print("BatchManager::process_batch::no more batches to process")

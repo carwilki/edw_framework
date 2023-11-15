@@ -13,9 +13,6 @@ from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 spark: SparkSession = SparkSession.getActiveSession()
 parser = argparse.ArgumentParser()
 
-job_id = os.environ.get("DATABRICKS_JOB_ID")
-run_id = os.environ.get("DATABRICKS_RUN_ID")
-
 parser.add_argument("-e", "--env", type=str, help="Environment value", required=True)
 parser.add_argument(
     "-id", "--batch_id", type=str, help="id of the batch job", required=True
