@@ -1,26 +1,7 @@
 -- Databricks notebook source
 DROP TABLE legacy.POG_SKU_STORE;
 
-CREATE TABLE refine.POG_SKU_STORE_history (
-  product_id INT,
-  location_id INT,
-  pog_nbr STRING,
-  pog_dbkey INT,
-  listing_start_dt DATE,
-  listing_end_dt DATE,
-  positions_cnt INT,
-  facings_cnt INT,
-  capacity_cnt INT,
-  presentation_qty INT,
-  pog_type_cd STRING,
-  pog_sku_position_status_id DECIMAL(1,0),
-  delete_flag DECIMAL(1,0),
-  sap_last_change_tstmp TIMESTAMP,
-  update_tstmp TIMESTAMP,
-  load_tstmp TIMESTAMP,
-  bd_create_dt_tm TIMESTAMP,
-  bd_update_dt_tm TIMESTAMP,
-  source_file_name STRING)
+CREATE TABLE refine.POG_SKU_STORE_history
 USING delta
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/legacy/pog_sku_store';
 
