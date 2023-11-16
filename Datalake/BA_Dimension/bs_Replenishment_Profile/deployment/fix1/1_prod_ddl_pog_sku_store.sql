@@ -6,6 +6,10 @@ USING delta
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/legacy/pog_sku_store';
 
 -- COMMAND ----------
+%python
+dbutils.fs.rm('gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/dimension/pog_sku_store', True)
+
+-- COMMAND ----------
 
 use legacy;
 
