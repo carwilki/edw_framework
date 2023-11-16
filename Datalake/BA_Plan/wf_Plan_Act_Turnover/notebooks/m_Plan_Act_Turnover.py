@@ -116,20 +116,20 @@ LKP_IC_WC_PLAN_SRC = LKP_IC_WC_PLAN_SRC \
 # COLUMN COUNT: 9
 
 SQ_Shortcut_to_PLAN_ACT_TO_DATE_PRE = spark.sql(f"""SELECT
--- PLAN_ACT_TO_DATE_PRE.WEEK_DT,
+PLAN_ACT_TO_DATE_PRE.WEEK_DT,
 PLAN_ACT_TO_DATE_PRE.FISCAL_WK,
--- PLAN_ACT_TO_DATE_PRE.FISCAL_WK_NBR,
--- PLAN_ACT_TO_DATE_PRE.FISCAL_YR,
+PLAN_ACT_TO_DATE_PRE.FISCAL_WK_NBR,
+PLAN_ACT_TO_DATE_PRE.FISCAL_YR,
 PLAN_ACT_TO_DATE_PRE.MAX_FISCAL_WK_NBR,
 SITE_PROFILE.LOCATION_ID,
 SITE_PROFILE.STORE_NBR,
 SITE_PROFILE.STORE_NAME,
-SITE_PROFILE.OPEN_DT,
-DAYS.FISCAL_WK_NBR,
-DAYS.FISCAL_YR,
-DAYS.WEEK_DT
+SITE_PROFILE.OPEN_DT
+--DAYS.FISCAL_WK_NBR,
+--DAYS.FISCAL_YR
+--DAYS.WEEK_DT
 FROM {raw}.PLAN_ACT_TO_DATE_PRE, {legacy}.SITE_PROFILE
-JOIN {enterprise}.DAYS on SITE_PROFILE.OPEN_DT = DAYS.DAY_DT
+left JOIN {enterprise}.DAYS on SITE_PROFILE.OPEN_DT = DAYS.DAY_DT
 WHERE SITE_PROFILE.SITE_SALES_FLAG = 1 OR (SITE_PROFILE.REGION_ID IN (100,8000))""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
@@ -138,22 +138,54 @@ WHERE SITE_PROFILE.SITE_SALES_FLAG = 1 OR (SITE_PROFILE.REGION_ID IN (100,8000))
 # COLUMN COUNT: 48
 
 
-# LKP_DAYS_FOR_OPEN_DATE_lookup_result = SQ_Shortcut_to_PLAN_ACT_TO_DATE_PRE.join(LKP_DAYS_FOR_OPEN_DATE_SRC, (col('DAY_DT') == col('OPEN_DT')), 'left') \
-# .withColumn('row_num_FISCAL_WK_NBR', row_number().over(Window.partitionBy("sys_row_id").orderBy("FISCAL_WK_NBR")))
+LKP_DAYS_FOR_OPEN_DATE_lookup_result = SQ_Shortcut_to_PLAN_ACT_TO_DATE_PRE.select("open_dt","sys_row_id").join(LKP_DAYS_FOR_OPEN_DATE_SRC, (col('DAY_DT') == col('OPEN_DT')), 'left') \
+.withColumn('row_num_FISCAL_WK_NBR', row_number().over(Window.partitionBy("sys_row_id").orderBy("FISCAL_WK_NBR")))
 
-# LKP_DAYS_FOR_OPEN_DATE = LKP_DAYS_FOR_OPEN_DATE_lookup_result.filter(col("row_num_FISCAL_WK_NBR") == 1).select(
-# 	LKP_DAYS_FOR_OPEN_DATE_lookup_result.sys_row_id,
-# 	col('FISCAL_WK_NBR'),
-# 	col('FISCAL_YR'),
-# 	col('WEEK_DT')
-# )
+LKP_DAYS_FOR_OPEN_DATE = LKP_DAYS_FOR_OPEN_DATE_lookup_result.filter(col("row_num_FISCAL_WK_NBR") == 1).select(
+	LKP_DAYS_FOR_OPEN_DATE_lookup_result.sys_row_id,
+	col('FISCAL_WK_NBR'),
+	col('FISCAL_YR'),
+	col('WEEK_DT'),
+    col("OPEN_DT")
+)
 
-LKP_DAYS_FOR_OPEN_DATE = SQ_Shortcut_to_PLAN_ACT_TO_DATE_PRE
+
+# LKP_DAYS_FOR_OPEN_DATE = SQ_Shortcut_to_PLAN_ACT_TO_DATE_PRE
 
 # COMMAND ----------
 
 # Processing node SQ_Shortcut_to_EMPL_TERM_DAYS_WORKED, type SOURCE 
 # COLUMN COUNT: 5
+
+# SQ_Shortcut_to_EMPL_TERM_DAYS_WORKED = spark.sql(f"""SELECT
+# EMPL_TERM_DAYS_WORKED.EMPL_TERM_WEEK_DT,
+# EMPL_TERM_DAYS_WORKED.LOCATION_ID,
+# EMPL_TERM_DAYS_WORKED.NBR_DAYS_WORKED,
+# EMPL_TERM_DAYS_WORKED.COUNT_FLAG,
+# EMPLOYEE_PROFILE_WK.TERM_REASON_CD
+# FROM {legacy}.EMPL_TERM_DAYS_WORKED INNER JOIN {legacy}.EMPLOYEE_PROFILE_WK ON EMPL_TERM_DAYS_WORKED.EMPLOYEE_ID = EMPLOYEE_PROFILE_WK.EMPLOYEE_ID AND EMPL_TERM_DAYS_WORKED.EMPL_TERM_WEEK_DT = EMPLOYEE_PROFILE_WK.WEEK_DT
+# AND EMPLOYEE_PROFILE_WK.JOB_CODE NOT IN (
+#               --Exclude PHO
+#               561
+#               ,688
+#               ,849
+#               ,839
+#               ,1680
+#               --Exclude Seasonal Store
+#               ,1680
+#               ,2651
+#               --Exclude Seasonal DC
+#               ,8110
+#               ,8210
+#               ,8310
+#               ,8410
+#               ,8510
+#               )
+
+#        AND EMPLOYEE_PROFILE_WK.PS_TAX_COMPANY_CD !='LJO' -- Exclude ONP DC 52
+# ORDER BY 1,2""").withColumn("sys_row_id", monotonically_increasing_id())
+
+# COMMAND ----------
 
 SQ_Shortcut_to_EMPL_TERM_DAYS_WORKED = spark.sql(f"""SELECT
 EMPL_TERM_DAYS_WORKED.EMPL_TERM_WEEK_DT,
@@ -161,7 +193,7 @@ EMPL_TERM_DAYS_WORKED.LOCATION_ID,
 EMPL_TERM_DAYS_WORKED.NBR_DAYS_WORKED,
 EMPL_TERM_DAYS_WORKED.COUNT_FLAG,
 EMPLOYEE_PROFILE_WK.TERM_REASON_CD
-FROM {legacy}.EMPL_TERM_DAYS_WORKED INNER JOIN {legacy}.EMPLOYEE_PROFILE_WK ON EMPL_TERM_DAYS_WORKED.EMPLOYEE_ID = EMPLOYEE_PROFILE_WK.EMPLOYEE_ID AND EMPL_TERM_DAYS_WORKED.EMPL_TERM_WEEK_DT = EMPLOYEE_PROFILE_WK.WEEK_DT
+FROM {legacy}.EMPL_TERM_DAYS_WORKED INNER JOIN qa_empl_protected.legacy_EMPLOYEE_PROFILE_WK as EMPLOYEE_PROFILE_WK  ON EMPL_TERM_DAYS_WORKED.EMPLOYEE_ID = EMPLOYEE_PROFILE_WK.EMPLOYEE_ID AND EMPL_TERM_DAYS_WORKED.EMPL_TERM_WEEK_DT = EMPLOYEE_PROFILE_WK.WEEK_DT
 AND EMPLOYEE_PROFILE_WK.JOB_CODE NOT IN (
               --Exclude PHO
               561
@@ -460,7 +492,3 @@ try:
 	Shortcut_to_PLAN_ACT_TURNOVER.write.mode("overwrite").saveAsTable(f'{legacy}.PLAN_ACT_TURNOVER')
 except Exception as e:
 	raise e
-
-# COMMAND ----------
-
-

@@ -55,6 +55,12 @@ DAYS.FISCAL_YR
 FROM {enterprise}.DAYS
 WHERE DAYS.DAY_DT = CURRENT_DATE""").withColumn("sys_row_id", monotonically_increasing_id())
 
+# SQ_Shortcut_To_DAYS = spark.sql(f"""SELECT
+# DAYS.WEEK_DT,
+# DAYS.FISCAL_YR
+# FROM {enterprise}.DAYS
+# WHERE DAYS.DAY_DT = '2023-11-09' """).withColumn("sys_row_id", monotonically_increasing_id())
+
 # COMMAND ----------
 
 # Processing node EXP_Get_LYR_FISCAL_YR, type EXPRESSION . Note: using additional SELECT to rename incoming columns
@@ -161,7 +167,3 @@ try:
 	Shortcut_to_PLAN_ACT_TO_DATE_PRE.write.mode("overwrite").saveAsTable(f'{raw}.PLAN_ACT_TO_DATE_PRE')
 except Exception as e:
 	raise e
-
-# COMMAND ----------
-
-
