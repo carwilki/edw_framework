@@ -268,7 +268,7 @@
           "node_type_id": "n2-standard-8",
           "driver_node_type_id": "n2-standard-8",
           "custom_tags": {
-            "Department": "Netezza-Migration"
+            "Department": "NZ-Migration"
           },
           "enable_elastic_disk": false,
           "num_workers": 8
