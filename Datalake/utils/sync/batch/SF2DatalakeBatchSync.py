@@ -1,8 +1,6 @@
 import argparse
 from datetime import datetime, timedelta
-import json
 from logging import INFO, getLogger
-import os
 from pyspark.sql.session import SparkSession
 from Datalake.utils.sync.utils import parse_delta
 
