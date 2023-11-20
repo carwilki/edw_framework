@@ -1,7 +1,6 @@
 import argparse
 from datetime import datetime, timedelta
 from logging import INFO, getLogger
-
 from pyspark.sql.session import SparkSession
 from Datalake.utils.sync.utils import parse_delta
 
@@ -9,6 +8,7 @@ from Datalake.utils.sync.batch.BatchManager import BatchManager
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
+spark: SparkSession = SparkSession.getActiveSession()
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-e", "--env", type=str, help="Environment value", required=True)
@@ -44,6 +44,13 @@ parser.add_argument(
     "--excluded_columns",
     type=str,
     help="exlcuded columns in the delta table",
+    default=None,
+)
+parser.add_argument(
+    "-pc",
+    "--partition_colunm",
+    type=str,
+    help="the column used to partition the delta table",
     default=None,
 )
 parser.add_argument(
@@ -109,8 +116,8 @@ if batchConfig.date_columns is None:
 batchConfig.start_dt = args.start_dt
 batchConfig.end_dt = args.end_dt
 batchConfig.interval = args.interval
+batchConfig.partition_colunm = args.partition_colunm
 batchConfig.current_dt = None
-spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
 logger.setLevel(INFO)
 

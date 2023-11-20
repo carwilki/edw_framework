@@ -4,12 +4,13 @@ from datetime import datetime
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 from pyspark.sql.types import ByteType, DecimalType, IntegerType, LongType, ShortType
+from Datalake.utils.sync.batch.BatchMemento import BatchMemento
 
 from Datalake.utils.sync.batch.DateRangeBatchConfig import DateRangeBatchConfig
 
 
 class AbstractBatchReader(ABC):
-    def __init__(self, config: DateRangeBatchConfig):
+    def __init__(self, config: BatchMemento):
         self.config = config
 
     def _strip_colunms(self, df: DataFrame) -> DataFrame:
