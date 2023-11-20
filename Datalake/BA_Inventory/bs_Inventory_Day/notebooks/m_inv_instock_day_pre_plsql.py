@@ -385,7 +385,7 @@ FROM (
 				,IP.SKU_NBR
 				,SP.LOCATION_ID
 				,IP.ON_HAND_QTY
-			FROM {legacy}.inventory_pre IP
+			FROM {raw}.inventory_pre IP
 				,{legacy}.sku_profile SKU
 				,{legacy}.site_profile SP
 			WHERE IP.SKU_NBR = SKU.SKU_NBR

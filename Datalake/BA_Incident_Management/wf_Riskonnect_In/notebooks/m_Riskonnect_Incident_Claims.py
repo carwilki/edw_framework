@@ -981,6 +981,7 @@ Shortcut_to_INCIDENT_CLAIMS = UPD_CLAIMS_INS_UPD.selectExpr(
 try:
 	primary_key = """source.SRC_CD = target.SRC_CD AND source.CLAIM_NBR = target.CLAIM_NBR"""
 	refined_perf_table = f"{legacy}.INCIDENT_CLAIMS"
+	DuplicateChecker.check_for_duplicate_primary_keys(Shortcut_to_INCIDENT_CLAIMS,['SRC_CD', 'CLAIM_NBR'])
 	executeMerge(Shortcut_to_INCIDENT_CLAIMS, refined_perf_table, primary_key)
 	logger.info(f"Merge with {refined_perf_table} completed]")
 	logPrevRunDt("INCIDENT_CLAIMS", "INCIDENT_CLAIMS", "Completed", "N/A", f"{raw}.log_run_details")
