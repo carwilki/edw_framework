@@ -9,6 +9,7 @@ from Datalake.utils.files.vars import prep, raw, processing
 
 class BucketConfig(BaseModel):
     bucket: str
+    datefstr:str
     type: str
 
 
@@ -17,12 +18,11 @@ class FileWorkflowController(object):
         self,
         buckets: list[BucketConfig],
         job_id: str,
-        workspace_token: str,
-        host: str,
         spark:SparkSession
     ):  
         self.session = spark
         self.dbutils = DBUtils(spark)
+        
         self.client = WorkspaceClient(
             host=self.client.host,
             token=workspace_token,
