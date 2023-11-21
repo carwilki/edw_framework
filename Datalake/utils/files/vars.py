@@ -1,3 +1,5 @@
 prep = "prep"
 raw = "raw"
 processing = "processing"
+prep_mount = "/mnt/databricks/prep"
+raw_mount = "/mnt/databricks/raw"
