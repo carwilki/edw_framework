@@ -15,6 +15,12 @@ class BucketConfig(BaseModel):
 
 
 class FileWorkflowController(object):
+    """_summary_
+
+    Args:
+        object (_type_): _description_
+    """
+    
     def __init__(
         self,
         buckets: list[BucketConfig],
@@ -53,7 +59,7 @@ class FileWorkflowController(object):
         print(f"FileWorkflowController::_setup_job_params::url:{url}")
         print(f"FileWorkflowController::_setup_job_params::token:{token}")
         print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
-        print(f"FileWorkflowController::_setup_job_params::complete")
+        print("FileWorkflowController::_setup_job_params::complete")
 
     def _setup_processing_map(self) -> dict[datetime, list[str]]:
         print("FileWorkflowController::_get_all_files::creating Processing map")
