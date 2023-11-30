@@ -91,7 +91,7 @@
       "spark_python_task": {
         "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
         "parameters": [
-          "qa",
+          "prod",
           "Plan_Act_Turnover",
           "overwrite"
         ],
@@ -108,13 +108,45 @@
       "webhook_notifications": {}
     }
   ],
+  "job_clusters": [
+        {
+            "job_cluster_key": "wf_plan_act_turnover",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.0.x-scala2.12",
+                "spark_conf": {
+                    "spark.databricks.dataLineage.enabled": "true",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "driver_node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "enable_elastic_disk": false,
+                "num_workers": 8
+            }
+        }
+    ], 
   "git_source": {
     "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
     "git_provider": "gitHubEnterprise",
     "git_branch": "main"
   },
   "tags": {
-    "Department": "NZ_Migration"
+    "Department": "NZ-Migration"
   },
   "run_as": {
     "user_name": "gcpdatajobs-shared@petsmart.com"
