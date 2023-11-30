@@ -879,33 +879,33 @@ except Exception as e:
 #                                                 or cast(base_table.WM_MOD_TSTMP as date) >= (cast('$$Prev_Run_Dt' as date )-14) ) and (location_id, WM_Rack_Type_ID) not in (select   SP.location_id, pre_table.Rack_level_ID from  WM_Rack_Type_Level_pre pre_table, site_profile SP where SP.store_nbr =pre_table.dc_nbr));
 
 
-
+#Commenting soft delete logic that has an Informatica bug and doesn't have to be done
 # update wm_trailer_contents set delete_flag=1, update_tstmp=current_timestamp where
-soft_delete_logic_WM_Rack_Type_Level= f""" 
-select  location_id, WM_Rack_Type_ID 
-from {refined_perf_table}  
-where (location_id, WM_Rack_Type_ID) in 
-(select location_id, WM_Rack_Type_ID 
-from  {refined_perf_table}  base_table 
-where base_table.DELETE_FLAG=0 
-and ( cast(base_table.WM_CREATE_TSTMP as date) >= (cast('{Prev_Run_Dt}' as date )-14) 
-		or cast(base_table.WM_MOD_TSTMP as date) >= (cast('{Prev_Run_Dt}' as date )-14))
-and (location_id, WM_Rack_Type_ID) not in 
-( select   SP.location_id, pre_table.Rack_level_ID 
-from  {raw_perf_table} pre_table, {site_profile_table} SP 
-where SP.store_nbr =pre_table.dc_nbr))"""
+# soft_delete_logic_WM_Rack_Type_Level= f""" 
+# select  location_id, WM_Rack_Type_ID 
+# from {refined_perf_table}  
+# where (location_id, WM_Rack_Type_ID) in 
+# (select location_id, WM_Rack_Type_ID 
+# from  {refined_perf_table}  base_table 
+# where base_table.DELETE_FLAG=0 
+# and ( cast(base_table.WM_CREATE_TSTMP as date) >= (cast('{Prev_Run_Dt}' as date )-14) 
+# 		or cast(base_table.WM_MOD_TSTMP as date) >= (cast('{Prev_Run_Dt}' as date )-14))
+# and (location_id, WM_Rack_Type_ID) not in 
+# ( select   SP.location_id, pre_table.Rack_level_ID 
+# from  {raw_perf_table} pre_table, {site_profile_table} SP 
+# where SP.store_nbr =pre_table.dc_nbr))"""
 
-sd_df = spark.sql(soft_delete_logic_WM_Rack_Type_Level)
+# sd_df = spark.sql(soft_delete_logic_WM_Rack_Type_Level)
 
-sd_df.createOrReplaceTempView('WM_RACK_TYPE_LEVEL_SD')
+# sd_df.createOrReplaceTempView('WM_RACK_TYPE_LEVEL_SD')
 
-spark.sql(f"""
-          MERGE INTO {refined_perf_table} tgt
-          USING  WM_RACK_TYPE_LEVEL_SD src
-          ON src.location_id = tgt.location_id and src.WM_Rack_Type_ID = tgt.WM_Rack_Type_ID
-          WHEN MATCHED THEN UPDATE
-          SET tgt.delete_flag = 1,
-          tgt.update_tstmp=current_timestamp
-          """)
+# spark.sql(f"""
+#           MERGE INTO {refined_perf_table} tgt
+#           USING  WM_RACK_TYPE_LEVEL_SD src
+#           ON src.location_id = tgt.location_id and src.WM_Rack_Type_ID = tgt.WM_Rack_Type_ID
+#           WHEN MATCHED THEN UPDATE
+#           SET tgt.delete_flag = 1,
+#           tgt.update_tstmp=current_timestamp
+#           """)
 
 	
