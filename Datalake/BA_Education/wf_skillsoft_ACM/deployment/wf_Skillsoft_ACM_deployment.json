@@ -492,8 +492,6 @@
             "Department": "NZ-Migration"
           },
           "enable_elastic_disk": false,
-          "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
-          "runtime_engine": "STANDARD",
           "num_workers": 8
         }
     }
