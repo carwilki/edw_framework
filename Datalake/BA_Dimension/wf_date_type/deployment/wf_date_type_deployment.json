@@ -430,6 +430,9 @@
             "availability": "ON_DEMAND_GCP",
             "zone_id": "auto"
           },
+          "spark_env_vars": {
+            "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+          },
           "node_type_id": "n2-standard-8",
           "custom_tags": {
             "Department": "NZ-Migration"
