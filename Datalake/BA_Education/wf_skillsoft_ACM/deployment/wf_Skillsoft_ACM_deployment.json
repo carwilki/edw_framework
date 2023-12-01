@@ -470,7 +470,7 @@
       "job_cluster_key": "wf_Skillsoft_ACM",
       "new_cluster": {
           "cluster_name": "",
-          "spark_version": "13.0.x-scala2.12",
+          "spark_version": "13.3.x-scala2.12",
           "spark_conf": {
             "spark.databricks.dataLineage.enabled": "true",
             "spark.databricks.delta.preview.enabled": "true",
