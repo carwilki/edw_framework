@@ -24,7 +24,7 @@
       , array("rrajamani@petsmart.com", "APipewala@PetSmart.com") --job_watchers
       , 0 --max_retry
       , 'TRUE' --disable_no_record_failure
-      ,'{"Department":"Netezza-Migration"\}' --job_tag
+      ,'{"Department":"Netezza-Migration"}' --job_tag
       , 'FALSE' --is_scheduled
       , null --job_id
       , null --snowflake_ddl
