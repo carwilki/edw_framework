@@ -546,12 +546,7 @@
           "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
         },
         "enable_elastic_disk": false,
-															
-									 
-        "autoscale": {
-          "min_workers": 2,
-          "max_workers": 8
-        }
+        "num_workers": 8
       }
     }
   ],

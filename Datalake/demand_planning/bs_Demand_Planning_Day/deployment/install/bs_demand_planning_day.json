@@ -292,7 +292,7 @@
             "job_cluster_key": "bs_Demand_Planning_Day",
             "new_cluster": {
                 "cluster_name": "",
-                "spark_version": "13.0.x-scala2.12",
+                "spark_version": "13.3.x-scala2.12",
                 "spark_conf": {
                     "spark.databricks.dataLineage.enabled": "true",
                     "spark.databricks.delta.preview.enabled": "true",
@@ -314,7 +314,8 @@
                     "Department": "NZ-Migration"
                 },
                 "spark_env_vars": {
-                    "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+                    "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+                    "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
                 },
                 "enable_elastic_disk": false,
                 "num_workers": 8
