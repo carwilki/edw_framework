@@ -359,46 +359,6 @@
       "webhook_notifications": {}
     },
     {
-      "task_key": "sf_sap_merch_pricing_category",
-      "depends_on": [
-        {
-          "task_key": "m_SAP_Merch_Pricing_Category"
-        }
-      ],
-      "run_if": "ALL_SUCCESS",
-      "spark_python_task": {
-        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
-        "parameters": [
-          "prod",
-          "SAP_CATEGORY",
-          "SAP_CATEGORY_ID",
-          "UPD_TSTMP"
-        ],
-        "source": "GIT"
-      },
-      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
-      "libraries": [
-        {
-          "pypi": {
-            "package": "deepdiff"
-          }
-        },
-        {
-          "pypi": {
-            "package": "retry"
-          }
-        }
-      ],
-      "timeout_seconds": 0,
-      "email_notifications": {},
-      "notification_settings": {
-        "no_alert_for_skipped_runs": false,
-        "no_alert_for_canceled_runs": false,
-        "alert_on_last_attempt": false
-      },
-      "webhook_notifications": {}
-    },
-    {
       "task_key": "sf_sap_pricing_category",
       "depends_on": [
         {
