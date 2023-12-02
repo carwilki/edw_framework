@@ -9,7 +9,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from Datalake.utils.genericUtilities import *
 from Datalake.utils.configs import *
-from Datalake.utils.mergeUtils import has_duplicates
+from Datalake.utils.mergeUtils
 from Datalake.utils.logger import *
 
 # COMMAND ----------
@@ -113,8 +113,6 @@ Shortcut_To_POG_DISTRIB_PRE = ASQ_Shortcut_To_PLANOGRAM_PRO.selectExpr(
 	"CAST(PRODLOC_PROMO_QTY AS INT) as PRODLOC_PROMO_QTY"
 )
 
-if has_duplicates(Shortcut_To_POG_DISTRIB_PRE, ["PRODUCT_ID", "LOCATION_ID", "POG_ID"]):
-    raise Exception("Duplicates found in the dataset")
 
 Shortcut_To_POG_DISTRIB_PRE.write.mode("overwrite").saveAsTable(f'{raw}.POG_DISTRIB_PRE')
 

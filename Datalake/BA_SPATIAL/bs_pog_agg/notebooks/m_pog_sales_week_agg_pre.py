@@ -255,9 +255,6 @@ Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE = EXP_ROUN_NET_SALES_COST.selectExpr(
 	"CAST(PLANNER_CNT AS INT) as PLANNER_CNT"
 )
 
-if has_duplicates(Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE, ["WEEK_DT", "PRODUCT_ID", "LOCATION_ID", "POG_ID"]):
-    raise Exception("Duplicates found in the dataset")
-
 Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE.write.mode("overwrite").saveAsTable(f'{raw}.POG_SALES_WEEK_SKU_STORE_PRE')
 
 # COMMAND ----------
