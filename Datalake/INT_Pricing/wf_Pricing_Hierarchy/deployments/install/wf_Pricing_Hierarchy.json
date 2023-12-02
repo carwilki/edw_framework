@@ -1,0 +1,609 @@
+{
+  "name": "wf_Pricing_Hierarchy",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "m_SAP_Pricing_Hierarchy_Pre",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Hierarchy_Pre",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Merch_Pricing_Category",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Hierarchy_Pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Merch_Pricing_Category",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Pricing_Class",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Hierarchy_Pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Class",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Pricing_Department",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Hierarchy_Pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Department",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Pricing_Division",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Hierarchy_Pre"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Division",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_UDH_Online_Role_lkp",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_UDH_Online_Role_lkp",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_UDH_Pricing_Role_lkp",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_UDH_Pricing_Role_lkp",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Pricing_Category",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Hierarchy_Pre"
+        },
+        {
+          "task_key": "m_UDH_Pricing_Role_lkp"
+        },
+        {
+          "task_key": "m_UDH_Online_Role_lkp"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Category",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "maven": {
+            "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "m_SAP_Pricing_Hierarchy_Errors",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Category"
+        },
+        {
+          "task_key": "m_SAP_Pricing_Class"
+        },
+        {
+          "task_key": "m_SAP_Pricing_Department"
+        },
+        {
+          "task_key": "m_SAP_Merch_Pricing_Category"
+        },
+        {
+          "task_key": "m_SAP_Pricing_Division"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "Datalake/INT_Pricing/wf_Pricing_Hierarchy/notebooks/m_SAP_Pricing_Hierarchy_Errors",
+        "base_parameters": {
+          "env": "prod"
+        },
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "sf_sap_merch_pricing_category",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Merch_Pricing_Category"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+        "parameters": [
+          "prod",
+          "SAP_CATEGORY",
+          "SAP_CATEGORY_ID",
+          "UPD_TSTMP"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "sf_sap_pricing_category",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Category"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "SAP_PRICING_CATEGORY",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "sf_sap_pricing_class",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Class"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "SAP_PRICING_CLASS",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "sf_sap_pricing_dept",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Department"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "SAP_PRICING_DEPT",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "sf_sap_pricing_division",
+      "depends_on": [
+        {
+          "task_key": "m_SAP_Pricing_Division"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "spark_python_task": {
+        "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+        "parameters": [
+          "prod",
+          "SAP_PRICING_DIVISION",
+          "overwrite"
+        ],
+        "source": "GIT"
+      },
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "libraries": [
+        {
+          "pypi": {
+            "package": "deepdiff"
+          }
+        },
+        {
+          "pypi": {
+            "package": "retry"
+          }
+        }
+      ],
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
+    }
+  ],
+  "job_clusters": [
+    {
+      "job_cluster_key": "wf_Pricing_Hierarchy_Cluster",
+      "new_cluster": {
+        "cluster_name": "",
+        "spark_version": "13.3.x-scala2.12",
+        "spark_conf": {
+          "spark.databricks.dataLineage.enabled": "true",
+          "spark.databricks.delta.preview.enabled": "true",
+          "spark.sql.hive.metastore.jars": "maven",
+          "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+          "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+          "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+          "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+          "spark.sql.hive.metastore.version": "3.1.0"
+        },
+        "gcp_attributes": {
+          "use_preemptible_executors": false,
+          "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+          "availability": "ON_DEMAND_GCP",
+          "zone_id": "auto"
+        },
+        "node_type_id": "n2-standard-8",
+        "custom_tags": {
+          "Department": "NZ-Migration"
+        },
+        "spark_env_vars": {
+          "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+          "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
+        },
+        "enable_elastic_disk": false,
+															
+									 
+        "autoscale": {
+          "min_workers": 2,
+          "max_workers": 8
+        }
+      }
+    }
+  ],
+  "git_source": {
+    "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+    "git_provider": "gitHubEnterprise",
+    "git_branch": "main"
+  },
+		   
+								
+	
+  "run_as": {
+    "user_name": "gcpdatajobs-shared@petsmart.com"
+  }
+}
