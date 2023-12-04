@@ -491,8 +491,15 @@
           "custom_tags": {
             "Department": "NZ-Migration"
           },
+          "spark_env_vars": {
+            "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+            "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
+          },
           "enable_elastic_disk": false,
-          "num_workers": 8
+          "autoscale": {
+            "min_workers": 2,
+            "max_workers": 8
+          }
         }
     }
   ],
