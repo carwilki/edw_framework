@@ -90,6 +90,6 @@ Shortcut_To_SALES_INV_WEEK_POG = ASQ_Shortcut_To_SALES_INV_WEEK_STORE_POG.select
 	"CAST(EXCH_RATE_PCT AS DECIMAL(9,6)) as EXCH_RATE_PCT"
 )
 
-DuplicateChecker.check_for_duplicate_primary_keys(spark, f'{legacy}.SALES_INV_WEEK_POG', Shortcut_To_SALES_INV_WEEK_POG, ["WEEK_DT", "POG_ID", "COUNTRY_CD"])
+DuplicateChecker.check_for_duplicate_primary_keys(Shortcut_To_SALES_INV_WEEK_POG, ["WEEK_DT", "POG_ID", "COUNTRY_CD"])
 
 Shortcut_To_SALES_INV_WEEK_POG.write.mode("append").saveAsTable(f'{legacy}.SALES_INV_WEEK_POG')
