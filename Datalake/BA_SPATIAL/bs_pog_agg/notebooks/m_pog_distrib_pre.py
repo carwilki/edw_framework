@@ -9,7 +9,7 @@ from pyspark.sql.types import *
 from datetime import datetime
 from Datalake.utils.genericUtilities import *
 from Datalake.utils.configs import *
-from Datalake.utils.mergeUtils
+from Datalake.utils.mergeUtils import *
 from Datalake.utils.logger import *
 
 # COMMAND ----------
