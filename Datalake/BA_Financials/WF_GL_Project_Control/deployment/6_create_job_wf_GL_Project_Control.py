@@ -568,7 +568,8 @@ parentJson = f"""
 
         "spark_env_vars": {{
 
-          "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+          "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+          "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
 
         }},
 
