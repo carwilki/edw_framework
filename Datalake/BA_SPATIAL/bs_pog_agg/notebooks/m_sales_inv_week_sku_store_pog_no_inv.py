@@ -125,7 +125,7 @@ Shortcut_To_SALES_INV_WEEK_SKU_STORE_POG = EXPTRANS.selectExpr(
 	"CAST(EXCHANGE_RATE_PCNT AS DECIMAL(9,6)) as EXCH_RATE_PCT"
 )
 
-DuplicateChecker.check_for_duplicate_primary_keys(spark, f'{legacy}.SALES_INV_WEEK_SKU_STORE_POG', Shortcut_To_SALES_INV_WEEK_SKU_STORE_POG, ["WEEK_DT", "PRODUCT_ID", "LOCATION_ID", "POG_ID"])
+DuplicateChecker.check_for_duplicate_primary_keys(Shortcut_To_SALES_INV_WEEK_SKU_STORE_POG, ["WEEK_DT", "PRODUCT_ID", "LOCATION_ID", "POG_ID"])
 
 Shortcut_To_SALES_INV_WEEK_SKU_STORE_POG.write.mode("append").saveAsTable(f'{legacy}.SALES_INV_WEEK_SKU_STORE_POG')
 
