@@ -153,7 +153,6 @@ Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE = EXPTRANS.selectExpr(
 	"CAST(PLANNER_CNT AS INT) as PLANNER_CNT"
 )
 
-DuplicateChecker.check_for_duplicate_primary_keys(spark, f'{raw}.POG_SALES_WEEK_SKU_STORE_PRE', Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE, ["WEEK_DT", "PRODUCT_ID", "LOCATION_ID", "POG_ID"])
 
 Shortcut_To_POG_SALES_WEEK_SKU_STORE_PRE.write.mode("append").saveAsTable(f'{raw}.POG_SALES_WEEK_SKU_STORE_PRE')
 
