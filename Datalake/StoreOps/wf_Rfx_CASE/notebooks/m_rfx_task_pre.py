@@ -58,7 +58,7 @@ csv_options = {
 SQ_Shortcut_to_RFX_TASK = spark.read.csv(source_file, **csv_options)
 if SQ_Shortcut_to_RFX_TASK.head() is None:
     df = spark.sql(f"TRUNCATE TABLE {raw}.RFX_TASK_PRE")
-    sys.exit()
+    dbutils.notebook.exit('file not available or empty')
 # COMMAND ----------
 
 # Rename columns

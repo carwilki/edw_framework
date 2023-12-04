@@ -56,7 +56,7 @@ SQ_Shortcut_to_RFX_UNIT_HRCY = spark.read.csv(source_file, **csv_options)
 
 if SQ_Shortcut_to_RFX_UNIT_HRCY.head() is None:
     df = spark.sql(f"TRUNCATE TABLE {raw}.RFX_UNIT_HRCY_PRE")
-    sys.exit()
+    dbutils.notebook.exit('file not available or empty')
 
 # COMMAND ----------
 

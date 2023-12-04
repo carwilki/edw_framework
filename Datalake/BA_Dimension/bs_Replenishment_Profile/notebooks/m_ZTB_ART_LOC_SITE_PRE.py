@@ -42,7 +42,7 @@ if source_file != None and not fileExists(source_file):
   # print('2')
   # overwrite so trunc for missing data
   spark.sql(f'truncate table {raw}.ZTB_ART_LOC_SITE_PRE')
-  dbutils.notebooks.exit(f'{file_path} does not exist')
+  dbutils.notebook.exit(f'{file_path} does not exist')
   
 
 
