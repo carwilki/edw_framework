@@ -1,0 +1,336 @@
+{
+    "name": "bs_Demand_Planning_Day",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {
+    },
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "m_dp_site_vend_pre",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/bs_Demand_Planning_Day/notebooks/m_dp_site_vend_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "m_dp_site_vend_profile",
+            "depends_on": [
+                {
+                    "task_key": "m_dp_site_vend_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/bs_Demand_Planning_Day/notebooks/m_dp_site_vend_profile",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                },
+                {
+                    "maven": {
+                        "coordinates": "com.microsoft.sqlserver:mssql-jdbc:12.3.0.jre8-preview"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "m_SAP_Sku_Link_Type",
+            "depends_on": [
+                {
+                    "task_key": "m_dp_site_vend_profile"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/bs_Demand_Planning_Day/notebooks/m_SAP_Sku_Link_Type",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "m_dp_sku_link_pre",
+            "depends_on": [
+                {
+                    "task_key": "m_SAP_Sku_Link_Type"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/bs_Demand_Planning_Day/notebooks/m_dp_sku_link_pre",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "m_dp_sku_link",
+            "depends_on": [
+                {
+                    "task_key": "m_dp_sku_link_pre"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "Datalake/demand_planning/bs_Demand_Planning_Day/notebooks/m_dp_sku_link",
+                "base_parameters": {
+                    "env": "prod"
+                },
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "SF_DP_SITE_VEND_PROFILE",
+            "depends_on": [
+                {
+                    "task_key": "m_dp_sku_link"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_overWrite_append_legacy.py",
+                "parameters": [
+                    "prod",
+                    "DP_SITE_VEND_PROFILE",
+                    "overwrite"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        },
+        {
+            "task_key": "SF_DP_SKU_LINK",
+            "depends_on": [
+                {
+                    "task_key": "SF_DP_SITE_VEND_PROFILE"
+                }
+            ],
+            "run_if": "ALL_SUCCESS",
+            "spark_python_task": {
+                "python_file": "Datalake/utils/SF_Lgcy_Ingest.py",
+                "parameters": [
+                    "prod",
+                    "DP_SKU_LINK",
+                    "PRODUCT_ID,LOCATION_ID,SKU_LINK_TYPE_CD,SKU_LINK_EFF_DT,LINK_PRODUCT_ID, LINK_LOCATION_ID",
+                    "LOAD_DT"
+                ],
+                "source": "GIT"
+            },
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "libraries": [
+                {
+                    "pypi": {
+                        "package": "retry"
+                    }
+                },
+                {
+                    "pypi": {
+                        "package": "deepdiff"
+                    }
+                }
+            ],
+            "timeout_seconds": 0,
+            "email_notifications": {
+            },
+            "notification_settings": {
+                "no_alert_for_skipped_runs": false,
+                "no_alert_for_canceled_runs": false,
+                "alert_on_last_attempt": false
+            },
+            "webhook_notifications": {
+            }
+        }
+    ],
+    "job_clusters": [
+        {
+            "job_cluster_key": "bs_Demand_Planning_Day",
+            "new_cluster": {
+                "cluster_name": "",
+                "spark_version": "13.3.x-scala2.12",
+                "spark_conf": {
+                    "spark.databricks.dataLineage.enabled": "true",
+                    "spark.databricks.delta.preview.enabled": "true",
+                    "spark.sql.hive.metastore.jars": "maven",
+                    "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+                    "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+                    "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
+                    "spark.sql.hive.metastore.version": "3.1.0"
+                },
+                "gcp_attributes": {
+                    "use_preemptible_executors": false,
+                    "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
+                    "availability": "ON_DEMAND_GCP",
+                    "zone_id": "auto"
+                },
+                "node_type_id": "n2-standard-8",
+                "custom_tags": {
+                    "Department": "NZ-Migration"
+                },
+                "spark_env_vars": {
+                    "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+                    "SNOWFLAKE_SPARK_CONNECTOR_VERSION":"2.12"
+                },
+                "enable_elastic_disk": false,
+                "num_workers": 8
+            }
+        }
+    ],
+    "git_source": {
+        "git_url": "https://github.ssg.petsmart.com/BigData-AdvancedAnalytics/nz-databricks-migration.git",
+        "git_provider": "gitHubEnterprise",
+        "git_branch": "main"
+    },
+    "tags": {
+        "Department": "NZ-Migration"
+    },
+    "run_as": {
+        "user_name": "gcpdatajobs-shared@petsmart.com"
+    }
+}
