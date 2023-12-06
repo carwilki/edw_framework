@@ -135,7 +135,7 @@ use raw;
 
 , CHANGE_DATE                                 TIMESTAMP 
 
-, CHANGE_TIME TIMESTAMP
+, CHANGE_TIME STRING
 
 , NOTES                                       STRING 
 
