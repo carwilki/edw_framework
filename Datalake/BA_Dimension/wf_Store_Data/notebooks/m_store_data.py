@@ -181,17 +181,54 @@ Shortcut_to_STORE_DATA = EXPTRANS.selectExpr(
 #     raise e
 
 
+
+# try:
+# 	primary_key = """source.SITE_NBR = target.SITE_NBR """
+# 	refined_perf_table = f"{legacy}.STORE_DATA"
+# 	chk=DuplicateChecker()
+# 	chk.check_for_duplicate_primary_keys(Shortcut_to_STORE_DATA,['SITE_NBR'])
+# 	executeMergeNoAction(Shortcut_to_STORE_DATA, refined_perf_table, primary_key)
+# 	logger.info(f"Merge with {refined_perf_table} completed]")
+# 	logPrevRunDt("STORE_DATA", "STORE_DATA", "Completed", "N/A", f"{raw}.log_run_details")
+# except Exception as e:
+# 	logPrevRunDt("STORE_DATA", "STORE_DATA","Failed",str(e), f"{raw}.log_run_details", )
+# 	raise e    
+
+# COMMAND ----------
+
+
+Shortcut_to_STORE_DATA.createOrReplaceTempView("temp_table")
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+#facing parsing eror with executemergenoaction code, replaced with Merge code
 try:
-	primary_key = """source.SITE_NBR = target.SITE_NBR """
-	refined_perf_table = f"{legacy}.STORE_DATA"
-	chk=DuplicateChecker()
-	chk.check_for_duplicate_primary_keys(Shortcut_to_STORE_DATA,['SITE_NBR'])
-	executeMergeNoAction(Shortcut_to_STORE_DATA, refined_perf_table, primary_key)
-	logger.info(f"Merge with {refined_perf_table} completed]")
-	logPrevRunDt("STORE_DATA", "STORE_DATA", "Completed", "N/A", f"{raw}.log_run_details")
+    primary_key = """source.SITE_NBR = target.SITE_NBR """
+    refined_perf_table = f"{legacy}.STORE_DATA"
+    chk = DuplicateChecker()
+    chk.check_for_duplicate_primary_keys(Shortcut_to_STORE_DATA, ['SITE_NBR'])
+    
+    merge_sql = f"""
+        MERGE INTO {refined_perf_table} AS target
+        USING temp_table AS source
+        ON target.SITE_NBR = source.SITE_NBR
+        WHEN MATCHED THEN UPDATE SET *
+        WHEN NOT MATCHED THEN INSERT *
+    """
+    
+    spark.sql(merge_sql)
+    
+    logger.info(f"Merge with {refined_perf_table} completed")
+    logPrevRunDt("STORE_DATA", "STORE_DATA", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
-	logPrevRunDt("STORE_DATA", "STORE_DATA","Failed",str(e), f"{raw}.log_run_details", )
-	raise e    
+    logPrevRunDt("STORE_DATA", "STORE_DATA", "Failed", str(e), f"{raw}.log_run_details")
+    raise e
+
 
 # COMMAND ----------
 
