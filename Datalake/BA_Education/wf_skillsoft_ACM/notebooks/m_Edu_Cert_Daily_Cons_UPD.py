@@ -27,6 +27,7 @@ def execute_update(dataframe, target_table, join_condition):
                       SET {", ".join([f"target.{col} = source.{col}" for col in dataframe.columns if col!='pyspark_data_action'])}          
                 """
 
+  print(merge_sql)
   spark.sql(merge_sql)
 
 
@@ -215,6 +216,10 @@ Shortcut_to_EDU_CERT_DAILY_CONS1 = UPD_Flag.selectExpr(
 	"CAST(CURR_COMPLIANCE_FLAG AS TINYINT) as CURR_COMPLIANCE_FLAG",
 	"pyspark_data_action as pyspark_data_action"
 )		
+
+# COMMAND ----------
+
+display(Shortcut_to_EDU_CERT_DAILY_CONS1)
 
 # COMMAND ----------
 
