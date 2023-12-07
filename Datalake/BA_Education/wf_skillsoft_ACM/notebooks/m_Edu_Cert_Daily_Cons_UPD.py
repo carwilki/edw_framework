@@ -111,10 +111,9 @@ COMPLIANT_EXPIRATION_DT,
 CURR_COMPLIANCE_FLAG,
 CURR_MISSING_FLAG,
 CURR_PERIOD_ATTEMPTS_NBR,
-LOAD_DT,
-row_number() over(partition by EMPLOYEE_ID order by EMPLOYEE_ID) as rn
+LOAD_DT
 FROM {legacy}.EDU_CERT_DAILY_CONS
-WHERE CURR_COMPLIANCE_FLAG <> 3) lkp where lkp.rn =1
+WHERE CURR_COMPLIANCE_FLAG <> 3) lkp
 """
 
 SQ_Shortcut_to_EDU_CERT_DAILY_CONS = spark.sql(_sql).withColumn("sys_row_id", monotonically_increasing_id())
@@ -133,7 +132,7 @@ EXP_Concat_IDS = SQ_Shortcut_to_EDU_CERT_DAILY_CONS.withColumn("JNR_Learning_ID"
 # Processing node SQ_Shortcut_to_EDU_SKILLSOFT_LEARNING_EXEMPTIONS, type SOURCE 
 # COLUMN COUNT: 5
 
-SQ_Shortcut_to_EDU_SKILLSOFT_LEARNING_EXEMPTIONS = spark.sql(f"""SELECT
+SQ_Shortcut_to_EDU_SKILLSOFT_LEARNING_EXEMPTIONS = spark.sql(f"""SELECT 
 SNAPSHOT_DT,
 EMPLOYEE_ID,
 LEARNING_ID,
@@ -213,13 +212,9 @@ Shortcut_to_EDU_CERT_DAILY_CONS1 = UPD_Flag.selectExpr(
 	"CAST(EMPLOYEE_ID AS BIGINT) as EMPLOYEE_ID",
 	"CAST(ASSESSMENT_MID AS BIGINT) as ASSESSMENT_MID",
 	"CAST(ASSESSMENT_LID AS BIGINT) as ASSESSMENT_LID",
-	"CAST(CURR_COMPLIANCE_FLAG AS TINYINT) as CURR_COMPLIANCE_FLAG",
+	"CAST(EXP_Flags AS TINYINT) as CURR_COMPLIANCE_FLAG",
 	"pyspark_data_action as pyspark_data_action"
-)		
-
-# COMMAND ----------
-
-display(Shortcut_to_EDU_CERT_DAILY_CONS1)
+).dropDuplicates()
 
 # COMMAND ----------
 
@@ -236,7 +231,3 @@ try:
 except Exception as e:
 	logPrevRunDt("EDU_CERT_DAILY_CONS", "EDU_CERT_DAILY_CONS","Failed",str(e), f"{raw}.log_run_details", )
 	raise e
-
-# COMMAND ----------
-
-
