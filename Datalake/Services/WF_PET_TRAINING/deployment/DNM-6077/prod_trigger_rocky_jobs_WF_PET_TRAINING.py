@@ -28,7 +28,7 @@ def trigger_rocky_job(payload):
 import csv
 import time
 
-tables = ['TRAINING_SCHED_CLASS_TYPE']
+tables = ['TRAINING_SCHED_CLASS_TYPE','TRAINING_STORE_CLASS']
 
 for table in tables:    
   print(table)

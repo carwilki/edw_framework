@@ -2,7 +2,7 @@
 from pyspark.sql.functions import col
 import csv
 
-tables = ['TRAINING_SCHED_CLASS_TYPE']
+tables = ['TRAINING_SCHED_CLASS_TYPE','TRAINING_STORE_CLASS']
 
 for table in tables:    
   print(table)
