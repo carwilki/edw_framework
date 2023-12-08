@@ -1,4 +1,9 @@
 -- Databricks notebook source
+-- MAGIC %md
+-- MAGIC rocky REGION as it is required  for wf_Aspect_Ancillary_File
+
+-- COMMAND ----------
+
 INSERT INTO work.rocky_ingestion_metadata (
 table_group, table_group_desc, source_type, source_db, source_table, 
 table_desc, is_pii, pii_type, has_hard_deletes, target_sink, 
