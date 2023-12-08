@@ -1,6 +1,6 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC rocky EM_STORE_DISP_LOC as it is required source for wF_JDA_Extract
+-- MAGIC rocky EM_DISP_LOC as it is required source for wF_JDA_Extract
 
 -- COMMAND ----------
 
