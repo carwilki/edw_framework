@@ -57,7 +57,7 @@ csv_options = {
 SQ_Shortcut_to_RFX_PRJ_RESPONSE = spark.read.csv(source_file, **csv_options)
 if SQ_Shortcut_to_RFX_PRJ_RESPONSE.head() is None:
     spark.sql(f"TRUNCATE TABLE {raw}.RFX_PRJ_RESPONSE_PRE").collect()
-    exit()
+    dbutils.notebook.exit('file not available or empty')
 
 # COMMAND ----------
 
