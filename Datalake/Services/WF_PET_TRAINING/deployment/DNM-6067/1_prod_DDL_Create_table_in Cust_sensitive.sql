@@ -1,6 +1,6 @@
 -- Databricks notebook source
 use cust_sensitive;
-CREATE TABLE  TRAINING_PET_PRE
+CREATE TABLE  raw_TRAINING_PET_PRE
 
 (PET_ID INT not null
 
