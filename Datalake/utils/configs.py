@@ -166,7 +166,26 @@ def dc41(env):
 
         return (username, password, connection_string)
 
+def or_stxp1_read(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "stxp1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_edhp1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        username = secrets.get(scope="SVC_BD_ORA_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key="stxp1_password")
+        hostname = "172.20.89.162"
+        portnumber = "1805"
+        db = "stxp1"
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+        return (username, password, connection_string)
+    
 def or_kro_read(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = "SVC_BD_ORA_NP_READ"

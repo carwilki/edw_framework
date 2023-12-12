@@ -275,7 +275,7 @@ SRT_Reservations_1 = (
         row_number().over(
             Window.partitionBy(
                 col("TP_CUSTOMER_NBR"),
-                to_date(col("APPT_START_TSTMP")),
+                col("APPT_START_TSTMP"),
                 col("STORE_NBR"),
             ).orderBy(desc(col("APPT_START_TSTMP")), desc(col("TP_INVOICE_NBR")))
         ),

@@ -173,7 +173,7 @@ def create_table_metadata(metadata_path,table_name):
   return table_metadata4
  
 
-def trigger_rocky_job(payload):
+def trigger_rocky_job(payload, instance_id, token):
   import json
   import requests
   api_version = "/api/2.1"
@@ -208,7 +208,7 @@ def trigger_rocky(tables):
       job_id = spark.sql(query).collect()[0][0]
       print(job_id)
       try:
-          run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
+          run_info = trigger_rocky_job(json.dumps({"job_id": job_id}), instance_id, token)
           print("response:", run_info)
           # run_id = json.loads(run_info)['run_id']
           # print(run_id)
@@ -302,6 +302,7 @@ trigger_rocky(tables)
     with open(f"{workflow_name}_rocky_trigger.py","w") as file1:
         file1.writelines(rocky_script)
 
+
 def get_copy_script(workflow_name,table_metadata):
     from pyspark.sql.functions import lower
     refine_tables = [] 
@@ -309,7 +310,13 @@ def get_copy_script(workflow_name,table_metadata):
     empl_protected_tables =[]
     empl_sensitive_tables =[]
     cust_sensitive_tables =[]
-
+ 
+    table_list = []
+    for table in table_metadata:
+        if table["created"]:
+            continue
+        table_list.append(table['table_name'])
+ 
     for table in table_metadata:
         if table["created"]:
             continue
@@ -370,3 +377,25 @@ cust_sensitive_tables = {cust_sensitive_tables}
 copy_hist_to_cust_sensitive(cust_sensitive_tables)"""
             print(scripts)
             file1.writelines(scripts)
+        #creating delete scripts
+        delete_scripts =f"""
+# COMMAND ----------
+table_list = {table_list} 
+# COMMAND ----------  
+for table in table_list:
+    try:
+      spark.sql(f\"drop table  refine.{{table}}_history\")
+      print(f"refine.{{table}}_history deleted")
+    except Exception as e:
+      print(\"failed for \", table, e)"""
+        file1.writelines(delete_scripts)
+
+
+def getLargeTables(table_metadata):
+    large_tables= []
+    for table in table_metadata:
+        if table["created"]:
+            continue
+        if table["record_count"] > 1000000000:
+            large_tables.append(table['table_name'])
+    return large_tables

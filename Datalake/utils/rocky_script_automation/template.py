@@ -28,8 +28,10 @@ with open(f"{workflow_name}_rocky_scripts.sql","w") as file1:
     file1.writelines(rocky_insert_scripts[x])
 
 # COMMAND ----------
+tables_with_primary_key = getLargeTables(table_metadata)
+print(tables_with_primary_key)
 
-
+# COMMAND ----------
 table_list = [] 
 for table in table_metadata:
     if table["created"]:
