@@ -62,7 +62,7 @@ FROM    {enterprise}.days d1
 
         INNER JOIN {enterprise}.days d2 ON d1.day_dt = CURRENT_DATE
 
-           AND CASE d1.FISCAL_WK_NBR WHEN 1 THEN d3.LastYearMaxFiscal_wk  ELSE (d1.fiscal_wk - 1) END = d2.fiscal_wk
+           AND CAST(CASE d1.FISCAL_WK_NBR WHEN 1 THEN d3.LastYearMaxFiscal_wk  ELSE (d1.fiscal_wk - 1) END AS INT) = d2.fiscal_wk
 
 UNION
 
