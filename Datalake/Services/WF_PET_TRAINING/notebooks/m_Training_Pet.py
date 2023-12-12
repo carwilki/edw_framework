@@ -25,6 +25,7 @@ if env is None or env == '':
 refine = getEnvPrefix(env) + 'refine'
 raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
+sensitive = getEnvPrefix(env) + 'cust_sensitive'
 
 # Set global variables
 starttime = datetime.now() #start timestamp of the script
@@ -43,7 +44,7 @@ BIRTH_DATE,
 NOTES,
 CREATE_DATE_TIME,
 EXTERNAL_PET_ID
-FROM {raw}.TRAINING_PET_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {sensitive}.raw_TRAINING_PET_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_TRAINING_PET, type SOURCE 
@@ -53,7 +54,7 @@ SQ_Shortcut_to_TRAINING_PET = spark.sql(f"""SELECT
 TRAINING_PET_ID,
 SRC_CREATE_TSTMP,
 LOAD_TSTMP
-FROM {legacy}.TRAINING_PET""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {sensitive}.legacy_TRAINING_PET""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node JNR_TRAINING_PET, type JOINER . Note: using additional SELECT to rename incoming columns
@@ -162,7 +163,7 @@ spark.sql("""set spark.sql.legacy.timeParserPolicy = LEGACY""")
 
 try:
   primary_key = """source.TRAINING_PET_ID = target.TRAINING_PET_ID"""
-  refined_perf_table = f"{legacy}.TRAINING_PET"
+  refined_perf_table = f"{sensitive}.legacy_TRAINING_PET"
   executeMerge(Shortcut_to_TRAINING_PET1, refined_perf_table, primary_key)
   logger.info(f"Merge with {refined_perf_table} completed]")
   logPrevRunDt("TRAINING_PET", "TRAINING_PET", "Completed", "N/A", f"{raw}.log_run_details")
