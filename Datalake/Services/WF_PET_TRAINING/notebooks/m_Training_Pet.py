@@ -44,7 +44,7 @@ BIRTH_DATE,
 NOTES,
 CREATE_DATE_TIME,
 EXTERNAL_PET_ID
-FROM {sensitive}.TRAINING_PET_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {sensitive}.raw_TRAINING_PET_PRE""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node SQ_Shortcut_to_TRAINING_PET, type SOURCE 
