@@ -2,7 +2,7 @@
 --*****  Creating table:  "CO_DEPOSIT" , ***** Creating table: "CO_DEPOSIT"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE CO_DEPOSIT 
 (  SALES_DT                                  TIMESTAMP                            not null
 
@@ -36,7 +36,7 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Financials/co_deposit';
 --*****  Creating table:  "CO_HEADER" , ***** Creating table: "CO_HEADER"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE CO_HEADER 
 (  SALES_DT                                  TIMESTAMP                            not null
 
@@ -59,7 +59,7 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Financials/co_header';
 --*****  Creating table:  "CO_VARIANCE" , ***** Creating table: "CO_VARIANCE"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE CO_VARIANCE 
 (  SALES_DT                                  TIMESTAMP                            not null
 
@@ -92,7 +92,7 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Financials/co_variance';
 --*****  Creating table:  "CO_TENDER_TOTAL" , ***** Creating table: "CO_TENDER_TOTAL"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE CO_TENDER_TOTAL 
 (  SALES_DT                                  TIMESTAMP                            not null
 
@@ -240,4 +240,3 @@ USING delta
 LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/BA_Financials/co_tender_total_pre';
 
 --DISTRIBUTE ON (SITE_NBR)
-

@@ -1,7 +1,7 @@
 --*****  Creating table:  "LP_TENDER_VAR_DAY" , ***** Creating table: "LP_TENDER_VAR_DAY"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE LP_TENDER_VAR_DAY 
 (  DAY_DT        TIMESTAMP                            not null
 
@@ -23,7 +23,7 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Financials/lp_tender_var_da
 --*****  Creating table:  "LP_TENDER_DAY" , ***** Creating table: "LP_TENDER_DAY"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE LP_TENDER_DAY 
 (  DAY_DT        TIMESTAMP                            not null
 
@@ -45,7 +45,7 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Financials/lp_tender_day';
 --*****  Creating table:  "LP_EMPL_UNKNOWN" , ***** Creating table: "LP_EMPL_UNKNOWN"
 
 
-use prod_legacy;
+use legacy;
  CREATE TABLE LP_EMPL_UNKNOWN 
 (  EMPLOYEE_ID INT not null
 
