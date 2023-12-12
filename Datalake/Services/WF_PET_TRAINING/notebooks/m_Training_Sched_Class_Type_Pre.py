@@ -68,7 +68,7 @@ EXP_LOAD_TSTMP = SQ_Shortcut_to_ClassType_temp.selectExpr( \
 	"SQ_Shortcut_to_ClassType___Price as Price", \
 	"SQ_Shortcut_to_ClassType___UPC as UPC", \
 	"SQ_Shortcut_to_ClassType___InfoPage as InfoPage", \
-	"CASE WHEN UPPER ( LTRIM ( RTRIM ( SQ_Shortcut_to_ClassType___IsActive ) ) ) = 'T' THEN 1 ELSE 0 END  as o_IsActive", \
+	"CASE WHEN UPPER ( ltrim ( rtrim ( SQ_Shortcut_to_ClassType___IsActive ) ) ) = 'T' or upper(trim(SQ_Shortcut_to_ClassType___IsActive))= 'TRUE' THEN 1 ELSE 0 END  as o_IsActive", \
 	"SQ_Shortcut_to_ClassType___VisibilityLevel as VisibilityLevel", \
 	"CURRENT_TIMESTAMP as LOAD_TSTMP" \
 )
