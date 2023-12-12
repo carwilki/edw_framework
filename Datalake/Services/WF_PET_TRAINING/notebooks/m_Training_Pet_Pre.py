@@ -93,7 +93,7 @@ Shortcut_to_TRAINING_PET_PRE = EXP_LOAD_TSTMP.selectExpr( \
 )
 
 try:
-	Shortcut_to_TRAINING_PET_PRE.write.saveAsTable(f'{sensitive}.TRAINING_PET_PRE', mode = 'overwrite')
+	Shortcut_to_TRAINING_PET_PRE.write.saveAsTable(f'{sensitive}.raw_TRAINING_PET_PRE', mode = 'overwrite')
 	logPrevRunDt("TRAINING_PET_PRE", "TRAINING_PET_PRE", "Completed", "N/A", f"{raw}.log_run_details")
 except Exception as e:
 	logPrevRunDt("TRAINING_PET_PRE", "TRAINING_PET_PRE", "Failed", "N/A", f"{raw}.log_run_details")
