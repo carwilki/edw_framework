@@ -140,7 +140,7 @@ LKP_hotel = LKP_SITE_PROFILE_SRC.toDF(*["LKP___hotel___" + col for col in LKP_SI
 JNR_ID = SQ_Shortcut_to_GS_Training.join(SQ_Shortcut_to_GS_TRAINING1,[SQ_Shortcut_to_GS_Training.ID == SQ_Shortcut_to_GS_TRAINING1.GS_TRAINING_ID],'left_outer')\
         .join(LKP_home,[SQ_Shortcut_to_GS_Training.HomeStoreID == LKP_home.LKP___home___LOCATION_ID],'left')\
         .join(LKP_train,[SQ_Shortcut_to_GS_Training.TrainingStoreID == LKP_train.LKP___train___LOCATION_ID],'left')\
-        .join(LKP_hotel,[SQ_Shortcut_to_GS_Training.TrainingStoreID == LKP_hotel.LKP___hotel___LOCATION_ID],'left')            
+        .join(LKP_hotel,[SQ_Shortcut_to_GS_Training.HotelPartnerStoreID == LKP_hotel.LKP___hotel___LOCATION_ID],'left')            
 
 # COMMAND ----------
 
