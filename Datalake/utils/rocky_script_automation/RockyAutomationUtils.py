@@ -59,7 +59,7 @@ def add_rocky_metadata(table_metadata):
       elif table["target_schema"].lower() == "empl_sensitive":
         table["pii_type"] = "\'employee\'"
       else:
-        table["pii_type"] = "employee_protected"
+        table["pii_type"] = "\'employee_protected\'"
         
   return table_metadata
 
