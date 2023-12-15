@@ -1,5 +1,4 @@
 from queue import Queue
-from databricks.sdk import WorkspaceClient
 from pyspark.sql import SparkSession
 from pyspark.dbutils import DBUtils
 from databricks.sdk.dbutils import FileInfo
@@ -10,8 +9,9 @@ from Datalake.utils.files.vars import prep, raw, processing, prep_mount, raw_mou
 
 
 class BucketConfig(BaseModel):
-    directory: str
-    datefmtstr: str
+    prep_bucket: str
+    archive_bucket: str
+    datefmtstr: str = "yyyymmdd_hh24mmss"
 
 
 class FileWorkflowController(object):
@@ -20,7 +20,7 @@ class FileWorkflowController(object):
     Args:
         object (_type_): _description_
     """
-    
+
     def __init__(
         self,
         buckets: list[BucketConfig],
@@ -32,7 +32,7 @@ class FileWorkflowController(object):
         self.session = spark
         self.timeout = timeout
         self.job_id = job_id
-        if self.job_id is None or len(self.job_id.strip) == 0:
+        if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
 
         if self.buckets is None:
@@ -41,14 +41,15 @@ class FileWorkflowController(object):
         if self.session is None:
             raise ValueError("spark must have a SparkSession instance")
 
-        self.dbutils = DBUtils(self.session)
-
-        self._mount_buckets()
+        self.dbutils = DBUtils(spark=self.session)
         self._setup_job_params()
+        # self._mount_buckets()
         self._setup_processing_map()
-        self._setup_for_run()
-        self._run_workflow()
-        self._un_mount_buckets()
+        self._setup_processing_queue()
+        # self._process_job_queue()
+        # self._run_workflow()
+        # self._un_mount_buckets()
+        print(self.queue)
 
     def _setup_job_params(self):
         print("FileWorkflowController::_setup_job_params::setting up job params")
@@ -61,26 +62,22 @@ class FileWorkflowController(object):
         print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
         print("FileWorkflowController::_setup_job_params::complete")
 
-    def _setup_processing_map(self) -> dict[datetime, list[str]]:
+    def _setup_processing_map(self) -> dict[datetime, dict[BucketConfig, list[FileInfo]]]:
         print("FileWorkflowController::_get_all_files::creating Processing map")
         # create a dictionary date-> bucketconfig -> file of files that need to be processed for the date.
-        date_dict: dict[datetime, dict[BucketConfig, FileInfo]] = {}
+        pmap: dict[datetime, list[(BucketConfig,str)]] = {}
         # foreach bucket
         for bucket_config in self.buckets:
             # list the contents of the bucket
-            r = self.client.dbfs.list(f"{prep}/{bucket_config.directory}")
+            files = self.dbutils.fs.ls(bucket_config.prep_bucket)
             # foreach file in the bucket
-            for f in r:
-                # if the file is a directory, extract the date from the directory name
-                if f.is_dir is True:
-                    # extract the date from the directory name
-                    dt = self._extract_date(f.path, bucket_config.datefmtstr)
-                    # if the date is not already in the dictionary, add it
-                    if dt not in date_dict.keys():
-                        date_dict[dt] = {bucket_config: f}
-                    # else if the date is already in the dictionary, add the file to the list of files to process
-                    else:
-                        date_dict[dt][bucket_config] = f
+            for f in files:
+                #if the size is 0 then its a directory and should be skipped. 
+                if f.size != 0:
+                    date = self._extract_date(f,bucket_config.datefmtstr)
+                    if date not in date_dict:
+                        pmap[date] = 
+                    
 
         print(
             f"""FileWorkflowController::_get_all_files::Processing map created:
@@ -92,7 +89,7 @@ class FileWorkflowController(object):
         print(
             "FileWorkflowController::_setup_processing_queue::creating processing queue"
         )
-        self.queue: Queue = Queue(len(self.processing_map))
+        self.queue: Queue = Queue(len(self.processing_map.keys))
         sorted_dates = sorted(self.processing_map.keys(), reverse=False)
         for dt in sorted_dates:
             self.queue.put(dt)
@@ -105,15 +102,12 @@ class FileWorkflowController(object):
             self._setup_files(dt)
             try:
                 self._run_workflow()
-                failed = False
+                self._move_to_raw()
             except Exception as e:
-                failed = True
                 print(
                     f"FileWorkflowController::_process_job_queue::Error processing date: {dt}"
                 )
                 print(f"FileWorkflowController::_process_job_queue::Error: {e}")
-            finally:
-                self._clean_up_files(dt, failed)
 
     def _setup_files(self, dt: datetime) -> None:
         self._move_to_processing(dt)
@@ -136,13 +130,9 @@ class FileWorkflowController(object):
         file_map = self.processing_map[dt]
         for b in self.buckets:
             # get the file for the bucket
-            f = file_map[b]
-            if f is not None:
-                # move the file to the processing directory
-                self.client.dbfs.move(f.path, f"{prep}/{processing}/{f.name}")
-            else:
-                # if there is nothing there put an empty file in the processing directory
-                self._copy_empty_to_processing()
+            files = file_map[b]
+            for f in files:
+                self.dbutils.fs.mv(f.path, f"{b.prep_bucket}/processing/")
 
     def _move_to_prep(self, dt: datetime) -> None:
         # get the bucket -> file map for processing
@@ -153,9 +143,7 @@ class FileWorkflowController(object):
             if f is not None:
                 # move the file to the processing directory
                 try:
-                    self.client.dbfs.move(
-                        f"{b.directory}/{processing}/{f.name}", f.path
-                    )
+                    self.client.dbfs.move(f"{b.prep_bucket}/{processing}/{f.name}")
                 except Exception as e:
                     print(
                         f"FileWorkflowController::_move_to_prep::Error moving file: {f.path}"
@@ -171,7 +159,7 @@ class FileWorkflowController(object):
             if f is not None:
                 try:
                     self.client.dbfs.move(
-                        f"{b.directory}/{processing}/{f.name}", f"{raw}/{f.name}"
+                        f"{b.prep_bucket}/{processing}/{f.name}", f"{raw}/{f.name}"
                     )
                 except Exception as e:
                     print(
@@ -180,9 +168,32 @@ class FileWorkflowController(object):
                     print(f"FileWorkflowController::_move_to_raw::Error: {e}")
                     raise e
 
-    def _extract_date(dir: str, dtstrfmt: str) -> datetime:
-        dt = datetime.strptime(dir.split("/")[-1], dtstrfmt)
+    def _extract_date(file: FileInfo, dtstrfmt: str) -> datetime:
+        # gs://bucket/some/path/to/file_yyyymmdd_hh24mmss.txt
+        file: str = file.path.split("/")[-1], dtstrfmt
+        # file_yyyymmdd_hh24mmss.txt
+        name: str = file[0].split(".")[0]
+        # file_yyyymmdd_hh24mmss
+        dt = name.split("_")[-2]
+        # yyyymmdd
+        dt = datetime.strptime(dt, dtstrfmt)
         return dt
+
+    def _extract_file_locations(
+        self, path: str | None, datefmtstr: str | None
+    ) -> dict[datetime, list[str]]:
+        dbfs = self.client.dbfs
+        if path is None:
+            raise ValueError("path must be set")
+        files = dbfs.list(path, recursive=True)
+        date_dict: dict[datetime, list[str]] = {}
+        for f in files:
+            if f.is_dir is not True:
+                dt = self._extract_date(f.path, datefmtstr)
+                if dt not in date_dict.keys():
+                    date_dict[dt] = [f.path]
+                else:
+                    date_dict[dt].append(f.path)
 
     def _mount_buckets(self):
         print("FileWorkflowController::_mount_buckets::mounting buckets")
@@ -193,7 +204,7 @@ class FileWorkflowController(object):
         )
         utils.fs.mount(raw, raw_mount)
         print("FileWorkflowController::_mount_buckets::complete")
-        
+
     def _un_mount_buckets(self):
         print("FileWorkflowController::_un_mount_buckets::un-mounting buckets")
         utils = self.dbutils
