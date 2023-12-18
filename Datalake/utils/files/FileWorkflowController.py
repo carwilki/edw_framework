@@ -169,7 +169,7 @@ class FileWorkflowController(object):
                     print(f"FileWorkflowController::_move_to_raw::Error: {e}")
                     raise e
 
-    def _extract_date(file: FileInfo, dtstrfmt: str) -> datetime:
+    def _extract_date(self,file: FileInfo, dtstrfmt: str) -> datetime:
         # gs://bucket/some/path/to/file_yyyymmdd_hh24mmss.txt
         file: str = file.path.split("/")[-1], dtstrfmt
         # file_yyyymmdd_hh24mmss.txt
