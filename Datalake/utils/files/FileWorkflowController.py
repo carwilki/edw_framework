@@ -8,9 +8,9 @@ from Datalake.utils import secrets
 from Datalake.utils.files.vars import prep, raw, processing, prep_mount, raw_mount
 
 
-class BucketConfig(BaseModel):
-    prep_bucket: str
-    archive_bucket: str
+class FileConfig(BaseModel):
+    prep_path: str
+    archive_path: str
     datefmtstr: str = "yyyymmdd_hh24mmss"
 
 
@@ -23,7 +23,7 @@ class FileWorkflowController(object):
 
     def __init__(
         self,
-        buckets: list[BucketConfig],
+        buckets: list[FileConfig],
         job_id: str,
         spark: SparkSession,
         timeout: timedelta | None = None,
@@ -44,6 +44,7 @@ class FileWorkflowController(object):
         self.dbutils = DBUtils(spark=self.session)
         self._setup_job_params()
         # self._mount_buckets()
+
         self._setup_processing_map()
         self._setup_processing_queue()
         # self._process_job_queue()
@@ -56,34 +57,34 @@ class FileWorkflowController(object):
         token = secrets.get(scope="db-token-jobsapi", key="password")
         instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
         url = f"https://{instance_id}"
-        self.client = WorkspaceClient(host=url, token=token)
         print(f"FileWorkflowController::_setup_job_params::url:{url}")
         print(f"FileWorkflowController::_setup_job_params::token:{token}")
         print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
         print("FileWorkflowController::_setup_job_params::complete")
 
-    def _setup_processing_map(self) -> dict[datetime, dict[BucketConfig, list[FileInfo]]]:
+    def _setup_processing_map(self) -> dict[datetime, dict[FileConfig, FileInfo]]:
         print("FileWorkflowController::_get_all_files::creating Processing map")
         # create a dictionary date-> bucketconfig -> file of files that need to be processed for the date.
-        pmap: dict[datetime, list[(BucketConfig,str)]] = {}
+        pmap: dict[datetime, dict[FileConfig, FileInfo]] = {}
         # foreach bucket
         for bucket_config in self.buckets:
             # list the contents of the bucket
-            files = self.dbutils.fs.ls(bucket_config.prep_bucket)
+            files = self.dbutils.fs.ls(bucket_config.prep_path)
             # foreach file in the bucket
             for f in files:
-                #if the size is 0 then its a directory and should be skipped. 
+                # if the size is 0 then its a directory and should be skipped.
                 if f.size != 0:
-                    date = self._extract_date(f,bucket_config.datefmtstr)
-                    if date not in date_dict:
-                        pmap[date] = 
-                    
+                    date = self._extract_date(f, bucket_config.datefmtstr)
+                    if date not in pmap:
+                        pmap[date] = {bucket_config: f}
+                    else:
+                        pmap[date] += {bucket_config: f}
 
         print(
             f"""FileWorkflowController::_get_all_files::Processing map created:
-{date_dict}"""
+{pmap}"""
         )
-        self.processing_map = date_dict
+        self.processing_map = pmap
 
     def _setup_processing_queue(self):
         print(
@@ -132,7 +133,7 @@ class FileWorkflowController(object):
             # get the file for the bucket
             files = file_map[b]
             for f in files:
-                self.dbutils.fs.mv(f.path, f"{b.prep_bucket}/processing/")
+                self.dbutils.fs.mv(f.path, f"{b.prep_path}/processing/")
 
     def _move_to_prep(self, dt: datetime) -> None:
         # get the bucket -> file map for processing
@@ -143,7 +144,7 @@ class FileWorkflowController(object):
             if f is not None:
                 # move the file to the processing directory
                 try:
-                    self.client.dbfs.move(f"{b.prep_bucket}/{processing}/{f.name}")
+                    self.client.dbfs.move(f"{b.prep_path}/{processing}/{f.name}")
                 except Exception as e:
                     print(
                         f"FileWorkflowController::_move_to_prep::Error moving file: {f.path}"
@@ -159,7 +160,7 @@ class FileWorkflowController(object):
             if f is not None:
                 try:
                     self.client.dbfs.move(
-                        f"{b.prep_bucket}/{processing}/{f.name}", f"{raw}/{f.name}"
+                        f"{b.prep_path}/{processing}/{f.name}", f"{raw}/{f.name}"
                     )
                 except Exception as e:
                     print(
