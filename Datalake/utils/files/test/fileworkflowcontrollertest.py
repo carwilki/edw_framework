@@ -6,7 +6,7 @@ from Datalake.utils.files.FileWorkflowController import (
 
 # COMMAND ----------
 bucket = FileConfig(
-    prep_path="gs://petm-bdpl-dev-shared-p1-gcs-gbl/cwilkins01/file_controller_test/prep/file_controller_test/",
-    archive_path="gs://petm-bdpl-dev-shared-p1-gcs-gbl/cwilkins01/file_controller_test/archive/file_controller_test/",
+    prep_path="cwilkins01/file_controller_test/prep/file_controller_test/",
+    archive_path="cwilkins01/file_controller_test/archive/file_controller_test/",
 )
 controller = FileWorkflowController(buckets=[bucket], job_id="1", spark=spark)

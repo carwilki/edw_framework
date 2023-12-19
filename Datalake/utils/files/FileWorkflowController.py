@@ -6,7 +6,7 @@ from databricks.sdk.dbutils import FileInfo
 from datetime import datetime, timedelta
 from pydantic import BaseModel, compu
 from Datalake.utils import secrets
-from Datalake.utils.files.vars import prep, raw, processing, prep_mount, raw_mount
+from Datalake.utils.files import vars
 
 
 class FileConfig(BaseModel):
@@ -16,7 +16,7 @@ class FileConfig(BaseModel):
     
     @property.fget
     def prep_path(self):
-        return self.prep_folder
+        return vars.getPrepBucket() +self.prep_folder
     
     @property.fget
     def archive_path(self):
@@ -37,6 +37,7 @@ class FileWorkflowController(object):
         buckets: list[FileConfig],
         job_id: str,
         spark: SparkSession,
+        env: str = "dev",
         timeout: timedelta | None = None,
     ):
         self.buckets = buckets
@@ -51,7 +52,7 @@ class FileWorkflowController(object):
 
         if self.session is None:
             raise ValueError("spark must have a SparkSession instance")
-
+        
         self.dbutils = DBUtils(spark=self.session)
         self._setup_job_params()
         # self._mount_buckets()
