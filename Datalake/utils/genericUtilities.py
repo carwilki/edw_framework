@@ -343,6 +343,17 @@ def writeToFlatFile(df, filePath, fileName, mode):
 
     renamePartFileName(filePath, newFilePath)
 
+def renamePartFileNames(filePath, newFilename ,ext = ''):
+    fileList = dbutils.fs.ls(filePath)
+
+    for file in fileList:
+        if file.name.startswith("part-0000"):
+            print(file.name)
+            partFileName = filePath.strip("/") + "/" + file.name
+            print("part file name:", partFileName)
+            print("new file name:", newFilename + ext)
+            dbutils.fs.cp(partFileName, newFilename  + ext)
+            dbutils.fs.rm(filePath,True)
 
 def execute_cmd_on_edge_node(cmd_parameter, mykey):
     import os

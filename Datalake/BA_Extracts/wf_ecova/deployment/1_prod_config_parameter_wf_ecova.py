@@ -12,7 +12,7 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_ecova' 
 parameter_section='m_ecova_department' 
 parameter_key='key' 
-parameter_value='ecova_department.dat' 
+parameter_value='pet_dept.txt' 
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_ecova' 
@@ -24,8 +24,21 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_ecova' 
 parameter_section='m_ecova_employee' 
 parameter_key='key' 
-parameter_value='ecova_employee.dat' 
+parameter_value='pet_empl.txt' 
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+
+parameter_file_name='wf_ecova' 
+parameter_section='m_ecova_employee' 
+parameter_key='nas_target_path' 
+parameter_value='\\\\\\\\nas05\\\\edwshare\\\\DataLake\\\\Temp_NZ_Migration\\\\ECOVA\\\\' 
+insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+
+parameter_file_name='wf_ecova' 
+parameter_section='m_ecova_department' 
+parameter_key='nas_target_path' 
+parameter_value='\\\\\\\\nas05\\\\edwshare\\\\DataLake\\\\Temp_NZ_Migration\\\\ECOVA\\\\'
+insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+
 
 
 
