@@ -787,9 +787,14 @@ key = key[:-4]+ f'_' + str(current_date) + key[-4:]
 target_bucket=target_bucket+sub_folder+ f'/' + str(current_date) + f'/' 
 
 target_file=target_bucket + key
+# nas_target_path=getParameterValue(raw,'wf_ecova','m_ecova_department','nas_target_path')
 
-nas_target_path=getParameterValue(raw,'wf_ecova','m_ecova_department','nas_target_path')
-nas_target_path=nas_target_path + sub_folder + '\\'
+if env == "prod":
+    nas_target_path = "/mnt/nas05/edwshare/DataLake/Temp_NZ_Migration/ECOVA/"
+else:
+    nas_target_path = "/mnt/ssgnas01/devl-edwshare/DataLake/NZ_Migration_Test/ECOVA/"
+
+nas_target_path=nas_target_path + sub_folder + '/'
 
 #\\nas05\edwshare\DataLake\Temp_NZ_Migration\ECOVA\
 
