@@ -111,7 +111,7 @@ if env == "prod":
 else:
     nas_target_path = "/mnt/ssgnas01/devl-edwshare/DataLake/NZ_Migration_Test/ECOVA/"
 
-nas_target_path=nas_target_path + sub_folder + '//'
+nas_target_path=nas_target_path + sub_folder + '/'
 
 # COMMAND ----------
 
