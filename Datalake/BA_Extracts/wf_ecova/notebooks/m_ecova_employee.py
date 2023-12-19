@@ -94,11 +94,18 @@ EXP_Department = EMPL_PROFILE_temp.selectExpr(
 
 # COMMAND ----------
 
+current_date = datetime.today().strftime('%Y%m%d')
+sub_folder="pet_empl"
 target_bucket=getParameterValue(raw,'wf_ecova','m_ecova_employee','target_bucket')
 key=getParameterValue(raw,'wf_ecova','m_ecova_employee','key')
 
+key = key[:-4]+ f'_' + str(current_date) + key[-4:]
+target_bucket=target_bucket+sub_folder+ f'/' + str(current_date) + f'/' 
+
 target_file=target_bucket + key
 
+nas_target_path=getParameterValue(raw,'wf_ecova','m_ecova_employee','nas_target_path')
+nas_target_path=nas_target_path + sub_folder + '\\'
 
 # COMMAND ----------
 
@@ -132,11 +139,23 @@ Shortcut_to_ECOVA_EMPLOYEE = EXP_Department.selectExpr(
 	"CAST(PERMISSION AS STRING) as PERMISSION"
 )
 
+# COMMAND ----------
 
 Shortcut_to_ECOVA_EMPLOYEE=Shortcut_to_ECOVA_EMPLOYEE.withColumnRenamed("PERMISSION","PERMISSION ")
 cols = Shortcut_to_ECOVA_EMPLOYEE.columns
 cols =[col.lower() for col in cols ]
 Shortcut_to_ECOVA_EMPLOYEE=Shortcut_to_ECOVA_EMPLOYEE.toDF(*cols)
 
-Shortcut_to_ECOVA_EMPLOYEE.write.mode('overwrite').option("ignoreLeadingWhiteSpace","false").option("ignoreTrailingWhiteSpace", "false").options(header='True', delimiter='|').csv(target_file)
+
+
+try:
+	Shortcut_to_ECOVA_EMPLOYEE.repartition(1).write.mode('overwrite').option("ignoreLeadingWhiteSpace","false").option("ignoreTrailingWhiteSpace", "false").options(header='True', delimiter='|').csv(target_bucket.strip("/") + "/" + key[:-4])
+	removeTransactionFiles(target_bucket.strip("/") + "/" + key[:-4])
+	newFilePath = target_bucket.strip("/") + "/" + key[:-4]
+	renamePartFileNames(newFilePath, newFilePath,'.txt')
+	copy_file_to_nas(target_file, nas_target_path)
+	logPrevRunDt("wf_ecova", "ecova_employee", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+	logPrevRunDt("wf_ecova", "ecova_employee","Failed",str(e), f"{raw}.log_run_details", )
+	raise e
 

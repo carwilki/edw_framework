@@ -33,6 +33,11 @@
           "pypi": {
             "package": "retry"
           }
+        },
+        {
+          "pypi": {
+            "package": "paramiko"
+          }
         }
       ],
       "timeout_seconds": 0,
@@ -64,6 +69,11 @@
         {
           "pypi": {
             "package": "retry"
+          }
+        },
+        {
+          "pypi": {
+            "package": "paramiko"
           }
         }
       ],

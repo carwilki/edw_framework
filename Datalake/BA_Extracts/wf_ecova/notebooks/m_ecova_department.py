@@ -778,10 +778,20 @@ SQ_Shortcut_to_SITE_PROFILE = SQ_Shortcut_to_SITE_PROFILE \
 
 # COMMAND ----------
 
+current_date = datetime.today().strftime('%Y%m%d')
+sub_folder="pet_dept"
 target_bucket=getParameterValue(raw,'wf_ecova','m_ecova_department','target_bucket')
 key=getParameterValue(raw,'wf_ecova','m_ecova_department','key')
 
+key = key[:-4]+ f'_' + str(current_date) + key[-4:]
+target_bucket=target_bucket+sub_folder+ f'/' + str(current_date) + f'/' 
+
 target_file=target_bucket + key
+
+nas_target_path=getParameterValue(raw,'wf_ecova','m_ecova_department','nas_target_path')
+nas_target_path=nas_target_path + sub_folder + '\\'
+
+#\\nas05\edwshare\DataLake\Temp_NZ_Migration\ECOVA\
 
 
 # COMMAND ----------
@@ -810,14 +820,24 @@ Shortcut_to_ECOVA_DEPARTMENT = SQ_Shortcut_to_SITE_PROFILE.selectExpr(
 	"CAST(SHOW_AS_BUSINESS_UNIT AS STRING) as SHOW_AS_BUSINESS_UNIT"
 )
 
+
+# COMMAND ----------
+
 Shortcut_to_ECOVA_DEPARTMENT=Shortcut_to_ECOVA_DEPARTMENT.withColumnRenamed("SHOW_AS_BUSINESS_UNIT", "SHOW_AS_BUSINESS_UNIT ")
 cols = Shortcut_to_ECOVA_DEPARTMENT.columns
 cols =[col.lower() for col in cols ]
 Shortcut_to_ECOVA_DEPARTMENT=Shortcut_to_ECOVA_DEPARTMENT.toDF(*cols)
 
-Shortcut_to_ECOVA_DEPARTMENT.write.mode('overwrite').option("ignoreLeadingWhiteSpace","false").option("ignoreTrailingWhiteSpace", "false").options(header='True', delimiter='|').csv(target_file)
 
-
-# COMMAND ----------
+try:
+     Shortcut_to_ECOVA_DEPARTMENT.repartition(1).write.mode('overwrite').option("ignoreLeadingWhiteSpace","false").option("ignoreTrailingWhiteSpace", "false").options(header='True', delimiter='|').csv(target_bucket.strip("/") + "/" + key[:-4])
+     removeTransactionFiles(target_bucket.strip("/") + "/" + key[:-4])
+     newFilePath = target_bucket.strip("/") + "/" + key[:-4]
+     renamePartFileNames(newFilePath, newFilePath,'.txt')
+     copy_file_to_nas(target_file, nas_target_path)
+     logPrevRunDt("wf_ecova", "ecova_department", "Completed", "N/A", f"{raw}.log_run_details")
+except Exception as e:
+     logPrevRunDt("wf_ecova", "ecova_department","Failed",str(e), f"{raw}.log_run_details", )
+     raise e
 
 
