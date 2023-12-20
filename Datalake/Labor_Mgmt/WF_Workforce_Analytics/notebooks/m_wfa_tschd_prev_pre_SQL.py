@@ -45,6 +45,7 @@ SQ_Shortcut_to_WFA_TSCHD_PRE = SQ_Shortcut_to_WFA_TSCHD_PRE \
 # COMMAND ----------
 # Processing node SQL_INS_and_DUPS_CHECK, type SQL_TRANSFORM 
 # COLUMN COUNT: 9
+spark.sql(f"""TRUNCATE table {empl_protected}.raw_wfa_tschd_prev_pre""")
 
 spark.sql(f"""INSERT INTO {empl_protected}.raw_wfa_tschd_prev_pre
 SELECT TSCHD_ID,
@@ -200,3 +201,4 @@ SELECT TSCHD_ID,
 # 	"CAST(ABORT_SESSION AS STRING) as ABORT_SESSION"
 # )
 # Shortcut_to_SQL_TRANSFORM_DUMMY_TARGET1.write.saveAsTable(f'{raw}.SQL_TRANSFORM_DUMMY_TARGET')
+# COMMAND ----------
