@@ -1,6 +1,6 @@
 from Datalake.utils.genericUtilities import *
 
-raw='dev_raw'
+raw='raw'
 parameter_file_name='wf_Store_Data'
 parameter_section='m_store_data'
 parameter_key='source_bucket'
