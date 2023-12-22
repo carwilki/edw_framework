@@ -60,7 +60,7 @@
           "use_preemptible_executors": false,
           "google_service_account": "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com",
           "availability": "ON_DEMAND_GCP",
-          "zone_id": "HA"
+          "zone_id": "auto"
         },
         "node_type_id": "n2-standard-8",
         "custom_tags": {
@@ -70,8 +70,6 @@
           "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
         },
         "enable_elastic_disk": false,
-        "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
-        "runtime_engine": "STANDARD",
         "autoscale": {
           "min_workers": 2,
           "max_workers": 8
