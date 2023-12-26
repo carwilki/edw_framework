@@ -86,7 +86,7 @@ FIL_IS_NUMBER = SQ_Shortcut_to_DIM_EMP_temp.selectExpr(
 	"SQ_Shortcut_to_DIM_EMP___EMP_BADGE_EFF_DAT as EMP_BADGE_EFF_DAT",
 	"SQ_Shortcut_to_DIM_EMP___EMP_BADGE_EXP_DAT as EMP_BADGE_EXP_DAT",
 	"SQ_Shortcut_to_DIM_EMP___EM_MNR_SWT as EM_MNR_SWT",
-	"SQ_Shortcut_to_DIM_EMP___UPDT_DTM as UPDT_DTM").filter("PRSN_NBR_TXT is not null").withColumn("sys_row_id", monotonically_increasing_id())
+	"SQ_Shortcut_to_DIM_EMP___UPDT_DTM as UPDT_DTM").filter("length(translate(prsn_nbr_txt,'0123456789', '' )) = 0").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 # Processing node Shortcut_to_WFA_EMP_PRE, type TARGET 
