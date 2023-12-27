@@ -166,8 +166,48 @@ def dc41(env):
 
         return (username, password, connection_string)
 
+def or_stxp1_read(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "stxp1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_edhp1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
 
-def mtx_prd_sqlServer(env):
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        username = secrets.get(scope="SVC_BD_ORA_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key="stxp1_password")
+        hostname = "172.20.89.162"
+        portnumber = "1805"
+        db = "stxp1"
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+        return (username, password, connection_string)
+    
+def or_kro_read(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "krop1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key="temp_krop1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        username = secrets.get(scope="SVC_BD_ORA_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key="krop1_password")
+        hostname = "172.20.89.166"
+        portnumber = "1810"
+        db = "krop1"
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+        return (username, password, connection_string)
+
+
+def esdh_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
         password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
@@ -188,8 +228,65 @@ def mtx_prd_sqlServer(env):
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
+    raise Exception(f"Environment {env} is not supported")
+
+
+
+def store_loc_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="store_locator_password")
+        hostname = "10.116.133.31"
+        portnumber = "1433"
+        db = "StoreLocator"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+    raise Exception(f"Environment {env} is not supported")
+
+
+def salon_call_log_daily_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = dbutils.secrets.get(scope="svc_bd_sql_np_write", key="mtx_username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_np_write", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = (
+            "jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="svc_bd_sql_p_write", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_write", key="mtx_password")
+        hostname = "172.20.89.186"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
 
     raise Exception(f"Environment {env} is not supported")
+
 
 def pettraining_prd_sqlServer_training(env):
     if env.lower() == "dev" or env.lower() == "qa":
@@ -206,7 +303,7 @@ def pettraining_prd_sqlServer_training(env):
         # username, password, hostname
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
         password = secrets.get(scope="SVC_BD_SQL_P_READ", key="training_password")
-        hostname = "20.62.132.163"
+        hostname = "10.116.133.31"
         portnumber = "1433"
         db = "Training"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
@@ -214,6 +311,7 @@ def pettraining_prd_sqlServer_training(env):
         return (username, password, connection_string)
 
     raise Exception(f"Environment {env} is not supported")
+
 
 def pettraining_prd_sqlServer_trainingSched(env):
     if env.lower() == "dev" or env.lower() == "qa":
@@ -239,7 +337,34 @@ def pettraining_prd_sqlServer_trainingSched(env):
 
     raise Exception(f"Environment {env} is not supported")
 
+
 def timesmart_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":      
+        # Access time_tracking db through a linked server in MTX_PRD
+        # username, password, hostname        
+        username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
+        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="mtx_password")
+        hostname = "172.20.89.186"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+        linked_server = "timetracking"
+
+        return (username, password, connection_string, linked_server)
+
+    raise Exception(f"Environment {env} is not supported")
+
+def UserDataFeed_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
         password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
@@ -253,16 +378,15 @@ def timesmart_prd_sqlServer(env):
     if env.lower() == "prod":
         # username, password, hostname
         username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="time_tracking_password")
-        hostname = "172.20.72.51"
-        portnumber = "1433"
-        db = "Time_Tracking"
+        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="udf_password")
+        hostname = "172.20.89.138"
+        portnumber = "1840"
+        db = "UserDataFeed"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
 
     raise Exception(f"Environment {env} is not supported")
-
 
 def petHotel_prd_sqlServer(env):
     if env.lower() == "dev" or env.lower() == "qa":
@@ -282,30 +406,6 @@ def petHotel_prd_sqlServer(env):
         hostname = "172.20.89.184"
         portnumber = "1840"
         db = "eReservations"
-        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
-
-        return (username, password, connection_string)
-
-    raise Exception(f"Environment {env} is not supported")
-
-def IKB_ODS_Daily_prd_sqlServer(env):
-    if env.lower() == "dev" or env.lower() == "qa":
-        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
-        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
-        hostname = "172.17.89.188"
-        portnumber = "1840"
-        db = "CKB_PRD"
-        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
-
-        return (username, password, connection_string)
-
-    if env.lower() == "prod":
-        # username, password, hostname
-        username = secrets.get(scope="SVC_BD_SQL_P_READ", key="username")
-        password = secrets.get(scope="SVC_BD_SQL_P_READ", key="ckb_password")
-        hostname = "172.20.89.153"
-        portnumber = "1840"
-        db = "CKB_PRD"
         connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
 
         return (username, password, connection_string)
@@ -384,10 +484,12 @@ def getMaxDate(refine_table_name, schema):
     logger = getLogger()
     logger.info("getMaxDate funcation is getting executed")
 
-    if "dev" in schema or "qa" in schema:
-        metadataSchema = schema.split("_")[0] + "_refine"
+    if "dev" in schema:
+      metadataSchema = "dev_stranger_things"
+    elif "qa" in schema:
+      metadataSchema = "qa_stranger_things"
     else:
-        metadataSchema = "refine"
+      metadataSchema = "stranger_things"
 
     metadata_df = spark.table(f"{metadataSchema}.ingestion_metadata")
     try:
@@ -449,6 +551,28 @@ def getMaxDate(refine_table_name, schema):
     return maxDate
 
 
+def or_kro_read_krap1(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = "SVC_BD_ORA_NP_READ"
+        hostname = "172.17.89.238"
+        portnumber = "1800"
+        db = "krap1"
+        password = secrets.get(scope="SVC_BD_ORA_NP_READ", key=f"temp_krap1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        username = secrets.get(scope="SVC_BD_ORA_P_READ", key="username")
+        hostname = "172.20.89.168"
+        portnumber = "1812"
+        db = "KRAP1"
+        password = secrets.get(scope="SVC_BD_ORA_P_READ", key="krap1_password")
+        connection_string = f"jdbc:oracle:thin:@//{hostname}:{portnumber}/{db}.world"
+
+        return (username, password, connection_string)
+
+
 def or_kro_read_edhp1(env):
     if env.lower() == "dev" or env.lower() == "qa":
         username = "SVC_BD_ORA_NP_READ"
@@ -471,3 +595,89 @@ def or_kro_read_edhp1(env):
         return (username, password, connection_string)
 
     raise Exception(f"Environment {env} is not supported")
+
+
+def evdh_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="evdh_password")
+        hostname = "172.20.89.138"
+        portnumber = "1840"
+        db = "EnterpriseVendorDataHub"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+    raise Exception(f"Environment {env} is not supported")
+
+
+def Get_Smart_Training_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = secrets.get(scope="svc_bd_sql_p_read", key="getsmarttrn_password")
+        hostname = "172.20.89.187"
+        portnumber = "1840"
+        db = "GetSmartTraining_V1"
+        connection_string = f"""jdbc:sqlserver://{hostname}:{portnumber};databaseName={db};encrypt=true;trustServerCertificate=true;"""
+
+        return (username, password, connection_string)
+
+    raise Exception(f"Environment {env} is not supported")
+
+
+def ckb_prd_sqlServer(env):
+    if env.lower() == "dev" or env.lower() == "qa":
+        username = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_np_read", key="mtx_password")
+        hostname = "172.17.89.188"
+        portnumber = "1840"
+        db = "MTX_PRD"
+        connection_string = (
+            "jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
+
+    if env.lower() == "prod":
+        # username, password, hostname
+        username = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="username")
+        password = dbutils.secrets.get(scope="svc_bd_sql_p_read", key="ckb_password")
+        hostname = "172.20.89.153"
+        portnumber = "1840"
+        db = "CKB_PRD"
+        connection_string = (
+            f"jdbc:sqlserver://"
+            + hostname
+            + ":"
+            + portnumber
+            + ";databaseName="
+            + db
+            + ";encrypt=true;trustServerCertificate=true;"
+        )
+        return (username, password, connection_string)
