@@ -33,7 +33,7 @@ raw = getEnvPrefix(env) + 'raw'
 legacy = getEnvPrefix(env) + 'legacy'
 
 # Read in relation source variables
-(username, password, connection_string) = IKB_ODS_Daily_prd_sqlServer(env)
+(username, password, connection_string) = ckb_prd_sqlServer(env)
 db_name = "CKB_PRD"
 
 # COMMAND ----------
