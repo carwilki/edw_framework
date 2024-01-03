@@ -17,7 +17,7 @@
 # MAGIC "NZ_Migration", null, 'NZ_Mako8_legacy', "EDW_PRD", "SALES_DAY_SKU_STORE_RPT",
 # MAGIC null, false, null, false, "delta",
 # MAGIC "legacy", null, "sales_day_sku_store_rpt", "upsert", "UPDATE_DT", 
-# MAGIC "DAY_DT,PRODUCT_ID,LOCATION_ID,SALES_CUST_CAPTURE_CD", "UPDATE_DT>='2023-12-31'", "daily", null, array("DUMMY_TIDAL_JOB"), 
+# MAGIC "DAY_DT,PRODUCT_ID,LOCATION_ID,SALES_CUST_CAPTURE_CD", "UPDATE_DT>='2024-01-01'", "daily", null, array("DUMMY_TIDAL_JOB"), 
 # MAGIC null, array("abelsare@petsmart.com","pkulkarni@petsmart.com","sjaiswal@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
 # MAGIC null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null
 # MAGIC );
