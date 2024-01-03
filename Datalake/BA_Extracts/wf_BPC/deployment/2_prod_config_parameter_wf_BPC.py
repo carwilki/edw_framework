@@ -19,5 +19,5 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_BPC' 
 parameter_section='m_bpc_ff' 
 parameter_key='nas_target_path' 
-parameter_value='\\\\\\\\nas05\\\\edwshare\\\\DataLake\\\\Temp_NZ_Migration\\\\Finance\\\\BPC\\\\'
+parameter_value='/mnt/nas05/edwshare/DataLake/Temp_NZ_Migration/Finance/BPC/'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
