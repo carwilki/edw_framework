@@ -1,3 +1,4 @@
+-- Databricks notebook source
 
 DROP TABLE legacy.EDU_ASSESSMENTS;
 
@@ -6,12 +7,13 @@ CREATE TABLE refine.EDU_ASSESSMENTS_history
 USING delta
 LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/IT/edu_assessments';
 
+-- COMMAND ----------
 
 --*****  Creating table:  "EDU_ASSESSMENTS" , ***** Creating table: "EDU_ASSESSMENTS"
 
 
 use legacy;
- CREATE TABLE  EDU_ASSESSMENTS 
+CREATE TABLE  EDU_ASSESSMENTS 
 (  ASSESSMENT_MID BIGINT not null
 
 , ASSESSMENT_LID BIGINT not null
@@ -55,9 +57,10 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Education/edu_assessments';
 --DISTRIBUTE ON RANDOM
 
 
+-- COMMAND ----------
 
 
-DROP TABLE legacy.EDU_RESULT
+DROP TABLE legacy.EDU_RESULT;
 
 
 CREATE TABLE refine.EDU_RESULT_history
@@ -69,7 +72,7 @@ LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/IT/edu_result';
 
 
 use legacy;
- CREATE TABLE  EDU_RESULT 
+CREATE TABLE  EDU_RESULT 
 (  RESULT_ID BIGINT not null
 
 , TEST_TAKEN_DT                               TIMESTAMP                            not null
@@ -199,10 +202,11 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Education/edu_result';
 --DISTRIBUTE ON (RESULT_ID)
 
 
+-- COMMAND ----------
 
 
 
-DROP TABLE legacy.EDU_CERT_SUMMARY
+DROP TABLE legacy.EDU_CERT_SUMMARY;
 
 
 CREATE TABLE refine.EDU_CERT_SUMMARY_history
@@ -215,7 +219,7 @@ LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/IT/edu_cert_summary';
 
 
 use legacy;
- CREATE TABLE  EDU_CERT_SUMMARY 
+CREATE TABLE  EDU_CERT_SUMMARY 
 (  DAY_DT                                      TIMESTAMP                            not null
 
 , EMPLOYEE_ID BIGINT not null
@@ -241,10 +245,11 @@ LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Education/edu_cert_summary'
 --DISTRIBUTE ON (EMPLOYEE_ID)
 
 
+-- COMMAND ----------
 
 
 
-DROP TABLE legacy.EDU_CERT_DAILY
+DROP TABLE legacy.EDU_CERT_DAILY;
 
 
 CREATE TABLE refine.EDU_CERT_DAILY_history
@@ -257,7 +262,7 @@ LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/IT/edu_cert_daily';
 
 
 use legacy;
- CREATE TABLE  EDU_CERT_DAILY 
+CREATE TABLE  EDU_CERT_DAILY 
 (  DAY_DT                                      TIMESTAMP                            not null
 
 , EMPLOYEE_ID BIGINT not null
