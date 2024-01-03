@@ -29,7 +29,7 @@ def trigger_rocky_job(payload):
 import csv
 import time
 
-tables = ['WMS_INV_NEED_TYPE', 'WM_E_JOB_FUNCTION', 'WMS_JOB_FUNCTION']
+tables = ['WMS_JOB_FUNCTION']
 
 for table in tables:    
   print(table)
