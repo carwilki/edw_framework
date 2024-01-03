@@ -4,7 +4,7 @@ DROP TABLE legacy.pog_sku_store_pro;
  
 CREATE TABLE refine.pog_sku_store_pro_history
 USING delta
-LOCATION 'ggs://petm-bdpl-prod-refine-p1-gcs-gbl/legacy/pog_sku_store_pro';
+LOCATION 'gs://petm-bdpl-prod-refine-p1-gcs-gbl/legacy/pog_sku_store_pro';
  
 
 # COMMAND ----------
