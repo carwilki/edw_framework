@@ -1,21 +1,14 @@
 # Databricks notebook source
-from Datalake.utils.rocky_script_automation.RockyAutomationUtils import *
-from pyspark.sql.functions import *
+# Databricks notebook source
+from pyspark.sql.functions import col
+import csv
 
-# COMMAND ----------
+tables = ['WMS_INV_NEED_TYPE', 'WM_E_JOB_FUNCTION', 'WMS_JOB_FUNCTION']
 
-legacy_tables = ['WMS_INV_NEED_TYPE', 'WM_E_JOB_FUNCTION', 'WMS_JOB_FUNCTION']
-copy_hist_to_legacy(legacy_tables)
-
-# COMMAND ----------
-
-table_list = ['WMS_INV_NEED_TYPE', 'WM_E_JOB_FUNCTION', 'WMS_JOB_FUNCTION'] 
-
-# COMMAND ----------
-
-for table in table_list:
-    try:
-      spark.sql(f"drop table  refine.{table}_history")
-      print(f"refine.{table}_history deleted")
-    except Exception as e:
-      print("failed for ", table, e)
+for table in tables:    
+  print(table)
+  rocky_table = f"refine.{table}_history"
+  target_table = f"legacy.{table}"
+  df = spark.sql(f"select * from {rocky_table}")
+  df = df.drop(col("bd_create_dt_tm"),col("bd_update_dt_tm"),col("source_file_name"))
+  df.write.insertInto(f"{target_table}",overwrite=True)
