@@ -1,5 +1,4 @@
 # Databricks notebook source
-# Databricks notebook source
 from pyspark.sql.functions import col
 import csv
 
