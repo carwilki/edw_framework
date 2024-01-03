@@ -2,7 +2,7 @@
 from pyspark.sql.functions import col
 import csv
 
-tables = ['WMS_INV_NEED_TYPE', 'WM_E_JOB_FUNCTION', 'WMS_JOB_FUNCTION']
+tables = ['WMS_JOB_FUNCTION']
 
 for table in tables:    
   print(table)
