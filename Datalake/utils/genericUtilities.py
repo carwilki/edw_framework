@@ -459,6 +459,17 @@ def insert_param_config(
     return f"ID of the {parameter_key} is {id+1}"
 
 
+def update_param_config(
+    raw, parameter_file_name, parameter_section, parameter_key, parameter_value
+):
+
+    spark.sql(
+        f"""Update {raw}.parameter_config set parameter_value="{parameter_value}" where parameter_file_name='{parameter_file_name}' and parameter_section='{parameter_section}' and parameter_key='{parameter_key}'"""
+    )
+    return f"Update Complete for {parameter_key}"    
+
+
+
 def get_source_file(key, _bucket):
     import builtins
 
