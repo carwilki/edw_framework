@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime, timedelta
 from logging import INFO, getLogger
 from pyspark.sql.session import SparkSession
-from Datalake.utils.sync.utils import parse_delta
+from Datalake.utils.timedeltautils import parse_delta
 
 from Datalake.utils.sync.batch.BatchManager import BatchManager
 from Datalake.utils.sync.batch.BatchReaderSourceType import BatchReaderSourceType

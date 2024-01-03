@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.dbutils import DBUtils
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.dbutils import FileInfo
+from databricks.sdk.service.jobs import RunResultState
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from Datalake.utils import secrets
@@ -47,7 +48,6 @@ class FileWorkflowController(object):
         self.timeout = config.timeout
         self.job_id = config.job_id
         self.env = config.env
-        self.max_time_gap = config.max_time_gap
 
         if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
@@ -60,12 +60,13 @@ class FileWorkflowController(object):
 
         self.dbutils = DBUtils(spark=self.session)
         self._setup_job_params()
-        # self._mount_buckets()
+
+    def execute(self):
         self._setup_processing_map()
         self._setup_processing_queue()
         self._validate_processing_queue()
         self._process_job_queue()
-        # self._run_workflow()
+        self._run_workflow()
 
     def _setup_job_params(self):
         print("FileWorkflowController::_setup_job_params::setting up job params")
@@ -98,7 +99,6 @@ class FileWorkflowController(object):
                         pmap[date][fc] = f
                         
         self.processing_map = pmap
-        self._pp_file_date_map()
         self._pp_processing_map()
 
     def _setup_processing_queue(self):
@@ -121,12 +121,10 @@ class FileWorkflowController(object):
     def _process_job_queue(self):
         print("FileWorkflowController::_process_job_queue::processing job queue")
         for dt in self.queue:
-            dt = self.queue.get()
             print(f"FileWorkflowController::_process_job_queue::processing date: {dt}")
-
             try:
                 self._move_to_processing(dt)
-                # self._run_workflow()
+                self._run_workflow()
                 self._move_to_raw(dt)
             except Exception as e:
                 print(
@@ -136,11 +134,15 @@ class FileWorkflowController(object):
                 raise e
 
     def _run_workflow(self) -> None:
-        return None
-        r = self.client.jobs.run_now_and_wait(job_id=self.job_id, timeout=self.timeout)
-        if r.state.state_message != "SUCCESS":
+        print("FileWorkflowController::_run_workflow::running workflow")
+        r = self.ws_client.jobs.run_now_and_wait(job_id=self.job_id, timeout=self.timeout)
+        if r.state.result_state != RunResultState.SUCCESS:
             raise Exception(
                 f"FileWorkflowController::_run_workflow::Job with Id {self.job_id} completed other than successfull: {r.state}"
+            )
+        else:
+            print(
+                f"FileWorkflowController::_run_workflow::Job with Id {self.job_id} completed successfully: {r.state}"
             )
 
     def _move_to_processing(self, dt: datetime) -> None:
@@ -233,7 +235,7 @@ class FileWorkflowController(object):
     def _pp_processing_queue(self) -> None:
         if self.queue is not None:
             print("FileWorkflowController::_pp_processing_queue::processing queue:")
-            for d in self.queue:
+            for dt in self.queue:
                 print(
                     f"\tFileWorkflowController::_pp_processing_queue::processing date: {dt}"
                 )
