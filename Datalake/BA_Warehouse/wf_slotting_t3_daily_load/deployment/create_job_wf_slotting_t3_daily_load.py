@@ -1,5 +1,4 @@
 # Databricks notebook source
-# Databricks notebook source
 import requests
 import json
 token = dbutils.secrets.get(scope = "db-token-jobsapi", key = "password")
