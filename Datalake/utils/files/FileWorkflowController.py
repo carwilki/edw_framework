@@ -10,39 +10,110 @@ from Datalake.utils.files import vars
 
 
 class FileConfig(BaseModel):
+    """
+    File configs are models that map the details needed to 
+    process the file
+    This inherits from Pydantic BaseModel
+    """
+    
+    """
+    the prep folder for processing
+    """
     prep_folder: str
+    """
+    the archive folder for processing
+    """
     archive_folder: str
+    """
+    the date format for the file name
+    """
     datefmtstr: str = "%Y%m%d_%H%M%S"
-    max_time_gap = timedelta(days=1)
-
+    
     def prep_path(self, env: str) -> str:
+        """
+        Returns the full prep path for the given env
+        :param env: the current evn
+        :type env: str
+        :return: a string with the address of the prep folder
+        :rtype: str
+        """
         return vars.getPrepBucket(env) + "/" + self.prep_folder + "/"
 
     def processing_path(self, env: str) -> str:
+        """
+        Returns the full processing path for the given env
+        :param env: the current evn
+        :type env: str
+        :return: a string with the address of the processing folder
+        """
         return f"{vars.getPrepBucket(env)}/{self.prep_folder}/processing/"
 
     def archive_path(self, env: str, date: datetime) -> str:
+        """
+        Returns the full archive path for the given env and date
+        :param env: the current evn
+        :type env: str
+        :param date: the date that for this file to be archived
+        """
         return f"{vars.getArchiveBucket(env)}/{self.archive_folder}/{date.strftime('%Y%m%d')}/"
 
     class Config:
+        """
+        freezes the config
+        """
         frozen = True
 
 
 class FileWorkflowControllerConfg(BaseModel):
+    """
+        FileWorkflowControllerConfg is a model that contains
+        all of the config details to run a file based workflow job
+        This inherits from Pydantic BaseModel
+    """
+    
+    """
+    the id of the job
+    """
     job_id: str
+    """
+    the individual configs for each gcs://bucket/folder pair
+    """
     file_configs: list[FileConfig]
+    """
+    the environment to run the job in dev,qa,prod
+    """
     env: str
+    """
+    the timeout for the job
+    """
     timeout: timedelta = timedelta(minutes=120)
 
 
 class FileWorkflowController(object):
-    """_summary_
-
+    """
+    FileWorkflowController is a class that is used as an entry point for processing
+    workflows that require files to be processed.
+    
+    The main objective is to manage the files and move them into the appropriate
+    buckets for processing.This is done by creating a queue of files to be processed,
+    that is scanned for any daily gaps in the expected file dates and processes the files
+    in order of arriving date.
+    
     Args:
         object (_type_): _description_
     """
 
     def __init__(self, spark: SparkSession, config: FileWorkflowControllerConfg):
+        """
+        sets up the FileWorkflowController object
+        :param spark: needs a spark session
+        :type spark: SparkSession
+        :param config: a FileWorkflowControllerConfg object
+        :type config: FileWorkflowControllerConfg
+        :raises ValueError: fails if the job_id is not set
+        :raises ValueError: fails if the buckets are not set
+        :raises ValueError: fails if the spark session is not set
+        """
         self.file_configs = config.file_configs
         self.session = spark
         self.timeout = config.timeout
