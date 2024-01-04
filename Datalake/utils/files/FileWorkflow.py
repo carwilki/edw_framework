@@ -57,8 +57,21 @@ parser.add_argument(
 
 
 def splitpaths(path: str) -> FileConfig:
+    """
+    Splits a path string in the form of "gcs://bucket/path/to/prep::gcs://bucket/path/to/archive"
+    into two FileConfig objects.
+
+    Args:
+        path (str): The path string to split.
+
+    Returns:
+        FileConfig: A FileConfig object containing the input and output paths.
+
+    Raises:
+        ValueError: If the path is not in the expected format.
+    """
     i, o = path.split("::")
-    FileConfig(prep_folder=i, archive_folder=o)
+    return FileConfig(prep_folder=i, archive_folder=o)
 
 
 args = parser.parse_args()
