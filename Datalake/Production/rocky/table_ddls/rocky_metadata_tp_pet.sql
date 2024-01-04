@@ -1,4 +1,8 @@
 -- Databricks notebook source
+-- MAGIC %md
+-- MAGIC ####Rocky table TP_PET, as it is a required source for wf_petshotel_email_extract  
+
+-- COMMAND ----------
 
 INSERT INTO work.rocky_ingestion_metadata (
 table_group, table_group_desc, source_type, source_db, source_table, 
@@ -19,6 +23,7 @@ null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null
 
 -- COMMAND ----------
 
+-- DBTITLE 1,This step is required to create view with masking for sensitive details
 
 INSERT INTO work.pii_dynamic_view_control (
 secured_database, secured_table_name, view_database, view_name,
@@ -31,6 +36,7 @@ false, "tmarimuthu", current_timestamp(), current_timestamp()
 
 -- COMMAND ----------
 
+-- DBTITLE 1,This step is required to copy metadata details from QA table to PROD for view creation.
 
 insert into pii_metadata.pii_metadata_store
  (
