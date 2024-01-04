@@ -1,4 +1,9 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC ####Rocky table USR_ASSESSMENT_EXCEPTIONS, as it is a required source for wf_ORA2NZ_EDU_Replication_Daily
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC INSERT INTO work.rocky_ingestion_metadata (
 # MAGIC table_group, table_group_desc, source_type, source_db, source_table, 
