@@ -681,4 +681,3 @@ def ckb_prd_sqlServer(env):
             + ";encrypt=true;trustServerCertificate=true;"
         )
         return (username, password, connection_string)
-

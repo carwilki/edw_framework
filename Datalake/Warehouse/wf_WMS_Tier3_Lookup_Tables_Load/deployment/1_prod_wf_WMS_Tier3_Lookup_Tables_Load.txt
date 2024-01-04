@@ -1,0 +1,53 @@
+--*****  Creating table:  "WMS_JOB_FUNCTION" , ***** Creating table: "WMS_JOB_FUNCTION"
+
+
+use legacy;
+ CREATE TABLE  WMS_JOB_FUNCTION 
+(
+ WMS_JOB_FUNCTION_ID SMALLINT not null
+
+, WMS_JOB_FUNCTION_NAME                             STRING 
+
+, WMS_INV_NEED_TYPE_ID SMALLINT not null
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Warehouse/wms_job_function';
+
+--DISTRIBUTE ON RANDOM
+
+
+
+
+
+
+
+--*****  Creating table:  "WMS_INV_NEED_TYPE" , ***** Creating table: "WMS_INV_NEED_TYPE"
+
+
+use legacy;
+ CREATE TABLE  WMS_INV_NEED_TYPE 
+(
+ WMS_INV_NEED_TYPE_ID SMALLINT not null
+
+, WMS_INV_NEED_TYPE_DESC                            STRING 
+
+, WMS_WORK_GROUP_ID SMALLINT
+
+, WMS_WORK_GROUP_DESC                               STRING 
+
+, UPDATE_DT     TIMESTAMP 
+
+, LOAD_DT       TIMESTAMP 
+
+)
+USING delta 
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Warehouse/wms_inv_need_type';
+
+--DISTRIBUTE ON RANDOM
+
+Insert into legacy.WMS_INV_NEED_TYPE select * from qa_legacy.WMS_INV_NEED_TYPE;
