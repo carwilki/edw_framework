@@ -99,9 +99,6 @@ class FileWorkflowController(object):
     buckets for processing.This is done by creating a queue of files to be processed,
     that is scanned for any daily gaps in the expected file dates and processes the files
     in order of arriving date.
-
-    Args:
-        object (_type_): _description_
     """
 
     def __init__(self, spark: SparkSession, config: FileWorkflowControllerConfg):
@@ -144,14 +141,22 @@ class FileWorkflowController(object):
         self._process_job_queue()
 
     def _setup_job_params(self):
+        """
+        sets up the job parameters needed to interact with the databricks workspace API
+        """
         print("FileWorkflowController::_setup_job_params::setting up job params")
+        # get the secrets needed to authenticate with the databricks workspace API
         token = secrets.get(scope="db-token-jobsapi", key="password")
         instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
+        # construct the URL to the databricks workspace API
         url = f"https://{instance_id}"
+        # create a workspace client using the URL and token
         self.ws_client = WorkspaceClient(host=url, token=token)
+        # log the URL and token to the console
         print(f"FileWorkflowController::_setup_job_params::url:{url}")
         print(f"FileWorkflowController::_setup_job_params::token:{token}")
         print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
+        # log that the setup is complete
         print("FileWorkflowController::_setup_job_params::complete")
 
     def _setup_processing_map(self) -> dict[datetime, dict[FileConfig, FileInfo]]:
