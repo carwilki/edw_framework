@@ -219,8 +219,8 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 	"DAYCAMP_FLAG as DAY_CAMP_FLAG",
 	"VET_FLAG as VET_FLAG",
 	"SALON_FLAG as SALON_FLAG",
-	"OPEN_DT as OPEN_DT",
-	"SURVEY_START_DT as SURVEY_START_DT"
+	"DATE_FORMAT(OPEN_DT,'MM/dd/yyyy HH:mm:ss') as OPEN_DT",
+ 	"DATE_FORMAT(SURVEY_START_DT,'MM/dd/yyyy HH:mm:ss') as SURVEY_START_DT"
 )
 
 # COMMAND ----------
