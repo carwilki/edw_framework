@@ -198,7 +198,7 @@ EXP_Format = JNR_Master_Outer_Join_temp.selectExpr(
 
 
 Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
-	"o_STORE_NBR as #STORE_NBR",
+	"o_STORE_NBR as STORE_NBR",
 	"CAST(o_STORE_NAME AS STRING) as STORE_NAME",
 	"CAST(o_SITE_EMAIL_ADDRESS AS STRING) as SITE_EMAIL_ADDRESS",
 	"REGION_ID as REGION_ID",
@@ -224,7 +224,9 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 )
 
 # COMMAND ----------
+Shortcut_to_SMG_Site_Extract_FlatFile.withColumnRenamed("STORE_NBR","#STORE_NBR")
 
+# COMMAND ----------
 
 def writeToFlatFile_comma(df, filePath, fileName, mode):
     print(filePath)
@@ -247,3 +249,4 @@ writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, targ
 # COMMAND ----------
 
 
+#things to revert back i> snapshot date to be removed ii> hardcoded version table SALES_DAY_SKU_STORE_RPT@v15
