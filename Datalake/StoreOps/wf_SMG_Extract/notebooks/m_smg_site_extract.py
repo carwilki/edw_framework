@@ -75,6 +75,10 @@ JNR_Normal_Join = SQ_Shortcut_to_SKU_PROFILE_temp.join(SQ_Shortcut_to_SALES_DAY_
 	"SQ_Shortcut_to_SALES_DAY_SKU_STORE_RPT___LOCATION_ID as LOCATION_ID",
 	"SQ_Shortcut_to_SKU_PROFILE___PRODUCT_ID as PRODUCT_ID1")
 
+
+# COMMAND ----------
+JNR_Normal_Join_dedupe = JNR_Normal_Join.dropDuplicates(["LOCATION_ID"])
+
 # COMMAND ----------
 
 # Processing node SQ_Shortcut_to_SITE_PROFILE_RPT, type SOURCE 
@@ -117,7 +121,7 @@ AND OPEN_DT < CURRENT_DATE - 30""").withColumn("sys_row_id", monotonically_incre
 # Processing node SRTTRANS, type SORTER 
 # COLUMN COUNT: 1
 
-SRTTRANS = JNR_Normal_Join.sort(col('LOCATION_ID').asc())
+SRTTRANS = JNR_Normal_Join_dedupe.sort(col('LOCATION_ID').asc())
 
 # COMMAND ----------
 
@@ -162,7 +166,7 @@ JNR_Master_Outer_Join = SRTTRANS_temp.join(SQ_Shortcut_to_SITE_PROFILE_RPT_temp,
 JNR_Master_Outer_Join_temp = JNR_Master_Outer_Join.toDF(*["JNR_Master_Outer_Join___" + col for col in JNR_Master_Outer_Join.columns])
 
 EXP_Format = JNR_Master_Outer_Join_temp.selectExpr(
-	"IF (CHARACTER_LENGTH(JNR_Master_Outer_Join___STORE_NBR) < 4, LPAD ( JNR_Master_Outer_Join___STORE_NBR , 4 , '0' ), char(JNR_Master_Outer_Join___STORE_NBR)) as o_STORE_NBR",
+	"IF (LENGTH(JNR_Master_Outer_Join___STORE_NBR) < 4, LPAD ( JNR_Master_Outer_Join___STORE_NBR , 4 , '0' ), String(JNR_Master_Outer_Join___STORE_NBR)) as o_STORE_NBR",
 	"LTRIM ( RTRIM ( JNR_Master_Outer_Join___STORE_NAME ) ) as o_STORE_NAME",
 	"LTRIM ( RTRIM ( JNR_Master_Outer_Join___SITE_EMAIL_ADDRESS ) ) as o_SITE_EMAIL_ADDRESS",
 	"JNR_Master_Outer_Join___REGION_ID as REGION_ID",
@@ -219,7 +223,26 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 	"SURVEY_START_DT as SURVEY_START_DT"
 )
 
-writeToFlatFile(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
+# COMMAND ----------
+
+
+def writeToFlatFile_comma(df, filePath, fileName, mode):
+    print(filePath)
+    if mode == "overwrite":
+        dbutils.fs.rm(filePath.strip("/") + "/", True)
+ 
+    df.repartition(1).write.mode(mode).option("header", "True").option(
+        "inferSchema", "true"
+    ).option("delimiter", ",").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
+    print("File added to GCS Path")
+    removeTransactionFiles(filePath)
+    newFilePath = filePath.strip("/") + "/" + fileName
+ 
+    renamePartFileName(filePath, newFilePath)
+
+
+# COMMAND ----------
+writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
 
 # COMMAND ----------
 
