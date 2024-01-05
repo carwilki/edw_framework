@@ -48,8 +48,8 @@ p_sku_dept=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','p_sku_de
 SQ_Shortcut_to_SALES_DAY_SKU_STORE_RPT = spark.sql(f"""SELECT DISTINCT
 SALES_DAY_SKU_STORE_RPT.PRODUCT_ID,
 SALES_DAY_SKU_STORE_RPT.LOCATION_ID
-FROM {legacy}.SALES_DAY_SKU_STORE_RPT
-WHERE SALES_DAY_SKU_STORE_RPT.WEEK_DT >= CURRENT_DATE - 7""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {legacy}.SALES_DAY_SKU_STORE_RPT@v15 as SALES_DAY_SKU_STORE_RPT
+WHERE SALES_DAY_SKU_STORE_RPT.WEEK_DT >= to_date('2023-12-24','yyyy-MM-dd') - 7""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
@@ -114,7 +114,7 @@ AND SITE_SALES_FLAG = 1
 
 AND STORE_OPEN_CLOSE_FLAG = 'O'
 
-AND OPEN_DT < CURRENT_DATE - 30""").withColumn("sys_row_id", monotonically_increasing_id())
+AND OPEN_DT < to_date('2023-12-24','yyyy-MM-dd') - 30""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
