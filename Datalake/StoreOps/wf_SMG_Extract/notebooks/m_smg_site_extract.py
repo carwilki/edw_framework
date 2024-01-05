@@ -198,7 +198,7 @@ EXP_Format = JNR_Master_Outer_Join_temp.selectExpr(
 
 
 Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
-	"o_STORE_NBR as STORE_NBR",
+	"o_STORE_NBR as #STORE_NBR",
 	"CAST(o_STORE_NAME AS STRING) as STORE_NAME",
 	"CAST(o_SITE_EMAIL_ADDRESS AS STRING) as SITE_EMAIL_ADDRESS",
 	"REGION_ID as REGION_ID",
