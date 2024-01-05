@@ -56,10 +56,11 @@ target_file=getParameterValue(raw,'wf_IRI_Product_Out','m_IRI_Product_Out','key'
 Last_Run_date=getParameterValue(raw,'wf_IRI_Product_Out','m_IRI_Product_Out','Last_Run_date')
 SKU_Date_Filter=getParameterValue(raw,'wf_IRI_Product_Out','m_IRI_Product_Out','SKU_Date_Filter')
 
-if Last_Run_date=='01/01/1900' :
+if str(Last_Run_date).startswith('1900') :
     v_max_update_dt=str(spark.sql(f"Select max(UPDATE_DT) as max_dt from {legacy}.SKU_PROFILE_RPT").first()[0])
     Last_Run_date=v_max_update_dt
-    SKU_Date_Filter=f"SKU_PROFILE_RPT.UPDATE_DT>to_date({v_max_update_dt},'MM/dd/yyyy')"
+    SKU_Date_Filter=f"SKU_PROFILE_RPT.UPDATE_DT>to_date('{v_max_update_dt}')"
+    print('Initial Run')
 else:
     Last_Run_date=getParameterValue(raw,'wf_IRI_Product_Out','m_IRI_Product_Out','Last_Run_date')
     SKU_Date_Filter=getParameterValue(raw,'wf_IRI_Product_Out','m_IRI_Product_Out','SKU_Date_Filter')
@@ -237,5 +238,4 @@ else:
 copy_file_to_nas(gs_source_path, nas_target_path)
 
 # COMMAND ----------
-
 
