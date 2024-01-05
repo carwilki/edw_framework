@@ -220,14 +220,12 @@ copy_file_to_nas(gs_source_path, nas_target_path)
 
 # COMMAND ----------
 
-# COMMAND ----------
-
 # updating parm config table with latest run date
 param_file_name='wf_IRI_Product_Out'
 param_section='m_IRI_Product_Out'
 
 v_param_value_Last_Run_date=spark.sql(f"Select max(UPDATE_DT) as max_dt from {legacy}.SKU_PROFILE_RPT").first()[0]
-v_param_value_SKU_Date_Filter=f"SKU_PROFILE_RPT.UPDATE_DT > to_date('{v_param_value_Last_Run_date}','MM/dd/yyyy')"
+v_param_value_SKU_Date_Filter=f"SKU_PROFILE_RPT.UPDATE_DT > to_date('{v_param_value_Last_Run_date}')"
 
 print(v_param_value_Last_Run_date)
 print(v_param_value_SKU_Date_Filter)
@@ -239,4 +237,6 @@ print(v_param_value_SKU_Date_Filter)
 #raw, parameter_file_name, parameter_section, parameter_key, parameter_value
 update_param_config(raw, param_file_name, param_section, 'SKU_Date_Filter',v_param_value_SKU_Date_Filter)
 update_param_config(raw, param_file_name, param_section, 'Last_Run_date',v_param_value_Last_Run_date)
+
+# COMMAND ----------
 
