@@ -37,7 +37,7 @@ enterprise = getEnvPrefix(env) + 'enterprise'
 
 SQ_Shortcut_to_WM_E_JOB_FUNCTION = spark.sql(f"""SELECT DISTINCT
 WM_E_JOB_FUNCTION.WM_JOB_FUNCTION_NAME
-FROM {legacy}.WM_E_JOB_FUNCTION""").withColumn("sys_row_id", monotonically_increasing_id())
+FROM {refine}.WM_E_JOB_FUNCTION""").withColumn("sys_row_id", monotonically_increasing_id())
 
 # COMMAND ----------
 
