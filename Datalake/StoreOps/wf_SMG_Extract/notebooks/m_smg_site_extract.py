@@ -166,7 +166,8 @@ JNR_Master_Outer_Join = SRTTRANS_temp.join(SQ_Shortcut_to_SITE_PROFILE_RPT_temp,
 JNR_Master_Outer_Join_temp = JNR_Master_Outer_Join.toDF(*["JNR_Master_Outer_Join___" + col for col in JNR_Master_Outer_Join.columns])
 
 EXP_Format = JNR_Master_Outer_Join_temp.selectExpr(
-	"IF (LENGTH(JNR_Master_Outer_Join___STORE_NBR) < 4, LPAD ( JNR_Master_Outer_Join___STORE_NBR , 4 , '0' ), String(JNR_Master_Outer_Join___STORE_NBR)) as o_STORE_NBR",
+	#"IF (LENGTH(JNR_Master_Outer_Join___STORE_NBR) < 4, LPAD ( JNR_Master_Outer_Join___STORE_NBR , 4 , '0' ), String(JNR_Master_Outer_Join___STORE_NBR)) as o_STORE_NBR",
+	"String(JNR_Master_Outer_Join___STORE_NBR) as o_STORE_NBR",
 	"LTRIM ( RTRIM ( JNR_Master_Outer_Join___STORE_NAME ) ) as o_STORE_NAME",
 	"LTRIM ( RTRIM ( JNR_Master_Outer_Join___SITE_EMAIL_ADDRESS ) ) as o_SITE_EMAIL_ADDRESS",
 	"JNR_Master_Outer_Join___REGION_ID as REGION_ID",
