@@ -19,7 +19,6 @@ from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
 from Datalake.utils.files.FileWorkflowController import (
-    FileConfig,
     FileWorkflowController,
     FileWorkflowControllerConfg,
 )
@@ -37,14 +36,9 @@ parser.add_argument(
     default=None,
     required=True,
 )
+
 parser.add_argument(
-    "-p",
-    "--paths",
-    type=str,
-    help="""required
-    gcs://prep_bucket/some/path/to/::gcs://archive_bucket/some/path/to/file_yyyymmdd_hh
-    indicates the input path and the archive path for when processing is completed""",
-    default=None,
+    "-pf", "--paramter_file", type=str, help="parameter file", default=None
 )
 
 parser.add_argument(
@@ -55,37 +49,20 @@ parser.add_argument(
     default=timedelta(hours=2),
 )
 
-
-def splitpaths(path: str) -> FileConfig:
-    """
-    Splits a path string in the form of "gcs://bucket/path/to/prep::gcs://bucket/path/to/archive"
-    into two FileConfig objects.
-
-    Args:
-        path (str): The path string to split.
-
-    Returns:
-        FileConfig: A FileConfig object containing the input and output paths.
-
-    Raises:
-        ValueError: If the path is not in the expected format.
-    """
-    i, o = path.split("::")
-    return FileConfig(prep_folder=i, archive_folder=o)
-
-
 args = parser.parse_args()
 env = args.env
 paths = args.paths
 job_id = args.job_id
 timeout = args.timeout
 pairs = paths.split(",")
-file_configs = list(map(splitpaths, pairs))
+parameter_file = args.paramter_file
 spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
 logger.setLevel(INFO)
 
-config = FileWorkflowControllerConfg(job_id=job_id, env=env, file_configs=file_configs)
+config = FileWorkflowControllerConfg(
+    job_id=job_id, env=env, parameter_file=parameter_file, timeout=timeout
+)
 controller = FileWorkflowController(spark=spark, config=config)
 
 logger.info("starting file based workflow job")

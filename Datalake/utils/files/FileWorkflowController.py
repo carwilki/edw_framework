@@ -6,7 +6,7 @@ from databricks.sdk.service.jobs import RunResultState
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from Datalake.utils import secrets
-from Datalake.utils.files import vars
+from Datalake.utils.parameters.ParameterData import ParameterData, ParameterFile
 
 
 class FileConfig(BaseModel):
@@ -29,7 +29,7 @@ class FileConfig(BaseModel):
     """
     datefmtstr: str = "%Y%m%d_%H%M%S"
 
-    def prep_path(self, env: str) -> str:
+    def prep_path(self) -> str:
         """
         Returns the full prep path for the given env
         :param env: the current evn
@@ -37,25 +37,25 @@ class FileConfig(BaseModel):
         :return: a string with the address of the prep folder
         :rtype: str
         """
-        return vars.getPrepBucket(env) + "/" + self.prep_folder + "/"
+        return self.prep_folder + "/"
 
-    def processing_path(self, env: str) -> str:
+    def processing_path(self) -> str:
         """
         Returns the full processing path for the given env
         :param env: the current evn
         :type env: str
         :return: a string with the address of the processing folder
         """
-        return f"{vars.getPrepBucket(env)}/{self.prep_folder}/processing/"
+        return f"{self.prep_folder}processing/"
 
-    def archive_path(self, env: str, date: datetime) -> str:
+    def archive_path(self, date: datetime) -> str:
         """
         Returns the full archive path for the given env and date
         :param env: the current evn
         :type env: str
         :param date: the date that for this file to be archived
         """
-        return f"{vars.getArchiveBucket(env)}/{self.archive_folder}/{date.strftime('%Y%m%d')}/"
+        return f"{self.archive_folder}{date.strftime('%Y%m%d')}/"
 
     class Config:
         """
@@ -77,9 +77,9 @@ class FileWorkflowControllerConfg(BaseModel):
     """
     job_id: str
     """
-    the individual configs for each gcs://bucket/folder pair
+    the name of the workflow
     """
-    file_configs: list[FileConfig]
+    parameter_file: str
     """
     the environment to run the job in dev,qa,prod
     """
@@ -88,6 +88,10 @@ class FileWorkflowControllerConfg(BaseModel):
     the timeout for the job
     """
     timeout: timedelta = timedelta(minutes=120)
+    """
+    the date format for the file name
+    """
+    datefmtstr: str = "%Y%m%d_%H%M%S"
 
 
 class FileWorkflowController(object):
@@ -112,11 +116,13 @@ class FileWorkflowController(object):
         :raises ValueError: fails if the buckets are not set
         :raises ValueError: fails if the spark session is not set
         """
-        self.file_configs = config.file_configs
+
         self.session = spark
         self.timeout = config.timeout
         self.job_id = config.job_id
         self.env = config.env
+        self.datefmtstr = config.datefmtstr
+        self.workflow_name = config.parameter_file
 
         if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
@@ -128,19 +134,30 @@ class FileWorkflowController(object):
             raise ValueError("spark must have a SparkSession instance")
 
         self.dbutils = DBUtils(spark=self.session)
-        self._setup_job_params()
+        self.file_configs = self._setup_parameter_file()
+        self._setup_workspace_api()
+        self._setup_parameter_file()
 
     def execute(self):
         """
         runs the workflow
         """
-        
         self._setup_processing_map()
         self._setup_processing_queue()
         self._validate_processing_queue()
         self._process_job_queue()
 
-    def _setup_job_params(self):
+    def _setup_parameter_file(self) -> dict[str, FileConfig]:
+        """
+        sets up the file configurations based on the parameter file
+        :return: a dictionary of the file configurations keyed by the environment
+        """
+        pd = ParameterData(env=self.env, spark=self.session)
+        self.parameter_file: ParameterFile = pd.get_parameter_file(
+            self.workflow_name, self.env, self.session
+        )
+
+    def _setup_workspace_api(self):
         """
         sets up the job parameters needed to interact with the databricks workspace API
         """
@@ -172,7 +189,8 @@ class FileWorkflowController(object):
         # create a dictionary date-> bucketconfig -> file of files that need to be processed for the date.
         pmap: dict[datetime, dict[FileConfig, FileInfo]] = {}
         # foreach bucket
-        for fc in self.file_configs:
+        for s, a in self.parameter_file.get_source_buckets_archive_pairs():
+            fc = FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
             # list the contents of the bucket
             files = self.dbutils.fs.ls(fc.prep_path(self.env))
             # foreach file in the bucket
@@ -227,21 +245,19 @@ class FileWorkflowController(object):
         """
         Runs the workflow for each date in the queue.
 
-        This method moves the files to the processing bucket, runs the workflow, and then moves the files to the raw bucket. 
+        This method moves the files to the processing bucket, runs the workflow, and then moves the files to the raw bucket.
         If an error occurs during any of these steps, the method logs the error and raises an exception.
         """
         print("FileWorkflowController::_process_job_queue::processing job queue")
         for dt in self.queue:
-            print(f"FileWorkflowController::_process_job_queue::processing date: {dt}")
+            print(f"\tprocessing date: {dt}")
             try:
                 self._move_to_processing(dt)
                 self._run_workflow()
                 self._move_to_archive(dt)
             except Exception as e:
-                print(
-                    f"FileWorkflowController::_process_job_queue::Error processing date: {dt}"
-                )
-                print(f"FileWorkflowController::_process_job_queue::Error: {e}")
+                print(f"\tError processing date: {dt}")
+                print(f"\tError: {e}")
                 raise e
 
     def _run_workflow(self) -> None:
@@ -319,6 +335,7 @@ class FileWorkflowController(object):
         # get the bucket -> file map for processing
         # Date -> FileConfig -> [FileInfo]
         file_map = self.processing_map[dt]
+        fc: FileConfig
         for fc in self.file_configs:
             # get the file for the bucket
             file = file_map[fc]
@@ -330,8 +347,8 @@ class FileWorkflowController(object):
                         \tto raw Path:{fc.archive_path(self.env,dt)}"""
                     )
                     self.dbutils.fs.mv(
-                        fc.processing_path(self.env) + "/" + file.name,
-                        fc.archive_path(self.env, dt) + "/" + file.name,
+                        fc.processing_path() + file.name,
+                        fc.archive_path(dt) + file.name,
                     )
                 except Exception as e:
                     print(
