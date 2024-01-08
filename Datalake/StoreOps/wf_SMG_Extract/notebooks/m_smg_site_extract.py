@@ -225,7 +225,7 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 )
 
 # COMMAND ----------
-Shortcut_to_SMG_Site_Extract_FlatFile.withColumnRenamed("STORE_NBR","#STORE_NBR")
+Shortcut_to_SMG_Site_Extract_FlatFile = Shortcut_to_SMG_Site_Extract_FlatFile.withColumnRenamed("STORE_NBR","#STORE_NBR")
 
 # COMMAND ----------
 
