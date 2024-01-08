@@ -132,11 +132,11 @@ class FileWorkflowController(object):
 
         if self.session is None:
             raise ValueError("spark must have a SparkSession instance")
-
+        
         self.dbutils = DBUtils(spark=self.session)
         self.file_configs = self._setup_parameter_file()
         self._setup_workspace_api()
-        self._setup_parameter_file()
+        self.parameter_file:ParameterFile =  self._setup_parameter_file()
 
     def execute(self):
         """
@@ -153,7 +153,7 @@ class FileWorkflowController(object):
         :return: a dictionary of the file configurations keyed by the environment
         """
         pd = ParameterData(env=self.env, spark=self.session)
-        self.parameter_file: ParameterFile = pd.get_parameter_file(
+        return pd.get_parameter_file(
             self.parameter_file_name
         )
 
