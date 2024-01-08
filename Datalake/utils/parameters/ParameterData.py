@@ -40,7 +40,7 @@ class ParameterData:
         them to the params dictionary.
         """
         rows = self.spark.sql(
-            f"select * from {self.table_fqn} where parameter_file = '{parameter_file_name}'"
+            f"select * from {self.table_fqn} where parameter_file_name = '{parameter_file_name}'"
         ).collect()
         params: ParameterFile = {}
         # loop through all the rows in the table
@@ -68,7 +68,7 @@ class ParameterData:
         self.spark.sql(
             f"""
             delete from table {self.table}
-            where id = {id} and parameter_file = '{parameter_file_name}'
+            where id = {id} and parameter_file_name = '{parameter_file_name}'
             and parameter_section = '{parameter_section}' and parameter_key = '{parameter_key}'"""
         )
 
@@ -79,6 +79,6 @@ class ParameterData:
             f"""
             update table {self.table}
             set parameter_value = '{parameter_value}'
-            where id = {id} and parameter_file = '{parameter_file_name}'
+            where id = {id} and parameter_file_name = '{parameter_file_name}'
             and parameter_section = '{parameter_section}' and parameter_key = '{parameter_key}'"""
         )
