@@ -245,9 +245,15 @@ def writeToFlatFile_comma(df, filePath, fileName, mode):
 
 
 # COMMAND ----------
-writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
+# gs_source_path = target_file + "/*.txt"
+# nas_target_path = nas_target_base_path + folder+ "\\"
 
-# COMMAND ----------
+try:
+	writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
+	# copy_file_to_nas(gs_source_path, nas_target_path)
+ 
+except Exception as e:
+    raise e
 
 
 #things to revert back i> snapshot date to be removed ii> hardcoded version table SALES_DAY_SKU_STORE_RPT@v15
