@@ -1,4 +1,4 @@
-# Databricks notebook source
+-- Databricks notebook source
 INSERT INTO work.rocky_ingestion_metadata (
 table_group, table_group_desc, source_type, source_db, source_table, 
 table_desc, is_pii, pii_type, has_hard_deletes, target_sink, 
@@ -8,9 +8,10 @@ expected_start_time, job_watchers, max_retry, job_tag, is_scheduled,
 job_id, snowflake_ddl , tidal_trigger_condition , disable_no_record_failure , snowflake_pre_sql , snowflake_post_sql ,additional_config
 )
 VALUES (
-"NZ_Migration", null, 'NZ_Export_Mako8', "EDW_PRD", "EMPL_LABOR_WK",
+"NZ_Migration", null, 'NZ_Mako8', "EDW_PRD", "STORE_DEPT",
 null, false, null, false, "delta",
-"legacy", null, "EMPL_LABOR_WK", "full", null, 
-null, null, "daily", null, array("DUMMY_TIDAL_JOB"), 
+"legacy", null, "STORE_DEPT", "upsert", "UPDATE_TSTMP", 
+"STORE_DEPT_NBR", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
 null, array("abelsare@petsmart.com","sjaiswal@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
-null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null);
+null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null
+);
