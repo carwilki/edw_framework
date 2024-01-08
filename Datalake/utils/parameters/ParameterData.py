@@ -31,7 +31,7 @@ class ParameterData:
         prefix = getEnvPrefix(self.env)
         self.table = "parameter_config"
         self.schema = "raw"
-        self.table_fqn = f"{prefix}_{self.schema}.{self.table}"
+        self.table_fqn = f"{prefix}{self.schema}.{self.table}"
 
     def get_parameter_file(self, parameter_file_name) -> ParameterFile:
         """
