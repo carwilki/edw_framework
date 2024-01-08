@@ -30,7 +30,8 @@ class ParameterData:
         self.spark = spark
         prefix = getEnvPrefix(self.env)
         self.table = "parameter_config"
-        self.table_fqn = f"{prefix}.{self.table}"
+        self.schema = "raw"
+        self.table_fqn = f"{prefix}_{self.schema}.{self.table}"
 
     def get_parameter_file(self, parameter_file_name) -> ParameterFile:
         """
