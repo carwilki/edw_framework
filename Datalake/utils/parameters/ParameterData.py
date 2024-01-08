@@ -8,7 +8,7 @@ class ParameterFile(dict[str, dict[str, str]]):
     """
 
     def __init__(self):
-        super(ParameterFile, self).__init__()
+        super(ParameterFile(), self).__init__()
 
     def get_source_buckets_archive_pairs(self) -> (str, str):
         for _, v in self.items():
@@ -44,7 +44,7 @@ class ParameterData:
         rows = self.spark.sql(
             f"select * from {self.table_fqn} where parameter_file_name = '{parameter_file_name}'"
         ).collect()
-        params: ParameterFile = {}
+        params: ParameterFile = ParameterFile()
         # loop through all the rows in the table
         for row in rows:
             # if the row's parameter_section is not in the params dictionary, create it
