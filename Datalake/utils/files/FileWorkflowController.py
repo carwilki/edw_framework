@@ -316,10 +316,10 @@ class FileWorkflowController(object):
                 try:
                     print(
                         f"""FileWorkflowController::_move_to_processing::moving file: {file.path}
-                        \tto processing Path:{fc.processing_path(self.env)}"""
+                        \tto processing Path:{fc.processing_path()}"""
                     )
                     self.dbutils.fs.mv(
-                        file.path, f"{fc.processing_path(self.env)}/{file.name}"
+                        file.path, f"{fc.processing_path()}/{file.name}"
                     )
                 except Exception as e:
                     print(
