@@ -147,7 +147,7 @@ class FileWorkflowController(object):
         self._validate_processing_queue()
         self._process_job_queue()
 
-    def _setup_parameter_file(self) -> dict[str, FileConfig]:
+    def _setup_parameter_file(self) -> ParameterFile:
         """
         sets up the file configurations based on the parameter file
         :return: a dictionary of the file configurations keyed by the environment
