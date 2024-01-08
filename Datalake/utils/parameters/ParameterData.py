@@ -51,7 +51,7 @@ class ParameterData:
             if params.get(row[self.parameter_section]) is None:
                 params[row[self.parameter_section]] = {}
             # add the row's parameter_key and parameter_value to the params dictionary
-            params[row[self.parameter_section]][row[self.parameter_section]] = row[
+            params[row[self.parameter_section]][row[self.parameter_key]] = row[
                 self.parameter_value
             ]
         print(params)
