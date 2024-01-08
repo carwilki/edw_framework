@@ -249,8 +249,8 @@ def writeToFlatFile_comma(df, filePath, fileName, mode):
 # nas_target_path = nas_target_base_path + folder+ "\\"
 
 try:
-	writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
-	# copy_file_to_nas(gs_source_path, nas_target_path)
+    writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
+    # copy_file_to_nas(gs_source_path, nas_target_path)
  
 except Exception as e:
     raise e
