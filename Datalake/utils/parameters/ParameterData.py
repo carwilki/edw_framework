@@ -54,7 +54,7 @@ class ParameterData:
             params[row[self.parameter_section]][row[self.parameter_section]] = row[
                 self.parameter_value
             ]
-
+        print(params)
         return params
 
     def add_parameter(
