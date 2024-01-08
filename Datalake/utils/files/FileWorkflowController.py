@@ -122,8 +122,8 @@ class FileWorkflowController(object):
         self.job_id = config.job_id
         self.env = config.env
         self.datefmtstr = config.datefmtstr
-        self.workflow_name = config.parameter_file
-
+        self.parameter_file = config.parameter_file
+        
         if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
 
