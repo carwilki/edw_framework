@@ -7,9 +7,10 @@ class ParameterFile(dict[str, dict[str, str]]):
     """
     this class is used as a container for the parameter_config table values.
     """
-    def __init__():
-        super().__init__()
-        
+
+    def __init__(self):
+        super(ParameterFile, self).__init__()
+
     def get_source_buckets_archive_pairs(self) -> (str, str):
         for _, v in self.items():
             s = v.get("source_bucket")
