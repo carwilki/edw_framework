@@ -134,9 +134,9 @@ class FileWorkflowController(object):
             raise ValueError("spark must have a SparkSession instance")
 
         self.dbutils = DBUtils(spark=self.session)
-        self.file_configs = self._setup_parameter_file()
         self._setup_workspace_api()
         self.parameter_file: ParameterFile = self._setup_parameter_file()
+        self.file_configs = self._setup_file_configs()
 
     def execute(self):
         """
@@ -173,6 +173,18 @@ class FileWorkflowController(object):
         print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
         # log that the setup is complete
         print("FileWorkflowController::_setup_job_params::complete")
+
+    def _setup_file_configs(self) -> list[FileConfig]:
+        print("FileWorkflowController::_setup_file_configs::setting up file configs")
+        l = []
+        for s, a in self.parameter_file.get_source_buckets_archive_pairs():
+            l.append(
+                FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
+            )
+        print("complete")
+        print("Fileconfigs:")
+        print(l)
+        return l
 
     def _setup_processing_map(self) -> dict[datetime, dict[FileConfig, FileInfo]]:
         """
