@@ -123,7 +123,7 @@ class FileWorkflowController(object):
         self.env = config.env
         self.datefmtstr = config.datefmtstr
         self.parameter_file_name = config.parameter_file
-        
+
         if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
 
@@ -154,7 +154,7 @@ class FileWorkflowController(object):
         """
         pd = ParameterData(env=self.env, spark=self.session)
         self.parameter_file: ParameterFile = pd.get_parameter_file(
-            self.parameter_file_name, self.env, self.session
+            self.parameter_file_name
         )
 
     def _setup_workspace_api(self):
