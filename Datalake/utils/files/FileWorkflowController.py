@@ -132,11 +132,11 @@ class FileWorkflowController(object):
 
         if self.session is None:
             raise ValueError("spark must have a SparkSession instance")
-        
+
         self.dbutils = DBUtils(spark=self.session)
         self.file_configs = self._setup_parameter_file()
         self._setup_workspace_api()
-        self.parameter_file:ParameterFile =  self._setup_parameter_file()
+        self.parameter_file: ParameterFile = self._setup_parameter_file()
 
     def execute(self):
         """
@@ -153,9 +153,7 @@ class FileWorkflowController(object):
         :return: a dictionary of the file configurations keyed by the environment
         """
         pd = ParameterData(env=self.env, spark=self.session)
-        return pd.get_parameter_file(
-            self.parameter_file_name
-        )
+        return pd.get_parameter_file(self.parameter_file_name)
 
     def _setup_workspace_api(self):
         """
@@ -189,6 +187,7 @@ class FileWorkflowController(object):
         # create a dictionary date-> bucketconfig -> file of files that need to be processed for the date.
         pmap: dict[datetime, dict[FileConfig, FileInfo]] = {}
         # foreach bucket
+        print(self.parameter_file)
         for s, a in self.parameter_file.get_source_buckets_archive_pairs():
             fc = FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
             # list the contents of the bucket
