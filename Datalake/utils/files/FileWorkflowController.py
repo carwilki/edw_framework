@@ -203,7 +203,7 @@ class FileWorkflowController(object):
         for s, a in self.parameter_file.get_source_buckets_archive_pairs():
             fc = FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
             # list the contents of the bucket
-            files = self.dbutils.fs.ls(fc.prep_path(self.env))
+            files = self.dbutils.fs.ls(fc.prep_path())
             # foreach file in the bucket
             for f in files:
                 # if the size is 0 then its a directory and should be skipped.
@@ -355,7 +355,7 @@ class FileWorkflowController(object):
                     print(
                         f"""
                         FileWorkflowController::_move_to_raw::moving file: {fc.processing_path(self.env)}/{file.name}
-                        \tto raw Path:{fc.archive_path(self.env,dt)}"""
+                        \tto raw Path:{fc.archive_path(dt)}"""
                     )
                     self.dbutils.fs.mv(
                         fc.processing_path() + file.name,
@@ -363,7 +363,7 @@ class FileWorkflowController(object):
                     )
                 except Exception as e:
                     print(
-                        f"FileWorkflowController::_move_to_raw::Error moving file: {f.path}"
+                        f"FileWorkflowController::_move_to_raw::Error moving file: {file.path}"
                     )
                     print(f"FileWorkflowController::_move_to_raw::Error: {e}")
                     raise e
