@@ -51,10 +51,8 @@ parser.add_argument(
 
 args = parser.parse_args()
 env = args.env
-paths = args.paths
 job_id = args.job_id
 timeout = args.timeout
-pairs = paths.split(",")
 parameter_file = args.paramter_file
 spark: SparkSession = SparkSession.getActiveSession()
 logger = getLogger()
