@@ -127,8 +127,8 @@ class FileWorkflowController(object):
         if self.job_id is None or len(self.job_id.strip()) == 0:
             raise ValueError("job_id must be set")
 
-        if self.file_configs is None:
-            raise ValueError("buckets must have at least a BucketConfig instance")
+        if self.parameter_file is None:
+            raise ValueError("there must be a parameter file for the workflow")
 
         if self.session is None:
             raise ValueError("spark must have a SparkSession instance")
