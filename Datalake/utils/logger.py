@@ -10,7 +10,7 @@ dbutils = DBUtils(spark)
 
 
 def getLogger() -> logging.Logger:
-    FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+    FORMAT = "[%(filename)s:%(funcName)20s:%(lineno)s] %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.INFO, stream=sys.stdout)
     return logging.getLogger()
 

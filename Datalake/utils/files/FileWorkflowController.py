@@ -33,8 +33,6 @@ class FileConfig(BaseModel):
     def prep_path(self) -> str:
         """
         Returns the full prep path for the given env
-        :param env: the current evn
-        :type env: str
         :return: a string with the address of the prep folder
         :rtype: str
         """
@@ -43,8 +41,6 @@ class FileConfig(BaseModel):
     def processing_path(self) -> str:
         """
         Returns the full processing path for the given env
-        :param env: the current evn
-        :type env: str
         :return: a string with the address of the processing folder
         """
         return f"{self.prep_folder}processing/"
@@ -52,8 +48,6 @@ class FileConfig(BaseModel):
     def archive_path(self, date: datetime) -> str:
         """
         Returns the full archive path for the given env and date
-        :param env: the current evn
-        :type env: str
         :param date: the date that for this file to be archived
         """
         return f"{self.archive_folder}{date.strftime('%Y%m%d')}/"
@@ -265,6 +259,8 @@ class FileWorkflowController(object):
                 self._run_workflow()
                 self._move_to_archive(dt)
             except Exception as e:
+                #if there is an error move everthing back to source bucket
+                self._move_to_prep(dt)
                 self.logger.info(f"Error processing date: {dt}")
                 self.logger.info(f"Error: {e}")
                 raise e
@@ -317,12 +313,8 @@ class FileWorkflowController(object):
                     )
                     self.dbutils.fs.mv(file.path, f"{fc.processing_path()}/{file.name}")
                 except Exception as e:
-                    self.logger.error(
-                        f"Error moving file: {file.path}"
-                    )
-                    self.logger.info(
-                        f"Error: {e}"
-                    )
+                    self.logger.error(f"Error moving file: {file.path}")
+                    self.logger.info(f"Error: {e}")
                     raise e
             else:
                 raise ValueError(
@@ -363,6 +355,42 @@ class FileWorkflowController(object):
             else:
                 raise ValueError(
                     f"FileWorkflowController::_move_to_raw::no file config found for date:{dt}"
+                )
+
+    def _move_to_prep(self, dt: datetime) -> None:
+        """
+        Moves the files for the given date to the archive bucket.
+
+        Args:
+            dt (datetime): The date for which the files need to be moved.
+
+        Raises:
+            ValueError: If no file config is found for the given date.
+            Exception: If an error occurs while moving the files.
+        """
+        # get the bucket -> file map for processing
+        # Date -> FileConfig -> [FileInfo]
+        file_map = self.processing_map[dt]
+        fc: FileConfig
+        for fc in self.file_configs:
+            # get the file for the bucket
+            file = file_map[fc]
+            if file is not None:
+                try:
+                    self.logger.info(
+                        f"""moving file: {fc.processing_path()}/{file.name} to raw Path:{fc.archive_path(dt)}"""
+                    )
+                    self.dbutils.fs.mv(
+                        fc.processing_path() + file.name,
+                        fc.prep_path() + file.name,
+                    )
+                except Exception as e:
+                    self.logger.info(f"Error moving file: {file.path}")
+                    self.logger.info(f"Error: {e}")
+                    raise e
+            else:
+                raise ValueError(
+                    f"FileWorkflowController::_move_to_prep::no file config found for date:{dt}"
                 )
 
     def _extract_date(self, file: FileInfo, dtstrfmt: str) -> datetime:
