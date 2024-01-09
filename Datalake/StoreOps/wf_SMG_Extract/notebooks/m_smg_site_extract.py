@@ -39,6 +39,8 @@ target_file=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','key')
 
 p_sku_dept=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','p_sku_dept')
 
+nas_target_base_path = getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','nas_target')
+today = str(date.today())
 
 # COMMAND ----------
 
@@ -245,12 +247,12 @@ def writeToFlatFile_comma(df, filePath, fileName, mode):
 
 
 # COMMAND ----------
-# gs_source_path = target_file + "/*.txt"
-# nas_target_path = nas_target_base_path + folder+ "\\"
+gs_source_path = target_bucket + target_file
+nas_target_path = nas_target_base_path + today+ "\\"
 
 try:
     writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
-    # copy_file_to_nas(gs_source_path, nas_target_path)
+    copy_file_to_nas(gs_source_path, nas_target_path)
  
 except Exception as e:
     raise e
