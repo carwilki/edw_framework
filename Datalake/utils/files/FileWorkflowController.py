@@ -259,7 +259,7 @@ class FileWorkflowController(object):
                 self._run_workflow()
                 self._move_to_archive(dt)
             except Exception as e:
-                #if there is an error move everthing back to source bucket
+                # if there is an error move everthing back to source bucket
                 self._move_to_prep(dt)
                 self.logger.info(f"Error processing date: {dt}")
                 self.logger.info(f"Error: {e}")
