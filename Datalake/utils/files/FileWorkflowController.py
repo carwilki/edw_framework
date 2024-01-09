@@ -259,7 +259,7 @@ class FileWorkflowController(object):
                 self._run_workflow()
                 self._move_to_archive(dt)
             except Exception as e:
-                # if there is an error move everthing back to source bucket
+                #if there is an error move everthing back to source bucket
                 self._move_to_prep(dt)
                 self.logger.info(f"Error processing date: {dt}")
                 self.logger.info(f"Error: {e}")
@@ -408,11 +408,11 @@ class FileWorkflowController(object):
         # gs://bucket/some/path/to/file_yyyymmdd_hh24mmss.txt
         file_name: str = file.path.split("/")[-1]
         # file_yyyymmdd_hh24mmss.txt
-        name: str = file_name.split("_")[-2]
+        name: str = file_name.split(".")[0]
         # file_yyyymmdd_hh24mmss
         # dt = name.split("_")[-2]
         ds: str = "_".join(s for s in name.split("_")[-2::])
-        # yyyymmdd_hh24mmss
+        # yyyymmdd
         dt: datetime = datetime.strptime(ds, dtstrfmt)
         return dt
 
