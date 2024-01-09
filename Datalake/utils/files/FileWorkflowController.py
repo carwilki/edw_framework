@@ -6,6 +6,7 @@ from databricks.sdk.service.jobs import RunResultState
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from Datalake.utils import secrets
+from Datalake.utils.logger import getLogger
 from Datalake.utils.parameters.ParameterData import ParameterData, ParameterFile
 
 
@@ -116,7 +117,7 @@ class FileWorkflowController(object):
         :raises ValueError: fails if the buckets are not set
         :raises ValueError: fails if the spark session is not set
         """
-
+        self.logger = getLogger()
         self.session = spark
         self.timeout = config.timeout
         self.job_id = config.job_id
@@ -159,7 +160,7 @@ class FileWorkflowController(object):
         """
         sets up the job parameters needed to interact with the databricks workspace API
         """
-        print("FileWorkflowController::_setup_job_params::setting up job params")
+        self.logger.info("setting up job params")
         # get the secrets needed to authenticate with the databricks workspace API
         token = secrets.get(scope="db-token-jobsapi", key="password")
         instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
@@ -168,23 +169,22 @@ class FileWorkflowController(object):
         # create a workspace client using the URL and token
         self.ws_client = WorkspaceClient(host=url, token=token)
         # log the URL and token to the console
-        print(f"FileWorkflowController::_setup_job_params::url:{url}")
-        print(f"FileWorkflowController::_setup_job_params::token:{token}")
-        print(f"FileWorkflowController::_setup_job_params::instance_id:{instance_id}")
+        self.logger.info(f"url:{url}")
+        self.logger.info(f"token:{token}")
+        self.logger.info(f"instance_id:{instance_id}")
         # log that the setup is complete
-        print("FileWorkflowController::_setup_job_params::complete")
+        self.logger.info("complete")
 
     def _setup_file_configs(self) -> list[FileConfig]:
-        print("FileWorkflowController::_setup_file_configs::setting up file configs")
-        l = []
+        self.logger.info("setting up file configs")
+        fc = []
         for s, a in self.parameter_file.get_source_buckets_archive_pairs():
-            l.append(
+            fc.append(
                 FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
             )
-        print("complete")
-        print("Fileconfigs:")
-        print(l)
-        return l
+        self.logger.info("complete")
+        self.logger.info("Fileconfigs:")
+        return fc
 
     def _setup_processing_map(self) -> dict[datetime, dict[FileConfig, FileInfo]]:
         """
@@ -195,11 +195,11 @@ class FileWorkflowController(object):
             dict[datetime, dict[FileConfig, FileInfo]]: A dictionary of dates and their corresponding file
             configurations and files that need to be processed.
         """
-        print("FileWorkflowController::_get_all_files::creating Processing map")
+        self.logger.info("creating Processing map")
         # create a dictionary date-> bucketconfig -> file of files that need to be processed for the date.
         pmap: dict[datetime, dict[FileConfig, FileInfo]] = {}
         # foreach bucket
-        print(self.parameter_file)
+        self.logger.debug(self.parameter_file)
         for s, a in self.parameter_file.get_source_buckets_archive_pairs():
             fc = FileConfig(prep_folder=s, archive_folder=a, datefmtstr=self.datefmtstr)
             # list the contents of the bucket
@@ -227,9 +227,7 @@ class FileWorkflowController(object):
 
         This method prints the processing queue to the console for debugging purposes.
         """
-        print(
-            "FileWorkflowController::_setup_processing_queue::creating processing queue"
-        )
+        self.logger.info("creating processing queue")
         sorted_dates = sorted(self.processing_map.keys(), reverse=False)
         self.queue = sorted_dates
         self._pp_processing_queue()
@@ -259,16 +257,16 @@ class FileWorkflowController(object):
         This method moves the files to the processing bucket, runs the workflow, and then moves the files to the raw bucket.
         If an error occurs during any of these steps, the method logs the error and raises an exception.
         """
-        print("FileWorkflowController::_process_job_queue::processing job queue")
+        self.logger.info("processing job queue")
         for dt in self.queue:
-            print(f"\tprocessing date: {dt}")
+            self.logger.info(f"processing date: {dt}")
             try:
                 self._move_to_processing(dt)
                 self._run_workflow()
                 self._move_to_archive(dt)
             except Exception as e:
-                print(f"\tError processing date: {dt}")
-                print(f"\tError: {e}")
+                self.logger.info(f"Error processing date: {dt}")
+                self.logger.info(f"Error: {e}")
                 raise e
 
     def _run_workflow(self) -> None:
@@ -281,7 +279,7 @@ class FileWorkflowController(object):
         Raises:
         Exception: If the job does not complete successfully.
         """
-        print("FileWorkflowController::_run_workflow::running workflow")
+        self.logger.info("running workflow")
         r = self.ws_client.jobs.run_now_and_wait(
             job_id=self.job_id, timeout=self.timeout
         )
@@ -290,8 +288,8 @@ class FileWorkflowController(object):
                 f"FileWorkflowController::_run_workflow::Job with Id {self.job_id} completed other than successfull: {r.state}"
             )
         else:
-            print(
-                f"FileWorkflowController::_run_workflow::Job with Id {self.job_id} completed successfully: {r.state}"
+            self.logger.info(
+                f"Job with Id {self.job_id} completed successfully: {r.state}"
             )
 
     def _move_to_processing(self, dt: datetime) -> None:
@@ -314,18 +312,17 @@ class FileWorkflowController(object):
             file = file_map[fc]
             if file is not None:
                 try:
-                    print(
-                        f"""FileWorkflowController::_move_to_processing::moving file: {file.path}
-                        \tto processing Path:{fc.processing_path()}"""
+                    self.logger.info(
+                        f"""moving file: {file.path} to processing Path:{fc.processing_path()}"""
                     )
-                    self.dbutils.fs.mv(
-                        file.path, f"{fc.processing_path()}/{file.name}"
-                    )
+                    self.dbutils.fs.mv(file.path, f"{fc.processing_path()}/{file.name}")
                 except Exception as e:
-                    print(
-                        f"FileWorkflowController::_move_to_processing::Error moving file: {file.path}"
+                    self.logger.error(
+                        f"Error moving file: {file.path}"
                     )
-                    print(f"FileWorkflowController::_move_to_processing::Error: {e}")
+                    self.logger.info(
+                        f"Error: {e}"
+                    )
                     raise e
             else:
                 raise ValueError(
@@ -352,20 +349,16 @@ class FileWorkflowController(object):
             file = file_map[fc]
             if file is not None:
                 try:
-                    print(
-                        f"""
-                        FileWorkflowController::_move_to_raw::moving file: {fc.processing_path(self.env)}/{file.name}
-                        \tto raw Path:{fc.archive_path(dt)}"""
+                    self.logger.info(
+                        f"""moving file: {fc.processing_path()}/{file.name} to raw Path:{fc.archive_path(dt)}"""
                     )
                     self.dbutils.fs.mv(
                         fc.processing_path() + file.name,
                         fc.archive_path(dt) + file.name,
                     )
                 except Exception as e:
-                    print(
-                        f"FileWorkflowController::_move_to_raw::Error moving file: {file.path}"
-                    )
-                    print(f"FileWorkflowController::_move_to_raw::Error: {e}")
+                    self.logger.info(f"Error moving file: {file.path}")
+                    self.logger.info(f"Error: {e}")
                     raise e
             else:
                 raise ValueError(
@@ -400,35 +393,25 @@ class FileWorkflowController(object):
         prints the processing map to the console
         """
         if self.processing_map is not None:
-            print("FileWorkflowController::_pp_processing_map::processing map:")
+            self.logger.info("processing map:")
             for k, v in self.processing_map.items():
-                print(
-                    f"\tFileWorkflowController::_pp_processing_map::processing date: {k}"
-                )
+                self.logger.info(f"processing date: {k}")
                 for b, f in v.items():
-                    print(
-                        f"\t\tFileWorkflowController::_pp_processing_map::bucket: {b}"
-                    )
-                    print(f"\t\tFileWorkflowController::_pp_processing_map::file: {f}")
-            print("FileWorkflowController::_pp_processing_map::complete")
+                    self.logger.info(f"bucket: {b}")
+                    self.logger.info(f"file: {f}")
+            self.logger.info("complete")
         else:
-            print(
-                "\tFileWorkflowController::_pp_processing_map::processing map is empty"
-            )
+            self.logger.info("processing map is empty")
 
     def _pp_processing_queue(self) -> None:
         """
         prints the processing queue to the console
         """
         if self.queue is not None:
-            print("FileWorkflowController::_pp_processing_queue::processing queue:")
+            self.logger.info("processing queue:")
             for dt in self.queue:
-                print(
-                    f"\tFileWorkflowController::_pp_processing_queue::processing date: {dt}"
-                )
+                self.logger.info(f"processing date: {dt}")
 
-            print("FileWorkflowController::_pp_processing_queue::complete")
+            self.logger.info("complete")
         else:
-            print(
-                "\tFileWorkflowController::_pp_processing_queue::processing queue is None"
-            )
+            self.logger.info("processing queue is None")
