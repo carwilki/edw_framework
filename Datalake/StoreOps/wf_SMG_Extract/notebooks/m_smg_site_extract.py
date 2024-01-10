@@ -14,7 +14,8 @@ from Datalake.utils.logger import *
 from Datalake.utils.pk import *
 
 # COMMAND ----------
-#test
+
+
 spark = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
@@ -36,11 +37,14 @@ enterprise = getEnvPrefix(env) + 'enterprise'
 
 target_bucket=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','target_bucket')
 target_file=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','key')
-
 p_sku_dept=getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','p_sku_dept')
-
 nas_target_base_path = getParameterValue(raw,'wf_SMG_Extract','m_smg_site_extract','nas_target')
-today = str(date.today())
+
+
+# COMMAND ----------
+
+current_date = datetime.now() 
+today = str(current_date.strftime("%Y%m%d"))
 
 # COMMAND ----------
 
@@ -79,6 +83,7 @@ JNR_Normal_Join = SQ_Shortcut_to_SKU_PROFILE_temp.join(SQ_Shortcut_to_SALES_DAY_
 
 
 # COMMAND ----------
+
 JNR_Normal_Join_dedupe = JNR_Normal_Join.dropDuplicates(["LOCATION_ID"])
 
 # COMMAND ----------
@@ -227,6 +232,7 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 )
 
 # COMMAND ----------
+
 Shortcut_to_SMG_Site_Extract_FlatFile = Shortcut_to_SMG_Site_Extract_FlatFile.withColumnRenamed("STORE_NBR","#STORE_NBR")
 
 # COMMAND ----------
@@ -247,11 +253,13 @@ def writeToFlatFile_comma(df, filePath, fileName, mode):
 
 
 # COMMAND ----------
-gs_source_path = target_bucket + target_file
-nas_target_path = nas_target_base_path + today+ "\\"
+
+target_path =target_bucket +today
+gs_source_path = target_path +"/"+ target_file 
+nas_target_path = nas_target_base_path+ today +"/"
 
 try:
-    writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_bucket, target_file, 'overwrite' )
+    writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_path, target_file, 'overwrite' )
     copy_file_to_nas(gs_source_path, nas_target_path)
  
 except Exception as e:
