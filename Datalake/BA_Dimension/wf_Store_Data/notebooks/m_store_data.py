@@ -50,7 +50,7 @@ refine = getEnvPrefix(env) + "refine"
 # Set global variables
 starttime = datetime.now()  # start timestamp of the script
 
-source_bucket = getParameterValue(raw, "wf_Store_Data", "m_store_data", "source_bucket")
+source_bucket = getParameterValue(raw, "wf_store_data", "m_store_data", "source_bucket")
 # key=getParameterValue(raw,'wf_Store_Data','m_store_data','key')
 
 # source_file=get_src_file(key,source_bucket)
