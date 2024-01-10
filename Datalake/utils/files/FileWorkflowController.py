@@ -413,7 +413,7 @@ class FileWorkflowController(object):
         # dt = name.split("_")[-2]
         ds: str = "_".join(s for s in name.split("_")[-2::])
         # yyyymmdd
-        dt: datetime = datetime.strptime(ds, dtstrfmt)
+        dt: datetime = datetime.strptime(ds.strip(), dtstrfmt)
         return dt
 
     def _pp_processing_map(self) -> None:
