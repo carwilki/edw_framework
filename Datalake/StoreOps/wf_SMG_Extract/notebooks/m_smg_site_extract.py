@@ -254,13 +254,15 @@ def writeToFlatFile_comma(df, filePath, fileName, mode):
 
 # COMMAND ----------
 
-target_path =target_bucket +today
+folder = target_file.split('.')[0]
+target_path =target_bucket + folder + '/' +today
 gs_source_path = target_path +"/"+ target_file 
+
 nas_target_path = nas_target_base_path+ today +"/"
 
 try:
     writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_path, target_file, 'overwrite' )
-    copy_file_to_nas(gs_source_path, nas_target_path)
+    #copy_file_to_nas(gs_source_path, nas_target_path)
  
 except Exception as e:
     raise e
