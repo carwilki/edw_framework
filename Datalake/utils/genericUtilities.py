@@ -424,9 +424,14 @@ def copy_file_to_nas(gs_source_path, nas_target_path):
     except ImportError:
         from io import StringIO
 
+    if not nas_target_path.startswith("/mnt"):
+        raise Exception(f"The NAS location should start with /mnt/ : {nas_target_path}")
+
     key_string = dbutils.secrets.get(scope="dataprocedgenode-creds", key="pkey")
     keyfile = StringIO(key_string)
     mykey = paramiko.RSAKey.from_private_key(keyfile)
+    # create target directory if not existing
+    execute_cmd_on_edge_node(f"mkdir -p {nas_target_path}", mykey)
     execute_cmd_on_edge_node(
         "gsutil cp " + gs_source_path + " " + nas_target_path, mykey
     )
