@@ -21,6 +21,7 @@ else:
 
 # COMMAND ----------
 
+
 def trigger_rocky_job(payload):
     api_version = "/api/2.1"
     api_command = "/jobs/run-now"
@@ -32,27 +33,28 @@ def trigger_rocky_job(payload):
 
     return response.text
 
+
 # COMMAND ----------
 
 import csv
 import time
 
-tables = ['STORE_DATA']
+tables = ["STORE_DATA"]
 
-for table in tables:    
-  print(table)
-  query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
-  print(query)
-  job_id = spark.sql(query).collect()[0][0]
-  print(job_id)
-  try:
-      run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
-      print("response:", run_info)
-      #time.sleep(240)
-      # run_id = json.loads(run_info)['run_id']
-      # print(run_id)
-  except Exception as e:
-      print("failed for", table, e)
+for table in tables:
+    print(table)
+    query = f"""select job_id from {work_db}.rocky_ingestion_metadata where source_table='{table}' and table_group='NZ_Migration'"""
+    print(query)
+    job_id = spark.sql(query).collect()[0][0]
+    print(job_id)
+    try:
+        run_info = trigger_rocky_job(json.dumps({"job_id": job_id}))
+        print("response:", run_info)
+        # time.sleep(240)
+        # run_id = json.loads(run_info)['run_id']
+        # print(run_id)
+    except Exception as e:
+        print("failed for", table, e)
 
 # COMMAND ----------
 
@@ -61,5 +63,3 @@ for table in tables:
 
 
 # COMMAND ----------
-
-

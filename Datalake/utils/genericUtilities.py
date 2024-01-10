@@ -46,8 +46,8 @@ def getSfCredentials(env):
         "sfSchema": schema,
         "sfWarehouse": warehouse,
         "autopushdown": "on",
-        "truncate_table" :"ON",
-        "truncate_columns" :"on",
+        "truncate_table": "ON",
+        "truncate_columns": "on",
         "sfRole": sfRole,
     }
 
@@ -457,37 +457,41 @@ def get_source_file(key, _bucket):
 
 
 def execSP(sp_sql, connection_string, username, password):
+    driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
+    connection = driver_manager.getConnection(connection_string, username, password)
+    exec_statement = connection.prepareCall(f"{sp_sql}")
+    exec_statement.registerOutParameter(
+        1, spark._sc._gateway.jvm.java.sql.Types.INTEGER
+    )
+    exec_statement.execute()
+    result = exec_statement.getInt(1)
 
-  driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
-  connection = driver_manager.getConnection(connection_string, username, password)
-  exec_statement=connection.prepareCall(f"{sp_sql}")
-  exec_statement.registerOutParameter(1, spark._sc._gateway.jvm.java.sql.Types.INTEGER)
-  exec_statement.execute()
-  result = exec_statement.getInt(1)
-
-  # Close connections
-  exec_statement.close()
-  connection.close()
-  return result
-
-def loadDFtoSQLTarget(df,sqlTable,username,password,connStr):
-  driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-  try:
-    properties = {"user":username, "password":password, "driver": driver}
-    df.write.jdbc(url=connStr, table=sqlTable, properties=properties,mode='append')   
-  except Exception as e:
-    print('Truncate and load failed for ' + sqlTable )  
-    raise(Exception(str(e)))    
+    # Close connections
+    exec_statement.close()
+    connection.close()
+    return result
 
 
-def get_source_file_bs_wkly(fname,_bucket):
+def loadDFtoSQLTarget(df, sqlTable, username, password, connStr):
+    driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+    try:
+        properties = {"user": username, "password": password, "driver": driver}
+        df.write.jdbc(url=connStr, table=sqlTable, properties=properties, mode="append")
+    except Exception as e:
+        print("Truncate and load failed for " + sqlTable)
+        raise (Exception(str(e)))
+
+
+def get_source_file_bs_wkly(fname, _bucket):
     import builtins
+
     lst = dbutils.fs.ls(_bucket)
     fldr = builtins.max(lst, key=lambda x: x.name).name
     lst = dbutils.fs.ls(_bucket + fldr)
     files = [x.path for x in lst if x.name == fname]
     return files[0] if files else None
-  
+
+
 # def get_source_file_rfx(key, _bucket):
 #   import builtins
 #   lst = dbutils.fs.ls(_bucket)
@@ -496,14 +500,20 @@ def get_source_file_bs_wkly(fname,_bucket):
 #   files = [x.path for x in lst if x.name.startswith(key)]
 #   return files[0] if files else None
 
+
 def get_src_file(key, _bucket):
     import builtins
+
     lst = dbutils.fs.ls(_bucket)
     dirs = [item for item in lst if item.isDir()]
     fldr = builtins.max(dirs, key=lambda x: x.name).name
     lst = dbutils.fs.ls(_bucket + fldr)
     files = [x.path for x in lst if x.name.lower().startswith(key.lower())]
     return files[0] if files else None
+
+
+def get_file_for_processing(bucket: str):
+    return bucket + "processing/"
 
 
 def fileExists(pfile):
