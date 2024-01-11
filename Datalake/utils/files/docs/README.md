@@ -62,11 +62,11 @@ insert_param_config(
 | Parameter File Name | `-pf`| `--paramter_file`| This is the name of the parameter file where the configurations for the driver are stored.|
 | **Optonal** Time Out|`-to`| `--timeout`| this is uesed to set the default time out for the workflow call. syntax is is based on days, hours and mintues and is encoded as like this example `3d5h19m` would set the timeout to 3 Days, 5 hours and 19 minutes. the default value is set to `2h` |
 
-3) Deplow the workflow as normal, making sure to note the Job ID and inputting it into the Job ID value in the driver configuration.
+3) Deploy the workflow as normal, making sure to note the Job ID and inputting it into the Job ID value in the driver configuration.
 
 ## General Flow
 ### Happy Path Diagram
-![Happy Path Flow.](./diagrams/out/happy_path.png)
+![[diagrams/out/happy_path.png]]
 
 ### Error Handling Flow
-![Error Flow](./diagrams/out/error_path.png)
+![[diagrams/out/error_path.png]]
