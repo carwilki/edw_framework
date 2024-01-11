@@ -66,7 +66,7 @@ insert_param_config(
 
 ## General Flow
 ### Happy Path Diagram
-![Happy Path Flow.](diagrams/out/happy_path.png?raw=true)
+![Happy Path Flow.](diagrams/out/happy_path.svg)
 
 ### Error Handling Flow
-![Error Flow](./diagrams/out/error_path.png)
+![Error Flow](./diagrams/out/error_path.svg)
