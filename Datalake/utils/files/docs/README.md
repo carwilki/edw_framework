@@ -66,7 +66,7 @@ insert_param_config(
 
 ## General Flow
 ### Happy Path Diagram
-[[diagrams/out/happy_path.png]]
+![Happy Path Flow.](Datalake/utils/files/diagrams/out/happy_path.png)
 
 ### Error Handling Flow
-[[diagrams/out/error_path.png]]
+![Error Flow](./diagrams/out/error_path.png)
