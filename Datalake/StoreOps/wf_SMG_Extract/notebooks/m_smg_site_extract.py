@@ -262,7 +262,7 @@ nas_target_path = nas_target_base_path+ today +"/"
 
 try:
     writeToFlatFile_comma(Shortcut_to_SMG_Site_Extract_FlatFile, target_path, target_file, 'overwrite' )
-    #copy_file_to_nas(gs_source_path, nas_target_path)
+    copy_file_to_nas(gs_source_path, nas_target_path)
  
 except Exception as e:
     raise e
