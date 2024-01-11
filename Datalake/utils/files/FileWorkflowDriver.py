@@ -6,10 +6,6 @@ and is used as an entry point to the file jobs
 args:
     env:        -e --env the environment to run the job in dev,qa,prod
     job id:     -id --job_id the id of the job to run as a file job
-    paths:      -p --paths the required paths as a tuple of
-                strings (input_bucket,archive_bucket)
-                passed in as a comma separated string of pairs
-                "input_1::archive1,input_2::archive2"
     timeout:    -to --timeout
                 the timeout to wait for the called job to complete.
 """
