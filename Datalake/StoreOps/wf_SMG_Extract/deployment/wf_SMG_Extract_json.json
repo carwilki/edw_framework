@@ -28,6 +28,11 @@
             "pypi": {
               "package": "deepdiff"
             }
+          },
+          {
+            "pypi": {
+              "package": "paramiko"
+            }
           }
         ],
         "timeout_seconds": 0,
