@@ -43,7 +43,7 @@ insert_param_config(
 ```
 
 2) Create the workfllow driver
-![Workflow configuration example.](img/fw_driver_task_creation.png)
+![Workflow configuration example.](./img/fw_driver_task_creation.png)
 
 | Name | Description |
 | ---- | ----------- |
@@ -66,7 +66,7 @@ insert_param_config(
 
 ## General Flow
 ### Happy Path Diagram
-![Happy Path Flow.](diagrams/out/happy_path.png)
+![Happy Path Flow.](./diagrams/out/happy_path.png)
 
 ### Error Handling Flow
-![Error Flow](diagrams/out/error_path.png)
+![Error Flow](./diagrams/out/error_path.png)
