@@ -173,9 +173,9 @@ Exp_Load_Strategy = Jnr_Wfa_Lbracct_temp.selectExpr(
 	"Jnr_Wfa_Lbracct___SRC_COD as SRC_COD",
 	"Jnr_Wfa_Lbracct___SRC_SKEY as SRC_SKEY",
 	"Jnr_Wfa_Lbracct___TENANT_SKEY as TENANT_SKEY",
-	"IF (Jnr_Wfa_Lbracct___LBRACCT_ID IS NULL, 0, IF (Jnr_Wfa_Lbracct___LBRACCT_ID IS NOT NULL AND Jnr_Wfa_Lbracct___LBRACCT_ID IS NOT NULL, 1, 3)) as LOAD_STRATEGY",
+	"IF (Jnr_Wfa_Lbracct___LBRACCT_ID1 IS NULL, 0, IF (Jnr_Wfa_Lbracct___LBRACCT_ID IS NOT NULL AND Jnr_Wfa_Lbracct___LBRACCT_ID IS NOT NULL, 1, 3)) as LOAD_STRATEGY",
 	"CURRENT_TIMESTAMP as UPDATE_DT",
-	"IF (Jnr_Wfa_Lbracct___LBRACCT_ID IS NULL, CURRENT_TIMESTAMP, Jnr_Wfa_Lbracct___LOAD_DT) as LOAD_DT"
+	"IF (Jnr_Wfa_Lbracct___LBRACCT_ID1 IS NULL, CURRENT_TIMESTAMP, Jnr_Wfa_Lbracct___LOAD_DT) as LOAD_DT"
 )
 
 # COMMAND ----------

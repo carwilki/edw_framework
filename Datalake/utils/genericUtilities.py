@@ -343,6 +343,17 @@ def writeToFlatFile(df, filePath, fileName, mode):
 
     renamePartFileName(filePath, newFilePath)
 
+def renamePartFileNames(filePath, newFilename ,ext = ''):
+    fileList = dbutils.fs.ls(filePath)
+
+    for file in fileList:
+        if file.name.startswith("part-0000"):
+            print(file.name)
+            partFileName = filePath.strip("/") + "/" + file.name
+            print("part file name:", partFileName)
+            print("new file name:", newFilename + ext)
+            dbutils.fs.cp(partFileName, newFilename  + ext)
+            dbutils.fs.rm(filePath,True)
 
 def execute_cmd_on_edge_node(cmd_parameter, mykey):
     import os
@@ -424,9 +435,14 @@ def copy_file_to_nas(gs_source_path, nas_target_path):
     except ImportError:
         from io import StringIO
 
+    if not nas_target_path.startswith("/mnt"):
+        raise Exception(f"The NAS location should start with /mnt/ : {nas_target_path}")
+
     key_string = dbutils.secrets.get(scope="dataprocedgenode-creds", key="pkey")
     keyfile = StringIO(key_string)
     mykey = paramiko.RSAKey.from_private_key(keyfile)
+    # create target directory if not existing
+    execute_cmd_on_edge_node(f"mkdir -p {nas_target_path}", mykey)
     execute_cmd_on_edge_node(
         "gsutil cp " + gs_source_path + " " + nas_target_path, mykey
     )
@@ -452,6 +468,17 @@ def insert_param_config(
     )
     """
     spark.sql(sql)
+
+
+def update_param_config(
+    raw, parameter_file_name, parameter_section, parameter_key, parameter_value
+):
+
+    spark.sql(
+        f"""Update {raw}.parameter_config set parameter_value="{parameter_value}" where parameter_file_name='{parameter_file_name}' and parameter_section='{parameter_section}' and parameter_key='{parameter_key}'"""
+    )
+    return f"Update Complete for {parameter_key}"    
+
 
 
 def get_source_file(key, _bucket):
@@ -538,3 +565,18 @@ def fileExists(pfile):
     else:
         print(f"FILE {pfile} EXISTS  ")
         return True
+    
+
+def writeToFlatFile_comma(df, filePath, fileName, mode):
+    print(filePath)
+    if mode == "overwrite":
+        dbutils.fs.rm(filePath.strip("/") + "/", True)
+ 
+    df.repartition(1).write.mode(mode).option("header", "True").option(
+        "inferSchema", "true"
+    ).option("delimiter", ",").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
+    print("File added to GCS Path")
+    removeTransactionFiles(filePath)
+    newFilePath = filePath.strip("/") + "/" + fileName
+ 
+    renamePartFileName(filePath, newFilePath)

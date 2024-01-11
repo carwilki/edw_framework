@@ -97,4 +97,5 @@ Shortcut_to_RELEX_DAILY_ORDER_PROJECTION_PRE = EXP_DATE_CONV.selectExpr(
 	"CAST(Projected_deliveries AS DECIMAL(12,4)) as PROJECTED_DELIVERIES",
 	"CAST(LOAD_TSTMP AS TIMESTAMP) as LOAD_TSTMP"
 )
-#Shortcut_to_RELEX_DAILY_ORDER_PROJECTION_PRE.write.saveAsTable(f'{raw}.RELEX_DAILY_ORDER_PROJECTION_PRE', mode = 'overwrite')
+
+Shortcut_to_RELEX_DAILY_ORDER_PROJECTION_PRE.write.saveAsTable(f'{raw}.RELEX_DAILY_ORDER_PROJECTION_PRE', mode = 'overwrite')
