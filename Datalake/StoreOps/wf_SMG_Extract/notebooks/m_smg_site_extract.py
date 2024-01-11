@@ -235,22 +235,6 @@ Shortcut_to_SMG_Site_Extract_FlatFile = EXP_Format.selectExpr(
 
 Shortcut_to_SMG_Site_Extract_FlatFile = Shortcut_to_SMG_Site_Extract_FlatFile.withColumnRenamed("STORE_NBR","#STORE_NBR")
 
-# COMMAND ----------
-
-def writeToFlatFile_comma(df, filePath, fileName, mode):
-    print(filePath)
-    if mode == "overwrite":
-        dbutils.fs.rm(filePath.strip("/") + "/", True)
- 
-    df.repartition(1).write.mode(mode).option("header", "True").option(
-        "inferSchema", "true"
-    ).option("delimiter", ",").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
-    print("File added to GCS Path")
-    removeTransactionFiles(filePath)
-    newFilePath = filePath.strip("/") + "/" + fileName
- 
-    renamePartFileName(filePath, newFilePath)
-
 
 # COMMAND ----------
 
