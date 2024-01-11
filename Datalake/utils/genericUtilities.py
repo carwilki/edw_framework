@@ -435,12 +435,23 @@ def copy_file_to_nas(gs_source_path, nas_target_path):
 def insert_param_config(
     raw, parameter_file_name, parameter_section, parameter_key, parameter_value
 ):
-    id = spark.sql(f"select max(id) from {raw}.parameter_config").collect()[0][0]
-
-    spark.sql(
-        f"insert into table {raw}.parameter_config values ({id+1},'{parameter_file_name}','{parameter_section}','{parameter_key}','{parameter_value}')"
+    sql = f"""
+    insert into
+    {raw}.parameter_config (
+        parameter_file_name,
+        parameter_section,
+        parameter_key,
+        parameter_value
     )
-    return f"ID of the {parameter_key} is {id+1}"
+    values
+    (
+        {parameter_file_name},
+        {parameter_section},
+        {parameter_key},
+        {parameter_value}
+    )
+    """
+    spark.sql(sql)
 
 
 def get_source_file(key, _bucket):
