@@ -544,3 +544,18 @@ def fileExists(pfile):
     else:
         print(f"FILE {pfile} EXISTS  ")
         return True
+    
+
+def writeToFlatFile_comma(df, filePath, fileName, mode):
+    print(filePath)
+    if mode == "overwrite":
+        dbutils.fs.rm(filePath.strip("/") + "/", True)
+ 
+    df.repartition(1).write.mode(mode).option("header", "True").option(
+        "inferSchema", "true"
+    ).option("delimiter", ",").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
+    print("File added to GCS Path")
+    removeTransactionFiles(filePath)
+    newFilePath = filePath.strip("/") + "/" + fileName
+ 
+    renamePartFileName(filePath, newFilePath)
