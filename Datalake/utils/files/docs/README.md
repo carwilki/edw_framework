@@ -3,7 +3,15 @@
 The FileworkflowController and Driver are used to create a file based workflow that will process all the files that have been configured by entries in the parameter table. 
 
 ##Longer Description
+
 The FileworkflowController should be used to handle and drive workflow(s) that are configured to read from 1 or more files.
+
+|Key Terms| Description|
+|---|----|
+|`source_bucket` | This is the bucket where files are stored for processing for a particular mapping|
+|`processing` directory | This is the directory in the `source_bucket` where currently processing file is moved to for processing for a particular mapping. There should only ever be one such directory in the `source_bucket` directory. There should also never be more than one file in the dirrectory.d
+|`archive_bucket` | This is the bucket where files are move to post processing for for long term storage. The format of the archive path is `{archive_bucket}/{file_date}/{file}`|
+
 
 Steps to configure:
 1) Create parameter file scripts and execute them
@@ -65,6 +73,9 @@ insert_param_config(
 3) Deploy the workflow as normal, making sure to note the Job ID and inputting it into the Job ID value in the driver configuration.
 
 ## General Flow
+All file are are processed in the `processing` dircetory under the `source_bucket` directory
+Files are moved to the `archive_bucket`
+
 ### Happy Path Diagram
 ![Happy Path Flow.](diagrams/out/happy_path.svg)
 
