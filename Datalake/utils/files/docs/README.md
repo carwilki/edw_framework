@@ -4,14 +4,29 @@ The FileworkflowController and Driver are used to create a file based workflow t
 
 ##Longer Description
 
-The FileworkflowController should be used to handle and drive workflow(s) that are configured to read from 1 or more files.
-
 |Key Terms| Description|
 |---|----|
+|`parameters`| Pre configured values stored in the parameter table and accessd by the `controller`|
+|`controller`| The FileWorkflowController Component|
 |`source_bucket` | This is the bucket where files are stored for processing for a particular mapping|
-|`processing` directory | This is the directory in the `source_bucket` where currently processing file is moved to for processing for a particular mapping. There should only ever be one such directory in the `source_bucket` directory. There should also never be more than one file in the dirrectory.d
+|`processing` directory | This is the directory in the `source_bucket` where currently processing file is moved to for processing for a particular mapping. There should only ever be one such directory in the `source_bucket` directory. There should also never be more than one file in the dirrectory. directory structure `{source_buck}/processing`|
 |`archive_bucket` | This is the bucket where files are move to post processing for for long term storage. The format of the archive path is `{archive_bucket}/{file_date}/{file}`|
+|`file(s)`| The files that are locate in the `source_bucket`|
+|`date_map`| a mapping of day(s) to `file(s)` that need to processed.|
+|`queue`| This is the processing list of ordered dates that need to be processed.|
+|`date`| This is the current date for files that are being processed. 
 
+The FileworkflowController should be used to handle and drive workflows that are configured to read from one or more files. The controller reads the `parameters` from the parameter table to get the `source_bucket(s)` and `archive_bucket(s)` to be used for the mappings. The controller then scans all of the `source_bucket(s)` to build a `date_map`
+
+The `date_map` contains all of the dates that have files that need to be processed i.e. `date_map(date)->[files]|None`. The `controller` then uses the `date_map` to build a `queue` of dates that need to proceesed from the keys.
+
+The controller then loops through the `queue` pulling the the date that should be processed. The files are then pulled from the `date_map` like `date_map(date)->[files]`. 
+
+The `controller` then checks to make sure that for the `date` that all of the buckets have a file for processing. If there is gap then the controller will fail with a missing file exception. 
+
+The controller then moves the files from `date_map(date)->[files]` to the `processing` directory(s). It then signals the job via dbr sdk to start processing. If the job completes normally then the `controller` moves the files that have been processed to their `archive_bucket(s)`. 
+
+If the job fails or is terminated before completion, then all of the files currently in `processing` are moved back their `source_bucket(s)` for re-processing.
 
 Steps to configure:
 1) Create parameter file scripts and execute them

@@ -11,11 +11,22 @@ class ParameterFile(dict[str, dict[str, str]]):
         super(ParameterFile, self).__init__()
 
     def get_source_buckets_archive_pairs(self) -> (str, str):
+        """
+        Returns a generator that yields tuples of (source_bucket, archive_bucket)
+        where both values are present in the parameter file.
+
+        Args:
+            None
+
+        Yields:
+            A tuple of (source_bucket, archive_bucket)
+
+        """
         for _, v in self.items():
-            s = v.get("source_bucket")
-            a = v.get("archive_bucket")
-            if s is not None and a is not None:
-                yield (s, a)
+            source_bucket = v.get("source_bucket")
+            archive_bucket = v.get("archive_bucket")
+            if source_bucket is not None and archive_bucket is not None:
+                yield (source_bucket, archive_bucket)
 
 
 class ParameterData:
@@ -58,25 +69,51 @@ class ParameterData:
         return params
 
     def add_parameter(
-        self, id, parameter_file_name, parameter_section, parameter_key, parameter_value
-    ):
+        self, id: int, parameter_file_name: str, parameter_section: str, parameter_key: str, parameter_value: str
+    ) -> None:
+        """
+        Adds a new parameter to the parameter_config table.
+
+        Args:
+            id (int): The id of the parameter.
+            parameter_file_name (str): The name of the parameter file.
+            parameter_section (str): The section of the parameter.
+            parameter_key (str): The key of the parameter.
+            parameter_value (str): The value of the parameter.
+        """
         self.spark.sql(
             f"insert into table {self.table} values ({id},'{parameter_file_name}','{parameter_section}','{parameter_key}','{parameter_value}')"
         )
 
     def remove_parameter(
-        self, id, parameter_file_name, parameter_section, parameter_key
-    ):
+        self, id: int, parameter_file_name: str, parameter_section: str, parameter_key: str
+    ) -> None:
+        """
+        Removes a parameter from the parameter_config table.
+
+        Args:
+            id (int): The id of the parameter.
+            parameter_file_name (str): The name of the parameter file.
+            parameter_section (str): The section of the parameter.
+            parameter_key (str): The key of the parameter.
+        """
         self.spark.sql(
-            f"""
-            delete from table {self.table}
-            where id = {id} and parameter_file_name = '{parameter_file_name}'
-            and parameter_section = '{parameter_section}' and parameter_key = '{parameter_key}'"""
+            f"delete from table {self.table} where id = {id} and parameter_file_name = '{parameter_file_name}' and parameter_section = '{parameter_section}' and parameter_key = '{parameter_key}'"
         )
 
     def update_parameter(
-        self, id, parameter_file_name, parameter_section, parameter_key, parameter_value
-    ):
+        self, id: int, parameter_file_name: str, parameter_section: str, parameter_key: str, parameter_value: str
+    ) -> None:
+        """
+        Updates an existing parameter in the parameter_config table.
+
+        Args:
+            id (int): The id of the parameter.
+            parameter_file_name (str): The name of the parameter file.
+            parameter_section (str): The section of the parameter.
+            parameter_key (str): The key of the parameter.
+            parameter_value (str): The value of the parameter.
+        """
         self.spark.sql(
             f"""
             update table {self.table}
