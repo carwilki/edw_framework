@@ -40,7 +40,7 @@ legacy = getEnvPrefix(env) + 'legacy'
 
 _sql = f"""
 INSERT OVERWRITE {legacy}.EDU_ASSESSMENTS_CONS
-SELECT * EXCEPT(bd_create_dt_tm,source_file_name) FROM {legacy}.EDU_ASSESSMENTS
+SELECT * FROM {legacy}.EDU_ASSESSMENTS
 UNION ALL
 -- Create additional records based on specific conditions
 SELECT DISTINCT

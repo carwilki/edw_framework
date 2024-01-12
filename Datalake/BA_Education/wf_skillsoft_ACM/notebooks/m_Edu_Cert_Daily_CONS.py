@@ -86,7 +86,7 @@ FROM (
 ) ACM
 WHERE ACM.RN = 1
 UNION ALL
-SELECT * EXCEPT(bd_create_dt_tm,source_file_name) FROM {legacy}.EDU_CERT_DAILY
+SELECT * FROM {legacy}.EDU_CERT_DAILY
 WHERE DAY_DT = CURRENT_DATE - INTERVAL 1 DAY
 """
 
