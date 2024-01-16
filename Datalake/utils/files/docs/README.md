@@ -9,8 +9,8 @@ The FileworkflowController and Driver are used to create a file based workflow t
 |`parameters`| Pre configured values stored in the parameter table and accessd by the `controller`|
 |`controller`| The FileWorkflowController Component|
 |`source_bucket` | This is the bucket where files are stored for processing for a particular mapping|
-|`processing` directory | This is the directory in the `source_bucket` where currently processing file is moved to for processing for a particular mapping. There should only ever be one such directory in the `source_bucket` directory. There should also never be more than one file in the dirrectory. directory structure `{source_buck}/processing`|
-|`archive_bucket` | This is the bucket where files are move to post processing for for long term storage. The format of the archive path is `{archive_bucket}/{file_date}/{file}`|
+|`processing` directory | This is the directory in the `source_bucket` where the currently processing file is moved to for processing. There should only ever be one such directory in the `source_bucket` directory. There should also never be more than one file in the dirrectory. directory structure: `{source_buck}/processing`|
+|`archive_bucket` | This is the bucket where files are move to post processing for for long term storage. The format of the archive path is: `{archive_bucket}/{file_date}/{file}`|
 |`file(s)`| The files that are locate in the `source_bucket`|
 |`date_map`| a mapping of day(s) to `file(s)` that need to processed.|
 |`queue`| This is the processing list of ordered dates that need to be processed.|
