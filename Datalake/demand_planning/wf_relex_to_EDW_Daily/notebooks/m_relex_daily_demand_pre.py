@@ -60,7 +60,7 @@ FIL_UNKNOWN_RECORDS = SQ_Shortcut_to_RELEX_Daily_Demand_FF_temp.selectExpr(
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Date as Date",
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Location_code as Location_code",
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Product_code as Product_code",
-	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Supplier_code as Supplier_code",
+	"CAST(SQ_Shortcut_to_RELEX_Daily_Demand_FF___Supplier_code AS STRING) as Supplier_code",
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Ordering_need as Ordering_need",
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Needed_quantity as Needed_quantity",
 	"SQ_Shortcut_to_RELEX_Daily_Demand_FF___Proposed_quantity as Proposed_quantity",
