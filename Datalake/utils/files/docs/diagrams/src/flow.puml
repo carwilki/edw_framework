@@ -1,0 +1,46 @@
+@startuml Happy Path
+actor Driver
+actor Controller
+actor Workflow
+title Happy Path
+Driver --->Controller:Configures
+Controller ---> GCS:Scans Prep Bucket
+Controller ---> Controller:Read Parameter from table
+Controller ---> Controller: Configure Prep and Archive Bucket locations.
+
+loop for all files in prep bucket
+    Controller ---> GCS: Move Current File to Processing Bucket
+    Workflow ---> GCS:: Reads file from processing  Bucket
+    Workflow ---> Workflow:Processes the file
+    Workflow ---> Controller: Signal job Complete 
+    Controller ---> GCS: Archive Current File to GCS Bucket
+end 
+
+Controller ---> Driver:Signals Complete
+
+@enduml
+
+@startuml Error Path
+actor Driver
+actor Controller
+actor Workflow
+title Error Flow
+Driver --->Controller:Configures
+Controller ---> GCS:Scans Prep Bucket
+Controller ---> Controller:Read Parameter from table
+Controller ---> Controller: Configure Prep and Archive Bucket locations.
+
+loop for all files in prep bucket
+    Controller ---> GCS: Move Current File to Processing Bucket
+    Workflow ---> GCS: Reads file from processing  Bucket
+    Workflow ---> Workflow:Processes the file
+    Workflow ---> Workflow: Throws an Error
+    Workflow ---> Controller: signal job failed
+    Controller ---> Controller: Exit Loop
+end 
+break
+Controller ---> GCS: Return currently processing file(s) to Prep Folder(s)
+Controller ---> Controller: Raises Exception
+
+Controller ---> Driver:Signals Complete
+@enduml
