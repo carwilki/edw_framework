@@ -65,6 +65,11 @@
           "pypi": {
             "package": "deepdiff"
           }
+        },
+        {
+          "maven": {
+            "coordinates": "com.oracle.ojdbc:ojdbc8:19.3.0.0"
+          }
         }
       ],
       "timeout_seconds": 0,
