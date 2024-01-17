@@ -296,7 +296,7 @@ writeToFlatFile(Shortcut_to_RELEX_Stores_Sales_FF, target_file_path, key, 'overw
 
 # COMMAND ----------
 
-nas_target_path = nas_target  + date.today().strftime('%Y%m%d') + '\\'
+nas_target_path = nas_target  + date.today().strftime('%Y%m%d') + '/'
 gs_source_path = target_file_path + '*.csv'
 copy_file_to_nas(gs_source_path, nas_target_path)
 
