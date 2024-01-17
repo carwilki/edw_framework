@@ -97,3 +97,15 @@ print(response)
 # set the permissions on the file driver
 response = set_permission(payload, file_driver)
 print(response)
+print(
+    f"""
+      Job Id: {job_id}
+      Driver Id: {driver_id}
+      Driver Cluster: {dc}
+      ############################################
+      IMPORTANT::
+      The Driver Id is the Id of the job that needs
+      to be run in tidal. the driver controls th
+      ############################################
+      """
+)
