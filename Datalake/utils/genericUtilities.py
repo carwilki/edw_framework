@@ -5,6 +5,7 @@ from pyspark.sql import SparkSession
 
 import Datalake.utils.secrets as secrets
 from Datalake.utils.logger import logPrevRunDt
+import pyspark.sql.functions as F
 
 logger = getLogger()
 logger.setLevel(INFO)
@@ -333,6 +334,23 @@ def writeToFlatFile(df, filePath, fileName, mode):
     print(filePath)
     if mode == "overwrite":
         dbutils.fs.rm(filePath.strip("/") + "/", True)
+
+    df.repartition(1).write.mode(mode).option("header", "True").option(
+        "inferSchema", "true"
+    ).option("delimiter", "|").option("ignoreTrailingWhiteSpace", "False").csv(filePath)
+    print("File added to GCS Path")
+    removeTransactionFiles(filePath)
+    newFilePath = filePath.strip("/") + "/" + fileName
+
+    renamePartFileName(filePath, newFilePath)
+
+def writeToFlatFile_withoutQuotes(df, filePath, fileName, mode):
+    print(filePath)
+    if mode == "overwrite":
+        dbutils.fs.rm(filePath.strip("/") + "/", True)
+    
+    for col in df.columns:         
+        df = df.withColumn(col, F.when(F.col(col).isNull() | (F.trim(F.col(col)) == ""), F.lit(None)).otherwise(F.col(col)))
 
     df.repartition(1).write.mode(mode).option("header", "True").option(
         "inferSchema", "true"
