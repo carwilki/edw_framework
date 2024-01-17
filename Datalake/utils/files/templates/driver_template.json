@@ -1,5 +1,5 @@
 {
-    "name": "wf_Store_Data_File_Driver",
+    "name": "{{ name }}",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
     },

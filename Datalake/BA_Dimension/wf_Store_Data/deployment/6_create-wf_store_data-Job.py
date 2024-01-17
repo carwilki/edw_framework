@@ -73,11 +73,12 @@ job_id = getJobId(response)
 # set up the file driver parmeters
 env = "prod"
 pf = "wf_store_data"
+name = f"{pf}_driver"
 dc = "FileDriverCluster"
 rau = "gcpdatajobs-shared@petsmart.com"
 to = "2h"
 # creat the file driver job
-file_driver = get_file_driver_payload(env, job_id, pf, dc, rau, to)
+file_driver = get_file_driver_payload(name, env, job_id, pf, dc, rau, to)
 driver_id = getJobId(create_cluster(file_driver))
 
 permission_json = {

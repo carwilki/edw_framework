@@ -10,12 +10,13 @@ _jenv.filters["jsonify"] = json.dumps
 
 
 def get_file_driver_payload(
-    env, job_id, parameter_file, driver_cluster, run_as_user, timeout="2H"
+    name,env, job_id, parameter_file, driver_cluster, run_as_user, timeout="2H"
 ) -> str:
     # Template file at ./app/templates/example.json
     template = _jenv.get_template("driver_template.json")
 
     return template.render(
+        name=name,
         env=env,
         job_id=job_id,
         parameter_file=parameter_file,
