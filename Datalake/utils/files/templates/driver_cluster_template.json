@@ -24,9 +24,6 @@
     },
     "node_type_id": "e2-standard-4",
     "driver_node_type_id": "e2-standard-4",
-    "custom_tags": {
-        "ResourceClass": "SingleNode"
-    },
     "spark_env_vars": {
         "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
     },
@@ -37,6 +34,7 @@
     "runtime_engine": "STANDARD",
     "num_workers": 0,
     "custom_tags": {
+        "ResourceClass": "SingleNode",
         "Department": "NZ-Migration",
         "DeliveryTeam": "DTDATAPT"
     }
