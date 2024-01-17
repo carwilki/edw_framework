@@ -55,11 +55,18 @@ def set_permission(payload, job_id):
 
 
 # COMMAND ----------
+
+job_json = "prod_wf_store_data.json"
+env = "prod"
+pf = "wf_store_data"
+name = f"{pf}_driver"
+dc = "FileDriverCluster"
+rau = "gcpdatajobs-shared@petsmart.com"
+to = "2h"
+
 # create the file driver cluster to run the file utils on
 # this is required for the file utils to execute.
 create_cluster(get_file_driver_cluster_payload())
-
-job_json = "prod_wf_store_data.json"
 # create the workflow first. we need the id of the job so we can set the permissions
 # and set up the file driver
 with open(job_json) as json_file:
@@ -71,12 +78,7 @@ response = create_job(payload)
 job_id = getJobId(response)
 
 # set up the file driver parmeters
-env = "prod"
-pf = "wf_store_data"
-name = f"{pf}_driver"
-dc = "FileDriverCluster"
-rau = "gcpdatajobs-shared@petsmart.com"
-to = "2h"
+
 # creat the file driver job
 file_driver = get_file_driver_payload(name, env, job_id, pf, dc, rau, to)
 driver_id = getJobId(create_cluster(file_driver))
