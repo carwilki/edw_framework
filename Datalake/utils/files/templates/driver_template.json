@@ -14,17 +14,17 @@
                 "python_file": "Datalake/utils/files/FileWorkflowDriver.py",
                 "parameters": [
                     "-e",
-                    {{ env }},
+                    "{{ env }}",
                     "-id",
-                    {{ job_id},
+                    "{{ job_id}}",
                     "-pf",
-                    {{ parameter_file }},
+                    "{{ parameter_file }}",
                     "-to",
-                    {{ time_out }}
+                    "{{ time_out }}"
                 ],
                 "source": "GIT"
             },
-            "existing_cluster_id": {{ driver_cluster}},
+            "existing_cluster_id": "{{ driver_cluster }}",
             "libraries": [
                 {
                     "pypi": {
@@ -52,6 +52,6 @@
         "Department": "NZ-Migration"
       },
       "run_as": {
-        "user_name": {{ run_as_user}}
+        "user_name": "{{ run_as_user}}"
       }
 }

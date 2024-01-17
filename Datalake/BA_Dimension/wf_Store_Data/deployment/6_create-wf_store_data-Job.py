@@ -1,14 +1,17 @@
 # Databricks notebook source
 import requests
 import json
+from Datalake.utils import secrets
+from Datalake.utils.files.driver_installer import (
+    get_file_driver_payload,
+    get_file_driver_cluster_payload,
+)
 
-token = dbutils.secrets.get(scope="db-token-jobsapi", key="password")
+token = secrets.get(scope="db-token-jobsapi", key="password")
 google_service_account = (
     "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com"
 )
-instance_id = dbutils.secrets.get(scope="db-token-jobsapi", key="instance_id")
-
-# COMMAND ----------
+instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
 
 
 def create_job(payload):
@@ -23,32 +26,20 @@ def create_job(payload):
     return response.text
 
 
+def create_cluster(payload):
+    path = "/api/2.0/clusters/create"
+    url = f"https://{instance_id}{path}"
+
+    params = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
+
+    response = requests.post(url=url, headers=params, data=payload)
+
+    return response.text
+
+
 def getJobId(json_response):
-    import re
-
-    id = json_response.split(":")[1]
-    return re.findall(r"\d+", id)[0]
-
-
-# COMMAND ----------
-
-import json
-
-job_json = "prod_wf_store_data.json"
-
-with open(job_json) as json_file:
-    job_payload = json.load(json_file)
-
-payload = json.dumps(job_payload)
-
-
-# COMMAND ----------
-
-response = create_job(payload)
-job_id = getJobId(response)
-print(response)
-
-# COMMAND ----------
+    json_response = json.loads(json_response)
+    return json_response.id
 
 
 def set_permission(payload, job_id):
@@ -64,6 +55,30 @@ def set_permission(payload, job_id):
 
 
 # COMMAND ----------
+# create the file driver cluster to run the file utils on
+# this is required for the file utils to execute.
+create_cluster(get_file_driver_cluster_payload())
+
+job_json = "prod_wf_store_data.json"
+# create the workflow first. we need the id of the job so we can set the permissions
+# and set up the file driver
+with open(job_json) as json_file:
+    job_payload = json.load(json_file)
+
+payload = json.dumps(job_payload)
+response = create_job(payload)
+
+job_id = getJobId(response)
+
+# set up the file driver parmeters
+env = "prod"
+pf = "wf_store_data"
+dc = "FileDriverCluster"
+rau = "gcpdatajobs-shared@petsmart.com"
+to = "2h"
+# creat the file driver job
+file_driver = get_file_driver_payload(env, job_id, pf, dc, rau, to)
+driver_id = getJobId(create_cluster(file_driver))
 
 permission_json = {
     "access_control_list": [
@@ -75,11 +90,10 @@ permission_json = {
     ]
 }
 
-
-# COMMAND ----------
-
-
 payload = json.dumps(permission_json)
-
+# set the permissions on the workflow
 response = set_permission(payload, job_id)
+print(response)
+# set the permissions on the file driver
+response = set_permission(payload, file_driver)
 print(response)
