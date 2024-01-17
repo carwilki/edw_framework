@@ -11,7 +11,7 @@
       "task_key": "m_EP_Original_Plan_Pre",
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "Datalake/BA_Merchandising/wf_EP_Original_Plan/notebooks/m_EP_Original_Plan_Pre",
+        "notebook_path": "Datalake/Merchandising/wf_EP_Original_Plan/notebooks/m_EP_Original_Plan_Pre",
         "base_parameters": {
           "env": "prod"
         },
@@ -48,7 +48,7 @@
       ],
       "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "Datalake/BA_Merchandising/wf_EP_Original_Plan/notebooks/m_EP_Original_Plan",
+        "notebook_path": "Datalake/Merchandising/wf_EP_Original_Plan/notebooks/m_EP_Original_Plan",
         "base_parameters": {
           "env": "prod"
         },

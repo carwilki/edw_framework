@@ -109,7 +109,7 @@ use legacy;
 
 )
 USING delta 
-LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/BA_Merchandising/ep_plan_class_wk';
+LOCATION 'gs://petm-bdpl-prod-nzlegacy-p1-gcs-gbl/Merchandising/ep_plan_class_wk';
 
 --DISTRIBUTE ON (EP_VERSION, SAP_CLASS_ID)
 
@@ -229,7 +229,7 @@ use raw;
 
 )
 USING delta 
-LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/BA_Merchandising/ep_pf_ft_pl_op1_000_pre';
+LOCATION 'gs://petm-bdpl-prod-raw-p1-gcs-gbl/Merchandising/ep_pf_ft_pl_op1_000_pre';
 
 --DISTRIBUTE ON RANDOM
 
