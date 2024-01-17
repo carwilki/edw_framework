@@ -99,8 +99,8 @@ response = set_permission(payload, file_driver)
 print(response)
 print(
     f"""
-      Job Id: {job_id}
       Driver Id: {driver_id}
+      Job Id: {job_id}
       Driver Cluster: {dc}
       ############################################
       IMPORTANT::
