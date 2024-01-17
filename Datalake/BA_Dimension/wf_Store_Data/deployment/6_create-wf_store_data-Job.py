@@ -105,7 +105,8 @@ print(
       ############################################
       IMPORTANT::
       The Driver Id is the Id of the job that needs
-      to be run in tidal. the driver controls th
+      to be run in tidal. the driver controls all
+      of the file setup.
       ############################################
       """
 )
