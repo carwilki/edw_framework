@@ -35,5 +35,9 @@
     "enable_local_disk_encryption": false,
     "data_security_mode": "NONE",
     "runtime_engine": "STANDARD",
-    "num_workers": 0
+    "num_workers": 0,
+    "custom_tags": {
+        "Department": "NZ-Migration",
+        "DeliveryTeam": "DTDATAPT"
+    }
 }
