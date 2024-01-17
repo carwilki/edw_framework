@@ -30,13 +30,13 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_RELEX_StoreUsage_Out' 
 parameter_section='m_RELEX_StoreUsage_Out' 
 parameter_key='LAST_RUN_DATE' 
-parameter_value='01/01/1900' 
+parameter_value='1900-01-01'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_StoreUsage_Out' 
 parameter_section='m_RELEX_StoreUsage_Out' 
 parameter_key='Delta_Filter' 
-parameter_value='MOVEMENT_DAY.UPDATE_DT>to_date("01/01/1900","MM/dd/yyyy")'
+parameter_value='MOVEMENT_DAY.UPDATE_DT>to_date("1900-01-01")'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_StoreUsage_Out' 
