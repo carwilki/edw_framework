@@ -162,7 +162,7 @@ Shortcut_to_Nielsen_ArtHierarchy_Flat = SRT_UPC.selectExpr(
 
 target_bucket=target_bucket+datetime.now().strftime("%Y%m%d")+'/'
 
-writeToFlatFiles_sorted(Shortcut_to_Nielsen_ArtHierarchy_Flat, target_bucket, target_file[:-4], 'overwrite' , header="True" , ext=".txt" )
+#writeToFlatFiles_sorted(Shortcut_to_Nielsen_ArtHierarchy_Flat, target_bucket, target_file[:-4], 'overwrite' , header="True" , ext=".txt" )
 
 # COMMAND ----------
 
@@ -174,3 +174,10 @@ else:
     gs_source_path = target_bucket + target_file
     #today=datetime.now().strftime("%Y%m%d")
     nas_target_path = "/mnt/ssgnas01/devl-edwshare/DataLake/NZ_Migration_Test/Nielsen/petm_hierarchy/"
+
+try:
+    writeToFlatFiles_sorted(Shortcut_to_Nielsen_ArtHierarchy_Flat, target_bucket, target_file[:-4], 'overwrite' , header="True" , ext=".txt" )
+    copy_file_to_nas(gs_source_path, nas_target_path)
+ 
+except Exception as e:
+    raise e
