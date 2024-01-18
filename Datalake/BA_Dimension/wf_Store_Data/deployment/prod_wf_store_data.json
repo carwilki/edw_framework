@@ -51,6 +51,7 @@
           "spark.databricks.delta.preview.enabled": "true",
           "spark.sql.hive.metastore.jars": "maven",
           "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+          "databricks.loki.fileStatusCache.enabled": "false",
           "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/password}}",
           "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
           "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/userid}}",
@@ -64,7 +65,8 @@
         },
         "node_type_id": "n2-standard-8",
         "custom_tags": {
-          "Department": "NZ-Migration"
+          "Department": "NZ-Migration",
+          "DeliveryTeam": "DTDATAPT"
         },
         "spark_env_vars": {
           "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
@@ -83,7 +85,8 @@
     "git_branch": "main"
   },
   "tags": {
-    "Department": "NZ-Migration"
+    "Department": "NZ-Migration",
+    "DeliveryTeam": "DTDATAPT"
   },
   "run_as": {
     "user_name": "gcpdatajobs-shared@petsmart.com"
