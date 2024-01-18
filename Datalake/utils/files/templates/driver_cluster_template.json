@@ -1,0 +1,41 @@
+{
+    "cluster_name": "FileDriverCluster",
+    "spark_version": "13.3.x-scala2.12",
+    "spark_conf": {
+        "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+        "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
+        "spark.databricks.delta.preview.enabled": "true",
+        "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/dev-userid}}",
+        "spark.sql.parquet.outputTimestampType": "TIMESTAMP_MICROS",
+        "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/dev-password}}",
+        "databricks.loki.fileStatusCache.enabled": "false",
+        "spark.driver.maxResultSize": "16g",
+        "spark.master": "local[*, 4]",
+        "spark.databricks.cluster.profile": "singleNode",
+        "spark.sql.hive.metastore.jars": "maven",
+        "spark.sql.hive.metastore.version": "3.1.0",
+        "spark.sql.adaptive.enabled": "true"
+    },
+    "gcp_attributes": {
+        "use_preemptible_executors": false,
+        "google_service_account": "petm-bdpl-netezza-dev-p-sa@petm-prj-bricksengdev-p-b9f4.iam.gserviceaccount.com",
+        "availability": "ON_DEMAND_GCP",
+        "zone_id": "auto"
+    },
+    "node_type_id": "e2-standard-4",
+    "driver_node_type_id": "e2-standard-4",
+    "spark_env_vars": {
+        "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+    },
+    "autotermination_minutes": 120,
+    "enable_elastic_disk": true,
+    "enable_local_disk_encryption": false,
+    "data_security_mode": "NONE",
+    "runtime_engine": "STANDARD",
+    "num_workers": 0,
+    "custom_tags": {
+        "ResourceClass": "SingleNode",
+        "Department": "NZ-Migration",
+        "DeliveryTeam": "DTDATAPT"
+    }
+}

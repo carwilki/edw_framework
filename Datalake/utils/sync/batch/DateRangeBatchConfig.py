@@ -19,30 +19,33 @@ class DateRangeBatchConfig(object):
     target_table_fqn: str
     start_dt: datetime
     end_dt: datetime
-    current_dt: datetime
+    current_dt: datetime | None = field(default=None, compare=False)
     source_filter: str | None = None
     keys: list[str] = field(default_factory=list)
     excluded_columns: list[str] = field(default_factory=list)
     date_columns: list[str] = field(default_factory=list)
     interval: timedelta = field(default_factory=lambda: timedelta(weeks=1))
+    partition_colunm: str | None = None
 
     def __str__(self) -> str:
-        return f"""********************************
-            DateRangeBatchConfig:
-                batch_id:           {self.batch_id}
-                env:                {self.env}
-                source_table_fqn:   {self.source_table_fqn}
-                target_table_fqn:   {self.target_table_fqn}
-                source_type:        {self.source_type}
-                source_filter:      {self.source_filter}
-                keys:               {self.keys}
-                excluded_columns:   {self.excluded_columns}
-                date_columns:       {self.date_columns}
-                start_dt:           {self.start_dt}
-                end_dt:             {self.end_dt}
-                current_dt:         {self.current_dt}
-                interval:           {self.interval}
-            ********************************"""
+        return f"""
+                    ********************************
+                    DateRangeBatchConfig:
+                        batch_id:           {self.batch_id}
+                        env:                {self.env}
+                        source_table_fqn:   {self.source_table_fqn}
+                        target_table_fqn:   {self.target_table_fqn}
+                        source_type:        {self.source_type}
+                        source_filter:      {self.source_filter}
+                        keys:               {self.keys}
+                        parition_colunm:    {self.partition_colunm}
+                        excluded_columns:   {self.excluded_columns}
+                        date_columns:       {self.date_columns}
+                        start_dt:           {self.start_dt}
+                        end_dt:             {self.end_dt}
+                        current_dt:         {self.current_dt}
+                        interval:           {self.interval}
+                    ********************************"""
 
     @classmethod
     def empty(cls) -> "DateRangeBatchConfig":

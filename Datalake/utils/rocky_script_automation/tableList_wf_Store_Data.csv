@@ -1,0 +1,2 @@
+name,source_schema,source_table,snapshot_target_schema,snapshot_target_table,source_filter,test_target_schema,test_target_table,primary_key,validation_filter,is_input
+STORE_DATA,edw_prd,STORE_DATA,nzmigration,STORE_DATA,1=1,qa_legacy,STORE_DATA,SITE_NBR,,FALSE

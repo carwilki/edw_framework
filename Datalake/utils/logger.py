@@ -1,6 +1,7 @@
 import json
-from logging import INFO, getLogger
-
+from logging import INFO
+import logging
+import sys
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
@@ -8,16 +9,32 @@ spark: SparkSession = SparkSession.getActiveSession()
 dbutils = DBUtils(spark)
 
 
+def getLogger() -> logging.Logger:
+    FORMAT = "[%(filename)s:%(funcName)20s:%(lineno)s] %(message)s"
+    logging.basicConfig(format=FORMAT, level=logging.INFO, stream=sys.stdout)
+    return logging.getLogger()
+
+
 # Function to Log the Success/Failure to log_run_details table
 # #Usage   - logPrevRunDt('test','test','Completed','N/A',"devrefine.log_run_details")
 def logPrevRunDt(process, table_name, status, error, logTableName):
-    from logging import INFO, getLogger
-
     logger = getLogger()
     from datetime import datetime as dt
-    escape_charlist = str.maketrans({"-": r"\-", "]": r"\]", "\\": r"\\", "^": r"\^", "$": r"\$", "*": r"\*", ".": r"\.","'": r"\'"})
+
+    escape_charlist = str.maketrans(
+        {
+            "-": r"\-",
+            "]": r"\]",
+            "\\": r"\\",
+            "^": r"\^",
+            "$": r"\$",
+            "*": r"\*",
+            ".": r"\.",
+            "'": r"\'",
+        }
+    )
     error = error.translate(escape_charlist)
-    
+
     # Getting current date and time
     now = dt.now()
 
