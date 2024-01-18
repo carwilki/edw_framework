@@ -1,4 +1,4 @@
-{
+driver_template = """{
     "name": "{{ name }}",
     "email_notifications": {
         "no_alert_for_skipped_runs": false
@@ -55,4 +55,4 @@
       "run_as": {
         "user_name": "{{ run_as_user}}"
       }
-}
+}"""

@@ -1,8 +1,8 @@
 import json
-from jinja2 import Environment, PackageLoader, select_autoescape, DebugUndefined
-
+from jinja2 import Environment, FileSystemLoader, PackageLoader, Template, select_autoescape, DebugUndefined
+from Datalake.utils.files.templates import driver_template
 _jenv = Environment(
-    loader=PackageLoader("Datalake.utils.files", "templates"),
+    loader=FileSystemLoader(searchpath="./templates"),
     autoescape=select_autoescape(),
     undefined=DebugUndefined,
 )
@@ -10,11 +10,10 @@ _jenv.filters["jsonify"] = json.dumps
 
 
 def get_file_driver_payload(
-    name,env, job_id, parameter_file, driver_cluster, run_as_user, timeout="2H"
+    name,env, job_id, parameter_file, driver_cluster, run_as_user, timeout="2h"
 ) -> str:
     # Template file at ./app/templates/example.json
-    template = _jenv.get_template("driver_template.json")
-
+    template = Environment(loader=FileSystemLoader("templates/")).from_string(driver_template)
     return template.render(
         name=name,
         env=env,
