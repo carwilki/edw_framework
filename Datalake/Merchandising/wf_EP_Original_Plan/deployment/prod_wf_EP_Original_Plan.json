@@ -168,6 +168,9 @@
     "git_provider": "gitHubEnterprise",
     "git_branch": "main"
   },
+  "tags": {
+    "Department": "NZ-Migration"
+  },  
   "run_as": {
     "user_name": "gcpdatajobs-shared@petsmart.com"
   }
