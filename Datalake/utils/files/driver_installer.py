@@ -1,14 +1,10 @@
 import json
 from jinja2 import (
-    BaseLoader,
     Environment,
-    FileSystemLoader,
     PackageLoader,
-    Template,
     select_autoescape,
     DebugUndefined,
 )
-from Datalake.utils.files.templates import driver_template
 
 _jenv = Environment(
     loader=PackageLoader(package_name="Datalake.utils.files", package_path="templates"),
@@ -34,12 +30,14 @@ def get_file_driver_payload(
     )
 
 
-def get_file_driver_cluster_payload():
-    with open(
-        "Datalake/utils/files/templates/driver_cluster_template.json"
-    ) as json_file:
-        job_payload = json.load(json_file)
-
-    payload = json.dumps(job_payload)
-
-    return payload
+def get_file_driver_cluster_payload(driver_cluster_name) -> str:
+    connection_password = "{{secrets/metastore/password}}"
+    connection_uri = "{{secrets/metastore/connectionuri}}"
+    connection_username = "{{secrets/metastore/userid}}"
+    template = _jenv.get_template("driver_cluster_template.json")
+    return template.render(
+        cluster_name=driver_cluster_name,
+        connection_password=connection_password,
+        connection_uri=connection_uri,
+        connection_username=connection_username,
+    )

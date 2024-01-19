@@ -1,13 +1,13 @@
 {
-    "cluster_name": "FileDriverCluster",
+    "cluster_name": "{{cluster_name}}",
     "spark_version": "13.3.x-scala2.12",
     "spark_conf": {
+        "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{connection_password}}",
+        "spark.hadoop.javax.jdo.option.ConnectionURL": "{{connection_uri}}",
+        "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{connection_username}}",
         "spark.hadoop.javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
-        "spark.hadoop.javax.jdo.option.ConnectionURL": "{{secrets/metastore/connectionuri}}",
         "spark.databricks.delta.preview.enabled": "true",
-        "spark.hadoop.javax.jdo.option.ConnectionUserName": "{{secrets/metastore/dev-userid}}",
         "spark.sql.parquet.outputTimestampType": "TIMESTAMP_MICROS",
-        "spark.hadoop.javax.jdo.option.ConnectionPassword": "{{secrets/metastore/dev-password}}",
         "databricks.loki.fileStatusCache.enabled": "false",
         "spark.driver.maxResultSize": "16g",
         "spark.master": "local[*, 4]",
