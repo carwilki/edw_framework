@@ -16,7 +16,7 @@ VALUES (
 "NZ_Migration", null, 'NZ_Export_Mako8', "EDW_PRD", "SALES_TRANS_SKU",
 null, false, null, false, "delta",
 "legacy", null, "sales_trans_sku", "upsert", "UPDATE_TSTMP", 
-"DAY_DT,SALES_INSTANCE_ID_DIST_KEY,PRODUCT_ID", null, "daily", null, array("DUMMY_TIDAL_JOB"), 
+"DAY_DT,SALES_INSTANCE_ID_DIST_KEY,PRODUCT_ID", "UPDATE_TSTMP > '2024-01-17 00:00:00'", "daily", null, array("DUMMY_TIDAL_JOB"), 
 null, array("sjaiswal@petsmart.com","dbodake@petsmart.com"), 3, '{"Department":"Netezza-Migration"}', false,
 null, null ,"ALL_MUST_BE_MET" ,true ,null , null, null
 );
