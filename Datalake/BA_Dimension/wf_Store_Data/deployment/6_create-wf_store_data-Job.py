@@ -7,11 +7,14 @@ from Datalake.utils.files.driver_installer import (
     get_file_driver_cluster_payload,
 )
 
+from databricks.sdk import WorkspaceClient
+
 token = secrets.get(scope="db-token-jobsapi", key="password")
 google_service_account = (
     "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com"
 )
 instance_id = secrets.get(scope="db-token-jobsapi", key="instance_id")
+ws = WorkspaceClient(host=f"https://{instance_id}", token=token)
 
 
 def create_job(payload):
@@ -23,23 +26,26 @@ def create_job(payload):
 
     response = requests.post(url=url, headers=params, data=payload)
 
-    return response.text
+    if response.status_code == 200:
+        return response
+    else:
+        raise Exception(response.text)
 
-
-def create_cluster(payload):
+def create_cluster(payload) -> str | None:
     path = "/api/2.0/clusters/create"
     url = f"https://{instance_id}{path}"
-
     params = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
 
     response = requests.post(url=url, headers=params, data=payload)
 
-    return response.text
+    if response.status_code == 200:
+        return response.json()["cluster_id"]
+    else:
+        raise Exception(response.text)
 
 
 def getJobId(json_response):
-    json_response = json.loads(json_response)
-    return json_response.id
+    return json_response["job_id"]
 
 
 def set_permission(payload, job_id):
@@ -51,37 +57,60 @@ def set_permission(payload, job_id):
 
     response = requests.patch(url=url, headers=params, data=payload)
 
-    return response.text
+    if response.status_code == 200:
+        return response
+    else:
+        raise Exception(response.text)
+
+
+def file_driver_cluster_exists(dc) -> str | None:
+    clusters = ws.clusters.list()
+    for c in clusters:
+        if c.cluster_name == dc:
+            return c.cluster_id
+
+    return None
 
 
 # COMMAND ----------
 
 job_json = "prod_wf_store_data.json"
 env = "prod"
+dc = "FileDriverCluster"
 pf = "wf_store_data"
 name = f"{pf}_driver"
-dc = "FileDriverCluster"
+dc_id = None
 rau = "gcpdatajobs-shared@petsmart.com"
 to = "2h"
 
 # create the file driver cluster to run the file utils on
 # this is required for the file utils to execute.
-create_cluster(get_file_driver_cluster_payload())
+# Check first to see if the file driver cluster already exists.
+dc_id = file_driver_cluster_exists(dc)
+if dc_id is None:
+    print(f"Creating file driver cluster: {dc}")
+    dc_id = create_cluster(get_file_driver_cluster_payload(dc))
+else:
+    print(f"File driver cluster already exists: {dc}")
+
 # create the workflow first. we need the id of the job so we can set the permissions
 # and set up the file driver
 with open(job_json) as json_file:
     job_payload = json.load(json_file)
 
 payload = json.dumps(job_payload)
+print(f"create job payload:{payload}")
 response = create_job(payload)
-
-job_id = getJobId(response)
-
+job_id = response.json().get("job_id")
+print(f"job_id:{job_id}")
 # set up the file driver parmeters
 
 # creat the file driver job
-file_driver = get_file_driver_payload(name, env, job_id, pf, dc, rau, to)
-driver_id = getJobId(create_cluster(file_driver))
+file_driver = get_file_driver_payload(name, env, job_id, pf, dc_id, rau, to)
+print(f"file_driver payload:{file_driver}")
+dr = create_job(file_driver)
+driver_id = dr.json().get("job_id")
+print(f"driver_id:{driver_id}")
 
 permission_json = {
     "access_control_list": [
@@ -96,10 +125,10 @@ permission_json = {
 payload = json.dumps(permission_json)
 # set the permissions on the workflow
 response = set_permission(payload, job_id)
-print(response)
+print(response.text)
 # set the permissions on the file driver
 response = set_permission(payload, file_driver)
-print(response)
+print(response.text)
 print(
     f"""
       Driver Id: {driver_id}
