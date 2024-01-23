@@ -127,7 +127,7 @@ payload = json.dumps(permission_json)
 response = set_permission(payload, job_id)
 print(response.text)
 # set the permissions on the file driver
-response = set_permission(payload, file_driver)
+response = set_permission(payload, driver_id)
 print(response.text)
 print(
     f"""
