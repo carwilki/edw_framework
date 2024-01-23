@@ -30,12 +30,14 @@ def get_file_driver_payload(
     )
 
 
-def get_file_driver_cluster_payload(driver_cluster_name) -> str:
+def get_file_driver_cluster_payload(driver_cluster_name,service_account) -> str:
     connection_password = "{{secrets/metastore/password}}"
     connection_uri = "{{secrets/metastore/connectionuri}}"
     connection_username = "{{secrets/metastore/userid}}"
     template = _jenv.get_template("driver_cluster_template.json")
+    
     return template.render(
+        service_account_name=service_account,
         cluster_name=driver_cluster_name,
         connection_password=connection_password,
         connection_uri=connection_uri,

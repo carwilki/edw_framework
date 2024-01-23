@@ -18,7 +18,7 @@
     },
     "gcp_attributes": {
         "use_preemptible_executors": false,
-        "google_service_account": "petm-bdpl-netezza-dev-p-sa@petm-prj-bricksengdev-p-b9f4.iam.gserviceaccount.com",
+        "google_service_account": "{{service_account_name}}",
         "availability": "ON_DEMAND_GCP",
         "zone_id": "auto"
     },

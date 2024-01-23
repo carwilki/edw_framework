@@ -82,14 +82,14 @@ name = f"{pf}_driver"
 dc_id = None
 rau = "gcpdatajobs-shared@petsmart.com"
 to = "2h"
-
+driver_sa = "petm-bdpl-bricksengprd-p-sa@petm-prj-bricksengprd-p-2f96.iam.gserviceaccount.com"
 # create the file driver cluster to run the file utils on
 # this is required for the file utils to execute.
 # Check first to see if the file driver cluster already exists.
 dc_id = file_driver_cluster_exists(dc)
 if dc_id is None:
     print(f"Creating file driver cluster: {dc}")
-    dc_id = create_cluster(get_file_driver_cluster_payload(dc))
+    dc_id = create_cluster(get_file_driver_cluster_payload(dc,driver_sa))
 else:
     print(f"File driver cluster already exists: {dc}")
 
