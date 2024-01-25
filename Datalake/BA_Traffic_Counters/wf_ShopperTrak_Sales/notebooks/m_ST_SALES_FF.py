@@ -425,7 +425,7 @@ Rtr_ST_Sales_FF_Sales_Greater_Than_30Days = Exp_STS.select(Exp_STS.sys_row_id.al
 	Exp_STS.CURRENCY_TYPE.alias('CURRENCY_TYPE3'),
 	Exp_STS.CATEGORY_ID.alias('CATEGORY_ID3'),
 	Exp_STS.DAY_DT.alias('DAY_DT3'))\
-	.filter("DAY_DT >= to_date('2023-12-20') - INTERVAL '30 DAYS'")
+	.filter("DAY_DT >= current_date - INTERVAL '30 DAYS'")
 
 	# .filter("DAY_DT >= date_add(trunc(current_date(), 'D'),-30)")
 
@@ -441,7 +441,7 @@ Rtr_ST_Sales_FF_Sales_Less_Than_30Days = Exp_STS.select(Exp_STS.sys_row_id.alias
 	Exp_STS.CURRENCY_TYPE.alias('CURRENCY_TYPE1'),
 	Exp_STS.CATEGORY_ID.alias('CATEGORY_ID1'),
 	Exp_STS.DAY_DT.alias('DAY_DT1'))\
-    .filter("DAY_DT < to_date('2023-12-20') - INTERVAL '30 DAYS'")
+    .filter("DAY_DT < current_date - INTERVAL '30 DAYS'")
     # .filter("DAY_DT < date_add(trunc(current_date(), 'D'),-30)")
 
 
