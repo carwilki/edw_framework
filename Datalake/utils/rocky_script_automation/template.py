@@ -74,7 +74,7 @@ for table in table_metadata:
 
 
 if len(refine_tables)>0:
-  print("Refine_tables =",refine_table)
+  print("Refine_tables =",refine_tables)
   #copy_hist_to_refine(refine_tables)
 
 
