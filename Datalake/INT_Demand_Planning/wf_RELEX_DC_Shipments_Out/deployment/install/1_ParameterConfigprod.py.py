@@ -1,7 +1,7 @@
 # Databricks notebook source
 from Datalake.utils.genericUtilities import *
 
-raw='qa_raw'
+raw='raw'
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
