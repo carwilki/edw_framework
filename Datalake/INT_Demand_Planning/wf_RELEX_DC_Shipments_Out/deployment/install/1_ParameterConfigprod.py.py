@@ -18,26 +18,20 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
 parameter_key='Delta_Filter1' 
-parameter_value='WM_ORDERS.UPDATE_TSTMP>to_date("01/01/1900","MM/dd/yyyy")' 
-insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+parameter_value="WM_ORDERS.UPDATE_TSTMP>to_date('1900-01-01')"
+update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
 parameter_key='Delta_Filter2' 
-parameter_value='WM_ORDER_LINE_ITEM.UPDATE_TSTMP > to_date("01/01/1900","MM/dd/yyyy")' 
-insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+parameter_value="WM_ORDER_LINE_ITEM.UPDATE_TSTMP >to_date('1900-01-01')"
+update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
 parameter_key='Last_Run_Date' 
-parameter_value='01/01/1900' 
-insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
-
-# parameter_file_name='wf_RELEX_DC_Shipments_Out' 
-# parameter_section='m_RELEX_2018_DC_Shipments_Out' 
-# parameter_key='Last_Run_Date2' 
-# parameter_value='01/01/1900' 
-# insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+parameter_value='1900-01-01' 
+update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
@@ -61,14 +55,14 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_CAN_DC_Shipments_Out' 
 parameter_key='Delta_Filter' 
-parameter_value='MOVEMENT_DAY.UPDATE_DT>to_date("01/01/1900","MM/dd/yyyy")'
-insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+parameter_value="MOVEMENT_DAY.UPDATE_DT>to_date('1900-01-01')"
+update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_CAN_DC_Shipments_Out' 
 parameter_key='Last_Run_Date' 
-parameter_value='01/01/1900'
-insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+parameter_value='1900-01-01'
+update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_CAN_DC_Shipments_Out' 
@@ -81,3 +75,7 @@ parameter_section='m_RELEX_CAN_DC_Shipments_Out'
 parameter_key='Move_Type_Filter' 
 parameter_value='MOVEMENT_INFO.MOVE_TYPE_ID IN (641,642)'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
+
+# COMMAND ----------
+
+

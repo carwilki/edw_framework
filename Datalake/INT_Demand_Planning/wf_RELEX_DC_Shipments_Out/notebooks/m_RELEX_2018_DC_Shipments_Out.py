@@ -43,12 +43,13 @@ Last_Run_date=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC
 Delta_Filter1=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter1')
 Delta_Filter2=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter2')
 
-if Last_Run_date=='01/01/1900' :
-    v_max_update_dt1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {legacy}.WM_ORDERS").first()[0])
-    v_max_update_dt2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {legacy}.WM_ORDER_LINE_ITEM").first()[0])
+if Last_Run_date=='1900-01-01' :
+    print('Initial_Load')
+    v_max_update_dt1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDERS").first()[0])
+    v_max_update_dt2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDER_LINE_ITEM").first()[0])
     Last_Run_date=v_max_update_dt1
-    Delta_Filter1=f"WM_ORDERS.UPDATE_TSTMP>=to_date({v_max_update_dt1},'MM/dd/yyyy')"
-    Delta_Filter2=f"WM_ORDER_LINE_ITEM.UPDATE_TSTMP>=to_date({v_max_update_dt2},'MM/dd/yyyy')"
+    Delta_Filter1=f"WM_ORDERS.UPDATE_TSTMP>=to_date('{v_max_update_dt1}','MM/dd/yyyy')"
+    Delta_Filter2=f"WM_ORDER_LINE_ITEM.UPDATE_TSTMP>=to_date('{v_max_update_dt2}','MM/dd/yyyy')"
 else:
     Last_Run_date=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Last_Run_Date')
     Delta_Filter1=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter1')
@@ -95,13 +96,13 @@ SELECT A.LOCATION_ID, A.WM_ORDER_ID, A.WM_ITEM_NAME, A.SHIPPED_QTY,A.UPDATE_TSTM
 
 FROM
 
-{legacy}.WM_ORDER_LINE_ITEM A
+{refine}.WM_ORDER_LINE_ITEM A
 
 JOIN ( 
 
 SELECT DISTINCT LOCATION_ID,WM_ITEM_NAME
 
-		FROM {legacy}.WM_ORDER_LINE_ITEM 
+		FROM {refine}.WM_ORDER_LINE_ITEM 
 
 		WHERE {Delta_Filter2}
 
@@ -121,9 +122,9 @@ SELECT DISTINCT LOCATION_ID,WM_ITEM_NAME
 
 FROM
 
-	{legacy}.WM_ORDERS 
+	{refine}.WM_ORDERS 
 
-LEFT OUTER JOIN {legacy}.WM_LPN ON WM_ORDERS.LOCATION_ID=WM_ORDERS.LOCATION_ID 
+LEFT OUTER JOIN {refine}.WM_LPN ON WM_ORDERS.LOCATION_ID=WM_ORDERS.LOCATION_ID 
 
 AND WM_ORDERS.WM_TC_ORDER_ID=WM_LPN.WM_TC_ORDER_ID 
 
@@ -323,8 +324,8 @@ writeToFlatFile(Shortcut_to_RELEX_DC_Shipments_FF, target_bucket, target_file, '
 param_file_name='wf_RELEX_DC_Shipments_Out'
 param_section='m_RELEX_2018_DC_Shipments_Out'
 
-v_param_value_Last_Run_date1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {legacy}.WM_ORDERS").first()[0])
-v_param_value_Last_Run_date2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {legacy}.WM_ORDER_LINE_ITEM").first()[0])
+v_param_value_Last_Run_date1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDERS").first()[0])
+v_param_value_Last_Run_date2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDER_LINE_ITEM").first()[0])
 v_param_value_Delta_Filter1=f"WM_ORDERS.UPDATE_TSTMP > to_date('{v_param_value_Last_Run_date1}','MM/dd/yyyy')"
 v_param_value_Delta_Filter2=f"WM_ORDER_LINE_ITEM.UPDATE_TSTMP > to_date('{v_param_value_Last_Run_date2}','MM/dd/yyyy')"
 
