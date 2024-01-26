@@ -44,6 +44,7 @@ Delta_Filter1=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC
 Delta_Filter2=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter2')
 
 if Last_Run_date=='01/01/1900' :
+    print('Initial_Load')
     v_max_update_dt1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDERS").first()[0])
     v_max_update_dt2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDER_LINE_ITEM").first()[0])
     Last_Run_date=v_max_update_dt1
