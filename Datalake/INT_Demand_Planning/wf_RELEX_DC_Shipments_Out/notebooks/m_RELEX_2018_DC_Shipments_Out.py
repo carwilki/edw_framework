@@ -43,13 +43,13 @@ Last_Run_date=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC
 Delta_Filter1=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter1')
 Delta_Filter2=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter2')
 
-if Last_Run_date=='01/01/1900' :
+if Last_Run_date=='1900-01-01' :
     print('Initial_Load')
     v_max_update_dt1=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDERS").first()[0])
     v_max_update_dt2=str(spark.sql(f"Select max(UPDATE_TSTMP) as max_dt from {refine}.WM_ORDER_LINE_ITEM").first()[0])
     Last_Run_date=v_max_update_dt1
-    Delta_Filter1=f"WM_ORDERS.UPDATE_TSTMP>=to_date({v_max_update_dt1},'MM/dd/yyyy')"
-    Delta_Filter2=f"WM_ORDER_LINE_ITEM.UPDATE_TSTMP>=to_date({v_max_update_dt2},'MM/dd/yyyy')"
+    Delta_Filter1=f"WM_ORDERS.UPDATE_TSTMP>=to_date('{v_max_update_dt1}','MM/dd/yyyy')"
+    Delta_Filter2=f"WM_ORDER_LINE_ITEM.UPDATE_TSTMP>=to_date('{v_max_update_dt2}','MM/dd/yyyy')"
 else:
     Last_Run_date=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Last_Run_Date')
     Delta_Filter1=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_2018_DC_Shipments_Out','Delta_Filter1')

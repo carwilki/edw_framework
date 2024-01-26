@@ -41,7 +41,7 @@ Store_Filter=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_CAN_DC_S
 Last_Run_date=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_CAN_DC_Shipments_Out','Last_Run_Date')
 Delta_Filter=getParameterValue(raw,'wf_RELEX_DC_Shipments_Out','m_RELEX_CAN_DC_Shipments_Out','Delta_Filter')
 
-if Last_Run_date=='1900/01/01' :
+if Last_Run_date=='1900-01-01' :
     v_max_update_dt=str(spark.sql(f"Select max(UPDATE_DT) as max_dt from {legacy}.MOVEMENT_DAY").first()[0])
     Last_Run_date=v_max_update_dt
     Delta_Filter=f"MOVEMENT_DAY.UPDATE_DT>=to_date({v_max_update_dt},'MM/dd/yyyy')"

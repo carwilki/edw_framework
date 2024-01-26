@@ -1,7 +1,7 @@
 # Databricks notebook source
 from Datalake.utils.genericUtilities import *
 
-raw='raw'
+raw='qa_raw'
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
@@ -32,12 +32,6 @@ parameter_section='m_RELEX_2018_DC_Shipments_Out'
 parameter_key='Last_Run_Date' 
 parameter_value='1900-01-01' 
 update_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
-
-# parameter_file_name='wf_RELEX_DC_Shipments_Out' 
-# parameter_section='m_RELEX_2018_DC_Shipments_Out' 
-# parameter_key='Last_Run_Date2' 
-# parameter_value='01/01/1900' 
-# insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_2018_DC_Shipments_Out' 
@@ -81,10 +75,6 @@ parameter_section='m_RELEX_CAN_DC_Shipments_Out'
 parameter_key='Move_Type_Filter' 
 parameter_value='MOVEMENT_INFO.MOVE_TYPE_ID IN (641,642)'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
-
-# COMMAND ----------
-
- spark.sql(f""" select to_date("01/01/1900","MM/dd/yyyy") , to_date("1900-01-01")""").display()
 
 # COMMAND ----------
 
