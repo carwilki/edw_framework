@@ -61,7 +61,7 @@ insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,para
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
 parameter_section='m_RELEX_CAN_DC_Shipments_Out' 
 parameter_key='Delta_Filter' 
-parameter_value='MOVEMENT_DAY.UPDATE_DT>to_date("01/01/1900","MM/dd/yyyy")'
+parameter_value='MOVEMENT_DAY.UPDATE_DT>to_date("1900-01-01")'
 insert_param_config(raw,parameter_file_name,parameter_section,parameter_key,parameter_value)
 
 parameter_file_name='wf_RELEX_DC_Shipments_Out' 
