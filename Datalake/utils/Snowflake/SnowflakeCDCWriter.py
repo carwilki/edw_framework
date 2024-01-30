@@ -1,202 +1,17 @@
 from typing import Optional
 
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, desc, row_number, when
 from pyspark.sql.window import Window
 
 from Datalake.utils import secrets
+from Datalake.utils.Snowflake.CDCLogger import CDCLogger
 from Datalake.utils.genericUtilities import getEnvPrefix
-from Datalake.utils.Snowflake.vars import (
-    cdc_metadata_catalog,
-    cdc_metadata_schema,
-    cdc_metadata_table,
-)
 
 
 class SnowflakeCDCException(Exception):
     def __init__(self, message: str):
         super().__init__(message)
-
-
-class SnowflakeCDCLogger:
-    """Snowflake CDC Logger class. This class is used to write the metadata about successfull execution
-    cdc to the snowflake database. This class will create the table to store the metadata in if it does
-    not already exist.
-    dl_catalog, dl_schema, dl_table, sf_database, sf_schema, sf_table are used to identity the table
-    that will be logged.
-    :param env: The environment variable used to identify the environment.
-    :param spark: The spark session.
-    :param dl_schema: The schema of the datalake table.
-    :param dl_table: The table of the datalake table.
-    :param sf_database: The snowflake database.
-    :param sf_schema: The snowflake schema.
-    :param sf_table: The snowflake table.
-    :param dl_catalog: The datalake catalog. Optional.
-    :param primary_keys: The primary keys of the table.
-    :param update_excl_columns: Colunms that should be excluded from the update.
-    """
-
-    def __init__(
-        self,
-        env: str,
-        spark: SparkSession,
-        dl_schema: str,
-        dl_table: str,
-        sf_database: str,
-        sf_schema: str,
-        sf_table: str,
-        dl_catalog: str = None,
-    ):
-        """Initializes the Snowflake CDC Logger class. This class will create the table to store the metadata in if it
-        does not already exist"""
-        self.env = env
-        self.spark = spark
-        self.dl_schema = dl_schema
-        self.cdc_metadata_schema = cdc_metadata_schema
-        self.cdc_metadata_catalog = cdc_metadata_catalog
-        self.cdc_metadata_table = cdc_metadata_table
-        self.dl_table = dl_table
-        self.sf_database = sf_database
-        self.sf_schema = sf_schema
-        self.sf_table = sf_table
-        self.dl_catalog = dl_catalog
-        self.log_table = self._get_metadata_table()
-        self.datalake_table_fqn = self._get_datalake_table()
-        self.max_observed_version = self.getLastSeenVersion()
-        self.max_table_history_verison = self.getMaxTableVersion()
-        self._createLogTable()
-
-    def _createLogTable(self):
-        """Creates the metadata table for the snowflake cdc if it does not exist"""
-        self.spark.sql(
-            f"""create table if not exists {self.log_table}(
-            dlSchema string,
-            dlTable string,
-            targetDatabase string,
-            targetSchema string,
-            targetTable string,
-            version long,
-            timestamp timestamp)"""
-        ).collect()
-
-    def _get_metadata_table(self) -> str:
-        """Get the metadata table name from the env and the values set in the var.SnowflakeCDCWriter
-        if var.SnowflakeCDCWriter.cdc_metadata_catalog is not None then will contain the catalog if
-        given. Otherwise it will only contain the schema and the table name.
-        """
-        if cdc_metadata_catalog is not None:
-            metadata_table = f"{self.cdc_metadata_catalog}.{self.cdc_metadata_schema}.{self.cdc_metadata_table}"
-        else:
-            metadata_table = f"{self.cdc_metadata_schema}.{self.cdc_metadata_table}"
-
-        return getEnvPrefix(self.env) + metadata_table
-
-    def _get_datalake_table(self) -> str:
-        """Get the datalake table name from the provided parameters"""
-
-        if self.dl_catalog is not None:
-            print("dl_catalog Not None", self.dl_catalog)
-            dltable = f"{self.dl_catalog}.{self.dl_schema}.{self.dl_table}"
-        else:
-            dltable = f"{self.dl_schema}.{self.dl_table}"
-
-        return dltable
-
-    def getLastSeenVersion(self) -> int:
-        """This function gets the last version that was inserted into the cdc metadata table to
-        to handle cdc
-        """
-        if self.dl_catalog is not None:
-            schema = f"{self.dl_catalog}.{self.dl_schema}"
-        else:
-            schema = self.dl_schema
-        query = f"""select version from {self.log_table} where
-                        lower(dlSchema) = lower('{schema}')
-                        and lower(dlTable) = lower('{self.dl_table}')
-                        and lower(targetDatabase) = lower('{self.sf_database}')
-                        and lower(targetSchema) = lower('{self.sf_schema}')
-                        and lower(targetTable) = lower('{self.sf_table}')
-                        and timestamp in (select max(timestamp) from {self.log_table}
-                            where lower(dlSchema) = lower('{schema}')
-                            and lower(dlTable) = lower('{self.dl_table}')
-                            and lower(targetDatabase) = lower('{self.sf_database}')
-                            and lower(targetSchema) = lower('{self.sf_schema}')
-                            and lower(targetTable) = lower('{self.sf_table}'))"""
-
-        print(
-            f"""SnowflakeCDCLogger::getLastSeenVersion::Query
-              {query}""",
-        )
-        df = self.spark.sql(query)
-        if df.count() > 0:
-            return df.collect()[0][0]
-        else:
-            return 0
-
-    def getMaxTableVersion(self) -> int:
-        """This function gets the last version that was inserted into the history metadata table to
-        to handle cdc. This is used to bootstrap the cdc metadata table if there is nothing there.
-        """
-        ret = self.spark.sql(
-            f"""select max(version) from (describe history {self.datalake_table_fqn})"""
-        ).collect()[0][0]
-        if ret is not None:
-            return ret
-        else:
-            return 0
-
-    def logLastSeenVersion(self, version: int) -> None:
-        """function logs the version that is speciffied to the metadata table. this should the version
-        that is most current at the time of write
-        """
-        if self.dl_catalog is not None:
-            schema = f"{self.dl_catalog}.{self.dl_schema}"
-        else:
-            schema = self.dl_schema
-
-        query = f"""insert into {self.log_table}(
-                        dlSchema,dlTable,targetDatabase,targetSchema,targetTable,version,timestamp)
-                    values('{schema}','{self.dl_table}','{self.sf_database}',
-                    '{self.sf_schema}','{self.sf_table}',{version},
-                    current_timestamp())"""
-
-        print(
-            f"""SnowflakeCDCLogger::logLastSeenVersion::Query
-              {query}""",
-        )
-
-        self.spark.sql(query)
-
-    def getChangesForTable(self, table_fqn: str) -> Optional[DataFrame]:
-        """This function gets the changes for the table specified by the table_fqn"""
-
-        # sanity check
-        if self.max_observed_version > self.max_table_history_verison:
-            raise SnowflakeCDCException(
-                f"""Observed Version history:{self.max_observed_version} for table {table_fqn}
-                    is greater than the max observed version {self.max_table_history_verison}.
-                    This is likely due to the table being recreated.
-                    update the version in the metadata table for cdf:{self.log_table}
-                    and try again"""
-            )
-
-        lastSeenVersion = self.getLastSeenVersion()
-
-        if lastSeenVersion is None:
-            lastSeenVersion = 0
-
-        print(lastSeenVersion)
-
-        cdc_query = f"select * from table_changes('{table_fqn}',{lastSeenVersion})"
-
-        df = self.spark.sql(cdc_query)
-
-        count = df.count()
-
-        if count > 0:
-            return df
-        else:
-            return None
 
 
 class SnowflakeCDCWriter:
@@ -232,7 +47,7 @@ class SnowflakeCDCWriter:
         primary_keys: str = None,
         update_excl_columns=[],
     ):
-        self.cdc_logger = SnowflakeCDCLogger(
+        self.cdc_logger = CDCLogger(
             env=env,
             spark=spark,
             dl_catalog=dl_catalog,
