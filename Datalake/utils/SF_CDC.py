@@ -21,7 +21,7 @@ from logging import INFO, getLogger
 
 from pyspark.sql.session import SparkSession
 
-from Datalake.utils.Snowflake.SnowflakeCDCWriter import SnowflakeCDCWriter
+from Datalake.utils.sync.cdc.snowflake.SnowflakeCDCWriter import SnowflakeCDCWriter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env", type=str, help="Environment value", default="dev")
@@ -77,7 +77,7 @@ logger.info(
     f"{sf_database}.{sf_schema}.{sf_table}",
     f"{dl_catalog}.{dl_schema}.{dl_table}",
 )
-sfcdc.push_cdc()
+sfcdc.push()
 logger.info(
     "Data write to SF completed for table: %s", f"{sf_database}.{sf_schema}.{sf_table}"
 )
