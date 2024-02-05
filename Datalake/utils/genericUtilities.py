@@ -208,7 +208,7 @@ def jdbcOracleConnection(query, username, password, connection_string):
         .option("oracle.jdbc.timezoneAsRegion", "false")
         .option(
             "sessionInitStatement",
-            """begin 
+            """begin
             execute immediate 'alter session set time_zone=''-07:00''';
             end;
         """,

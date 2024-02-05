@@ -91,10 +91,9 @@ class CDCWriter(ABC):
             lastSeenVersion = 0
 
         changes = (
-            self.spark.read.format("delta")
-            .option("readChangeFeed", "true")
+            self.spark.read.option("readChangeFeed", "true")
             .option("startingVersion", lastSeenVersion)
-            .load()
+            .table(self._getTargetFQN())
             .filter(col("_change_type") == "insert")
             .drop(cols="_change_type,_commit_version,_commit_timestamp")
         )
@@ -107,10 +106,9 @@ class CDCWriter(ABC):
             lastSeenVersion = 0
 
         changes = (
-            self.spark.read.format("delta")
-            .option("readChangeFeed", "true")
+             self.spark.read.option("readChangeFeed", "true")
             .option("startingVersion", lastSeenVersion)
-            .load()
+            .table(self._getTargetFQN())
         )
         return changes
 

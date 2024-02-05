@@ -182,8 +182,7 @@ class CDCLogger:
 
         print(lastSeenVersion)
 
-        cdc_query = f"select * from table_changes('{table_fqn}',{lastSeenVersion})"
-
+        cdc_query = self.spark.
         df = self.spark.sql(cdc_query)
 
         count = df.count()
