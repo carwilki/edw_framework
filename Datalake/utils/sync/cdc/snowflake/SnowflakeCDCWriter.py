@@ -56,6 +56,7 @@ class SnowflakeCDCWriter(CDCWriter):
             source_catalog=dl_catalog,
             primary_keys=primary_keys,
             update_excl_columns=update_excl_columns,
+            write_mode="merge",
         )
         self.logger = getLogger()
         if self.env == "prod":
@@ -166,6 +167,10 @@ class SnowflakeCDCWriter(CDCWriter):
         return query
 
     def _push(self, df):
+        if self.write_mode != "merge":
+            raise Exception(
+                """SnowflakeCDCWriter::_push::update_type only merge is supported for snowflake CDC"""
+            )
         if not all(
             col_name in df.columns
             for col_name in ("_change_type", "_commit_version", "_commit_timestamp")

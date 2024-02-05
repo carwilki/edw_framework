@@ -30,7 +30,7 @@ class CDCWriter(ABC):
         source_catalog: str = None,
         primary_keys: str = None,
         update_excl_columns: list[str] = [],
-        update_option: str | None = None,
+        write_mode: str | None = None,
     ):
         self.cdc_logger = CDCLogger(
             env=env,
@@ -47,14 +47,21 @@ class CDCWriter(ABC):
         self.source_catalog = (
             source_catalog.strip() if source_catalog is not None else None
         )
+
+        self.target_catalog = (
+            target_catalog.strip() if target_catalog is not None else None
+        )
+
+        if write_mode not in ["overwrite", "append", "merge"]:
+            raise ValueError(f"update_type {write_mode} is not supported")
+
         self.source_schema = getEnvPrefix(self.env) + source_schema.strip()
         self.source_table = source_table.strip()
         self.update_excl_columns = [x.lower() for x in update_excl_columns]
-        self.target_catalog = target_catalog.strip()
         self.target_schema = target_schema.strip()
         self.target_table = target_table.strip()
         self.primary_keys = primary_keys
-        self.update_option = update_option
+        self.write_mode = write_mode
         self.log_table = self.cdc_logger._get_metadata_table()
         self.logger = getLogger()
 
@@ -108,16 +115,16 @@ class CDCWriter(ABC):
         return changes
 
     def _get_source(self):
-        if self.update_option is None:
+        if self.write_mode is None:
             return self._get_source_for_overwrite()
-        elif self.update_option.lower() == "overwrite":
+        elif self.write_mode.lower() == "overwrite":
             return self._get_source_for_overwrite()
-        elif self.update_option.lower() == "append":
+        elif self.write_mode.lower() == "append":
             return self._get_source_for_append()
-        elif self.update_option.lower() == "merge":
+        elif self.write_mode.lower() == "merge":
             return self._get_source_for_merge()
         else:
-            raise ValueError(f"update_option {self.update_option} is not supported")
+            raise ValueError(f"update_option {self.write_mode} is not supported")
 
     def push(self) -> Optional[int]:
         """Push the cdc data to target that is configured for this writer from the

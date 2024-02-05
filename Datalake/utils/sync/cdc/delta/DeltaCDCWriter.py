@@ -18,7 +18,7 @@ class DeltaCDCWriter(CDCWriter):
         source_catalog: str = None,
         primary_keys: str = None,
         update_excl_columns=[],
-        update_option: str | None = None,
+        write_mode: str | None = None,
     ):
         super().__init__(
             env=env,
@@ -31,9 +31,9 @@ class DeltaCDCWriter(CDCWriter):
             source_catalog=source_catalog,
             primary_keys=primary_keys,
             update_excl_columns=update_excl_columns,
+            write_mode=write_mode,
         )
         self.logger = getLogger()
-        self.update_option = update_option
 
     def _overwrite_target(self, df: DataFrame):
         self.logger.info(
@@ -87,13 +87,13 @@ class DeltaCDCWriter(CDCWriter):
         return "and".join(keys)
 
     def _push(self, df: DataFrame) -> Optional[int]:
-        if self.update_option is None:
+        if self.write_mode is None:
             self._overwrite_target(df)
-        elif self.update_option.lower() == "overwrite":
+        elif self.write_mode.lower() == "overwrite":
             self._overwrite_target(df)
-        elif self.update_option.lower() == "append":
+        elif self.write_mode.lower() == "append":
             self._append_target(df)
-        elif self.update_option.lower() == "merge":
+        elif self.write_mode.lower() == "merge":
             self._merge_target(df)
         else:
-            raise ValueError(f"update_option {self.update_option} is not supported")
+            raise ValueError(f"update_option {self.write_mode} is not supported")
